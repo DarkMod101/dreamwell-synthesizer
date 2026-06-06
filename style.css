@@ -92,3 +92,8 @@ button:hover {
   transform: translateY(3px);
   box-shadow: 0 0 18px rgba(201, 168, 255, 0.7);
 }
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #b783ff;
+}
