@@ -3,7 +3,6 @@ let masterGain;
 let reverbNode;
 let reverbWetGain;
 let dryGain;
-
 let delayNode;
 let delayFeedbackGain;
 let delayWetGain;
@@ -19,7 +18,6 @@ const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
 const oscBLevelSlider = document.getElementById("oscBLevel");
 const oscBDetuneSlider = document.getElementById("oscBDetune");
-
 const masterVolume = document.getElementById("masterVolume");
 const keys = document.querySelectorAll(".key");
 
@@ -43,8 +41,77 @@ const delayMixSlider = document.getElementById("delayMix");
 const delayTimeSlider = document.getElementById("delayTime");
 const delayFeedbackSlider = document.getElementById("delayFeedback");
 
+const valueDisplays = {
+  oscBLevel: document.getElementById("oscBLevelValue"),
+  oscBDetune: document.getElementById("oscBDetuneValue"),
+  attack: document.getElementById("attackValue"),
+  decay: document.getElementById("decayValue"),
+  sustain: document.getElementById("sustainValue"),
+  release: document.getElementById("releaseValue"),
+  cutoff: document.getElementById("cutoffValue"),
+  resonance: document.getElementById("resonanceValue"),
+  lfoRate: document.getElementById("lfoRateValue"),
+  lfoAmount: document.getElementById("lfoAmountValue"),
+  reverbMix: document.getElementById("reverbMixValue"),
+  reverbDecay: document.getElementById("reverbDecayValue"),
+  delayMix: document.getElementById("delayMixValue"),
+  delayTime: document.getElementById("delayTimeValue"),
+  delayFeedback: document.getElementById("delayFeedbackValue"),
+  masterVolume: document.getElementById("masterVolumeValue"),
+};
+
 function getValue(element, fallback) {
   return element ? Number(element.value) : fallback;
+}
+
+function percent(value) {
+  return `${Math.round(value * 100)}%`;
+}
+
+function seconds(value) {
+  return `${Number(value).toFixed(2)} s`;
+}
+
+function hz(value) {
+  return `${Math.round(value)} Hz`;
+}
+
+function qValue(value) {
+  return `Q ${Number(value).toFixed(1)}`;
+}
+
+function cents(value) {
+  const number = Number(value);
+  return `${number >= 0 ? "+" : ""}${number} cents`;
+}
+
+function milliseconds(value) {
+  return `${Math.round(value * 1000)} ms`;
+}
+
+function updateValueDisplays() {
+  valueDisplays.oscBLevel.textContent = percent(getValue(oscBLevelSlider, 0.35));
+  valueDisplays.oscBDetune.textContent = cents(getValue(oscBDetuneSlider, 7));
+
+  valueDisplays.attack.textContent = seconds(getValue(attackSlider, 0.05));
+  valueDisplays.decay.textContent = seconds(getValue(decaySlider, 0.2));
+  valueDisplays.sustain.textContent = percent(getValue(sustainSlider, 0.7));
+  valueDisplays.release.textContent = seconds(getValue(releaseSlider, 0.5));
+
+  valueDisplays.cutoff.textContent = hz(getValue(cutoffSlider, 4000));
+  valueDisplays.resonance.textContent = qValue(getValue(resonanceSlider, 1));
+
+  valueDisplays.lfoRate.textContent = `${getValue(lfoRateSlider, 2).toFixed(1)} Hz`;
+  valueDisplays.lfoAmount.textContent = `${Math.round(getValue(lfoAmountSlider, 0))}`;
+
+  valueDisplays.reverbMix.textContent = percent(getValue(reverbMixSlider, 0.25));
+  valueDisplays.reverbDecay.textContent = seconds(getValue(reverbDecaySlider, 3));
+
+  valueDisplays.delayMix.textContent = percent(getValue(delayMixSlider, 0.55));
+  valueDisplays.delayTime.textContent = milliseconds(getValue(delayTimeSlider, 0.55));
+  valueDisplays.delayFeedback.textContent = percent(getValue(delayFeedbackSlider, 0.55));
+
+  valueDisplays.masterVolume.textContent = percent(getValue(masterVolume, 0.25));
 }
 
 function createReverbImpulse(ctx, decayTime) {
@@ -88,10 +155,10 @@ function setupDelay(ctx) {
   delayWetGain = ctx.createGain();
   delayDryGain = ctx.createGain();
 
-  const mix = getValue(delayMixSlider, 0.25);
+  const mix = getValue(delayMixSlider, 0.55);
 
-  delayNode.delayTime.value = getValue(delayTimeSlider, 0.35);
-  delayFeedbackGain.gain.value = getValue(delayFeedbackSlider, 0.35);
+  delayNode.delayTime.value = getValue(delayTimeSlider, 0.55);
+  delayFeedbackGain.gain.value = getValue(delayFeedbackSlider, 0.55);
 
   delayDryGain.gain.value = 1 - mix;
   delayWetGain.gain.value = mix;
@@ -203,10 +270,10 @@ function playNote(frequency) {
   filter.connect(noteGain);
 
   noteGain.connect(dryGain);
-noteGain.connect(reverbNode);
+  noteGain.connect(reverbNode);
 
-noteGain.connect(delayDryGain);
-noteGain.connect(delayNode);
+  noteGain.connect(delayDryGain);
+  noteGain.connect(delayNode);
 
   oscillator.start();
   oscillatorB.start();
@@ -252,69 +319,80 @@ function stopNote() {
   }
 }
 
-if (masterVolume) {
-  masterVolume.addEventListener("input", () => {
-    const ctx = getAudioContext();
-    masterGain.gain.setTargetAtTime(
-      Number(masterVolume.value),
-      ctx.currentTime,
-      0.01
-    );
+function bindSlider(slider, callback) {
+  if (!slider) return;
+
+  slider.addEventListener("input", () => {
+    updateValueDisplays();
+    if (callback) callback();
   });
 }
 
-if (reverbMixSlider) {
-  reverbMixSlider.addEventListener("input", () => {
-    const ctx = getAudioContext();
-    const mix = Number(reverbMixSlider.value);
+bindSlider(masterVolume, () => {
+  const ctx = getAudioContext();
+  masterGain.gain.setTargetAtTime(
+    Number(masterVolume.value),
+    ctx.currentTime,
+    0.01
+  );
+});
 
-    dryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
-    reverbWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
-  });
-}
+bindSlider(reverbMixSlider, () => {
+  const ctx = getAudioContext();
+  const mix = Number(reverbMixSlider.value);
 
-if (reverbDecaySlider) {
-  reverbDecaySlider.addEventListener("change", () => {
-    const ctx = getAudioContext();
-    const decay = Number(reverbDecaySlider.value);
+  dryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
+  reverbWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
+});
 
-    reverbNode.buffer = createReverbImpulse(ctx, decay);
-  });
-}
+bindSlider(reverbDecaySlider, () => {
+  const ctx = getAudioContext();
+  reverbNode.buffer = createReverbImpulse(
+    ctx,
+    Number(reverbDecaySlider.value)
+  );
+});
 
-if (delayMixSlider) {
-  delayMixSlider.addEventListener("input", () => {
-    const ctx = getAudioContext();
-    const mix = Number(delayMixSlider.value);
+bindSlider(delayMixSlider, () => {
+  const ctx = getAudioContext();
+  const mix = Number(delayMixSlider.value);
 
-    delayDryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
-    delayWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
-  });
-}
+  delayDryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
+  delayWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
+});
 
-if (delayTimeSlider) {
-  delayTimeSlider.addEventListener("input", () => {
-    const ctx = getAudioContext();
+bindSlider(delayTimeSlider, () => {
+  const ctx = getAudioContext();
 
-    delayNode.delayTime.setTargetAtTime(
-      Number(delayTimeSlider.value),
-      ctx.currentTime,
-      0.01
-    );
-  });
-}
+  delayNode.delayTime.setTargetAtTime(
+    Number(delayTimeSlider.value),
+    ctx.currentTime,
+    0.01
+  );
+});
 
-if (delayFeedbackSlider) {
-  delayFeedbackSlider.addEventListener("input", () => {
-    const ctx = getAudioContext();
+bindSlider(delayFeedbackSlider, () => {
+  const ctx = getAudioContext();
 
-    delayFeedbackGain.gain.setTargetAtTime(
-      Number(delayFeedbackSlider.value),
-      ctx.currentTime,
-      0.01
-    );
-  });
-}
+  delayFeedbackGain.gain.setTargetAtTime(
+    Number(delayFeedbackSlider.value),
+    ctx.currentTime,
+    0.01
+  );
+});
+
+[
+  oscBLevelSlider,
+  oscBDetuneSlider,
+  attackSlider,
+  decaySlider,
+  sustainSlider,
+  releaseSlider,
+  cutoffSlider,
+  resonanceSlider,
+  lfoRateSlider,
+  lfoAmountSlider,
+].forEach((slider) => bindSlider(slider));
 
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
@@ -331,3 +409,5 @@ keys.forEach((key) => {
 
   key.addEventListener("touchend", stopNote);
 });
+
+updateValueDisplays();
