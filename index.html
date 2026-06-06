@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dreamwell Synthesizer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="logo">
+      <h1>DREAMWELL</h1>
+      <p>SYNTHESIZER</p>
+      <span>Resonant Doorways</span>
+    </section>
 
+    <section class="panel">
+      <h2>Oscillator</h2>
+
+      <label>
+        Waveform
+        <select id="waveform">
+          <option value="sine">Sine</option>
+          <option value="triangle">Triangle</option>
+          <option value="sawtooth">Saw</option>
+          <option value="square">Square</option>
+        </select>
+      </label>
+
+      <button id="playBtn">Play Note</button>
+      <button id="stopBtn">Stop</button>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
