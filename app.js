@@ -23,13 +23,21 @@ const lfoRateSlider = document.getElementById("lfoRate");
 const lfoAmountSlider = document.getElementById("lfoAmount");
 const lfoDestinationSelect = document.getElementById("lfoDestination");
 
+function getValue(element, fallback) {
+  return element ? Number(element.value) : fallback;
+}
+
 function getAudioContext() {
   if (!audioContext) {
     audioContext = new AudioContext();
 
     masterGain = audioContext.createGain();
-    masterGain.gain.value = Number(masterVolume.value);
+    masterGain.gain.value = getValue(masterVolume, 0.25);
     masterGain.connect(audioContext.destination);
+  }
+
+  if (audioContext.state === "suspended") {
+    audioContext.resume();
   }
 
   return audioContext;
@@ -40,23 +48,20 @@ function playNote(frequency) {
 
   stopNote();
 
-  const attack = Number(attackSlider.value);
-  const decay = Number(decaySlider.value);
-  const sustain = Number(sustainSlider.value);
+  const attack = getValue(attackSlider, 0.05);
+  const decay = getValue(decaySlider, 0.2);
+  const sustain = getValue(sustainSlider, 0.7);
 
   const oscillator = ctx.createOscillator();
   const filter = ctx.createBiquadFilter();
   const noteGain = ctx.createGain();
 
-  const lfo = ctx.createOscillator();
-  const lfoGain = ctx.createGain();
-
-  oscillator.type = waveformSelect.value;
+  oscillator.type = waveformSelect ? waveformSelect.value : "sine";
   oscillator.frequency.value = frequency;
 
-  filter.type = filterTypeSelect.value;
-  filter.frequency.value = Number(cutoffSlider.value);
-  filter.Q.value = Number(resonanceSlider.value);
+  filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
+  filter.frequency.value = getValue(cutoffSlider, 4000);
+  filter.Q.value = getValue(resonanceSlider, 1);
 
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
   noteGain.gain.exponentialRampToValueAtTime(1, ctx.currentTime + attack);
@@ -65,44 +70,50 @@ function playNote(frequency) {
     ctx.currentTime + attack + decay
   );
 
-  lfo.frequency.value = Number(lfoRateSlider.value);
+  const lfoAmount = getValue(lfoAmountSlider, 0);
 
-  const destination = lfoDestinationSelect.value;
+  if (lfoAmount > 0 && lfoRateSlider && lfoDestinationSelect) {
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
 
-  if (destination === "filter") {
-    lfoGain.gain.value = Number(lfoAmountSlider.value);
-    lfoGain.connect(filter.frequency);
+    lfo.frequency.value = getValue(lfoRateSlider, 2);
+
+    if (lfoDestinationSelect.value === "filter") {
+      lfoGain.gain.value = lfoAmount;
+      lfoGain.connect(filter.frequency);
+    }
+
+    if (lfoDestinationSelect.value === "pitch") {
+      lfoGain.gain.value = lfoAmount;
+      lfoGain.connect(oscillator.frequency);
+    }
+
+    if (lfoDestinationSelect.value === "volume") {
+      lfoGain.gain.value = lfoAmount / 2000;
+      lfoGain.connect(noteGain.gain);
+    }
+
+    lfo.connect(lfoGain);
+    lfo.start();
+
+    activeLFO = lfo;
+    activeLFOGain = lfoGain;
   }
-
-  if (destination === "pitch") {
-    lfoGain.gain.value = Number(lfoAmountSlider.value);
-    lfoGain.connect(oscillator.frequency);
-  }
-
-  if (destination === "volume") {
-    lfoGain.gain.value = Number(lfoAmountSlider.value) / 2000;
-    lfoGain.connect(noteGain.gain);
-  }
-
-  lfo.connect(lfoGain);
 
   oscillator.connect(filter);
   filter.connect(noteGain);
   noteGain.connect(masterGain);
 
   oscillator.start();
-  lfo.start();
 
   activeOscillator = oscillator;
   activeGain = noteGain;
-  activeLFO = lfo;
-  activeLFOGain = lfoGain;
 }
 
 function stopNote() {
   if (activeOscillator && activeGain) {
     const ctx = getAudioContext();
-    const release = Number(releaseSlider.value);
+    const release = getValue(releaseSlider, 0.5);
 
     activeGain.gain.cancelScheduledValues(ctx.currentTime);
     activeGain.gain.setValueAtTime(activeGain.gain.value, ctx.currentTime);
@@ -129,14 +140,16 @@ function stopNote() {
   }
 }
 
-masterVolume.addEventListener("input", () => {
-  const ctx = getAudioContext();
-  masterGain.gain.setTargetAtTime(
-    Number(masterVolume.value),
-    ctx.currentTime,
-    0.01
-  );
-});
+if (masterVolume) {
+  masterVolume.addEventListener("input", () => {
+    const ctx = getAudioContext();
+    masterGain.gain.setTargetAtTime(
+      Number(masterVolume.value),
+      ctx.currentTime,
+      0.01
+    );
+  });
+}
 
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
@@ -152,106 +165,4 @@ keys.forEach((key) => {
   });
 
   key.addEventListener("touchend", stopNote);
-});const destination = lfoDestinationSelect.value;
-
-if (destination === "filter") {
-  lfoGain.connect(filter.frequency);
-}
-
-if (destination === "pitch") {
-  lfoGain.connect(oscillator.frequency);
-}
-
-if (destination === "volume") {
-  lfoGain.gain.value = Number(lfoAmountSlider.value) / 2000;
-  lfoGain.connect(noteGain.gain);
-}
-
-lfo.connect(lfoGain);
-lfo.start();
-  
-filter.type = filterTypeSelect.value;
-filter.frequency.value = Number(cutoffSlider.value);
-filter.Q.value = Number(resonanceSlider.value);
-
-oscillator.connect(filter);
-filter.connect(noteGain);
-noteGain.connect(masterGain);
-
-  oscillator.start();
-
-  activeOscillator = oscillator;
-  activeGain = noteGain;
-}
-
-function stopNote() {
-  if (activeOscillator && activeGain) {
-
-    const ctx = getAudioContext();
-    const release = Number(releaseSlider.value);
-
-    activeGain.gain.cancelScheduledValues(ctx.currentTime);
-
-    activeGain.gain.setValueAtTime(
-      activeGain.gain.value,
-      ctx.currentTime
-    );
-
-    activeGain.gain.exponentialRampToValueAtTime(
-      0.001,
-      ctx.currentTime + release
-    );
-
-    activeOscillator.stop(
-      ctx.currentTime + release + 0.05
-    );
-
-    activeOscillator = null;
-    activeGain = null;
-    activeLFO = lfo;
-activeLFOGain = lfoGain;
-  }
-}
-
-masterVolume.addEventListener("input", () => {
-  const ctx = getAudioContext();
-  masterGain.gain.setTargetAtTime(Number(masterVolume.value), ctx.currentTime, 0.01);
 });
-
-keys.forEach((key) => {
-  key.addEventListener("mousedown", () => playNote(Number(key.dataset.note)));
-  key.addEventListener("mouseup", stopNote);
-  key.addEventListener("mouseleave", stopNote);
-
-  key.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-    playNote(Number(key.dataset.note));
-  });
-
-  key.addEventListener("touchend", stopNote);
-});
-function stopNote() {
-  if (activeOscillator && activeGain) {
-    const ctx = getAudioContext();
-
-    activeGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-    activeOscillator.stop(ctx.currentTime + 0.06);
-
-    activeOscillator = null;
-    activeGain = null;
-  }
-}
-
-keys.forEach((key) => {
-  key.addEventListener("mousedown", () => playNote(Number(key.dataset.note)));
-  key.addEventListener("mouseup", stopNote);
-  key.addEventListener("mouseleave", stopNote);
-
-  key.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-    playNote(Number(key.dataset.note));
-  });
-
-  key.addEventListener("touchend", stopNote);
-});playBtn.addEventListener("click", startAudio);
-stopBtn.addEventListener("click", stopAudio);
