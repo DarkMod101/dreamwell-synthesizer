@@ -4,6 +4,11 @@ let reverbNode;
 let reverbWetGain;
 let dryGain;
 
+let delayNode;
+let delayFeedbackGain;
+let delayWetGain;
+let delayDryGain;
+
 let activeOscillator = null;
 let activeOscillatorB = null;
 let activeGain = null;
@@ -33,6 +38,10 @@ const lfoDestinationSelect = document.getElementById("lfoDestination");
 
 const reverbMixSlider = document.getElementById("reverbMix");
 const reverbDecaySlider = document.getElementById("reverbDecay");
+
+const delayMixSlider = document.getElementById("delayMix");
+const delayTimeSlider = document.getElementById("delayTime");
+const delayFeedbackSlider = document.getElementById("delayFeedback");
 
 function getValue(element, fallback) {
   return element ? Number(element.value) : fallback;
@@ -73,6 +82,29 @@ function setupReverb(ctx) {
   dryGain.connect(masterGain);
 }
 
+function setupDelay(ctx) {
+  delayNode = ctx.createDelay(2.0);
+  delayFeedbackGain = ctx.createGain();
+  delayWetGain = ctx.createGain();
+  delayDryGain = ctx.createGain();
+
+  const mix = getValue(delayMixSlider, 0.25);
+
+  delayNode.delayTime.value = getValue(delayTimeSlider, 0.35);
+  delayFeedbackGain.gain.value = getValue(delayFeedbackSlider, 0.35);
+
+  delayDryGain.gain.value = 1 - mix;
+  delayWetGain.gain.value = mix;
+
+  delayNode.connect(delayFeedbackGain);
+  delayFeedbackGain.connect(delayNode);
+
+  delayNode.connect(delayWetGain);
+  delayWetGain.connect(masterGain);
+
+  delayDryGain.connect(masterGain);
+}
+
 function getAudioContext() {
   if (!audioContext) {
     audioContext = new AudioContext();
@@ -82,6 +114,7 @@ function getAudioContext() {
     masterGain.connect(audioContext.destination);
 
     setupReverb(audioContext);
+    setupDelay(audioContext);
   }
 
   if (audioContext.state === "suspended") {
@@ -170,7 +203,10 @@ function playNote(frequency) {
   filter.connect(noteGain);
 
   noteGain.connect(dryGain);
-  noteGain.connect(reverbNode);
+noteGain.connect(reverbNode);
+
+noteGain.connect(delayDryGain);
+noteGain.connect(delayNode);
 
   oscillator.start();
   oscillatorB.start();
@@ -243,6 +279,40 @@ if (reverbDecaySlider) {
     const decay = Number(reverbDecaySlider.value);
 
     reverbNode.buffer = createReverbImpulse(ctx, decay);
+  });
+}
+
+if (delayMixSlider) {
+  delayMixSlider.addEventListener("input", () => {
+    const ctx = getAudioContext();
+    const mix = Number(delayMixSlider.value);
+
+    delayDryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
+    delayWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
+  });
+}
+
+if (delayTimeSlider) {
+  delayTimeSlider.addEventListener("input", () => {
+    const ctx = getAudioContext();
+
+    delayNode.delayTime.setTargetAtTime(
+      Number(delayTimeSlider.value),
+      ctx.currentTime,
+      0.01
+    );
+  });
+}
+
+if (delayFeedbackSlider) {
+  delayFeedbackSlider.addEventListener("input", () => {
+    const ctx = getAudioContext();
+
+    delayFeedbackGain.gain.setTargetAtTime(
+      Number(delayFeedbackSlider.value),
+      ctx.currentTime,
+      0.01
+    );
   });
 }
 
