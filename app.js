@@ -89,29 +89,35 @@ function milliseconds(value) {
   return `${Math.round(value * 1000)} ms`;
 }
 
+function setDisplay(display, text) {
+  if (display) {
+    display.textContent = text;
+  }
+}
+
 function updateValueDisplays() {
-  valueDisplays.oscBLevel.textContent = percent(getValue(oscBLevelSlider, 0.35));
-  valueDisplays.oscBDetune.textContent = cents(getValue(oscBDetuneSlider, 7));
+  setDisplay(valueDisplays.oscBLevel, percent(getValue(oscBLevelSlider, 0.35)));
+  setDisplay(valueDisplays.oscBDetune, cents(getValue(oscBDetuneSlider, 7)));
 
-  valueDisplays.attack.textContent = seconds(getValue(attackSlider, 0.05));
-  valueDisplays.decay.textContent = seconds(getValue(decaySlider, 0.2));
-  valueDisplays.sustain.textContent = percent(getValue(sustainSlider, 0.7));
-  valueDisplays.release.textContent = seconds(getValue(releaseSlider, 0.5));
+  setDisplay(valueDisplays.attack, seconds(getValue(attackSlider, 0.05)));
+  setDisplay(valueDisplays.decay, seconds(getValue(decaySlider, 0.2)));
+  setDisplay(valueDisplays.sustain, percent(getValue(sustainSlider, 0.7)));
+  setDisplay(valueDisplays.release, seconds(getValue(releaseSlider, 0.5)));
 
-  valueDisplays.cutoff.textContent = hz(getValue(cutoffSlider, 4000));
-  valueDisplays.resonance.textContent = qValue(getValue(resonanceSlider, 1));
+  setDisplay(valueDisplays.cutoff, hz(getValue(cutoffSlider, 4000)));
+  setDisplay(valueDisplays.resonance, qValue(getValue(resonanceSlider, 1)));
 
-  valueDisplays.lfoRate.textContent = `${getValue(lfoRateSlider, 2).toFixed(1)} Hz`;
-  valueDisplays.lfoAmount.textContent = `${Math.round(getValue(lfoAmountSlider, 0))}`;
+  setDisplay(valueDisplays.lfoRate, `${getValue(lfoRateSlider, 2).toFixed(1)} Hz`);
+  setDisplay(valueDisplays.lfoAmount, `${Math.round(getValue(lfoAmountSlider, 0))}`);
 
-  valueDisplays.reverbMix.textContent = percent(getValue(reverbMixSlider, 0.25));
-  valueDisplays.reverbDecay.textContent = seconds(getValue(reverbDecaySlider, 3));
+  setDisplay(valueDisplays.reverbMix, percent(getValue(reverbMixSlider, 0.25)));
+  setDisplay(valueDisplays.reverbDecay, seconds(getValue(reverbDecaySlider, 3)));
 
-  valueDisplays.delayMix.textContent = percent(getValue(delayMixSlider, 0.55));
-  valueDisplays.delayTime.textContent = milliseconds(getValue(delayTimeSlider, 0.55));
-  valueDisplays.delayFeedback.textContent = percent(getValue(delayFeedbackSlider, 0.55));
+  setDisplay(valueDisplays.delayMix, percent(getValue(delayMixSlider, 0.55)));
+  setDisplay(valueDisplays.delayTime, milliseconds(getValue(delayTimeSlider, 0.55)));
+  setDisplay(valueDisplays.delayFeedback, percent(getValue(delayFeedbackSlider, 0.55)));
 
-  valueDisplays.masterVolume.textContent = percent(getValue(masterVolume, 0.25));
+  setDisplay(valueDisplays.masterVolume, percent(getValue(masterVolume, 0.25)));
 }
 
 function createReverbImpulse(ctx, decayTime) {
