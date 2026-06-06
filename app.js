@@ -9,6 +9,9 @@ const releaseSlider = document.getElementById("release");
 const waveformSelect = document.getElementById("waveform");
 const masterVolume = document.getElementById("masterVolume");
 const keys = document.querySelectorAll(".key");
+const filterTypeSelect = document.getElementById("filterType");
+const cutoffSlider = document.getElementById("cutoff");
+const resonanceSlider = document.getElementById("resonance");
 
 function getAudioContext() {
   if (!audioContext) {
