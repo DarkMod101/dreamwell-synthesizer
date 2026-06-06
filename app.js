@@ -2,7 +2,10 @@ let audioContext;
 let masterGain;
 let activeOscillator = null;
 let activeGain = null;
-
+const attackSlider = document.getElementById("attack");
+const decaySlider = document.getElementById("decay");
+const sustainSlider = document.getElementById("sustain");
+const releaseSlider = document.getElementById("release");
 const waveformSelect = document.getElementById("waveform");
 const masterVolume = document.getElementById("masterVolume");
 const keys = document.querySelectorAll(".key");
@@ -24,6 +27,10 @@ function playNote(frequency) {
 
   stopNote();
 
+  const attack = Number(attackSlider.value);
+  const decay = Number(decaySlider.value);
+  const sustain = Number(sustainSlider.value);
+
   const oscillator = ctx.createOscillator();
   const noteGain = ctx.createGain();
 
@@ -31,7 +38,16 @@ function playNote(frequency) {
   oscillator.frequency.value = frequency;
 
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
-  noteGain.gain.exponentialRampToValueAtTime(1, ctx.currentTime + 0.03);
+
+  noteGain.gain.exponentialRampToValueAtTime(
+    1,
+    ctx.currentTime + attack
+  );
+
+  noteGain.gain.linearRampToValueAtTime(
+    sustain,
+    ctx.currentTime + attack + decay
+  );
 
   oscillator.connect(noteGain);
   noteGain.connect(masterGain);
@@ -44,10 +60,25 @@ function playNote(frequency) {
 
 function stopNote() {
   if (activeOscillator && activeGain) {
-    const ctx = getAudioContext();
 
-    activeGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
-    activeOscillator.stop(ctx.currentTime + 0.06);
+    const ctx = getAudioContext();
+    const release = Number(releaseSlider.value);
+
+    activeGain.gain.cancelScheduledValues(ctx.currentTime);
+
+    activeGain.gain.setValueAtTime(
+      activeGain.gain.value,
+      ctx.currentTime
+    );
+
+    activeGain.gain.exponentialRampToValueAtTime(
+      0.001,
+      ctx.currentTime + release
+    );
+
+    activeOscillator.stop(
+      ctx.currentTime + release + 0.05
+    );
 
     activeOscillator = null;
     activeGain = null;
