@@ -1,5 +1,8 @@
 let audioContext;
 let masterGain;
+let reverbNode;
+let reverbWetGain;
+let dryGain;
 
 let activeOscillator = null;
 let activeOscillatorB = null;
@@ -28,8 +31,46 @@ const lfoRateSlider = document.getElementById("lfoRate");
 const lfoAmountSlider = document.getElementById("lfoAmount");
 const lfoDestinationSelect = document.getElementById("lfoDestination");
 
+const reverbMixSlider = document.getElementById("reverbMix");
+const reverbDecaySlider = document.getElementById("reverbDecay");
+
 function getValue(element, fallback) {
   return element ? Number(element.value) : fallback;
+}
+
+function createReverbImpulse(ctx, decayTime) {
+  const sampleRate = ctx.sampleRate;
+  const length = sampleRate * decayTime;
+  const impulse = ctx.createBuffer(2, length, sampleRate);
+
+  for (let channel = 0; channel < 2; channel++) {
+    const data = impulse.getChannelData(channel);
+
+    for (let i = 0; i < length; i++) {
+      const fade = Math.pow(1 - i / length, 2);
+      data[i] = (Math.random() * 2 - 1) * fade;
+    }
+  }
+
+  return impulse;
+}
+
+function setupReverb(ctx) {
+  reverbNode = ctx.createConvolver();
+  reverbWetGain = ctx.createGain();
+  dryGain = ctx.createGain();
+
+  const mix = getValue(reverbMixSlider, 0.25);
+  const decay = getValue(reverbDecaySlider, 3);
+
+  reverbNode.buffer = createReverbImpulse(ctx, decay);
+
+  dryGain.gain.value = 1 - mix;
+  reverbWetGain.gain.value = mix;
+
+  reverbNode.connect(reverbWetGain);
+  reverbWetGain.connect(masterGain);
+  dryGain.connect(masterGain);
 }
 
 function getAudioContext() {
@@ -39,6 +80,8 @@ function getAudioContext() {
     masterGain = audioContext.createGain();
     masterGain.gain.value = getValue(masterVolume, 0.25);
     masterGain.connect(audioContext.destination);
+
+    setupReverb(audioContext);
   }
 
   if (audioContext.state === "suspended") {
@@ -125,7 +168,9 @@ function playNote(frequency) {
   oscBGain.connect(filter);
 
   filter.connect(noteGain);
-  noteGain.connect(masterGain);
+
+  noteGain.connect(dryGain);
+  noteGain.connect(reverbNode);
 
   oscillator.start();
   oscillatorB.start();
@@ -179,6 +224,25 @@ if (masterVolume) {
       ctx.currentTime,
       0.01
     );
+  });
+}
+
+if (reverbMixSlider) {
+  reverbMixSlider.addEventListener("input", () => {
+    const ctx = getAudioContext();
+    const mix = Number(reverbMixSlider.value);
+
+    dryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
+    reverbWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
+  });
+}
+
+if (reverbDecaySlider) {
+  reverbDecaySlider.addEventListener("change", () => {
+    const ctx = getAudioContext();
+    const decay = Number(reverbDecaySlider.value);
+
+    reverbNode.buffer = createReverbImpulse(ctx, decay);
   });
 }
 
