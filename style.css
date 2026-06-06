@@ -71,3 +71,24 @@ button {
 button:hover {
   border-color: #b783ff;
 }
+
+.keyboard {
+  display: flex;
+  gap: 6px;
+  margin-top: 28px;
+}
+
+.key {
+  flex: 1;
+  height: 120px;
+  background: linear-gradient(#f2edf8, #9f93aa);
+  color: #120016;
+  font-weight: bold;
+  border-radius: 0 0 10px 10px;
+  border: 1px solid #c9a8ff;
+}
+
+.key:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 18px rgba(201, 168, 255, 0.7);
+}
