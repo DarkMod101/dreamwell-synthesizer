@@ -1,38 +1,62 @@
 let audioContext;
-let oscillator;
-let gainNode;
+let activeOscillator = null;
+let activeGain = null;
 
-const playBtn = document.getElementById("playBtn");
-const stopBtn = document.getElementById("stopBtn");
 const waveformSelect = document.getElementById("waveform");
+const keys = document.querySelectorAll(".key");
 
-function startAudio() {
+function getAudioContext() {
   if (!audioContext) {
     audioContext = new AudioContext();
   }
-
-  stopAudio();
-
-  oscillator = audioContext.createOscillator();
-  gainNode = audioContext.createGain();
-
-  oscillator.type = waveformSelect.value;
-  oscillator.frequency.value = 220; // A3 note
-  gainNode.gain.value = 0.25;
-
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContext.destination);
-
-  oscillator.start();
+  return audioContext;
 }
 
-function stopAudio() {
-  if (oscillator) {
-    oscillator.stop();
-    oscillator.disconnect();
-    oscillator = null;
+function playNote(frequency) {
+  const ctx = getAudioContext();
+
+  stopNote();
+
+  const oscillator = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+
+  oscillator.type = waveformSelect.value;
+  oscillator.frequency.value = frequency;
+
+  gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
+  gainNode.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.03);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(ctx.destination);
+
+  oscillator.start();
+
+  activeOscillator = oscillator;
+  activeGain = gainNode;
+}
+
+function stopNote() {
+  if (activeOscillator && activeGain) {
+    const ctx = getAudioContext();
+
+    activeGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+    activeOscillator.stop(ctx.currentTime + 0.06);
+
+    activeOscillator = null;
+    activeGain = null;
   }
 }
 
-playBtn.addEventListener("click", startAudio);
+keys.forEach((key) => {
+  key.addEventListener("mousedown", () => playNote(Number(key.dataset.note)));
+  key.addEventListener("mouseup", stopNote);
+  key.addEventListener("mouseleave", stopNote);
+
+  key.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    playNote(Number(key.dataset.note));
+  });
+
+  key.addEventListener("touchend", stopNote);
+});playBtn.addEventListener("click", startAudio);
 stopBtn.addEventListener("click", stopAudio);
