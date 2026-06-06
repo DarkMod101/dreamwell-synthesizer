@@ -52,8 +52,15 @@ function playNote(frequency) {
     ctx.currentTime + attack + decay
   );
 
-  oscillator.connect(noteGain);
-  noteGain.connect(masterGain);
+  const filter = ctx.createBiquadFilter();
+
+filter.type = filterTypeSelect.value;
+filter.frequency.value = Number(cutoffSlider.value);
+filter.Q.value = Number(resonanceSlider.value);
+
+oscillator.connect(filter);
+filter.connect(noteGain);
+noteGain.connect(masterGain);
 
   oscillator.start();
 
