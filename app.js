@@ -2,11 +2,16 @@ let audioContext;
 let masterGain;
 
 let activeOscillator = null;
+let activeOscillatorB = null;
 let activeGain = null;
 let activeLFO = null;
 let activeLFOGain = null;
 
 const waveformSelect = document.getElementById("waveform");
+const waveformBSelect = document.getElementById("waveformB");
+const oscBLevelSlider = document.getElementById("oscBLevel");
+const oscBDetuneSlider = document.getElementById("oscBDetune");
+
 const masterVolume = document.getElementById("masterVolume");
 const keys = document.querySelectorAll(".key");
 
@@ -53,11 +58,23 @@ function playNote(frequency) {
   const sustain = getValue(sustainSlider, 0.7);
 
   const oscillator = ctx.createOscillator();
+  const oscillatorB = ctx.createOscillator();
+
+  const oscAGain = ctx.createGain();
+  const oscBGain = ctx.createGain();
+
   const filter = ctx.createBiquadFilter();
   const noteGain = ctx.createGain();
 
   oscillator.type = waveformSelect ? waveformSelect.value : "sine";
   oscillator.frequency.value = frequency;
+
+  oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
+  oscillatorB.frequency.value = frequency;
+  oscillatorB.detune.value = getValue(oscBDetuneSlider, 7);
+
+  oscAGain.gain.value = 1;
+  oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
 
   filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
   filter.frequency.value = getValue(cutoffSlider, 4000);
@@ -86,6 +103,7 @@ function playNote(frequency) {
     if (lfoDestinationSelect.value === "pitch") {
       lfoGain.gain.value = lfoAmount;
       lfoGain.connect(oscillator.frequency);
+      lfoGain.connect(oscillatorB.frequency);
     }
 
     if (lfoDestinationSelect.value === "volume") {
@@ -100,13 +118,20 @@ function playNote(frequency) {
     activeLFOGain = lfoGain;
   }
 
-  oscillator.connect(filter);
+  oscillator.connect(oscAGain);
+  oscillatorB.connect(oscBGain);
+
+  oscAGain.connect(filter);
+  oscBGain.connect(filter);
+
   filter.connect(noteGain);
   noteGain.connect(masterGain);
 
   oscillator.start();
+  oscillatorB.start();
 
   activeOscillator = oscillator;
+  activeOscillatorB = oscillatorB;
   activeGain = noteGain;
 }
 
@@ -123,6 +148,12 @@ function stopNote() {
     );
 
     activeOscillator.stop(ctx.currentTime + release + 0.05);
+
+    if (activeOscillatorB) {
+      activeOscillatorB.stop(ctx.currentTime + release + 0.05);
+      activeOscillatorB.disconnect();
+      activeOscillatorB = null;
+    }
 
     if (activeLFO) {
       activeLFO.stop(ctx.currentTime + release + 0.05);
