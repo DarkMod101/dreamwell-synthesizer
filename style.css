@@ -241,3 +241,10 @@ input[type="range"] {
 .controls {
   align-items: start;
 }
+
+.keyboard,
+.key {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
