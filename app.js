@@ -47,7 +47,8 @@ const saveUserPresetButton = document.getElementById("saveUserPreset");
 const loadUserPresetButton = document.getElementById("loadUserPreset");
 const presetMessage = document.getElementById("presetMessage");
 
-const presetButtons = document.querySelectorAll(".preset-btn");
+const presetGrid = document.getElementById("presetGrid");
+const bankButtons = document.querySelectorAll(".bank-btn");
 
 const valueDisplays = {
   oscBLevel: document.getElementById("oscBLevelValue"),
@@ -196,9 +197,7 @@ function getAudioContext() {
 function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   const lfoAmount = getValue(lfoAmountSlider, 0);
 
-  if (lfoAmount <= 0 || !lfoRateSlider || !lfoDestinationSelect) {
-    return null;
-  }
+  if (lfoAmount <= 0 || !lfoRateSlider || !lfoDestinationSelect) return null;
 
   const lfo = ctx.createOscillator();
   const lfoGain = ctx.createGain();
@@ -283,7 +282,6 @@ function createNote(frequency) {
 
 function playNote(frequency) {
   const noteId = String(frequency);
-
   if (activeNotes.has(noteId)) return;
 
   const note = createNote(frequency);
@@ -362,9 +360,7 @@ function moveTouchNote(touch) {
 
   if (!newKey || newKey === oldKey) return;
 
-  if (oldKey) {
-    stopNote(getKeyFrequency(oldKey));
-  }
+  if (oldKey) stopNote(getKeyFrequency(oldKey));
 
   activeTouchKeys.set(touch.identifier, newKey);
   playNote(getKeyFrequency(newKey));
@@ -438,117 +434,140 @@ bindSlider(delayFeedbackSlider, () => {
   lfoAmountSlider,
 ].forEach((slider) => bindSlider(slider));
 
-const presets = {
-  dreamPad: {
-    waveform: "sine",
-    waveformB: "triangle",
-    oscBLevel: 0.3,
-    oscBDetune: 5,
-    attack: 1.8,
-    decay: 1.2,
-    sustain: 0.8,
-    release: 3.5,
-    filterType: "lowpass",
-    cutoff: 1800,
-    resonance: 2,
-    lfoRate: 0.4,
-    lfoAmount: 150,
-    lfoDestination: "filter",
-    reverbMix: 0.65,
-    reverbDecay: 5,
-    delayMix: 0.25,
-    delayTime: 0.45,
-    delayFeedback: 0.35,
-    masterVolume: 0.2,
+const presetBanks = {
+  signature: {
+    dreamPad: {
+      name: "Dream Pad",
+      settings: {
+        waveform: "sine",
+        waveformB: "triangle",
+        oscBLevel: 0.3,
+        oscBDetune: 5,
+        attack: 1.8,
+        decay: 1.2,
+        sustain: 0.8,
+        release: 3.5,
+        filterType: "lowpass",
+        cutoff: 1800,
+        resonance: 2,
+        lfoRate: 0.4,
+        lfoAmount: 150,
+        lfoDestination: "filter",
+        reverbMix: 0.65,
+        reverbDecay: 5,
+        delayMix: 0.25,
+        delayTime: 0.45,
+        delayFeedback: 0.35,
+        masterVolume: 0.2,
+      },
+    },
+    theWell: {
+      name: "The Well",
+      settings: {
+        waveform: "triangle",
+        waveformB: "sine",
+        oscBLevel: 0.4,
+        oscBDetune: -7,
+        attack: 0.8,
+        decay: 1,
+        sustain: 0.7,
+        release: 4,
+        filterType: "lowpass",
+        cutoff: 1200,
+        resonance: 4,
+        lfoRate: 0.3,
+        lfoAmount: 250,
+        lfoDestination: "filter",
+        reverbMix: 0.8,
+        reverbDecay: 6,
+        delayMix: 0.4,
+        delayTime: 0.55,
+        delayFeedback: 0.4,
+        masterVolume: 0.18,
+      },
+    },
+    abyss: {
+      name: "Abyss",
+      settings: {
+        waveform: "sawtooth",
+        waveformB: "sawtooth",
+        oscBLevel: 0.25,
+        oscBDetune: 12,
+        attack: 0.05,
+        decay: 0.5,
+        sustain: 0.6,
+        release: 2.5,
+        filterType: "lowpass",
+        cutoff: 700,
+        resonance: 7,
+        lfoRate: 0.2,
+        lfoAmount: 400,
+        lfoDestination: "filter",
+        reverbMix: 0.7,
+        reverbDecay: 5.5,
+        delayMix: 0.5,
+        delayTime: 0.65,
+        delayFeedback: 0.5,
+        masterVolume: 0.16,
+      },
+    },
+    resonantDoorway: {
+      name: "Resonant Doorway",
+      settings: {
+        waveform: "triangle",
+        waveformB: "sawtooth",
+        oscBLevel: 0.35,
+        oscBDetune: 7,
+        attack: 0.2,
+        decay: 0.8,
+        sustain: 0.8,
+        release: 2,
+        filterType: "lowpass",
+        cutoff: 2500,
+        resonance: 5,
+        lfoRate: 2,
+        lfoAmount: 200,
+        lfoDestination: "filter",
+        reverbMix: 0.55,
+        reverbDecay: 4,
+        delayMix: 0.3,
+        delayTime: 0.38,
+        delayFeedback: 0.35,
+        masterVolume: 0.2,
+      },
+    },
+    falling: {
+      name: "Falling",
+      settings: {
+        waveform: "sine",
+        waveformB: "triangle",
+        oscBLevel: 0.45,
+        oscBDetune: -12,
+        attack: 3,
+        decay: 2,
+        sustain: 0.5,
+        release: 5,
+        filterType: "lowpass",
+        cutoff: 900,
+        resonance: 3,
+        lfoRate: 0.1,
+        lfoAmount: 500,
+        lfoDestination: "filter",
+        reverbMix: 0.9,
+        reverbDecay: 7,
+        delayMix: 0.45,
+        delayTime: 0.75,
+        delayFeedback: 0.45,
+        masterVolume: 0.15,
+      },
+    },
   },
-  theWell: {
-    waveform: "triangle",
-    waveformB: "sine",
-    oscBLevel: 0.4,
-    oscBDetune: -7,
-    attack: 0.8,
-    decay: 1,
-    sustain: 0.7,
-    release: 4,
-    filterType: "lowpass",
-    cutoff: 1200,
-    resonance: 4,
-    lfoRate: 0.3,
-    lfoAmount: 250,
-    lfoDestination: "filter",
-    reverbMix: 0.8,
-    reverbDecay: 6,
-    delayMix: 0.4,
-    delayTime: 0.55,
-    delayFeedback: 0.4,
-    masterVolume: 0.18,
-  },
-  abyss: {
-    waveform: "sawtooth",
-    waveformB: "sawtooth",
-    oscBLevel: 0.25,
-    oscBDetune: 12,
-    attack: 0.05,
-    decay: 0.5,
-    sustain: 0.6,
-    release: 2.5,
-    filterType: "lowpass",
-    cutoff: 700,
-    resonance: 7,
-    lfoRate: 0.2,
-    lfoAmount: 400,
-    lfoDestination: "filter",
-    reverbMix: 0.7,
-    reverbDecay: 5.5,
-    delayMix: 0.5,
-    delayTime: 0.65,
-    delayFeedback: 0.5,
-    masterVolume: 0.16,
-  },
-  resonantDoorway: {
-    waveform: "triangle",
-    waveformB: "sawtooth",
-    oscBLevel: 0.35,
-    oscBDetune: 7,
-    attack: 0.2,
-    decay: 0.8,
-    sustain: 0.8,
-    release: 2,
-    filterType: "lowpass",
-    cutoff: 2500,
-    resonance: 5,
-    lfoRate: 2,
-    lfoAmount: 200,
-    lfoDestination: "filter",
-    reverbMix: 0.55,
-    reverbDecay: 4,
-    delayMix: 0.3,
-    delayTime: 0.38,
-    delayFeedback: 0.35,
-    masterVolume: 0.2,
-  },
-  falling: {
-    waveform: "sine",
-    waveformB: "triangle",
-    oscBLevel: 0.45,
-    oscBDetune: -12,
-    attack: 3,
-    decay: 2,
-    sustain: 0.5,
-    release: 5,
-    filterType: "lowpass",
-    cutoff: 900,
-    resonance: 3,
-    lfoRate: 0.1,
-    lfoAmount: 500,
-    lfoDestination: "filter",
-    reverbMix: 0.9,
-    reverbDecay: 7,
-    delayMix: 0.45,
-    delayTime: 0.75,
-    delayFeedback: 0.45,
-    masterVolume: 0.15,
-  },
+
+  keys: {},
+  pads: {},
+  leads: {},
+  bass: {},
+  textures: {},
 };
 
 function applyPresetSettings(preset) {
@@ -585,9 +604,38 @@ function applyPresetSettings(preset) {
   stopAllNotes();
 }
 
-presetButtons.forEach((button) => {
+function renderPresetBank(bankName) {
+  if (!presetGrid) return;
+
+  const bank = presetBanks[bankName] || {};
+  presetGrid.innerHTML = "";
+
+  const presetEntries = Object.entries(bank);
+
+  if (presetEntries.length === 0) {
+    presetGrid.innerHTML = `<p class="preset-message">No presets in this bank yet.</p>`;
+    return;
+  }
+
+  presetEntries.forEach(([presetId, presetData]) => {
+    const button = document.createElement("button");
+    button.className = "preset-btn";
+    button.dataset.preset = presetId;
+    button.textContent = presetData.name;
+
+    button.addEventListener("click", () => {
+      applyPresetSettings(presetData.settings);
+    });
+
+    presetGrid.appendChild(button);
+  });
+}
+
+bankButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    applyPresetSettings(presets[button.dataset.preset]);
+    bankButtons.forEach((btn) => btn.classList.remove("active-bank"));
+    button.classList.add("active-bank");
+    renderPresetBank(button.dataset.bank);
   });
 });
 
@@ -651,80 +699,4 @@ keys.forEach((key) => {
     stopNote(getKeyFrequency(key));
   });
 
-  key.addEventListener("mouseleave", () => {
-    stopNote(getKeyFrequency(key));
-  });
-});
-
-document.addEventListener(
-  "touchstart",
-  (event) => {
-    let touchedKeyboard = false;
-
-    Array.from(event.changedTouches).forEach((touch) => {
-      const key = getKeyFromPoint(touch.clientX, touch.clientY);
-
-      if (key) {
-        touchedKeyboard = true;
-        startTouchNote(touch);
-      }
-    });
-
-    if (touchedKeyboard) event.preventDefault();
-  },
-  { passive: false }
-);
-
-document.addEventListener(
-  "touchmove",
-  (event) => {
-    let movedOnKeyboard = false;
-
-    Array.from(event.changedTouches).forEach((touch) => {
-      if (activeTouchKeys.has(touch.identifier)) {
-        movedOnKeyboard = true;
-        moveTouchNote(touch);
-      }
-    });
-
-    if (movedOnKeyboard) event.preventDefault();
-  },
-  { passive: false }
-);
-
-document.addEventListener(
-  "touchend",
-  (event) => {
-    Array.from(event.changedTouches).forEach((touch) => {
-      stopTouchNote(touch);
-    });
-  },
-  { passive: false }
-);
-
-document.addEventListener(
-  "touchcancel",
-  (event) => {
-    Array.from(event.changedTouches).forEach((touch) => {
-      stopTouchNote(touch);
-    });
-  },
-  { passive: false }
-);
-
-if (octaveDownButton) {
-  octaveDownButton.addEventListener("click", () => {
-    octaveShift = Math.max(octaveShift - 1, -2);
-    updateKeyboardOctave();
-  });
-}
-
-if (octaveUpButton) {
-  octaveUpButton.addEventListener("click", () => {
-    octaveShift = Math.min(octaveShift + 1, 2);
-    updateKeyboardOctave();
-  });
-}
-
-updateKeyboardOctave();
-updateValueDisplays();
+  key.addEventListene
