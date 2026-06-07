@@ -644,6 +644,21 @@ if (loadUserPresetButton) {
   });
 }
 
+let currentTouchKey = null;
+
+function getKeyFromTouch(event) {
+  const touch = event.touches[0];
+  if (!touch) return null;
+
+  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+
+  if (element && element.classList.contains("key")) {
+    return element;
+  }
+
+  return null;
+}
+
 keys.forEach((key) => {
   const frequency = Number(key.dataset.note);
 
@@ -658,19 +673,62 @@ keys.forEach((key) => {
   key.addEventListener("mouseleave", () => {
     stopNote(frequency);
   });
-
-  key.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-    playNote(frequency);
-  });
-
-  key.addEventListener("touchend", () => {
-    stopNote(frequency);
-  });
-
-  key.addEventListener("touchcancel", () => {
-    stopNote(frequency);
-  });
 });
+
+document.addEventListener(
+  "touchstart",
+  (event) => {
+    const key = getKeyFromTouch(event);
+    if (!key) return;
+
+    event.preventDefault();
+
+    currentTouchKey = key;
+    playNote(Number(key.dataset.note));
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchmove",
+  (event) => {
+    const newKey = getKeyFromTouch(event);
+    if (!newKey || newKey === currentTouchKey) return;
+
+    event.preventDefault();
+
+    if (currentTouchKey) {
+      stopNote(Number(currentTouchKey.dataset.note));
+    }
+
+    currentTouchKey = newKey;
+    playNote(Number(newKey.dataset.note));
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchend",
+  (event) => {
+    event.preventDefault();
+
+    if (currentTouchKey) {
+      stopNote(Number(currentTouchKey.dataset.note));
+      currentTouchKey = null;
+    }
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchcancel",
+  () => {
+    if (currentTouchKey) {
+      stopNote(Number(currentTouchKey.dataset.note));
+      currentTouchKey = null;
+    }
+  },
+  { passive: false }
+);
 
 updateValueDisplays();
