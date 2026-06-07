@@ -437,6 +437,7 @@ bindSlider(delayFeedbackSlider, () => {
   resonanceSlider,
   lfoRateSlider,
   lfoAmountSlider,
+  driftSlider,
 ].forEach((slider) => bindSlider(slider));
 
 const presetBanks = {
