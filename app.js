@@ -519,4 +519,97 @@ presetButtons.forEach((button) => {
 
 });
 
+const saveUserPresetButton = document.getElementById("saveUserPreset");
+const loadUserPresetButton = document.getElementById("loadUserPreset");
+const presetMessage = document.getElementById("presetMessage");
+
+function getCurrentPresetSettings() {
+  return {
+    waveform: waveformSelect.value,
+    waveformB: waveformBSelect.value,
+    oscBLevel: oscBLevelSlider.value,
+    oscBDetune: oscBDetuneSlider.value,
+
+    attack: attackSlider.value,
+    decay: decaySlider.value,
+    sustain: sustainSlider.value,
+    release: releaseSlider.value,
+
+    filterType: filterTypeSelect.value,
+    cutoff: cutoffSlider.value,
+    resonance: resonanceSlider.value,
+
+    lfoRate: lfoRateSlider.value,
+    lfoAmount: lfoAmountSlider.value,
+    lfoDestination: lfoDestinationSelect.value,
+
+    reverbMix: reverbMixSlider.value,
+    reverbDecay: reverbDecaySlider.value,
+
+    delayMix: delayMixSlider.value,
+    delayTime: delayTimeSlider.value,
+    delayFeedback: delayFeedbackSlider.value,
+
+    masterVolume: masterVolume.value,
+  };
+}
+
+function applyPresetSettings(preset) {
+  waveformSelect.value = preset.waveform;
+  waveformBSelect.value = preset.waveformB;
+  oscBLevelSlider.value = preset.oscBLevel;
+  oscBDetuneSlider.value = preset.oscBDetune;
+
+  attackSlider.value = preset.attack;
+  decaySlider.value = preset.decay;
+  sustainSlider.value = preset.sustain;
+  releaseSlider.value = preset.release;
+
+  filterTypeSelect.value = preset.filterType;
+  cutoffSlider.value = preset.cutoff;
+  resonanceSlider.value = preset.resonance;
+
+  lfoRateSlider.value = preset.lfoRate;
+  lfoAmountSlider.value = preset.lfoAmount;
+  lfoDestinationSelect.value = preset.lfoDestination;
+
+  reverbMixSlider.value = preset.reverbMix;
+  reverbDecaySlider.value = preset.reverbDecay;
+
+  delayMixSlider.value = preset.delayMix;
+  delayTimeSlider.value = preset.delayTime;
+  delayFeedbackSlider.value = preset.delayFeedback;
+
+  masterVolume.value = preset.masterVolume;
+
+  updateValueDisplays();
+}
+
+if (saveUserPresetButton) {
+  saveUserPresetButton.addEventListener("click", () => {
+    const preset = getCurrentPresetSettings();
+
+    localStorage.setItem("dreamwellUserPreset", JSON.stringify(preset));
+
+    presetMessage.textContent = "Preset saved.";
+  });
+}
+
+if (loadUserPresetButton) {
+  loadUserPresetButton.addEventListener("click", () => {
+    const savedPreset = localStorage.getItem("dreamwellUserPreset");
+
+    if (!savedPreset) {
+      presetMessage.textContent = "No saved preset found.";
+      return;
+    }
+
+    const preset = JSON.parse(savedPreset);
+
+    applyPresetSettings(preset);
+
+    presetMessage.textContent = "Preset loaded.";
+  });
+}
+
 updateValueDisplays();
