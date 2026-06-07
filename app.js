@@ -644,24 +644,34 @@ if (loadUserPresetButton) {
   });
 }
 
-...
-if (loadUserPresetButton) {
-   ...
-}
-
-let currentTouchKey = null;
-
-function getKeyFromTouch(event) {
-   ...
-}
-
 keys.forEach((key) => {
-   ...
+  const frequency = Number(key.dataset.note);
+
+  key.addEventListener("mousedown", () => {
+    playNote(frequency);
+  });
+
+  key.addEventListener("mouseup", () => {
+    stopNote(frequency);
+  });
+
+  key.addEventListener("mouseleave", () => {
+    stopNote(frequency);
+  });
+
+  key.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    playNote(frequency);
+  });
+
+  key.addEventListener("touchend", () => {
+    stopNote(frequency);
+  });
+
+  key.addEventListener("touchcancel", () => {
+    stopNote(frequency);
+  });
 });
 
-document.addEventListener("touchstart", ...);
-document.addEventListener("touchmove", ...);
-document.addEventListener("touchend", ...);
-document.addEventListener("touchcancel", ...);
-
+updateValueDisplays();
 updateValueDisplays();
