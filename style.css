@@ -216,3 +216,28 @@ input[type="range"] {
   font-size: 12px;
   min-height: 18px;
 }
+
+.logo h1 {
+  font-size: clamp(28px, 5vw, 56px);
+}
+
+.logo p {
+  font-size: clamp(14px, 2vw, 22px);
+}
+
+.logo span {
+  font-size: clamp(11px, 1.4vw, 16px);
+}
+
+.keyboard {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.key {
+  min-width: 54px;
+}
+
+.controls {
+  align-items: start;
+}
