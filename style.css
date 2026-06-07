@@ -248,3 +248,26 @@ input[type="range"] {
   user-select: none;
   -webkit-user-select: none;
 }
+
+.octave-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.octave-btn {
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(214,168,79,0.4);
+  background: linear-gradient(#24161f,#09000f);
+  color: #d6a84f;
+  font-weight: bold;
+}
+
+#octaveDisplay {
+  color: #d9c4ff;
+  min-width: 80px;
+  text-align: center;
+}
