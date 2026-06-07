@@ -16,7 +16,16 @@ const oscBLevelSlider = document.getElementById("oscBLevel");
 const oscBDetuneSlider = document.getElementById("oscBDetune");
 const masterVolume = document.getElementById("masterVolume");
 const keys = document.querySelectorAll(".key");
+const octaveDownButton = document.getElementById("octaveDown");
+const octaveUpButton = document.getElementById("octaveUp");
+const octaveDisplay = document.getElementById("octaveDisplay");
 
+let octaveShift = 0;
+const octaveDownButton = document.getElementById("octaveDown");
+const octaveUpButton = document.getElementById("octaveUp");
+const octaveDisplay = document.getElementById("octaveDisplay");
+
+let octaveShift = 0;
 const attackSlider = document.getElementById("attack");
 const decaySlider = document.getElementById("decay");
 const sustainSlider = document.getElementById("sustain");
@@ -644,6 +653,22 @@ if (loadUserPresetButton) {
   });
 }
 
+function updateKeyboardOctave() {
+  keys.forEach((key) => {
+    const baseFrequency = Number(key.dataset.note);
+    const shiftedFrequency = baseFrequency * Math.pow(2, octaveShift);
+
+    key.dataset.currentNote = shiftedFrequency.toFixed(2);
+  });
+
+  if (octaveDisplay) {
+    octaveDisplay.textContent =
+      `Shift: ${octaveShift > 0 ? "+" : ""}${octaveShift}`;
+  }
+
+  stopAllNotes();
+}
+
 const activeTouchKeys = new Map();
 
 function getKeyFromPoint(x, y) {
@@ -660,10 +685,11 @@ function startTouchNote(touch) {
   const key = getKeyFromPoint(touch.clientX, touch.clientY);
   if (!key) return;
 
-  const frequency = Number(key.dataset.note);
+  const frequency =
+  Number(key.dataset.currentNote || key.dataset.note);
 
-  activeTouchKeys.set(touch.identifier, key);
-  playNote(frequency);
+activeTouchKeys.set(touch.identifier, key);
+playNote(frequency);
 }
 
 function moveTouchNote(touch) {
@@ -673,11 +699,11 @@ function moveTouchNote(touch) {
   if (!newKey || newKey === oldKey) return;
 
   if (oldKey) {
-    stopNote(Number(oldKey.dataset.note));
+    stopNote(Number(oldKey.dataset.currentNote || oldKey.dataset.note));
   }
 
   activeTouchKeys.set(touch.identifier, newKey);
-  playNote(Number(newKey.dataset.note));
+  playNote(Number(newKey.dataset.currentNote || newKey.dataset.note));
 }
 
 function stopTouchNote(touch) {
@@ -690,7 +716,8 @@ function stopTouchNote(touch) {
 }
 
 keys.forEach((key) => {
-  const frequency = Number(key.dataset.note);
+  const frequency =
+  Number(key.dataset.currentNote || key.dataset.note);
 
   key.addEventListener("mousedown", () => {
     playNote(frequency);
@@ -765,4 +792,19 @@ document.addEventListener(
   { passive: false }
 );
 
+if (octaveDownButton) {
+  octaveDownButton.addEventListener("click", () => {
+    octaveShift = Math.max(octaveShift - 1, -2);
+    updateKeyboardOctave();
+  });
+}
+
+if (octaveUpButton) {
+  octaveUpButton.addEventListener("click", () => {
+    octaveShift = Math.min(octaveShift + 1, 2);
+    updateKeyboardOctave();
+  });
+}
+
+updateKeyboardOctave();
 updateValueDisplays();
