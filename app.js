@@ -674,4 +674,3 @@ keys.forEach((key) => {
 });
 
 updateValueDisplays();
-updateValueDisplays();
