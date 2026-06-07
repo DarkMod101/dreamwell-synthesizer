@@ -283,3 +283,33 @@ input[type="range"] {
 .black-key:active {
   box-shadow: 0 0 24px rgba(214, 168, 79, 0.8);
 }
+
+.preset-bank-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.bank-btn {
+  border: 1px solid rgba(214,168,79,0.35);
+  border-radius: 10px;
+  padding: 8px 14px;
+  background: linear-gradient(#24161f, #09000f);
+  color: #d9c4ff;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bank-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(214,168,79,0.25);
+}
+
+.active-bank {
+  color: #d6a84f;
+  border-color: rgba(214,168,79,0.8);
+  box-shadow: 0 0 14px rgba(214,168,79,0.35);
+}
