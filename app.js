@@ -416,4 +416,107 @@ keys.forEach((key) => {
   key.addEventListener("touchend", stopNote);
 });
 
+const presetButtons = document.querySelectorAll(".preset-btn");
+
+const presets = {
+
+  dreamPad: {
+    waveform: "sine",
+    attack: 1.8,
+    decay: 1.2,
+    sustain: 0.8,
+    release: 3.5,
+    cutoff: 1800,
+    resonance: 2,
+    lfoRate: 0.4,
+    lfoAmount: 150,
+    reverbMix: 0.65,
+    delayMix: 0.25
+  },
+
+  theWell: {
+    waveform: "triangle",
+    attack: 0.8,
+    decay: 1,
+    sustain: 0.7,
+    release: 4,
+    cutoff: 1200,
+    resonance: 4,
+    lfoRate: 0.3,
+    lfoAmount: 250,
+    reverbMix: 0.8,
+    delayMix: 0.4
+  },
+
+  abyss: {
+    waveform: "sawtooth",
+    attack: 0.05,
+    decay: 0.5,
+    sustain: 0.6,
+    release: 2.5,
+    cutoff: 700,
+    resonance: 7,
+    lfoRate: 0.2,
+    lfoAmount: 400,
+    reverbMix: 0.7,
+    delayMix: 0.5
+  },
+
+  resonantDoorway: {
+    waveform: "triangle",
+    attack: 0.2,
+    decay: 0.8,
+    sustain: 0.8,
+    release: 2,
+    cutoff: 2500,
+    resonance: 5,
+    lfoRate: 2,
+    lfoAmount: 200,
+    reverbMix: 0.55,
+    delayMix: 0.3
+  },
+
+  falling: {
+    waveform: "sine",
+    attack: 3,
+    decay: 2,
+    sustain: 0.5,
+    release: 5,
+    cutoff: 900,
+    resonance: 3,
+    lfoRate: 0.1,
+    lfoAmount: 500,
+    reverbMix: 0.9,
+    delayMix: 0.45
+  }
+};
+
+presetButtons.forEach((button) => {
+
+  button.addEventListener("click", () => {
+
+    const preset = presets[button.dataset.preset];
+
+    waveformSelect.value = preset.waveform;
+
+    attackSlider.value = preset.attack;
+    decaySlider.value = preset.decay;
+    sustainSlider.value = preset.sustain;
+    releaseSlider.value = preset.release;
+
+    cutoffSlider.value = preset.cutoff;
+    resonanceSlider.value = preset.resonance;
+
+    lfoRateSlider.value = preset.lfoRate;
+    lfoAmountSlider.value = preset.lfoAmount;
+
+    reverbMixSlider.value = preset.reverbMix;
+    delayMixSlider.value = preset.delayMix;
+
+    updateValueDisplays();
+
+  });
+
+});
+
 updateValueDisplays();
