@@ -710,12 +710,12 @@ document.addEventListener(
 document.addEventListener(
   "touchend",
   (event) => {
+    if (!currentTouchKey) return;
+
     event.preventDefault();
 
-    if (currentTouchKey) {
-      stopNote(Number(currentTouchKey.dataset.note));
-      currentTouchKey = null;
-    }
+    stopNote(Number(currentTouchKey.dataset.note));
+    currentTouchKey = null;
   },
   { passive: false }
 );
@@ -723,10 +723,10 @@ document.addEventListener(
 document.addEventListener(
   "touchcancel",
   () => {
-    if (currentTouchKey) {
-      stopNote(Number(currentTouchKey.dataset.note));
-      currentTouchKey = null;
-    }
+    if (!currentTouchKey) return;
+
+    stopNote(Number(currentTouchKey.dataset.note));
+    currentTouchKey = null;
   },
   { passive: false }
 );
