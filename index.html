@@ -18,7 +18,16 @@
 <section class="presets">
   <h2>Presets</h2>
 
-  <div class="preset-grid">
+  <div class="preset-bank-tabs">
+    <button class="bank-btn active-bank" data-bank="signature">Signature</button>
+    <button class="bank-btn" data-bank="keys">Keys</button>
+    <button class="bank-btn" data-bank="pads">Pads</button>
+    <button class="bank-btn" data-bank="leads">Leads</button>
+    <button class="bank-btn" data-bank="bass">Bass</button>
+    <button class="bank-btn" data-bank="textures">Textures</button>
+  </div>
+
+  <div class="preset-grid" id="presetGrid">
     <button class="preset-btn" data-preset="dreamPad">Dream Pad</button>
     <button class="preset-btn" data-preset="theWell">The Well</button>
     <button class="preset-btn" data-preset="abyss">Abyss</button>
@@ -26,13 +35,12 @@
     <button class="preset-btn" data-preset="falling">Falling</button>
   </div>
 
-<div class="user-preset-tools">
-  <button id="saveUserPreset" class="preset-action">Save Current Preset</button>
-  <button id="loadUserPreset" class="preset-action">Load Saved Preset</button>
-</div>
+  <div class="user-preset-tools">
+    <button id="saveUserPreset" class="preset-action">Save Current Preset</button>
+    <button id="loadUserPreset" class="preset-action">Load Saved Preset</button>
+  </div>
 
-<p id="presetMessage" class="preset-message"></p>
-  
+  <p id="presetMessage" class="preset-message"></p>
 </section>
     
     <section class="controls">
