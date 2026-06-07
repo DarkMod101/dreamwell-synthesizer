@@ -188,3 +188,31 @@ input[type="range"] {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.user-preset-tools {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.preset-action {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(214, 168, 79, 0.4);
+  background: linear-gradient(#24161f, #09000f);
+  color: #d6a84f;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.preset-action:active {
+  transform: translateY(3px);
+}
+
+.preset-message {
+  margin-top: 10px;
+  color: #d9c4ff;
+  font-size: 12px;
+  min-height: 18px;
+}
