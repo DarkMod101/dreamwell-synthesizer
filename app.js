@@ -36,6 +36,9 @@ const lfoRateSlider = document.getElementById("lfoRate");
 const lfoAmountSlider = document.getElementById("lfoAmount");
 const lfoDestinationSelect = document.getElementById("lfoDestination");
 
+const driftSlider = document.getElementById("drift");
+const driftValue = document.getElementById("driftValue");
+
 const reverbMixSlider = document.getElementById("reverbMix");
 const reverbDecaySlider = document.getElementById("reverbDecay");
 
@@ -61,6 +64,7 @@ const valueDisplays = {
   resonance: document.getElementById("resonanceValue"),
   lfoRate: document.getElementById("lfoRateValue"),
   lfoAmount: document.getElementById("lfoAmountValue"),
+  drift: document.getElementById("driftValue"),
   reverbMix: document.getElementById("reverbMixValue"),
   reverbDecay: document.getElementById("reverbDecayValue"),
   delayMix: document.getElementById("delayMixValue"),
@@ -113,6 +117,7 @@ function updateValueDisplays() {
   setDisplay(valueDisplays.resonance, qValue(getValue(resonanceSlider, 1)));
   setDisplay(valueDisplays.lfoRate, `${getValue(lfoRateSlider, 2).toFixed(1)} Hz`);
   setDisplay(valueDisplays.lfoAmount, `${Math.round(getValue(lfoAmountSlider, 0))}`);
+  setDisplay(valueDisplays.drift, `${Number(getValue("drift")).toFixed(1)}`);
   setDisplay(valueDisplays.reverbMix, percent(getValue(reverbMixSlider, 0.25)));
   setDisplay(valueDisplays.reverbDecay, seconds(getValue(reverbDecaySlider, 3)));
   setDisplay(valueDisplays.delayMix, percent(getValue(delayMixSlider, 0.55)));
