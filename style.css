@@ -271,3 +271,15 @@ input[type="range"] {
   min-width: 80px;
   text-align: center;
 }
+
+.black-key {
+  background: linear-gradient(#25202d, #050008);
+  color: #d9c4ff;
+  border-color: rgba(214, 168, 79, 0.55);
+  min-width: 42px;
+  height: 105px;
+}
+
+.black-key:active {
+  box-shadow: 0 0 24px rgba(214, 168, 79, 0.8);
+}
