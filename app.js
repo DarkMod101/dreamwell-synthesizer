@@ -8,11 +8,7 @@ let delayFeedbackGain;
 let delayWetGain;
 let delayDryGain;
 
-let activeOscillator = null;
-let activeOscillatorB = null;
-let activeGain = null;
-let activeLFO = null;
-let activeLFOGain = null;
+const activeNotes = new Map();
 
 const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
@@ -40,6 +36,10 @@ const reverbDecaySlider = document.getElementById("reverbDecay");
 const delayMixSlider = document.getElementById("delayMix");
 const delayTimeSlider = document.getElementById("delayTime");
 const delayFeedbackSlider = document.getElementById("delayFeedback");
+
+const saveUserPresetButton = document.getElementById("saveUserPreset");
+const loadUserPresetButton = document.getElementById("loadUserPreset");
+const presetMessage = document.getElementById("presetMessage");
 
 const valueDisplays = {
   oscBLevel: document.getElementById("oscBLevelValue"),
@@ -197,16 +197,14 @@ function getAudioContext() {
   return audioContext;
 }
 
-function playNote(frequency) {
+function createNote(frequency) {
   const ctx = getAudioContext();
-
-  stopNote();
 
   const attack = getValue(attackSlider, 0.05);
   const decay = getValue(decaySlider, 0.2);
   const sustain = getValue(sustainSlider, 0.7);
 
-  const oscillator = ctx.createOscillator();
+  const oscillatorA = ctx.createOscillator();
   const oscillatorB = ctx.createOscillator();
 
   const oscAGain = ctx.createGain();
@@ -215,14 +213,14 @@ function playNote(frequency) {
   const filter = ctx.createBiquadFilter();
   const noteGain = ctx.createGain();
 
-  oscillator.type = waveformSelect ? waveformSelect.value : "sine";
-  oscillator.frequency.value = frequency;
+  oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
+  oscillatorA.frequency.value = frequency;
 
   oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
   oscillatorB.frequency.value = frequency;
   oscillatorB.detune.value = getValue(oscBDetuneSlider, 7);
 
-  oscAGain.gain.value = 1;
+  oscAGain.gain.value = 0.65;
   oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
 
   filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
@@ -230,44 +228,15 @@ function playNote(frequency) {
   filter.Q.value = getValue(resonanceSlider, 1);
 
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
-  noteGain.gain.exponentialRampToValueAtTime(1, ctx.currentTime + attack);
+  noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + attack);
   noteGain.gain.linearRampToValueAtTime(
-    sustain,
+    sustain * 0.8,
     ctx.currentTime + attack + decay
   );
 
-  const lfoAmount = getValue(lfoAmountSlider, 0);
+  const lfoNodes = createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain);
 
-  if (lfoAmount > 0 && lfoRateSlider && lfoDestinationSelect) {
-    const lfo = ctx.createOscillator();
-    const lfoGain = ctx.createGain();
-
-    lfo.frequency.value = getValue(lfoRateSlider, 2);
-
-    if (lfoDestinationSelect.value === "filter") {
-      lfoGain.gain.value = lfoAmount;
-      lfoGain.connect(filter.frequency);
-    }
-
-    if (lfoDestinationSelect.value === "pitch") {
-      lfoGain.gain.value = lfoAmount;
-      lfoGain.connect(oscillator.frequency);
-      lfoGain.connect(oscillatorB.frequency);
-    }
-
-    if (lfoDestinationSelect.value === "volume") {
-      lfoGain.gain.value = lfoAmount / 2000;
-      lfoGain.connect(noteGain.gain);
-    }
-
-    lfo.connect(lfoGain);
-    lfo.start();
-
-    activeLFO = lfo;
-    activeLFOGain = lfoGain;
-  }
-
-  oscillator.connect(oscAGain);
+  oscillatorA.connect(oscAGain);
   oscillatorB.connect(oscBGain);
 
   oscAGain.connect(filter);
@@ -281,48 +250,99 @@ function playNote(frequency) {
   noteGain.connect(delayDryGain);
   noteGain.connect(delayNode);
 
-  oscillator.start();
+  oscillatorA.start();
   oscillatorB.start();
 
-  activeOscillator = oscillator;
-  activeOscillatorB = oscillatorB;
-  activeGain = noteGain;
+  return {
+    oscillatorA,
+    oscillatorB,
+    noteGain,
+    lfoNodes,
+  };
 }
 
-function stopNote() {
-  if (activeOscillator && activeGain) {
-    const ctx = getAudioContext();
-    const release = getValue(releaseSlider, 0.5);
+function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
+  const lfoAmount = getValue(lfoAmountSlider, 0);
 
-    activeGain.gain.cancelScheduledValues(ctx.currentTime);
-    activeGain.gain.setValueAtTime(activeGain.gain.value, ctx.currentTime);
-    activeGain.gain.exponentialRampToValueAtTime(
-      0.001,
-      ctx.currentTime + release
-    );
-
-    activeOscillator.stop(ctx.currentTime + release + 0.05);
-
-    if (activeOscillatorB) {
-      activeOscillatorB.stop(ctx.currentTime + release + 0.05);
-      activeOscillatorB.disconnect();
-      activeOscillatorB = null;
-    }
-
-    if (activeLFO) {
-      activeLFO.stop(ctx.currentTime + release + 0.05);
-      activeLFO.disconnect();
-      activeLFO = null;
-    }
-
-    if (activeLFOGain) {
-      activeLFOGain.disconnect();
-      activeLFOGain = null;
-    }
-
-    activeOscillator = null;
-    activeGain = null;
+  if (lfoAmount <= 0 || !lfoRateSlider || !lfoDestinationSelect) {
+    return null;
   }
+
+  const lfo = ctx.createOscillator();
+  const lfoGain = ctx.createGain();
+
+  lfo.frequency.value = getValue(lfoRateSlider, 2);
+
+  if (lfoDestinationSelect.value === "filter") {
+    lfoGain.gain.value = lfoAmount;
+    lfoGain.connect(filter.frequency);
+  }
+
+  if (lfoDestinationSelect.value === "pitch") {
+    lfoGain.gain.value = lfoAmount;
+    lfoGain.connect(oscillatorA.frequency);
+    lfoGain.connect(oscillatorB.frequency);
+  }
+
+  if (lfoDestinationSelect.value === "volume") {
+    lfoGain.gain.value = lfoAmount / 2000;
+    lfoGain.connect(noteGain.gain);
+  }
+
+  lfo.connect(lfoGain);
+  lfo.start();
+
+  return {
+    lfo,
+    lfoGain,
+  };
+}
+
+function playNote(frequency) {
+  const noteId = String(frequency);
+
+  if (activeNotes.has(noteId)) {
+    return;
+  }
+
+  const note = createNote(frequency);
+  activeNotes.set(noteId, note);
+}
+
+function stopNote(frequency) {
+  const noteId = String(frequency);
+  const note = activeNotes.get(noteId);
+
+  if (!note) {
+    return;
+  }
+
+  const ctx = getAudioContext();
+  const release = getValue(releaseSlider, 0.5);
+
+  note.noteGain.gain.cancelScheduledValues(ctx.currentTime);
+  note.noteGain.gain.setValueAtTime(note.noteGain.gain.value, ctx.currentTime);
+  note.noteGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    ctx.currentTime + release
+  );
+
+  note.oscillatorA.stop(ctx.currentTime + release + 0.05);
+  note.oscillatorB.stop(ctx.currentTime + release + 0.05);
+
+  if (note.lfoNodes) {
+    note.lfoNodes.lfo.stop(ctx.currentTime + release + 0.05);
+    note.lfoNodes.lfo.disconnect();
+    note.lfoNodes.lfoGain.disconnect();
+  }
+
+  activeNotes.delete(noteId);
+}
+
+function stopAllNotes() {
+  activeNotes.forEach((note, noteId) => {
+    stopNote(Number(noteId));
+  });
 }
 
 function bindSlider(slider, callback) {
@@ -400,128 +420,165 @@ bindSlider(delayFeedbackSlider, () => {
   lfoAmountSlider,
 ].forEach((slider) => bindSlider(slider));
 
-keys.forEach((key) => {
-  key.addEventListener("mousedown", () => {
-    playNote(Number(key.dataset.note));
-  });
-
-  key.addEventListener("mouseup", stopNote);
-  key.addEventListener("mouseleave", stopNote);
-
-  key.addEventListener("touchstart", (event) => {
-    event.preventDefault();
-    playNote(Number(key.dataset.note));
-  });
-
-  key.addEventListener("touchend", stopNote);
-});
-
 const presetButtons = document.querySelectorAll(".preset-btn");
 
 const presets = {
-
   dreamPad: {
     waveform: "sine",
+    waveformB: "triangle",
+    oscBLevel: 0.3,
+    oscBDetune: 5,
     attack: 1.8,
     decay: 1.2,
     sustain: 0.8,
     release: 3.5,
+    filterType: "lowpass",
     cutoff: 1800,
     resonance: 2,
     lfoRate: 0.4,
     lfoAmount: 150,
+    lfoDestination: "filter",
     reverbMix: 0.65,
-    delayMix: 0.25
+    reverbDecay: 5,
+    delayMix: 0.25,
+    delayTime: 0.45,
+    delayFeedback: 0.35,
+    masterVolume: 0.2,
   },
 
   theWell: {
     waveform: "triangle",
+    waveformB: "sine",
+    oscBLevel: 0.4,
+    oscBDetune: -7,
     attack: 0.8,
     decay: 1,
     sustain: 0.7,
     release: 4,
+    filterType: "lowpass",
     cutoff: 1200,
     resonance: 4,
     lfoRate: 0.3,
     lfoAmount: 250,
+    lfoDestination: "filter",
     reverbMix: 0.8,
-    delayMix: 0.4
+    reverbDecay: 6,
+    delayMix: 0.4,
+    delayTime: 0.55,
+    delayFeedback: 0.4,
+    masterVolume: 0.18,
   },
 
   abyss: {
     waveform: "sawtooth",
+    waveformB: "sawtooth",
+    oscBLevel: 0.25,
+    oscBDetune: 12,
     attack: 0.05,
     decay: 0.5,
     sustain: 0.6,
     release: 2.5,
+    filterType: "lowpass",
     cutoff: 700,
     resonance: 7,
     lfoRate: 0.2,
     lfoAmount: 400,
+    lfoDestination: "filter",
     reverbMix: 0.7,
-    delayMix: 0.5
+    reverbDecay: 5.5,
+    delayMix: 0.5,
+    delayTime: 0.65,
+    delayFeedback: 0.5,
+    masterVolume: 0.16,
   },
 
   resonantDoorway: {
     waveform: "triangle",
+    waveformB: "sawtooth",
+    oscBLevel: 0.35,
+    oscBDetune: 7,
     attack: 0.2,
     decay: 0.8,
     sustain: 0.8,
     release: 2,
+    filterType: "lowpass",
     cutoff: 2500,
     resonance: 5,
     lfoRate: 2,
     lfoAmount: 200,
+    lfoDestination: "filter",
     reverbMix: 0.55,
-    delayMix: 0.3
+    reverbDecay: 4,
+    delayMix: 0.3,
+    delayTime: 0.38,
+    delayFeedback: 0.35,
+    masterVolume: 0.2,
   },
 
   falling: {
     waveform: "sine",
+    waveformB: "triangle",
+    oscBLevel: 0.45,
+    oscBDetune: -12,
     attack: 3,
     decay: 2,
     sustain: 0.5,
     release: 5,
+    filterType: "lowpass",
     cutoff: 900,
     resonance: 3,
     lfoRate: 0.1,
     lfoAmount: 500,
+    lfoDestination: "filter",
     reverbMix: 0.9,
-    delayMix: 0.45
-  }
+    reverbDecay: 7,
+    delayMix: 0.45,
+    delayTime: 0.75,
+    delayFeedback: 0.45,
+    masterVolume: 0.15,
+  },
 };
 
+function applyPresetSettings(preset) {
+  if (!preset) return;
+
+  waveformSelect.value = preset.waveform;
+  waveformBSelect.value = preset.waveformB;
+  oscBLevelSlider.value = preset.oscBLevel;
+  oscBDetuneSlider.value = preset.oscBDetune;
+
+  attackSlider.value = preset.attack;
+  decaySlider.value = preset.decay;
+  sustainSlider.value = preset.sustain;
+  releaseSlider.value = preset.release;
+
+  filterTypeSelect.value = preset.filterType;
+  cutoffSlider.value = preset.cutoff;
+  resonanceSlider.value = preset.resonance;
+
+  lfoRateSlider.value = preset.lfoRate;
+  lfoAmountSlider.value = preset.lfoAmount;
+  lfoDestinationSelect.value = preset.lfoDestination;
+
+  reverbMixSlider.value = preset.reverbMix;
+  reverbDecaySlider.value = preset.reverbDecay;
+
+  delayMixSlider.value = preset.delayMix;
+  delayTimeSlider.value = preset.delayTime;
+  delayFeedbackSlider.value = preset.delayFeedback;
+
+  masterVolume.value = preset.masterVolume;
+
+  updateValueDisplays();
+  stopAllNotes();
+}
+
 presetButtons.forEach((button) => {
-
   button.addEventListener("click", () => {
-
     const preset = presets[button.dataset.preset];
-
-    waveformSelect.value = preset.waveform;
-
-    attackSlider.value = preset.attack;
-    decaySlider.value = preset.decay;
-    sustainSlider.value = preset.sustain;
-    releaseSlider.value = preset.release;
-
-    cutoffSlider.value = preset.cutoff;
-    resonanceSlider.value = preset.resonance;
-
-    lfoRateSlider.value = preset.lfoRate;
-    lfoAmountSlider.value = preset.lfoAmount;
-
-    reverbMixSlider.value = preset.reverbMix;
-    delayMixSlider.value = preset.delayMix;
-
-    updateValueDisplays();
-
+    applyPresetSettings(preset);
   });
-
 });
-
-const saveUserPresetButton = document.getElementById("saveUserPreset");
-const loadUserPresetButton = document.getElementById("loadUserPreset");
-const presetMessage = document.getElementById("presetMessage");
 
 function getCurrentPresetSettings() {
   return {
@@ -554,44 +611,15 @@ function getCurrentPresetSettings() {
   };
 }
 
-function applyPresetSettings(preset) {
-  waveformSelect.value = preset.waveform;
-  waveformBSelect.value = preset.waveformB;
-  oscBLevelSlider.value = preset.oscBLevel;
-  oscBDetuneSlider.value = preset.oscBDetune;
-
-  attackSlider.value = preset.attack;
-  decaySlider.value = preset.decay;
-  sustainSlider.value = preset.sustain;
-  releaseSlider.value = preset.release;
-
-  filterTypeSelect.value = preset.filterType;
-  cutoffSlider.value = preset.cutoff;
-  resonanceSlider.value = preset.resonance;
-
-  lfoRateSlider.value = preset.lfoRate;
-  lfoAmountSlider.value = preset.lfoAmount;
-  lfoDestinationSelect.value = preset.lfoDestination;
-
-  reverbMixSlider.value = preset.reverbMix;
-  reverbDecaySlider.value = preset.reverbDecay;
-
-  delayMixSlider.value = preset.delayMix;
-  delayTimeSlider.value = preset.delayTime;
-  delayFeedbackSlider.value = preset.delayFeedback;
-
-  masterVolume.value = preset.masterVolume;
-
-  updateValueDisplays();
-}
-
 if (saveUserPresetButton) {
   saveUserPresetButton.addEventListener("click", () => {
     const preset = getCurrentPresetSettings();
 
     localStorage.setItem("dreamwellUserPreset", JSON.stringify(preset));
 
-    presetMessage.textContent = "Preset saved.";
+    if (presetMessage) {
+      presetMessage.textContent = "Preset saved.";
+    }
   });
 }
 
@@ -600,7 +628,9 @@ if (loadUserPresetButton) {
     const savedPreset = localStorage.getItem("dreamwellUserPreset");
 
     if (!savedPreset) {
-      presetMessage.textContent = "No saved preset found.";
+      if (presetMessage) {
+        presetMessage.textContent = "No saved preset found.";
+      }
       return;
     }
 
@@ -608,8 +638,39 @@ if (loadUserPresetButton) {
 
     applyPresetSettings(preset);
 
-    presetMessage.textContent = "Preset loaded.";
+    if (presetMessage) {
+      presetMessage.textContent = "Preset loaded.";
+    }
   });
 }
+
+keys.forEach((key) => {
+  const frequency = Number(key.dataset.note);
+
+  key.addEventListener("mousedown", () => {
+    playNote(frequency);
+  });
+
+  key.addEventListener("mouseup", () => {
+    stopNote(frequency);
+  });
+
+  key.addEventListener("mouseleave", () => {
+    stopNote(frequency);
+  });
+
+  key.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    playNote(frequency);
+  });
+
+  key.addEventListener("touchend", () => {
+    stopNote(frequency);
+  });
+
+  key.addEventListener("touchcancel", () => {
+    stopNote(frequency);
+  });
+});
 
 updateValueDisplays();
