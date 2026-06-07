@@ -9,6 +9,7 @@ let delayWetGain;
 let delayDryGain;
 
 const activeNotes = new Map();
+const activeTouchKeys = new Map();
 
 const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
@@ -16,16 +17,12 @@ const oscBLevelSlider = document.getElementById("oscBLevel");
 const oscBDetuneSlider = document.getElementById("oscBDetune");
 const masterVolume = document.getElementById("masterVolume");
 const keys = document.querySelectorAll(".key");
+
 const octaveDownButton = document.getElementById("octaveDown");
 const octaveUpButton = document.getElementById("octaveUp");
 const octaveDisplay = document.getElementById("octaveDisplay");
-
 let octaveShift = 0;
-const octaveDownButton = document.getElementById("octaveDown");
-const octaveUpButton = document.getElementById("octaveUp");
-const octaveDisplay = document.getElementById("octaveDisplay");
 
-let octaveShift = 0;
 const attackSlider = document.getElementById("attack");
 const decaySlider = document.getElementById("decay");
 const sustainSlider = document.getElementById("sustain");
@@ -49,6 +46,8 @@ const delayFeedbackSlider = document.getElementById("delayFeedback");
 const saveUserPresetButton = document.getElementById("saveUserPreset");
 const loadUserPresetButton = document.getElementById("loadUserPreset");
 const presetMessage = document.getElementById("presetMessage");
+
+const presetButtons = document.querySelectorAll(".preset-btn");
 
 const valueDisplays = {
   oscBLevel: document.getElementById("oscBLevelValue"),
@@ -99,33 +98,25 @@ function milliseconds(value) {
 }
 
 function setDisplay(display, text) {
-  if (display) {
-    display.textContent = text;
-  }
+  if (display) display.textContent = text;
 }
 
 function updateValueDisplays() {
   setDisplay(valueDisplays.oscBLevel, percent(getValue(oscBLevelSlider, 0.35)));
   setDisplay(valueDisplays.oscBDetune, cents(getValue(oscBDetuneSlider, 7)));
-
   setDisplay(valueDisplays.attack, seconds(getValue(attackSlider, 0.05)));
   setDisplay(valueDisplays.decay, seconds(getValue(decaySlider, 0.2)));
   setDisplay(valueDisplays.sustain, percent(getValue(sustainSlider, 0.7)));
   setDisplay(valueDisplays.release, seconds(getValue(releaseSlider, 0.5)));
-
   setDisplay(valueDisplays.cutoff, hz(getValue(cutoffSlider, 4000)));
   setDisplay(valueDisplays.resonance, qValue(getValue(resonanceSlider, 1)));
-
   setDisplay(valueDisplays.lfoRate, `${getValue(lfoRateSlider, 2).toFixed(1)} Hz`);
   setDisplay(valueDisplays.lfoAmount, `${Math.round(getValue(lfoAmountSlider, 0))}`);
-
   setDisplay(valueDisplays.reverbMix, percent(getValue(reverbMixSlider, 0.25)));
   setDisplay(valueDisplays.reverbDecay, seconds(getValue(reverbDecaySlider, 3)));
-
   setDisplay(valueDisplays.delayMix, percent(getValue(delayMixSlider, 0.55)));
   setDisplay(valueDisplays.delayTime, milliseconds(getValue(delayTimeSlider, 0.55)));
   setDisplay(valueDisplays.delayFeedback, percent(getValue(delayFeedbackSlider, 0.55)));
-
   setDisplay(valueDisplays.masterVolume, percent(getValue(masterVolume, 0.25)));
 }
 
@@ -136,7 +127,6 @@ function createReverbImpulse(ctx, decayTime) {
 
   for (let channel = 0; channel < 2; channel++) {
     const data = impulse.getChannelData(channel);
-
     for (let i = 0; i < length; i++) {
       const fade = Math.pow(1 - i / length, 2);
       data[i] = (Math.random() * 2 - 1) * fade;
@@ -155,7 +145,6 @@ function setupReverb(ctx) {
   const decay = getValue(reverbDecaySlider, 3);
 
   reverbNode.buffer = createReverbImpulse(ctx, decay);
-
   dryGain.gain.value = 1 - mix;
   reverbWetGain.gain.value = mix;
 
@@ -180,10 +169,8 @@ function setupDelay(ctx) {
 
   delayNode.connect(delayFeedbackGain);
   delayFeedbackGain.connect(delayNode);
-
   delayNode.connect(delayWetGain);
   delayWetGain.connect(masterGain);
-
   delayDryGain.connect(masterGain);
 }
 
@@ -204,70 +191,6 @@ function getAudioContext() {
   }
 
   return audioContext;
-}
-
-function createNote(frequency) {
-  const ctx = getAudioContext();
-
-  const attack = getValue(attackSlider, 0.05);
-  const decay = getValue(decaySlider, 0.2);
-  const sustain = getValue(sustainSlider, 0.7);
-
-  const oscillatorA = ctx.createOscillator();
-  const oscillatorB = ctx.createOscillator();
-
-  const oscAGain = ctx.createGain();
-  const oscBGain = ctx.createGain();
-
-  const filter = ctx.createBiquadFilter();
-  const noteGain = ctx.createGain();
-
-  oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
-  oscillatorA.frequency.value = frequency;
-
-  oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
-  oscillatorB.frequency.value = frequency;
-  oscillatorB.detune.value = getValue(oscBDetuneSlider, 7);
-
-  oscAGain.gain.value = 0.65;
-  oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
-
-  filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
-  filter.frequency.value = getValue(cutoffSlider, 4000);
-  filter.Q.value = getValue(resonanceSlider, 1);
-
-  noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
-  noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + attack);
-  noteGain.gain.linearRampToValueAtTime(
-    sustain * 0.8,
-    ctx.currentTime + attack + decay
-  );
-
-  const lfoNodes = createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain);
-
-  oscillatorA.connect(oscAGain);
-  oscillatorB.connect(oscBGain);
-
-  oscAGain.connect(filter);
-  oscBGain.connect(filter);
-
-  filter.connect(noteGain);
-
-  noteGain.connect(dryGain);
-  noteGain.connect(reverbNode);
-
-  noteGain.connect(delayDryGain);
-  noteGain.connect(delayNode);
-
-  oscillatorA.start();
-  oscillatorB.start();
-
-  return {
-    oscillatorA,
-    oscillatorB,
-    noteGain,
-    lfoNodes,
-  };
 }
 
 function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
@@ -301,18 +224,67 @@ function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   lfo.connect(lfoGain);
   lfo.start();
 
-  return {
-    lfo,
-    lfoGain,
-  };
+  return { lfo, lfoGain };
+}
+
+function createNote(frequency) {
+  const ctx = getAudioContext();
+
+  const attack = getValue(attackSlider, 0.05);
+  const decay = getValue(decaySlider, 0.2);
+  const sustain = getValue(sustainSlider, 0.7);
+
+  const oscillatorA = ctx.createOscillator();
+  const oscillatorB = ctx.createOscillator();
+  const oscAGain = ctx.createGain();
+  const oscBGain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  const noteGain = ctx.createGain();
+
+  oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
+  oscillatorA.frequency.value = frequency;
+
+  oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
+  oscillatorB.frequency.value = frequency;
+  oscillatorB.detune.value = getValue(oscBDetuneSlider, 7);
+
+  oscAGain.gain.value = 0.65;
+  oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
+
+  filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
+  filter.frequency.value = getValue(cutoffSlider, 4000);
+  filter.Q.value = getValue(resonanceSlider, 1);
+
+  noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
+  noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + attack);
+  noteGain.gain.linearRampToValueAtTime(
+    sustain * 0.8,
+    ctx.currentTime + attack + decay
+  );
+
+  const lfoNodes = createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain);
+
+  oscillatorA.connect(oscAGain);
+  oscillatorB.connect(oscBGain);
+  oscAGain.connect(filter);
+  oscBGain.connect(filter);
+  filter.connect(noteGain);
+
+  noteGain.connect(dryGain);
+  noteGain.connect(reverbNode);
+  noteGain.connect(delayDryGain);
+  noteGain.connect(delayNode);
+
+  oscillatorA.start();
+  oscillatorB.start();
+
+  return { oscillatorA, oscillatorB, noteGain, lfoNodes };
 }
 
 function playNote(frequency) {
   const noteId = String(frequency);
 
-  if (activeNotes.has(noteId)) {
-    return;
-  }
+  if (activeNotes.has(noteId)) return;
 
   const note = createNote(frequency);
   activeNotes.set(noteId, note);
@@ -322,9 +294,7 @@ function stopNote(frequency) {
   const noteId = String(frequency);
   const note = activeNotes.get(noteId);
 
-  if (!note) {
-    return;
-  }
+  if (!note) return;
 
   const ctx = getAudioContext();
   const release = getValue(releaseSlider, 0.5);
@@ -354,6 +324,60 @@ function stopAllNotes() {
   });
 }
 
+function updateKeyboardOctave() {
+  keys.forEach((key) => {
+    const baseFrequency = Number(key.dataset.note);
+    const shiftedFrequency = baseFrequency * Math.pow(2, octaveShift);
+    key.dataset.currentNote = shiftedFrequency.toFixed(2);
+  });
+
+  if (octaveDisplay) {
+    octaveDisplay.textContent =
+      `Shift: ${octaveShift > 0 ? "+" : ""}${octaveShift}`;
+  }
+
+  stopAllNotes();
+}
+
+function getKeyFrequency(key) {
+  return Number(key.dataset.currentNote || key.dataset.note);
+}
+
+function getKeyFromPoint(x, y) {
+  const element = document.elementFromPoint(x, y);
+  return element && element.classList.contains("key") ? element : null;
+}
+
+function startTouchNote(touch) {
+  const key = getKeyFromPoint(touch.clientX, touch.clientY);
+  if (!key) return;
+
+  activeTouchKeys.set(touch.identifier, key);
+  playNote(getKeyFrequency(key));
+}
+
+function moveTouchNote(touch) {
+  const oldKey = activeTouchKeys.get(touch.identifier);
+  const newKey = getKeyFromPoint(touch.clientX, touch.clientY);
+
+  if (!newKey || newKey === oldKey) return;
+
+  if (oldKey) {
+    stopNote(getKeyFrequency(oldKey));
+  }
+
+  activeTouchKeys.set(touch.identifier, newKey);
+  playNote(getKeyFrequency(newKey));
+}
+
+function stopTouchNote(touch) {
+  const key = activeTouchKeys.get(touch.identifier);
+  if (!key) return;
+
+  stopNote(getKeyFrequency(key));
+  activeTouchKeys.delete(touch.identifier);
+}
+
 function bindSlider(slider, callback) {
   if (!slider) return;
 
@@ -365,50 +389,35 @@ function bindSlider(slider, callback) {
 
 bindSlider(masterVolume, () => {
   const ctx = getAudioContext();
-  masterGain.gain.setTargetAtTime(
-    Number(masterVolume.value),
-    ctx.currentTime,
-    0.01
-  );
+  masterGain.gain.setTargetAtTime(Number(masterVolume.value), ctx.currentTime, 0.01);
 });
 
 bindSlider(reverbMixSlider, () => {
   const ctx = getAudioContext();
   const mix = Number(reverbMixSlider.value);
-
   dryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
   reverbWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
 });
 
 bindSlider(reverbDecaySlider, () => {
   const ctx = getAudioContext();
-  reverbNode.buffer = createReverbImpulse(
-    ctx,
-    Number(reverbDecaySlider.value)
-  );
+  reverbNode.buffer = createReverbImpulse(ctx, Number(reverbDecaySlider.value));
 });
 
 bindSlider(delayMixSlider, () => {
   const ctx = getAudioContext();
   const mix = Number(delayMixSlider.value);
-
   delayDryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
   delayWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
 });
 
 bindSlider(delayTimeSlider, () => {
   const ctx = getAudioContext();
-
-  delayNode.delayTime.setTargetAtTime(
-    Number(delayTimeSlider.value),
-    ctx.currentTime,
-    0.01
-  );
+  delayNode.delayTime.setTargetAtTime(Number(delayTimeSlider.value), ctx.currentTime, 0.01);
 });
 
 bindSlider(delayFeedbackSlider, () => {
   const ctx = getAudioContext();
-
   delayFeedbackGain.gain.setTargetAtTime(
     Number(delayFeedbackSlider.value),
     ctx.currentTime,
@@ -428,8 +437,6 @@ bindSlider(delayFeedbackSlider, () => {
   lfoRateSlider,
   lfoAmountSlider,
 ].forEach((slider) => bindSlider(slider));
-
-const presetButtons = document.querySelectorAll(".preset-btn");
 
 const presets = {
   dreamPad: {
@@ -454,7 +461,6 @@ const presets = {
     delayFeedback: 0.35,
     masterVolume: 0.2,
   },
-
   theWell: {
     waveform: "triangle",
     waveformB: "sine",
@@ -477,7 +483,6 @@ const presets = {
     delayFeedback: 0.4,
     masterVolume: 0.18,
   },
-
   abyss: {
     waveform: "sawtooth",
     waveformB: "sawtooth",
@@ -500,7 +505,6 @@ const presets = {
     delayFeedback: 0.5,
     masterVolume: 0.16,
   },
-
   resonantDoorway: {
     waveform: "triangle",
     waveformB: "sawtooth",
@@ -523,7 +527,6 @@ const presets = {
     delayFeedback: 0.35,
     masterVolume: 0.2,
   },
-
   falling: {
     waveform: "sine",
     waveformB: "triangle",
@@ -584,8 +587,7 @@ function applyPresetSettings(preset) {
 
 presetButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    const preset = presets[button.dataset.preset];
-    applyPresetSettings(preset);
+    applyPresetSettings(presets[button.dataset.preset]);
   });
 });
 
@@ -595,40 +597,33 @@ function getCurrentPresetSettings() {
     waveformB: waveformBSelect.value,
     oscBLevel: oscBLevelSlider.value,
     oscBDetune: oscBDetuneSlider.value,
-
     attack: attackSlider.value,
     decay: decaySlider.value,
     sustain: sustainSlider.value,
     release: releaseSlider.value,
-
     filterType: filterTypeSelect.value,
     cutoff: cutoffSlider.value,
     resonance: resonanceSlider.value,
-
     lfoRate: lfoRateSlider.value,
     lfoAmount: lfoAmountSlider.value,
     lfoDestination: lfoDestinationSelect.value,
-
     reverbMix: reverbMixSlider.value,
     reverbDecay: reverbDecaySlider.value,
-
     delayMix: delayMixSlider.value,
     delayTime: delayTimeSlider.value,
     delayFeedback: delayFeedbackSlider.value,
-
     masterVolume: masterVolume.value,
   };
 }
 
 if (saveUserPresetButton) {
   saveUserPresetButton.addEventListener("click", () => {
-    const preset = getCurrentPresetSettings();
+    localStorage.setItem(
+      "dreamwellUserPreset",
+      JSON.stringify(getCurrentPresetSettings())
+    );
 
-    localStorage.setItem("dreamwellUserPreset", JSON.stringify(preset));
-
-    if (presetMessage) {
-      presetMessage.textContent = "Preset saved.";
-    }
+    if (presetMessage) presetMessage.textContent = "Preset saved.";
   });
 }
 
@@ -637,98 +632,27 @@ if (loadUserPresetButton) {
     const savedPreset = localStorage.getItem("dreamwellUserPreset");
 
     if (!savedPreset) {
-      if (presetMessage) {
-        presetMessage.textContent = "No saved preset found.";
-      }
+      if (presetMessage) presetMessage.textContent = "No saved preset found.";
       return;
     }
 
-    const preset = JSON.parse(savedPreset);
+    applyPresetSettings(JSON.parse(savedPreset));
 
-    applyPresetSettings(preset);
-
-    if (presetMessage) {
-      presetMessage.textContent = "Preset loaded.";
-    }
+    if (presetMessage) presetMessage.textContent = "Preset loaded.";
   });
-}
-
-function updateKeyboardOctave() {
-  keys.forEach((key) => {
-    const baseFrequency = Number(key.dataset.note);
-    const shiftedFrequency = baseFrequency * Math.pow(2, octaveShift);
-
-    key.dataset.currentNote = shiftedFrequency.toFixed(2);
-  });
-
-  if (octaveDisplay) {
-    octaveDisplay.textContent =
-      `Shift: ${octaveShift > 0 ? "+" : ""}${octaveShift}`;
-  }
-
-  stopAllNotes();
-}
-
-const activeTouchKeys = new Map();
-
-function getKeyFromPoint(x, y) {
-  const element = document.elementFromPoint(x, y);
-
-  if (element && element.classList.contains("key")) {
-    return element;
-  }
-
-  return null;
-}
-
-function startTouchNote(touch) {
-  const key = getKeyFromPoint(touch.clientX, touch.clientY);
-  if (!key) return;
-
-  const frequency =
-  Number(key.dataset.currentNote || key.dataset.note);
-
-activeTouchKeys.set(touch.identifier, key);
-playNote(frequency);
-}
-
-function moveTouchNote(touch) {
-  const oldKey = activeTouchKeys.get(touch.identifier);
-  const newKey = getKeyFromPoint(touch.clientX, touch.clientY);
-
-  if (!newKey || newKey === oldKey) return;
-
-  if (oldKey) {
-    stopNote(Number(oldKey.dataset.currentNote || oldKey.dataset.note));
-  }
-
-  activeTouchKeys.set(touch.identifier, newKey);
-  playNote(Number(newKey.dataset.currentNote || newKey.dataset.note));
-}
-
-function stopTouchNote(touch) {
-  const key = activeTouchKeys.get(touch.identifier);
-
-  if (!key) return;
-
-  stopNote(Number(key.dataset.note));
-  activeTouchKeys.delete(touch.identifier);
 }
 
 keys.forEach((key) => {
-  const frequency =
-  Number(key.dataset.currentNote || key.dataset.note);
-
   key.addEventListener("mousedown", () => {
-    playNote(frequency);
+    playNote(getKeyFrequency(key));
   });
 
   key.addEventListener("mouseup", () => {
-    stopNote(frequency);
+    stopNote(getKeyFrequency(key));
   });
 
   key.addEventListener("mouseleave", () => {
-    stopNote(frequency);
+    stopNote(getKeyFrequency(key));
   });
 });
 
@@ -746,9 +670,7 @@ document.addEventListener(
       }
     });
 
-    if (touchedKeyboard) {
-      event.preventDefault();
-    }
+    if (touchedKeyboard) event.preventDefault();
   },
   { passive: false }
 );
@@ -765,9 +687,7 @@ document.addEventListener(
       }
     });
 
-    if (movedOnKeyboard) {
-      event.preventDefault();
-    }
+    if (movedOnKeyboard) event.preventDefault();
   },
   { passive: false }
 );
