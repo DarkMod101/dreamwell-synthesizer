@@ -644,19 +644,49 @@ if (loadUserPresetButton) {
   });
 }
 
-let currentTouchKey = null;
+const activeTouchKeys = new Map();
 
-function getKeyFromTouch(event) {
-  const touch = event.touches[0];
-  if (!touch) return null;
-
-  const element = document.elementFromPoint(touch.clientX, touch.clientY);
+function getKeyFromPoint(x, y) {
+  const element = document.elementFromPoint(x, y);
 
   if (element && element.classList.contains("key")) {
     return element;
   }
 
   return null;
+}
+
+function startTouchNote(touch) {
+  const key = getKeyFromPoint(touch.clientX, touch.clientY);
+  if (!key) return;
+
+  const frequency = Number(key.dataset.note);
+
+  activeTouchKeys.set(touch.identifier, key);
+  playNote(frequency);
+}
+
+function moveTouchNote(touch) {
+  const oldKey = activeTouchKeys.get(touch.identifier);
+  const newKey = getKeyFromPoint(touch.clientX, touch.clientY);
+
+  if (!newKey || newKey === oldKey) return;
+
+  if (oldKey) {
+    stopNote(Number(oldKey.dataset.note));
+  }
+
+  activeTouchKeys.set(touch.identifier, newKey);
+  playNote(Number(newKey.dataset.note));
+}
+
+function stopTouchNote(touch) {
+  const key = activeTouchKeys.get(touch.identifier);
+
+  if (!key) return;
+
+  stopNote(Number(key.dataset.note));
+  activeTouchKeys.delete(touch.identifier);
 }
 
 keys.forEach((key) => {
@@ -678,13 +708,20 @@ keys.forEach((key) => {
 document.addEventListener(
   "touchstart",
   (event) => {
-    const key = getKeyFromTouch(event);
-    if (!key) return;
+    let touchedKeyboard = false;
 
-    event.preventDefault();
+    Array.from(event.changedTouches).forEach((touch) => {
+      const key = getKeyFromPoint(touch.clientX, touch.clientY);
 
-    currentTouchKey = key;
-    playNote(Number(key.dataset.note));
+      if (key) {
+        touchedKeyboard = true;
+        startTouchNote(touch);
+      }
+    });
+
+    if (touchedKeyboard) {
+      event.preventDefault();
+    }
   },
   { passive: false }
 );
@@ -692,17 +729,18 @@ document.addEventListener(
 document.addEventListener(
   "touchmove",
   (event) => {
-    const newKey = getKeyFromTouch(event);
-    if (!newKey || newKey === currentTouchKey) return;
+    let movedOnKeyboard = false;
 
-    event.preventDefault();
+    Array.from(event.changedTouches).forEach((touch) => {
+      if (activeTouchKeys.has(touch.identifier)) {
+        movedOnKeyboard = true;
+        moveTouchNote(touch);
+      }
+    });
 
-    if (currentTouchKey) {
-      stopNote(Number(currentTouchKey.dataset.note));
+    if (movedOnKeyboard) {
+      event.preventDefault();
     }
-
-    currentTouchKey = newKey;
-    playNote(Number(newKey.dataset.note));
   },
   { passive: false }
 );
@@ -710,23 +748,19 @@ document.addEventListener(
 document.addEventListener(
   "touchend",
   (event) => {
-    if (!currentTouchKey) return;
-
-    event.preventDefault();
-
-    stopNote(Number(currentTouchKey.dataset.note));
-    currentTouchKey = null;
+    Array.from(event.changedTouches).forEach((touch) => {
+      stopTouchNote(touch);
+    });
   },
   { passive: false }
 );
 
 document.addEventListener(
   "touchcancel",
-  () => {
-    if (!currentTouchKey) return;
-
-    stopNote(Number(currentTouchKey.dataset.note));
-    currentTouchKey = null;
+  (event) => {
+    Array.from(event.changedTouches).forEach((touch) => {
+      stopTouchNote(touch);
+    });
   },
   { passive: false }
 );
