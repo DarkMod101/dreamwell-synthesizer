@@ -699,4 +699,81 @@ keys.forEach((key) => {
     stopNote(getKeyFrequency(key));
   });
 
-  key.addEventListene
+  key.addEventListener("mouseleave", () => {
+    stopNote(getKeyFrequency(key));
+  });
+});
+
+document.addEventListener(
+  "touchstart",
+  (event) => {
+    let touchedKeyboard = false;
+
+    Array.from(event.changedTouches).forEach((touch) => {
+      const key = getKeyFromPoint(touch.clientX, touch.clientY);
+
+      if (key) {
+        touchedKeyboard = true;
+        startTouchNote(touch);
+      }
+    });
+
+    if (touchedKeyboard) event.preventDefault();
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchmove",
+  (event) => {
+    let movedOnKeyboard = false;
+
+    Array.from(event.changedTouches).forEach((touch) => {
+      if (activeTouchKeys.has(touch.identifier)) {
+        movedOnKeyboard = true;
+        moveTouchNote(touch);
+      }
+    });
+
+    if (movedOnKeyboard) event.preventDefault();
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchend",
+  (event) => {
+    Array.from(event.changedTouches).forEach((touch) => {
+      stopTouchNote(touch);
+    });
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchcancel",
+  (event) => {
+    Array.from(event.changedTouches).forEach((touch) => {
+      stopTouchNote(touch);
+    });
+  },
+  { passive: false }
+);
+
+if (octaveDownButton) {
+  octaveDownButton.addEventListener("click", () => {
+    octaveShift = Math.max(octaveShift - 1, -2);
+    updateKeyboardOctave();
+  });
+}
+
+if (octaveUpButton) {
+  octaveUpButton.addEventListener("click", () => {
+    octaveShift = Math.min(octaveShift + 1, 2);
+    updateKeyboardOctave();
+  });
+}
+
+renderPresetBank("signature");
+updateKeyboardOctave();
+updateValueDisplays();
