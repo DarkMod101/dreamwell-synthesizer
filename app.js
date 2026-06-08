@@ -265,14 +265,18 @@ stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 
   
 const driftAmount = getValue(driftSlider, 0);
 const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.6;
+
+const voiceSpread = getValue(voiceSpreadSlider, 0);
+const spreadCents = voiceSpread * 0.35;
   
   oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
   oscillatorA.frequency.value = frequency;
-oscillatorA.detune.value = driftCents;
+oscillatorA.detune.value = driftCents - spreadCents;
 
   oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
   oscillatorB.frequency.value = frequency;
-oscillatorB.detune.value = getValue(oscBDetuneSlider, 7) - driftCents;
+oscillatorB.detune.value =
+  getValue(oscBDetuneSlider, 7) - driftCents + spreadCents;
 
   oscAGain.gain.value = 0.65;
   oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
