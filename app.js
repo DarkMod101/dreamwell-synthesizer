@@ -245,12 +245,16 @@ function createNote(frequency) {
   const filter = ctx.createBiquadFilter();
   const noteGain = ctx.createGain();
 
+const driftAmount = getValue(driftSlider, 0);
+const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.15;
+  
   oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
   oscillatorA.frequency.value = frequency;
+oscillatorA.detune.value = driftCents;
 
   oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
   oscillatorB.frequency.value = frequency;
-  oscillatorB.detune.value = getValue(oscBDetuneSlider, 7);
+oscillatorB.detune.value = getValue(oscBDetuneSlider, 7) - driftCents;
 
   oscAGain.gain.value = 0.65;
   oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
