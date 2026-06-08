@@ -37,6 +37,8 @@ const lfoAmountSlider = document.getElementById("lfoAmount");
 const lfoDestinationSelect = document.getElementById("lfoDestination");
 
 const driftSlider = document.getElementById("drift");
+const stereoWidthSlider =
+  document.getElementById("stereoWidth");
 const driftValue = document.getElementById("driftValue");
 
 const reverbMixSlider = document.getElementById("reverbMix");
