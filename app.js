@@ -245,7 +245,8 @@ const oscBGain = ctx.createGain();
 const filter = ctx.createBiquadFilter();
 const noteGain = ctx.createGain();
 const stereoPanner = ctx.createStereoPanner();
-
+stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(driftSlider, 0) / 100);
+  
 const driftAmount = getValue(driftSlider, 0);
 const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.6;
   
