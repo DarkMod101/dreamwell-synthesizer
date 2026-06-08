@@ -267,16 +267,16 @@ const driftAmount = getValue(driftSlider, 0);
 const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.6;
 
 const voiceSpread = getValue(voiceSpreadSlider, 0);
-const spreadCents = voiceSpread * 1.5;
+const spreadCents = voiceSpread * 0.35;
+const unisonOscillators = [];
   
   oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
   oscillatorA.frequency.value = frequency;
-oscillatorA.detune.value = driftCents - spreadCents;
-
+oscillatorA.detune.value = driftCents;
   oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
   oscillatorB.frequency.value = frequency;
 oscillatorB.detune.value =
-  getValue(oscBDetuneSlider, 7) - driftCents + spreadCents;
+  getValue(oscBDetuneSlider, 7) - driftCents;
 
   oscAGain.gain.value = 0.65;
   oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
@@ -285,6 +285,39 @@ oscillatorB.detune.value =
   filter.frequency.value = getValue(cutoffSlider, 4000);
   filter.Q.value = getValue(resonanceSlider, 1);
 
+if (voiceSpread > 0) {
+  const unisonLevel = (voiceSpread / 100) * 0.18;
+
+  function addUnisonOscillator(type, detune) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.value = frequency;
+    osc.detune.value = detune;
+    gain.gain.value = unisonLevel;
+
+    osc.connect(gain);
+    gain.connect(filter);
+    osc.start();
+
+    unisonOscillators.push({ osc, gain });
+  }
+
+  addUnisonOscillator(oscillatorA.type, driftCents - spreadCents);
+  addUnisonOscillator(oscillatorA.type, driftCents + spreadCents);
+
+  addUnisonOscillator(
+    oscillatorB.type,
+    getValue(oscBDetuneSlider, 7) - driftCents - spreadCents
+  );
+
+  addUnisonOscillator(
+    oscillatorB.type,
+    getValue(oscBDetuneSlider, 7) - driftCents + spreadCents
+  );
+}
+  
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
   noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + attack);
   noteGain.gain.linearRampToValueAtTime(
@@ -314,7 +347,7 @@ stereoPanner.connect(delayNode);
 }
 
 function playNote(frequency) {
-  if (activeNotes.size >= 10) return;
+  if (activeNotes.size >= 6) return;
   const noteId = String(frequency);
   if (activeNotes.has(noteId)) return;
 
