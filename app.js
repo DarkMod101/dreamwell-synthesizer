@@ -467,6 +467,10 @@ bindSlider(delayFeedbackSlider, () => {
   voiceSpreadSlider,
 ].forEach((slider) => bindSlider(slider));
 
+if (voiceSpreadSlider) {
+  voiceSpreadSlider.addEventListener("input", updateValueDisplays);
+}
+
 const presetBanks = {
   signature: {
     dreamPad: {
