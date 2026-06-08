@@ -39,6 +39,8 @@ const lfoDestinationSelect = document.getElementById("lfoDestination");
 const driftSlider = document.getElementById("drift");
 const stereoWidthSlider =
   document.getElementById("stereoWidth");
+const voiceSpreadSlider =
+    document.getElementById("voiceSpread");
 const driftValue = document.getElementById("driftValue");
 
 const reverbMixSlider = document.getElementById("reverbMix");
@@ -69,6 +71,8 @@ const valueDisplays = {
   drift: document.getElementById("driftValue"),
   stereoWidth:
   document.getElementById("stereoWidthValue"),
+  voiceSpread:
+    document.getElementById("voiceSpreadValue"),
   reverbMix: document.getElementById("reverbMixValue"),
   reverbDecay: document.getElementById("reverbDecayValue"),
   delayMix: document.getElementById("delayMixValue"),
