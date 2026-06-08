@@ -67,6 +67,8 @@ const valueDisplays = {
   lfoRate: document.getElementById("lfoRateValue"),
   lfoAmount: document.getElementById("lfoAmountValue"),
   drift: document.getElementById("driftValue"),
+  stereoWidth:
+  document.getElementById("stereoWidthValue"),
   reverbMix: document.getElementById("reverbMixValue"),
   reverbDecay: document.getElementById("reverbDecayValue"),
   delayMix: document.getElementById("delayMixValue"),
