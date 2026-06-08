@@ -267,7 +267,7 @@ const driftAmount = getValue(driftSlider, 0);
 const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.6;
 
 const voiceSpread = getValue(voiceSpreadSlider, 0);
-const spreadCents = voiceSpread * 0.35;
+const spreadCents = voiceSpread * 1.5;
   
   oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
   oscillatorA.frequency.value = frequency;
