@@ -239,11 +239,12 @@ function createNote(frequency) {
   const sustain = getValue(sustainSlider, 0.7);
 
   const oscillatorA = ctx.createOscillator();
-  const oscillatorB = ctx.createOscillator();
-  const oscAGain = ctx.createGain();
-  const oscBGain = ctx.createGain();
-  const filter = ctx.createBiquadFilter();
-  const noteGain = ctx.createGain();
+const oscillatorB = ctx.createOscillator();
+const oscAGain = ctx.createGain();
+const oscBGain = ctx.createGain();
+const filter = ctx.createBiquadFilter();
+const noteGain = ctx.createGain();
+const stereoPanner = ctx.createStereoPanner();
 
 const driftAmount = getValue(driftSlider, 0);
 const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.6;
@@ -278,10 +279,12 @@ oscillatorB.detune.value = getValue(oscBDetuneSlider, 7) - driftCents;
   oscBGain.connect(filter);
   filter.connect(noteGain);
 
-  noteGain.connect(dryGain);
-  noteGain.connect(reverbNode);
-  noteGain.connect(delayDryGain);
-  noteGain.connect(delayNode);
+noteGain.connect(stereoPanner);
+
+stereoPanner.connect(dryGain);
+stereoPanner.connect(reverbNode);
+stereoPanner.connect(delayDryGain);
+stereoPanner.connect(delayNode);
 
   oscillatorA.start();
   oscillatorB.start();
