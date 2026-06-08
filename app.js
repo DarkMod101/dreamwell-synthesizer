@@ -302,6 +302,7 @@ stereoPanner.connect(delayNode);
 }
 
 function playNote(frequency) {
+  if (activeNotes.size >= 10) return;
   const noteId = String(frequency);
   if (activeNotes.has(noteId)) return;
 
