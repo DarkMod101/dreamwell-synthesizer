@@ -122,6 +122,10 @@ function updateValueDisplays() {
   setDisplay(valueDisplays.lfoRate, `${getValue(lfoRateSlider, 2).toFixed(1)} Hz`);
   setDisplay(valueDisplays.lfoAmount, `${Math.round(getValue(lfoAmountSlider, 0))}`);
   setDisplay(valueDisplays.drift, `${getValue(driftSlider, 0).toFixed(1)}`);
+  setDisplay(
+  valueDisplays.stereoWidth,
+  `${Math.round(getValue(stereoWidthSlider, 0))}%`
+);
   setDisplay(valueDisplays.reverbMix, percent(getValue(reverbMixSlider, 0.25)));
   setDisplay(valueDisplays.reverbDecay, seconds(getValue(reverbDecaySlider, 3)));
   setDisplay(valueDisplays.delayMix, percent(getValue(delayMixSlider, 0.55)));
