@@ -286,7 +286,7 @@ oscillatorB.detune.value =
   filter.Q.value = getValue(resonanceSlider, 1);
 
 if (voiceSpread > 0) {
-  const unisonLevel = (voiceSpread / 100) * 0.18;
+  const unisonLevel = (voiceSpread / 100) * 0.08;
 
   function addUnisonOscillator(type, detune) {
     const osc = ctx.createOscillator();
