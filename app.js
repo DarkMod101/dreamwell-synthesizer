@@ -762,6 +762,8 @@ function applyPresetSettings(preset) {
   lfoAmountSlider.value = preset.lfoAmount;
   lfoDestinationSelect.value = preset.lfoDestination;
 
+voiceSpreadSlider.value = preset.voiceSpread || 0;
+  
   reverbMixSlider.value = preset.reverbMix;
   reverbDecaySlider.value = preset.reverbDecay;
 
