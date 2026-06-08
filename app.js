@@ -130,6 +130,10 @@ function updateValueDisplays() {
   valueDisplays.stereoWidth,
   `${Math.round(getValue(stereoWidthSlider, 0))}%`
 );
+  setDisplay(
+    valueDisplays.voiceSpread,
+    `${Math.round(getValue(voiceSpreadSlider, 0))}%`
+);
   setDisplay(valueDisplays.reverbMix, percent(getValue(reverbMixSlider, 0.25)));
   setDisplay(valueDisplays.reverbDecay, seconds(getValue(reverbDecaySlider, 3)));
   setDisplay(valueDisplays.delayMix, percent(getValue(delayMixSlider, 0.55)));
