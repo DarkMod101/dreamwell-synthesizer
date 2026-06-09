@@ -510,6 +510,7 @@ bindSlider(delayFeedbackSlider, () => {
   driftSlider,
   stereoWidthSlider,
   voiceSpreadSlider,
+  noiseAmountSlider,
 ].forEach((slider) => bindSlider(slider));
 
 if (voiceSpreadSlider) {
