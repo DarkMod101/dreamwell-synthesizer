@@ -307,6 +307,14 @@ oscillatorB.detune.value =
   filter.frequency.value = getValue(cutoffSlider, 4000);
   filter.Q.value = getValue(resonanceSlider, 1);
 
+  const noiseAmount = getValue(noiseAmountSlider, 0);
+
+noiseSource.buffer = createNoiseBuffer(ctx);
+noiseSource.loop = true;
+
+noiseGain.gain.value =
+    (noiseAmount / 100) * 0.04;
+  
 if (voiceSpread > 0) {
   const unisonLevel = (voiceSpread / 100) * 0.08;
 
