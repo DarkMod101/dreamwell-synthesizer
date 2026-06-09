@@ -361,6 +361,8 @@ if (voiceSpread > 0) {
   oscillatorB.connect(oscBGain);
   oscAGain.connect(filter);
   oscBGain.connect(filter);
+  noiseSource.connect(noiseGain);
+noiseGain.connect(filter);
   filter.connect(noteGain);
 
 noteGain.connect(stereoPanner);
@@ -372,8 +374,10 @@ stereoPanner.connect(delayNode);
 
   oscillatorA.start();
   oscillatorB.start();
-
-  return { oscillatorA, oscillatorB, noteGain, lfoNodes };
+  noiseSource.start();
+  return { oscillatorA, oscillatorB, noteGain, lfoNodes,
+  noiseSource,
+  noiseGain, };
 }
 
 function playNote(frequency) {
@@ -404,6 +408,12 @@ function stopNote(frequency) {
   note.oscillatorA.stop(ctx.currentTime + release + 0.05);
   note.oscillatorB.stop(ctx.currentTime + release + 0.05);
 
+if (note.noiseSource) {
+  note.noiseSource.stop(ctx.currentTime + release + 0.05);
+  note.noiseSource.disconnect();
+  note.noiseGain.disconnect();
+}
+  
   if (note.lfoNodes) {
     note.lfoNodes.lfo.stop(ctx.currentTime + release + 0.05);
     note.lfoNodes.lfo.disconnect();
