@@ -41,6 +41,8 @@ const stereoWidthSlider =
   document.getElementById("stereoWidth");
 const voiceSpreadSlider =
     document.getElementById("voiceSpread");
+const noiseAmountSlider =
+    document.getElementById("noiseAmount");
 const driftValue = document.getElementById("driftValue");
 
 const reverbMixSlider = document.getElementById("reverbMix");
@@ -73,6 +75,8 @@ const valueDisplays = {
   document.getElementById("stereoWidthValue"),
   voiceSpread:
     document.getElementById("voiceSpreadValue"),
+  noiseAmount:
+    document.getElementById("noiseAmountValue"),
   reverbMix: document.getElementById("reverbMixValue"),
   reverbDecay: document.getElementById("reverbDecayValue"),
   delayMix: document.getElementById("delayMixValue"),
@@ -133,6 +137,10 @@ function updateValueDisplays() {
   setDisplay(
     valueDisplays.voiceSpread,
     `${Math.round(getValue(voiceSpreadSlider, 0))}%`
+);
+  setDisplay(
+    valueDisplays.noiseAmount,
+    `${Math.round(getValue(noiseAmountSlider, 0))}%`
 );
   setDisplay(valueDisplays.reverbMix, percent(getValue(reverbMixSlider, 0.25)));
   setDisplay(valueDisplays.reverbDecay, seconds(getValue(reverbDecaySlider, 3)));
