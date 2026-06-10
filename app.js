@@ -439,6 +439,12 @@ function stopNote(frequency) {
   note.oscillatorA.stop(ctx.currentTime + release + 0.05);
   note.oscillatorB.stop(ctx.currentTime + release + 0.05);
 
+if (note.subOscillator) {
+  note.subOscillator.stop(ctx.currentTime + release + 0.05);
+  note.subOscillator.disconnect();
+  note.subGain.disconnect();
+}
+  
 if (note.noiseSource) {
   note.noiseSource.stop(ctx.currentTime + release + 0.05);
   note.noiseSource.disconnect();
