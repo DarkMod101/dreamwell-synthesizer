@@ -82,7 +82,7 @@ const valueDisplays = {
   noiseAmount:
     document.getElementById("noiseAmountValue"),
   subLevel:
-document.getElementById("subLevelValue")
+document.getElementById("subLevelValue"),
   reverbMix: document.getElementById("reverbMixValue"),
   reverbDecay: document.getElementById("reverbDecayValue"),
   delayMix: document.getElementById("delayMixValue"),
