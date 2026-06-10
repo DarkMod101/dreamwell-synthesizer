@@ -17,6 +17,8 @@ const subWaveformSelect =
 document.getElementById("subWaveform");
 const oscBLevelSlider = document.getElementById("oscBLevel");
 const oscBDetuneSlider = document.getElementById("oscBDetune");
+const subLevelSlider =
+document.getElementById("subLevel");
 const masterVolume = document.getElementById("masterVolume");
 const keys = document.querySelectorAll(".key");
 
