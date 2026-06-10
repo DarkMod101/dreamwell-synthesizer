@@ -325,7 +325,9 @@ subOscillator.frequency.value =
   
   oscAGain.gain.value = 0.65;
   oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
-
+subGain.gain.value =
+  getValue(subLevelSlider, 0) / 100 * 0.35;
+  
   filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
   filter.frequency.value = getValue(cutoffSlider, 4000);
   filter.Q.value = getValue(resonanceSlider, 1);
