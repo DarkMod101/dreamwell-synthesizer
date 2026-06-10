@@ -403,6 +403,7 @@ stereoPanner.connect(delayNode);
 
   oscillatorA.start();
   oscillatorB.start();
+  subOscillator.start();
   noiseSource.start();
   return { oscillatorA, oscillatorB, noteGain, lfoNodes,
   noiseSource,
