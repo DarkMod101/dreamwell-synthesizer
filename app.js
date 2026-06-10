@@ -287,12 +287,15 @@ function createNote(frequency) {
   const oscillatorA = ctx.createOscillator();
 const oscillatorB = ctx.createOscillator();
   const subOscillator = ctx.createOscillator();
-const subGain = ctx.createGain();
+
+const subGain = ctx.createGain();  
 const oscAGain = ctx.createGain();
 const oscBGain = ctx.createGain();
+  
 const filter = ctx.createBiquadFilter();
 const noteGain = ctx.createGain();
 const stereoPanner = ctx.createStereoPanner();
+  
   const noiseSource = ctx.createBufferSource();
 const noiseGain = ctx.createGain();
 stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 0) / 100);
@@ -312,6 +315,14 @@ oscillatorA.detune.value = driftCents;
 oscillatorB.detune.value =
   getValue(oscBDetuneSlider, 7) - driftCents;
 
+subOscillator.type =
+    subWaveformSelect
+        ? subWaveformSelect.value
+        : "sine";
+
+subOscillator.frequency.value =
+    frequency / 2;
+  
   oscAGain.gain.value = 0.65;
   oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
 
