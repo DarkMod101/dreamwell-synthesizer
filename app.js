@@ -160,6 +160,10 @@ function updateValueDisplays() {
     valueDisplays.noiseAmount,
     `${Math.round(getValue(noiseAmountSlider, 0))}%`
 );
+  setDisplay(
+  valueDisplays.subLevel,
+  `${Math.round(getValue(subLevelSlider, 0))}%`
+);
   setDisplay(valueDisplays.reverbMix, percent(getValue(reverbMixSlider, 0.25)));
   setDisplay(valueDisplays.reverbDecay, seconds(getValue(reverbDecaySlider, 3)));
   setDisplay(valueDisplays.delayMix, percent(getValue(delayMixSlider, 0.55)));
