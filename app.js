@@ -13,6 +13,8 @@ const activeTouchKeys = new Map();
 
 const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
+const subWaveformSelect =
+document.getElementById("subWaveform");
 const oscBLevelSlider = document.getElementById("oscBLevel");
 const oscBDetuneSlider = document.getElementById("oscBDetune");
 const masterVolume = document.getElementById("masterVolume");
