@@ -286,6 +286,8 @@ function createNote(frequency) {
 
   const oscillatorA = ctx.createOscillator();
 const oscillatorB = ctx.createOscillator();
+  const subOscillator = ctx.createOscillator();
+const subGain = ctx.createGain();
 const oscAGain = ctx.createGain();
 const oscBGain = ctx.createGain();
 const filter = ctx.createBiquadFilter();
