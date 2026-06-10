@@ -384,8 +384,12 @@ if (voiceSpread > 0) {
 
   oscillatorA.connect(oscAGain);
   oscillatorB.connect(oscBGain);
+  subOscillator.connect(subGain);
+  
   oscAGain.connect(filter);
   oscBGain.connect(filter);
+  subGain.connect(filter);
+  
   noiseSource.connect(noiseGain);
 noiseGain.connect(noteGain);
   filter.connect(noteGain);
