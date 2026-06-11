@@ -982,30 +982,113 @@ function getCurrentPresetSettings() {
 }
 
 if (saveUserPresetButton) {
-  saveUserPresetButton.addEventListener("click", () => {
-    localStorage.setItem(
-      "dreamwellUserPreset",
-      JSON.stringify(getCurrentPresetSettings())
-    );
+const USER_PRESETS_KEY = "dreamwellNamedPresets";
 
-    if (presetMessage) presetMessage.textContent = "Preset saved.";
+function getSavedPresets() {
+  return JSON.parse(localStorage.getItem(USER_PRESETS_KEY)) || {};
+}
+
+function saveSavedPresets(presets) {
+  localStorage.setItem(USER_PRESETS_KEY, JSON.stringify(presets));
+}
+
+function refreshSavedPresetList() {
+  const presets = getSavedPresets();
+  const names = Object.keys(presets);
+
+  savedPresetSelect.innerHTML = "";
+
+  if (names.length === 0) {
+    savedPresetSelect.innerHTML = `<option value="">No Saved Presets</option>`;
+    return;
+  }
+
+  names.forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    savedPresetSelect.appendChild(option);
   });
 }
 
-if (loadUserPresetButton) {
-  loadUserPresetButton.addEventListener("click", () => {
-    const savedPreset = localStorage.getItem("dreamwellUserPreset");
+if (saveNamedPresetButton) {
+  saveNamedPresetButton.addEventListener("click", () => {
+    const name = presetNameInput.value.trim();
 
-    if (!savedPreset) {
-      if (presetMessage) presetMessage.textContent = "No saved preset found.";
+    if (!name) {
+      if (presetMessage) presetMessage.textContent = "Enter a preset name.";
       return;
     }
 
-    applyPresetSettings(JSON.parse(savedPreset));
+    const presets = getSavedPresets();
+    presets[name] = getCurrentPresetSettings();
+    saveSavedPresets(presets);
+    refreshSavedPresetList();
 
-    if (presetMessage) presetMessage.textContent = "Preset loaded.";
+    savedPresetSelect.value = name;
+
+    if (presetMessage) presetMessage.textContent = `"${name}" saved.`;
   });
 }
+
+if (loadNamedPresetButton) {
+  loadNamedPresetButton.addEventListener("click", () => {
+    const name = savedPresetSelect.value;
+    const presets = getSavedPresets();
+
+    if (!name || !presets[name]) {
+      if (presetMessage) presetMessage.textContent = "No preset selected.";
+      return;
+    }
+
+    applyPresetSettings(presets[name]);
+    presetNameInput.value = name;
+
+    if (presetMessage) presetMessage.textContent = `"${name}" loaded.`;
+  });
+}
+
+if (deleteNamedPresetButton) {
+  deleteNamedPresetButton.addEventListener("click", () => {
+    const name = savedPresetSelect.value;
+    const presets = getSavedPresets();
+
+    if (!name || !presets[name]) {
+      if (presetMessage) presetMessage.textContent = "No preset selected.";
+      return;
+    }
+
+    delete presets[name];
+    saveSavedPresets(presets);
+    refreshSavedPresetList();
+
+    if (presetMessage) presetMessage.textContent = `"${name}" deleted.`;
+  });
+}
+
+if (prevPresetButton) {
+  prevPresetButton.addEventListener("click", () => {
+    const options = Array.from(savedPresetSelect.options);
+
+    if (options.length <= 1 && !savedPresetSelect.value) return;
+
+    savedPresetSelect.selectedIndex =
+      (savedPresetSelect.selectedIndex - 1 + options.length) % options.length;
+  });
+}
+
+if (nextPresetButton) {
+  nextPresetButton.addEventListener("click", () => {
+    const options = Array.from(savedPresetSelect.options);
+
+    if (options.length <= 1 && !savedPresetSelect.value) return;
+
+    savedPresetSelect.selectedIndex =
+      (savedPresetSelect.selectedIndex + 1) % options.length;
+  });
+}
+
+refreshSavedPresetList();
 
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
