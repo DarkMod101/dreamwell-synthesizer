@@ -981,7 +981,6 @@ function getCurrentPresetSettings() {
   };
 }
 
-if (saveUserPresetButton) {
 const USER_PRESETS_KEY = "dreamwellNamedPresets";
 
 function getSavedPresets() {
@@ -1088,7 +1087,7 @@ if (nextPresetButton) {
   });
 }
 
-refreshSavedPresetList();
+refreshSavedPresetList();    
 
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
