@@ -1013,6 +1013,9 @@ function refreshSavedPresetList() {
 if (saveNamedPresetButton) {
   saveNamedPresetButton.addEventListener("click", () => {
     const name = presetNameInput.value.trim();
+    const confirmed = confirm(`Save preset "${name}"?`);
+
+if (!confirmed) return;
 
     if (!name) {
       if (presetMessage) presetMessage.textContent = "Enter a preset name.";
@@ -1050,6 +1053,9 @@ if (loadNamedPresetButton) {
 if (deleteNamedPresetButton) {
   deleteNamedPresetButton.addEventListener("click", () => {
     const name = savedPresetSelect.value;
+    const confirmed = confirm(`Delete preset "${name}"? This cannot be undone.`);
+
+if (!confirmed) return;
     const presets = getSavedPresets();
 
     if (!name || !presets[name]) {
