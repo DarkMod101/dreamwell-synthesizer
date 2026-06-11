@@ -36,8 +36,45 @@
   </div>
 
   <div class="user-preset-tools">
-    <button id="saveUserPreset" class="preset-action">Save Current Preset</button>
-    <button id="loadUserPreset" class="preset-action">Load Saved Preset</button>
+
+  <label>
+    Preset Name
+    <input
+      id="presetNameInput"
+      type="text"
+      placeholder="The Abyss v2">
+  </label>
+
+  <button id="saveNamedPreset" class="preset-action">
+    Save Preset
+  </button>
+
+  <div class="preset-browser">
+
+    <button id="prevPreset" class="preset-action">
+      ◀
+    </button>
+
+    <select id="savedPresetSelect">
+      <option value="">
+        No Saved Presets
+      </option>
+    </select>
+
+    <button id="nextPreset" class="preset-action">
+      ▶
+    </button>
+
+  </div>
+
+  <button id="loadNamedPreset" class="preset-action">
+    Load Preset
+  </button>
+
+  <button id="deleteNamedPreset" class="preset-action">
+    Delete Preset
+  </button>
+
   </div>
 
   <p id="presetMessage" class="preset-message"></p>
