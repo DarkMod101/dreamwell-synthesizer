@@ -338,7 +338,7 @@ noiseSource.buffer = createNoiseBuffer(ctx);
 noiseSource.loop = true;
 
 noiseGain.gain.value =
-  (noiseAmount / 100) * 0.25;
+  (noiseAmount / 100) * 0.08;
   
 if (voiceSpread > 0) {
   const unisonLevel = (voiceSpread / 100) * 0.08;
