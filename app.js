@@ -391,7 +391,7 @@ if (voiceSpread > 0) {
   subGain.connect(filter);
   
   noiseSource.connect(noiseGain);
-noiseGain.connect(noteGain);
+noiseGain.connect(filter);
   filter.connect(noteGain);
 
 noteGain.connect(stereoPanner);
