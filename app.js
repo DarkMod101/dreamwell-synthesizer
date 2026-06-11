@@ -56,8 +56,26 @@ const delayMixSlider = document.getElementById("delayMix");
 const delayTimeSlider = document.getElementById("delayTime");
 const delayFeedbackSlider = document.getElementById("delayFeedback");
 
-const saveUserPresetButton = document.getElementById("saveUserPreset");
-const loadUserPresetButton = document.getElementById("loadUserPreset");
+const presetNameInput =
+  document.getElementById("presetNameInput");
+
+const saveNamedPresetButton =
+  document.getElementById("saveNamedPreset");
+
+const savedPresetSelect =
+  document.getElementById("savedPresetSelect");
+
+const prevPresetButton =
+  document.getElementById("prevPreset");
+
+const nextPresetButton =
+  document.getElementById("nextPreset");
+
+const loadNamedPresetButton =
+  document.getElementById("loadNamedPreset");
+
+const deleteNamedPresetButton =
+  document.getElementById("deleteNamedPreset");
 const presetMessage = document.getElementById("presetMessage");
 
 const presetGrid = document.getElementById("presetGrid");
