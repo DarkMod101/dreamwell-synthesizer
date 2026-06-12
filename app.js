@@ -346,6 +346,9 @@ const oscBGain = ctx.createGain();
   
 const filter = ctx.createBiquadFilter();
 const noiseFilter = ctx.createBiquadFilter();
+noiseFilter.type = "lowpass";
+noiseFilter.frequency.value = 12000;
+noiseFilter.Q.value = 0.1;
   
 const noteGain = ctx.createGain();
 
