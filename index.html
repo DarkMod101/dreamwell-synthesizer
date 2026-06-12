@@ -142,14 +142,28 @@
 </label>
 
 <label>
-  <span>Noise Layer <strong id="noiseAmountValue">0%</strong></span>
-  <input id="noiseAmount"
-         type="range"
-         min="0"
-         max="100"
-         step="1"
-         value="0">
+  <span>Texture Type</span>
+  <select id="noiseType">
+    <option value="white">White</option>
+    <option value="dark">Dark Void</option>
+    <option value="air">Air</option>
+    <option value="dust">Stardust</option>
+    <option value="machine">Ancient Machine</option>
+    <option value="cosmic">Cosmic</option>
+  </select>
 </label>
+
+<label>
+  <span>Noise Layer <strong id="noiseAmountValue">0%</strong></span>
+  <input
+    id="noiseAmount"
+    type="range"
+    min="0"
+    max="100"
+    step="1"
+    value="0">
+</label>
+        
         
 <label>
  <span>Drift <strong id="driftValue">0</strong></span>
