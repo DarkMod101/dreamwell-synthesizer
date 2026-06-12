@@ -145,9 +145,41 @@ function createNoiseBuffer(ctx) {
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
 
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = Math.random() * 2 - 1;
-  }
+  const type = noiseTypeSelect?.value || "white";
+
+for (let i = 0; i < bufferSize; i++) {
+    let sample = Math.random() * 2 - 1;
+
+    switch (type) {
+        case "dark":
+            sample *= 0.3;
+            break;
+
+        case "air":
+            sample *= 0.15;
+            break;
+
+        case "dust":
+            sample = (Math.random() < 0.03)
+                ? (Math.random() * 2 - 1)
+                : 0;
+            break;
+
+        case "machine":
+            sample = Math.sign(sample) * Math.abs(sample) * 0.6;
+            break;
+
+        case "cosmic":
+            sample *= Math.sin(i * 0.0005);
+            break;
+
+        case "white":
+        default:
+            break;
+    }
+
+    data[i] = sample;
+}
 
   return buffer;
 }
