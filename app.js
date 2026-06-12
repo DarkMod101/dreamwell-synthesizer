@@ -417,10 +417,9 @@ if (voiceSpread > 0) {
   oscBGain.connect(filter);
   subGain.connect(filter);
   
-  noiseSource.connect(noiseFilter);
-noiseFilter.connect(noiseGain);
+  noiseSource.connect(noiseGain);
 noiseGain.connect(filter);
-
+  
 noteGain.connect(stereoPanner);
 
 stereoPanner.connect(dryGain);
