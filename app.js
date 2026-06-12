@@ -45,6 +45,8 @@ const stereoWidthSlider =
   document.getElementById("stereoWidth");
 const voiceSpreadSlider =
     document.getElementById("voiceSpread");
+const noiseTypeSelect =
+  document.getElementById("noiseType");
 const noiseAmountSlider =
     document.getElementById("noiseAmount");
 const driftValue = document.getElementById("driftValue");
