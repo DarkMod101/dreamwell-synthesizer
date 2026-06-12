@@ -700,4 +700,497 @@ const presetBanks = {
         voiceSpread: 40,
         attack: 0.2,
         decay: 0.8,
-       
+       sustain: 0.8,
+        release: 2,
+        filterType: "lowpass",
+        cutoff: 2500,
+        resonance: 5,
+        lfoRate: 2,
+        lfoAmount: 200,
+        lfoDestination: "filter",
+        reverbMix: 0.55,
+        reverbDecay: 4,
+        delayMix: 0.3,
+        delayTime: 0.38,
+        delayFeedback: 0.35,
+        masterVolume: 0.2,
+      },
+    },
+  
+    falling: {
+      name: "Falling",
+      settings: {
+        waveform: "sine",
+        waveformB: "triangle",
+        oscBLevel: 0.45,
+        oscBDetune: -12,
+        voiceSpread: 40,
+        attack: 3,
+        decay: 2,
+        sustain: 0.5,
+        release: 5,
+        filterType: "lowpass",
+        cutoff: 900,
+        resonance: 3,
+        lfoRate: 0.1,
+        lfoAmount: 500,
+        lfoDestination: "filter",
+        reverbMix: 0.9,
+        reverbDecay: 7,
+        delayMix: 0.45,
+        delayTime: 0.75,
+        delayFeedback: 0.45,
+        masterVolume: 0.15,
+      },
+    },
+
+    voidGate: {
+      name: "Void Gate",
+      settings: {
+        waveform: "sawtooth",
+        waveformB: "triangle",
+        oscBLevel: 0.28,
+        oscBDetune: -9,
+        voiceSpread: 40,
+        attack: 2.5,
+        decay: 1.8,
+        sustain: 0.75,
+        release: 5.5,
+        filterType: "lowpass",
+        cutoff: 650,
+        resonance: 6,
+        lfoRate: 0.15,
+        lfoAmount: 450,
+        lfoDestination: "filter",
+        reverbMix: 0.88,
+        reverbDecay: 7,
+        delayMix: 0.42,
+        delayTime: 0.68,
+        delayFeedback: 0.48,
+        masterVolume: 0.16,
+      },
+    },
+
+    astralPiano: {
+      name: "Astral Piano",
+      settings: {
+        waveform: "triangle",
+        waveformB: "sine",
+        oscBLevel: 0.22,
+        oscBDetune: 4,
+        voiceSpread: 40,
+        attack: 0.03,
+        decay: 1.4,
+        sustain: 0.35,
+        release: 2.8,
+        filterType: "lowpass",
+        cutoff: 3200,
+        resonance: 2,
+        lfoRate: 0.25,
+        lfoAmount: 80,
+        lfoDestination: "filter",
+        reverbMix: 0.7,
+        reverbDecay: 5,
+        delayMix: 0.32,
+        delayTime: 0.42,
+        delayFeedback: 0.28,
+        masterVolume: 0.2,
+      },
+    },
+
+    portalKey: {
+      name: "Portal Key",
+      settings: {
+        waveform: "square",
+        waveformB: "triangle",
+        oscBLevel: 0.3,
+        oscBDetune: 7,
+        voiceSpread: 40,
+        attack: 0.08,
+        decay: 0.9,
+        sustain: 0.55,
+        release: 2.2,
+        filterType: "lowpass",
+        cutoff: 2100,
+        resonance: 5,
+        lfoRate: 1.2,
+        lfoAmount: 180,
+        lfoDestination: "filter",
+        reverbMix: 0.62,
+        reverbDecay: 4.5,
+        delayMix: 0.45,
+        delayTime: 0.5,
+        delayFeedback: 0.4,
+        masterVolume: 0.18,
+      },
+    },
+
+    cathedral: {
+      name: "Cathedral",
+      settings: {
+        waveform: "sine",
+        waveformB: "triangle",
+        oscBLevel: 0.35,
+        oscBDetune: -5,
+        voiceSpread: 40,
+        attack: 2.2,
+        decay: 2,
+        sustain: 0.85,
+        release: 6,
+        filterType: "lowpass",
+        cutoff: 1400,
+        resonance: 3,
+        lfoRate: 0.18,
+        lfoAmount: 220,
+        lfoDestination: "filter",
+        reverbMix: 0.95,
+        reverbDecay: 8,
+        delayMix: 0.28,
+        delayTime: 0.6,
+        delayFeedback: 0.32,
+        masterVolume: 0.17,
+      },
+    },
+
+    ancientMachine: {
+      name: "Ancient Machine",
+      settings: {
+        waveform: "sawtooth",
+        waveformB: "square",
+        oscBLevel: 0.32,
+        oscBDetune: 11,
+        voiceSpread: 40,
+        attack: 0.12,
+        decay: 0.7,
+        sustain: 0.65,
+        release: 1.8,
+        filterType: "lowpass",
+        cutoff: 1800,
+        resonance: 8,
+        lfoRate: 3.5,
+        lfoAmount: 260,
+        lfoDestination: "filter",
+        reverbMix: 0.55,
+        reverbDecay: 4,
+        delayMix: 0.5,
+        delayTime: 0.33,
+        delayFeedback: 0.55,
+        masterVolume: 0.18,
+      },
+    },
+  },
+
+  keys: {},
+  pads: {},
+  leads: {},
+  bass: {},
+  textures: {},
+};
+
+function applyPresetSettings(preset) {
+  if (!preset) return;
+
+  waveformSelect.value = preset.waveform;
+  waveformBSelect.value = preset.waveformB;
+  oscBLevelSlider.value = preset.oscBLevel;
+  oscBDetuneSlider.value = preset.oscBDetune;
+
+  attackSlider.value = preset.attack;
+  decaySlider.value = preset.decay;
+  sustainSlider.value = preset.sustain;
+  releaseSlider.value = preset.release;
+
+  filterTypeSelect.value = preset.filterType;
+  cutoffSlider.value = preset.cutoff;
+  resonanceSlider.value = preset.resonance;
+
+  lfoRateSlider.value = preset.lfoRate;
+  lfoAmountSlider.value = preset.lfoAmount;
+  lfoDestinationSelect.value = preset.lfoDestination;
+
+voiceSpreadSlider.value = preset.voiceSpread || 0;
+
+  noiseTypeSelect.value = preset.noiseType ?? "white";
+noiseAmountSlider.value = preset.noiseAmount ?? 0;
+driftSlider.value = preset.drift ?? 0;
+stereoWidthSlider.value = preset.stereoWidth ?? 0;
+  
+  reverbMixSlider.value = preset.reverbMix;
+  reverbDecaySlider.value = preset.reverbDecay;
+
+  delayMixSlider.value = preset.delayMix;
+  delayTimeSlider.value = preset.delayTime;
+  delayFeedbackSlider.value = preset.delayFeedback;
+
+  masterVolume.value = preset.masterVolume;
+
+  updateValueDisplays();
+  stopAllNotes();
+}
+
+function renderPresetBank(bankName) {
+  if (!presetGrid) return;
+
+  const bank = presetBanks[bankName] || {};
+  presetGrid.innerHTML = "";
+
+  const presetEntries = Object.entries(bank);
+
+  if (presetEntries.length === 0) {
+    presetGrid.innerHTML = `<p class="preset-message">No presets in this bank yet.</p>`;
+    return;
+  }
+
+  presetEntries.forEach(([presetId, presetData]) => {
+    const button = document.createElement("button");
+    button.className = "preset-btn";
+    button.dataset.preset = presetId;
+    button.textContent = presetData.name;
+
+    button.addEventListener("click", () => {
+      applyPresetSettings(presetData.settings);
+    });
+
+    presetGrid.appendChild(button);
+  });
+}
+
+bankButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    bankButtons.forEach((btn) => btn.classList.remove("active-bank"));
+    button.classList.add("active-bank");
+    renderPresetBank(button.dataset.bank);
+  });
+});
+
+function getCurrentPresetSettings() {
+  return {
+    waveform: waveformSelect.value,
+    waveformB: waveformBSelect.value,
+    oscBLevel: oscBLevelSlider.value,
+    oscBDetune: oscBDetuneSlider.value,
+    attack: attackSlider.value,
+    decay: decaySlider.value,
+    sustain: sustainSlider.value,
+    release: releaseSlider.value,
+    filterType: filterTypeSelect.value,
+    cutoff: cutoffSlider.value,
+    resonance: resonanceSlider.value,
+    lfoRate: lfoRateSlider.value,
+    lfoAmount: lfoAmountSlider.value,
+    lfoDestination: lfoDestinationSelect.value,
+    voiceSpread: voiceSpreadSlider.value,
+noiseType: noiseTypeSelect.value,
+noiseAmount: noiseAmountSlider.value,
+drift: driftSlider.value,
+stereoWidth: stereoWidthSlider.value,
+    reverbMix: reverbMixSlider.value,
+    reverbDecay: reverbDecaySlider.value,
+    delayMix: delayMixSlider.value,
+    delayTime: delayTimeSlider.value,
+    delayFeedback: delayFeedbackSlider.value,
+    masterVolume: masterVolume.value,
+  };
+}
+
+const USER_PRESETS_KEY = "dreamwellNamedPresets";
+
+function getSavedPresets() {
+  return JSON.parse(localStorage.getItem(USER_PRESETS_KEY)) || {};
+}
+
+function saveSavedPresets(presets) {
+  localStorage.setItem(USER_PRESETS_KEY, JSON.stringify(presets));
+}
+
+function refreshSavedPresetList() {
+  const presets = getSavedPresets();
+  const names = Object.keys(presets);
+
+  savedPresetSelect.innerHTML = "";
+
+  if (names.length === 0) {
+    savedPresetSelect.innerHTML = `<option value="">No Saved Presets</option>`;
+    return;
+  }
+
+  names.forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    savedPresetSelect.appendChild(option);
+  });
+}
+
+if (saveNamedPresetButton) {
+  saveNamedPresetButton.addEventListener("click", () => {
+    const name = presetNameInput.value.trim();
+    const confirmed = confirm(`Save preset "${name}"?`);
+
+if (!confirmed) return;
+
+    if (!name) {
+      if (presetMessage) presetMessage.textContent = "Enter a preset name.";
+      return;
+    }
+
+    const presets = getSavedPresets();
+    presets[name] = getCurrentPresetSettings();
+    saveSavedPresets(presets);
+    refreshSavedPresetList();
+
+    savedPresetSelect.value = name;
+
+    if (presetMessage) presetMessage.textContent = `"${name}" saved.`;
+  });
+}
+
+if (loadNamedPresetButton) {
+  loadNamedPresetButton.addEventListener("click", () => {
+    const name = savedPresetSelect.value;
+    const presets = getSavedPresets();
+
+    if (!name || !presets[name]) {
+      if (presetMessage) presetMessage.textContent = "No preset selected.";
+      return;
+    }
+
+    applyPresetSettings(presets[name]);
+    presetNameInput.value = name;
+
+    if (presetMessage) presetMessage.textContent = `"${name}" loaded.`;
+  });
+}
+
+if (deleteNamedPresetButton) {
+  deleteNamedPresetButton.addEventListener("click", () => {
+    const name = savedPresetSelect.value;
+    const confirmed = confirm(`Delete preset "${name}"? This cannot be undone.`);
+
+if (!confirmed) return;
+    const presets = getSavedPresets();
+
+    if (!name || !presets[name]) {
+      if (presetMessage) presetMessage.textContent = "No preset selected.";
+      return;
+    }
+
+    delete presets[name];
+    saveSavedPresets(presets);
+    refreshSavedPresetList();
+
+    if (presetMessage) presetMessage.textContent = `"${name}" deleted.`;
+  });
+}
+
+if (prevPresetButton) {
+  prevPresetButton.addEventListener("click", () => {
+    const options = Array.from(savedPresetSelect.options);
+
+    if (options.length <= 1 && !savedPresetSelect.value) return;
+
+    savedPresetSelect.selectedIndex =
+      (savedPresetSelect.selectedIndex - 1 + options.length) % options.length;
+  });
+}
+
+if (nextPresetButton) {
+  nextPresetButton.addEventListener("click", () => {
+    const options = Array.from(savedPresetSelect.options);
+
+    if (options.length <= 1 && !savedPresetSelect.value) return;
+
+    savedPresetSelect.selectedIndex =
+      (savedPresetSelect.selectedIndex + 1) % options.length;
+  });
+}
+
+refreshSavedPresetList();    
+
+keys.forEach((key) => {
+  key.addEventListener("mousedown", () => {
+    playNote(getKeyFrequency(key));
+  });
+
+  key.addEventListener("mouseup", () => {
+    stopNote(getKeyFrequency(key));
+  });
+
+  key.addEventListener("mouseleave", () => {
+    stopNote(getKeyFrequency(key));
+  });
+});
+
+document.addEventListener(
+  "touchstart",
+  (event) => {
+    let touchedKeyboard = false;
+
+    Array.from(event.changedTouches).forEach((touch) => {
+      const key = getKeyFromPoint(touch.clientX, touch.clientY);
+
+      if (key) {
+        touchedKeyboard = true;
+        startTouchNote(touch);
+      }
+    });
+
+    if (touchedKeyboard) event.preventDefault();
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchmove",
+  (event) => {
+    let movedOnKeyboard = false;
+
+    Array.from(event.changedTouches).forEach((touch) => {
+      if (activeTouchKeys.has(touch.identifier)) {
+        movedOnKeyboard = true;
+        moveTouchNote(touch);
+      }
+    });
+
+    if (movedOnKeyboard) event.preventDefault();
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchend",
+  (event) => {
+    Array.from(event.changedTouches).forEach((touch) => {
+      stopTouchNote(touch);
+    });
+  },
+  { passive: false }
+);
+
+document.addEventListener(
+  "touchcancel",
+  (event) => {
+    Array.from(event.changedTouches).forEach((touch) => {
+      stopTouchNote(touch);
+    });
+  },
+  { passive: false }
+);
+
+if (octaveDownButton) {
+  octaveDownButton.addEventListener("click", () => {
+    octaveShift = Math.max(octaveShift - 1, -2);
+    updateKeyboardOctave();
+  });
+}
+
+if (octaveUpButton) {
+  octaveUpButton.addEventListener("click", () => {
+    octaveShift = Math.min(octaveShift + 1, 2);
+    updateKeyboardOctave();
+  });
+}
+
+renderPresetBank("signature");
+updateKeyboardOctave();
+updateValueDisplays();
