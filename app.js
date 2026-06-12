@@ -345,7 +345,11 @@ const oscAGain = ctx.createGain();
 const oscBGain = ctx.createGain();
   
 const filter = ctx.createBiquadFilter();
+const noiseFilter = ctx.createBiquadFilter();
+  
 const noteGain = ctx.createGain();
+
+  
 const stereoPanner = ctx.createStereoPanner();
   
   const noiseSource = ctx.createBufferSource();
