@@ -909,6 +909,11 @@ function applyPresetSettings(preset) {
   lfoDestinationSelect.value = preset.lfoDestination;
 
 voiceSpreadSlider.value = preset.voiceSpread || 0;
+
+  noiseTypeSelect.value = preset.noiseType ?? "white";
+noiseAmountSlider.value = preset.noiseAmount ?? 0;
+driftSlider.value = preset.drift ?? 0;
+stereoWidthSlider.value = preset.stereoWidth ?? 0;
   
   reverbMixSlider.value = preset.reverbMix;
   reverbDecaySlider.value = preset.reverbDecay;
