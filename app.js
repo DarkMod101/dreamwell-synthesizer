@@ -312,9 +312,8 @@ const subGain = ctx.createGain();
 const oscAGain = ctx.createGain();
 const oscBGain = ctx.createGain();
   
-
-  
-const noteGain = ctx.createGain();
+const filter = ctx.createBiquadFilter();
+  const noteGain = ctx.createGain();
 
   
 const stereoPanner = ctx.createStereoPanner();
