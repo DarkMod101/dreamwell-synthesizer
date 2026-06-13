@@ -360,7 +360,7 @@ subGain.gain.value =
 
   const noiseAmount = getValue(noiseAmountSlider, 0);
 
-noiseSource.buffer = createNoiseBuffer(ctx);
+noiseSource.buffer = createNoiseBuffer(ctx, noiseTypeSelect ? noiseTypeSelect.value : "white");
 noiseSource.loop = true;
 
 noiseGain.gain.value =
