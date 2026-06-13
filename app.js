@@ -149,8 +149,9 @@ function createNoiseBuffer(ctx, type = "white") {
     let sample = Math.random() * 2 - 1;
 
     if (type === "dark") {
-      sample *= 0.25;
-    }
+  const darkness = i / bufferSize;
+  sample *= 0.25 * (1 - darkness * 0.7);
+}
 
     data[i] = sample;
   }
