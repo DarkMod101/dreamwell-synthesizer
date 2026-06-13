@@ -154,9 +154,7 @@ function createNoiseBuffer(ctx, type = "white") {
 }
 
 if (type === "air") {
-  const previous = i > 0 ? data[i - 1] : 0;
-  sample = sample * 0.35 + previous * 0.65;
-  sample *= 0.35;
+  sample = sample > 0 ? sample * 0.22 : sample * 0.08;
 }
     
     data[i] = sample;
