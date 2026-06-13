@@ -153,6 +153,10 @@ function createNoiseBuffer(ctx, type = "white") {
   sample *= 0.25 * (1 - darkness * 0.7);
 }
 
+if (type === "air") {
+  sample *= 0.08;
+}
+    
     data[i] = sample;
   }
 
