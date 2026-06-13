@@ -140,13 +140,19 @@ function milliseconds(value) {
   return `${Math.round(value * 1000)} ms`;
 }
 
-function createNoiseBuffer(ctx) {
+function createNoiseBuffer(ctx, type = "white") {
   const bufferSize = ctx.sampleRate * 2;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
 
   for (let i = 0; i < bufferSize; i++) {
-    data[i] = Math.random() * 2 - 1;
+    let sample = Math.random() * 2 - 1;
+
+    if (type === "dark") {
+      sample *= 0.25;
+    }
+
+    data[i] = sample;
   }
 
   return buffer;
