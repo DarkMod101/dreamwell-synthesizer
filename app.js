@@ -610,6 +610,19 @@ if (note.noiseSource) {
     note.lfoNodes.lfoGain.disconnect();
   }
 
+if (note.livingTextureNodes) {
+  note.livingTextureNodes.forEach((node) => {
+    try {
+      if (node.stop) {
+        node.stop(ctx.currentTime + release + 0.05);
+      }
+      node.disconnect();
+    } catch (error) {
+      // Safe cleanup
+    }
+  });
+}
+  
   activeNotes.delete(noteId);
 }
 
