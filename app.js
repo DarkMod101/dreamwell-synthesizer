@@ -404,8 +404,9 @@ function addOrbit(rate, amount, type = "sine") {
 
   if (textureType === "dust") {
     addLFO(0.18, baseNoiseGain * 0.35, noiseGain.gain);
-  }
-
+    // Stardust orbit
+  addOrbit(0.035, 0.08);
+}
   if (textureType === "cosmic") {
   // Slow breathing distance
   addLFO(0.05, baseNoiseGain * 0.45, noiseGain.gain);
@@ -415,6 +416,9 @@ function addOrbit(rate, amount, type = "sine") {
 
   // Very subtle second movement so it feels less looped
   addLFO(0.011, baseNoiseGain * 0.18, noiseGain.gain);
+
+    // Deep Dream Orbit
+addOrbit(0.018, 0.05);
 }
   if (textureType === "machine") {
   // Slow hidden mechanism pulse
@@ -428,7 +432,11 @@ function addOrbit(rate, amount, type = "sine") {
 
   // Subtle ancient harmonic shift
   addLFO(0.021, 90, filter.frequency, "sine");
+
+  // Deep Dream Orbit
+  addOrbit(0.012, 0.035);
 }
+  
   if (textureType === "air") {
   // Gentle breathing
   addLFO(0.11, baseNoiseGain * 0.25, noiseGain.gain);
@@ -441,10 +449,15 @@ function addOrbit(rate, amount, type = "sine") {
 
   // Almost imperceptible long swell
   addLFO(0.017, 45, filter.frequency);
+
+    // Deep Dream Orbit
+addOrbit(0.028, 0.06);
 }
   if (textureType === "dark") {
     addLFO(0.045, baseNoiseGain * 0.3, noiseGain.gain);
     addLFO(0.035, 60, filter.frequency);
+    // Deep Dream Orbit
+addOrbit(0.009, 0.025);
   }
 
   return motionNodes;
