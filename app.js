@@ -361,6 +361,57 @@ function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   return { lfo, lfoGain };
 }
 
+function createLivingTextureMotion(ctx, textureType, noiseGain, filter) {
+  const motionNodes = [];
+
+  function addLFO(rate, amount, destination, type = "sine") {
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+
+    lfo.type = type;
+    lfo.frequency.value = rate;
+    lfoGain.gain.value = amount;
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(destination);
+    lfo.start();
+
+    motionNodes.push(lfo, lfoGain);
+  }
+
+  const baseNoiseGain = noiseGain.gain.value;
+
+  if (baseNoiseGain <= 0) {
+    return motionNodes;
+  }
+
+  if (textureType === "dust") {
+    addLFO(0.18, baseNoiseGain * 0.35, noiseGain.gain);
+  }
+
+  if (textureType === "cosmic") {
+    addLFO(0.05, baseNoiseGain * 0.45, noiseGain.gain);
+    addLFO(0.025, 120, filter.frequency);
+  }
+
+  if (textureType === "machine") {
+    addLFO(0.09, baseNoiseGain * 0.25, noiseGain.gain, "triangle");
+    addLFO(0.12, 90, filter.frequency, "triangle");
+  }
+
+  if (textureType === "air") {
+    addLFO(0.11, baseNoiseGain * 0.22, noiseGain.gain);
+    addLFO(0.07, 70, filter.frequency);
+  }
+
+  if (textureType === "dark") {
+    addLFO(0.045, baseNoiseGain * 0.3, noiseGain.gain);
+    addLFO(0.035, 60, filter.frequency);
+  }
+
+  return motionNodes;
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
