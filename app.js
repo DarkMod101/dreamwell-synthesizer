@@ -432,8 +432,10 @@ addOrbit(0.012, 0.05);
 
     // Deep Dream Orbit
     if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.018, 0.07);
-addOrbit(0.006, 0.035);
+  // Cosmic Presence Drift
+addOrbit(0.018, 0.11);
+addOrbit(0.006, 0.055);
+addOrbit(0.0025, 0.035);
     }
     
 }
