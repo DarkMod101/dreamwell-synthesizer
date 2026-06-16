@@ -411,7 +411,10 @@ function addOrbit(rate, amount, type = "sine") {
     // Stardust orbit
  if (deepDreamOrbitEnabled) {
   addOrbit(0.035, 0.08);
+ }
+    
 }
+  
   if (textureType === "cosmic") {
   // Slow breathing distance
   addLFO(0.05, baseNoiseGain * 0.45, noiseGain.gain);
@@ -425,7 +428,10 @@ function addOrbit(rate, amount, type = "sine") {
     // Deep Dream Orbit
     if (deepDreamOrbitEnabled) {
   addOrbit(0.035, 0.08);
+    }
+    
 }
+  
   if (textureType === "machine") {
   // Slow hidden mechanism pulse
   addLFO(0.09, baseNoiseGain * 0.38, noiseGain.gain, "triangle");
@@ -442,6 +448,8 @@ function addOrbit(rate, amount, type = "sine") {
   // Deep Dream Orbit
   if (deepDreamOrbitEnabled) {
   addOrbit(0.035, 0.08);
+  }
+    
 }
   
   if (textureType === "air") {
@@ -461,12 +469,17 @@ function addOrbit(rate, amount, type = "sine") {
 if (deepDreamOrbitEnabled) {
   addOrbit(0.035, 0.08);
 }
+    
+}
+  
   if (textureType === "dark") {
     addLFO(0.045, baseNoiseGain * 0.3, noiseGain.gain);
     addLFO(0.035, 60, filter.frequency);
     // Deep Dream Orbit
 if (deepDreamOrbitEnabled) {
   addOrbit(0.09, 0.25);
+}
+    
 }
   return motionNodes;
 }
