@@ -401,16 +401,16 @@ function createLivingTextureMotion(ctx, textureType, noiseGain, filter) {
 }
   if (textureType === "machine") {
   // Slow hidden mechanism pulse
-  addLFO(0.09, baseNoiseGain * 0.25, noiseGain.gain, "triangle");
+  addLFO(0.09, baseNoiseGain * 0.38, noiseGain.gain, "triangle");
 
   // Resonant chamber movement
-  addLFO(0.12, 90, filter.frequency, "triangle");
+  addLFO(0.12, 140, filter.frequency, "triangle");
 
   // Second slower gear, slightly offset
-  addLFO(0.037, baseNoiseGain * 0.16, noiseGain.gain, "sine");
+  addLFO(0.037, baseNoiseGain * 0.25, noiseGain.gain, "sine");
 
   // Subtle ancient harmonic shift
-  addLFO(0.021, 55, filter.frequency, "sine");
+  addLFO(0.021, 90, filter.frequency, "sine");
 }
   if (textureType === "air") {
     addLFO(0.11, baseNoiseGain * 0.22, noiseGain.gain);
