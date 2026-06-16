@@ -379,6 +379,23 @@ function createLivingTextureMotion(ctx, textureType, noiseGain, filter, stereoPa
     motionNodes.push(lfo, lfoGain);
   }
 
+function addOrbit(rate, amount, type = "sine") {
+  if (!stereoPanner) return;
+
+  const orbitLFO = ctx.createOscillator();
+  const orbitGain = ctx.createGain();
+
+  orbitLFO.type = type;
+  orbitLFO.frequency.value = rate;
+  orbitGain.gain.value = amount;
+
+  orbitLFO.connect(orbitGain);
+  orbitGain.connect(stereoPanner.pan);
+  orbitLFO.start();
+
+  motionNodes.push(orbitLFO, orbitGain);
+}
+  
   const baseNoiseGain = noiseGain.gain.value;
 
   if (baseNoiseGain <= 0) {
