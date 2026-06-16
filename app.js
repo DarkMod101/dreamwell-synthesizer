@@ -390,10 +390,15 @@ function createLivingTextureMotion(ctx, textureType, noiseGain, filter) {
   }
 
   if (textureType === "cosmic") {
-    addLFO(0.05, baseNoiseGain * 0.45, noiseGain.gain);
-    addLFO(0.025, 120, filter.frequency);
-  }
+  // Slow breathing distance
+  addLFO(0.05, baseNoiseGain * 0.45, noiseGain.gain);
 
+  // Ultra-slow horizon drift
+  addLFO(0.018, 180, filter.frequency);
+
+  // Very subtle second movement so it feels less looped
+  addLFO(0.011, baseNoiseGain * 0.18, noiseGain.gain);
+}
   if (textureType === "machine") {
     addLFO(0.09, baseNoiseGain * 0.25, noiseGain.gain, "triangle");
     addLFO(0.12, 90, filter.frequency, "triangle");
