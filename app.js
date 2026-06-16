@@ -162,10 +162,19 @@ function createNoiseBuffer(ctx, type = "white") {
         sample = last * 0.75;
         break;
 
-      case "dust":
-        sample = Math.random() > 0.985 ? white : white * 0.03;
-        break;
+      case "dust": {
+  const sparkleChance = 0.992;
+  const softBed = white * 0.015;
 
+  if (Math.random() > sparkleChance) {
+    const sparkle = white * (0.45 + Math.random() * 0.45);
+    sample = sparkle;
+  } else {
+    sample = softBed;
+  }
+
+  break;
+}
       case "machine":
         sample =
           Math.sin(i * 0.02) * 0.15 +
