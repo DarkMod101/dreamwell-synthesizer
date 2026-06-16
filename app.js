@@ -497,6 +497,22 @@ if (textureType === "dust") {
   noiseSource.textureLFOGain = textureLFOGain;
 }
 
+if (textureType === "cosmic") {
+  const textureLFO = ctx.createOscillator();
+  const textureLFOGain = ctx.createGain();
+
+  textureLFO.type = "sine";
+  textureLFO.frequency.value = 0.05;
+  textureLFOGain.gain.value = 0.015;
+
+  textureLFO.connect(textureLFOGain);
+  textureLFOGain.connect(noiseGain.gain);
+
+  textureLFO.start();
+
+  noiseSource.textureLFO = textureLFO;
+  noiseSource.textureLFOGain = textureLFOGain;
+}
 filter.connect(noteGain);
 noteGain.connect(stereoPanner);
 
