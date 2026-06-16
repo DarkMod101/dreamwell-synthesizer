@@ -529,41 +529,17 @@ if (voiceSpread > 0) {
 noiseGain.connect(filter);
 
 // Living Texture Engine - Stardust Motion
-const textureType = noiseTypeSelect ? noiseTypeSelect.value : "white";
+const textureType =
+  noiseTypeSelect ? noiseTypeSelect.value : "white";
 
-if (textureType === "dust") {
-  const textureLFO = ctx.createOscillator();
-  const textureLFOGain = ctx.createGain();
-
-  textureLFO.type = "sine";
-  textureLFO.frequency.value = 0.18;
-  textureLFOGain.gain.value = 0.012;
-
-  textureLFO.connect(textureLFOGain);
-  textureLFOGain.connect(noiseGain.gain);
-
-  textureLFO.start();
-
-  noiseSource.textureLFO = textureLFO;
-  noiseSource.textureLFOGain = textureLFOGain;
-}
-
-if (textureType === "cosmic") {
-  const textureLFO = ctx.createOscillator();
-  const textureLFOGain = ctx.createGain();
-
-  textureLFO.type = "sine";
-  textureLFO.frequency.value = 0.05;
-  textureLFOGain.gain.value = 0.015;
-
-  textureLFO.connect(textureLFOGain);
-  textureLFOGain.connect(noiseGain.gain);
-
-  textureLFO.start();
-
-  noiseSource.textureLFO = textureLFO;
-  noiseSource.textureLFOGain = textureLFOGain;
-}
+const livingTextureNodes =
+  createLivingTextureMotion(
+    ctx,
+    textureType,
+    noiseGain,
+    filter
+  );
+  
 filter.connect(noteGain);
 noteGain.connect(stereoPanner);
 
