@@ -197,19 +197,28 @@ function createNoiseBuffer(ctx, type = "white") {
 
   break;
 }
-      case "cosmic":
-        last = last * 0.985 + white * 0.015;
-        sample =
-          last * 0.5 +
-          Math.sin(i * 0.0008) * 0.1;
-        break;
+     case "cosmic": {
+  // Very smooth distant noise bed
+  last = last * 0.992 + white * 0.008;
 
-      case "white":
-      default:
-        sample = white;
-        break;
-    }
+  // Slow vast movement
+  const deepDrift =
+    Math.sin(i * 0.00018) * 0.12 +
+    Math.sin(i * 0.00007) * 0.08;
 
+  // Faint upper shimmer, very restrained
+  const distantSpark =
+    Math.random() > 0.9975
+      ? white * 0.12
+      : 0;
+
+  sample =
+    last * 0.55 +
+    deepDrift +
+    distantSpark;
+
+  break;
+}
     data[i] = sample;
   }
 
