@@ -550,6 +550,12 @@ if (note.subOscillator) {
 }
   
 if (note.noiseSource) {
+  if (note.noiseSource.textureLFO) {
+    note.noiseSource.textureLFO.stop(ctx.currentTime + release + 0.05);
+    note.noiseSource.textureLFO.disconnect();
+    note.noiseSource.textureLFOGain.disconnect();
+  }
+
   note.noiseSource.stop(ctx.currentTime + release + 0.05);
   note.noiseSource.disconnect();
   note.noiseGain.disconnect();
