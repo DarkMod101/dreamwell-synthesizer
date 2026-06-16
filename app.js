@@ -411,7 +411,7 @@ function addOrbit(rate, amount, type = "sine") {
     addLFO(0.18, baseNoiseGain * 0.35, noiseGain.gain);
     // Stardust orbit
  if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.035, 0.08);
+  addOrbit(0.035, 0.11);
  }
     
 }
@@ -428,7 +428,7 @@ function addOrbit(rate, amount, type = "sine") {
 
     // Deep Dream Orbit
     if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.035, 0.08);
+  addOrbit(0.018, 0.07);
     }
     
 }
@@ -448,7 +448,7 @@ function addOrbit(rate, amount, type = "sine") {
 
   // Deep Dream Orbit
   if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.035, 0.08);
+  addOrbit(0.012, 0.045);
   }
     
 }
@@ -468,7 +468,7 @@ function addOrbit(rate, amount, type = "sine") {
 
     // Deep Dream Orbit
 if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.035, 0.08);
+  addOrbit(0.028, 0.08);
 }
     
 }
@@ -478,7 +478,7 @@ if (deepDreamOrbitCheckbox?.checked) {
     addLFO(0.035, 60, filter.frequency);
     // Deep Dream Orbit
 if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.09, 0.25);
+  addOrbit(0.009, 0.032);
 }
     
 }
