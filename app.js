@@ -411,7 +411,11 @@ function addOrbit(rate, amount, type = "sine") {
     addLFO(0.18, baseNoiseGain * 0.35, noiseGain.gain);
     // Stardust orbit
  if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.035, 0.11);
+  // Primary drift
+addOrbit(0.035, 0.11);
+
+// Secondary, slower drift
+addOrbit(0.012, 0.05);
  }
     
 }
@@ -429,6 +433,7 @@ function addOrbit(rate, amount, type = "sine") {
     // Deep Dream Orbit
     if (deepDreamOrbitCheckbox?.checked) {
   addOrbit(0.018, 0.07);
+addOrbit(0.006, 0.035);
     }
     
 }
@@ -448,7 +453,11 @@ function addOrbit(rate, amount, type = "sine") {
 
   // Deep Dream Orbit
   if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.012, 0.045);
+  // Slow chamber rotation
+addOrbit(0.012, 0.045);
+
+// Deeper hidden mechanism drift
+addOrbit(0.004, 0.02);
   }
     
 }
@@ -468,7 +477,12 @@ function addOrbit(rate, amount, type = "sine") {
 
     // Deep Dream Orbit
 if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.028, 0.08);
+  // Primary wind drift
+addOrbit(0.028, 0.08);
+
+// Secondary slow current
+addOrbit(0.009, 0.035);
+  
 }
     
 }
@@ -478,7 +492,11 @@ if (deepDreamOrbitCheckbox?.checked) {
     addLFO(0.035, 60, filter.frequency);
     // Deep Dream Orbit
 if (deepDreamOrbitCheckbox?.checked) {
-  addOrbit(0.009, 0.032);
+  // Subtle gravitational pull
+addOrbit(0.009, 0.032);
+
+// Almost imperceptible abyss drift
+addOrbit(0.003, 0.014);
 }
     
 }
