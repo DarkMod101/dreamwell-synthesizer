@@ -53,6 +53,8 @@ const noiseTypeSelect =
   document.getElementById("noiseType");
 const noiseAmountSlider =
     document.getElementById("noiseAmount");
+const deepDreamOrbitCheckbox =
+  document.getElementById("deepDreamOrbit");
 const driftValue = document.getElementById("driftValue");
 
 const reverbMixSlider = document.getElementById("reverbMix");
