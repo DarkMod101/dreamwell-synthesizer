@@ -152,9 +152,8 @@ function createNoiseBuffer(ctx, type = "white") {
     let sample = white;
 
     switch (type) {
-
       case "air":
-        sample = white * 0.30;
+        sample = white * 0.3;
         break;
 
       case "dark":
@@ -163,62 +162,54 @@ function createNoiseBuffer(ctx, type = "white") {
         break;
 
       case "dust": {
-  const sparkleChance = 0.992;
-  const softBed = white * 0.015;
+        const sparkleChance = 0.992;
+        const softBed = white * 0.015;
 
-  if (Math.random() > sparkleChance) {
-    const sparkle = white * (0.45 + Math.random() * 0.45);
-    sample = sparkle;
-  } else {
-    sample = softBed;
-  }
+        if (Math.random() > sparkleChance) {
+          sample = white * (0.45 + Math.random() * 0.45);
+        } else {
+          sample = softBed;
+        }
 
-  break;
-}
-     case "machine": {
-  // Smooth mechanical foundation
-  last = last * 0.985 + white * 0.015;
+        break;
+      }
 
-  // Extremely slow resonance
-  const rumble =
-    Math.sin(i * 0.00055) * 0.12 +
-    Math.sin(i * 0.00110) * 0.05;
+      case "machine": {
+        last = last * 0.985 + white * 0.015;
 
-  // Tiny metallic imperfections
-  const ticks =
-    (Math.random() > 0.9985)
-      ? (Math.random() * 2 - 1) * 0.18
-      : 0;
+        const rumble =
+          Math.sin(i * 0.00055) * 0.12 +
+          Math.sin(i * 0.00110) * 0.05;
 
-  sample =
-    last * 0.45 +
-    rumble +
-    ticks;
+        const ticks =
+          Math.random() > 0.9985
+            ? (Math.random() * 2 - 1) * 0.18
+            : 0;
 
-  break;
-}
-     case "cosmic": {
-  // Very smooth distant noise bed
-  last = last * 0.992 + white * 0.008;
+        sample = last * 0.45 + rumble + ticks;
+        break;
+      }
 
-  // Slow vast movement
-  const deepDrift =
-    Math.sin(i * 0.00018) * 0.12 +
-    Math.sin(i * 0.00007) * 0.08;
+      case "cosmic": {
+        last = last * 0.992 + white * 0.008;
 
-  // Faint upper shimmer, very restrained
-  const distantSpark =
-    Math.random() > 0.9975
-      ? white * 0.12
-      : 0;
+        const deepDrift =
+          Math.sin(i * 0.00018) * 0.12 +
+          Math.sin(i * 0.00007) * 0.08;
 
-  sample =
-    last * 0.55 +
-    deepDrift +
-    distantSpark;
+        const distantSpark =
+          Math.random() > 0.9975 ? white * 0.12 : 0;
 
-  break;
-}
+        sample = last * 0.55 + deepDrift + distantSpark;
+        break;
+      }
+
+      case "white":
+      default:
+        sample = white;
+        break;
+    }
+
     data[i] = sample;
   }
 
