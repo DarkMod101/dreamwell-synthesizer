@@ -575,7 +575,8 @@ const livingTextureNodes =
     ctx,
     textureType,
     noiseGain,
-    filter
+    filter,
+    stereoPanner
   );
   
 filter.connect(noteGain);
