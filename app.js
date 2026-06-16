@@ -9,7 +9,6 @@ let delayWetGain;
 let delayDryGain;
 // Living Environment Systems
 let livingTexturesEnabled = true;
-let deepDreamOrbitEnabled = true;
 
 
 const activeNotes = new Map();
