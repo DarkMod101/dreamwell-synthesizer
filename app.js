@@ -145,12 +145,37 @@ function createNoiseBuffer(ctx, type = "white") {
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
 
+  let lastSample = 0;
+
   for (let i = 0; i < bufferSize; i++) {
-    let sample = Math.random() * 2 - 1;
+    const white = Math.random() * 2 - 1;
+    let sample = white;
+
+    if (type === "air") {
+      // Soft airy hiss
+      sample = white * 0.35;
+    }
 
     if (type === "dark") {
-  const darkness = i / bufferSize;
-  sample *= 0.25 * (1 - darkness * 0.7);
+      // Deeper smoother noise
+      lastSample = lastSample * 0.96 + white * 0.04;
+      sample = lastSample * 0.8;
+    }
+
+    if (type === "dust") {
+      // Sparse tiny particles
+      sample = Math.random() > 0.985 ? white * 0.9 : white * 0.04;
+    }
+
+    if (type === "static") {
+      // Sharper electrical texture
+      sample = Math.random() > 0.92 ? white : white * 0.15;
+    }
+
+    data[i] = sample;
+  }
+
+  return buffer;
 }
 
 if (type === "air")
