@@ -413,10 +413,18 @@ function createLivingTextureMotion(ctx, textureType, noiseGain, filter) {
   addLFO(0.021, 90, filter.frequency, "sine");
 }
   if (textureType === "air") {
-    addLFO(0.11, baseNoiseGain * 0.22, noiseGain.gain);
-    addLFO(0.07, 70, filter.frequency);
-  }
+  // Gentle breathing
+  addLFO(0.11, baseNoiseGain * 0.25, noiseGain.gain);
 
+  // Slow drifting current
+  addLFO(0.065, 110, filter.frequency);
+
+  // Secondary movement at a different speed
+  addLFO(0.031, baseNoiseGain * 0.12, noiseGain.gain);
+
+  // Almost imperceptible long swell
+  addLFO(0.017, 45, filter.frequency);
+}
   if (textureType === "dark") {
     addLFO(0.045, baseNoiseGain * 0.3, noiseGain.gain);
     addLFO(0.035, 60, filter.frequency);
