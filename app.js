@@ -175,12 +175,28 @@ function createNoiseBuffer(ctx, type = "white") {
 
   break;
 }
-      case "machine":
-        sample =
-          Math.sin(i * 0.02) * 0.15 +
-          white * 0.08;
-        break;
+     case "machine": {
+  // Smooth mechanical foundation
+  last = last * 0.985 + white * 0.015;
 
+  // Extremely slow resonance
+  const rumble =
+    Math.sin(i * 0.00055) * 0.12 +
+    Math.sin(i * 0.00110) * 0.05;
+
+  // Tiny metallic imperfections
+  const ticks =
+    (Math.random() > 0.9985)
+      ? (Math.random() * 2 - 1) * 0.18
+      : 0;
+
+  sample =
+    last * 0.45 +
+    rumble +
+    ticks;
+
+  break;
+}
       case "cosmic":
         last = last * 0.985 + white * 0.015;
         sample =
