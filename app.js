@@ -361,7 +361,7 @@ function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   return { lfo, lfoGain };
 }
 
-function createLivingTextureMotion(ctx, textureType, noiseGain, filter) {
+function createLivingTextureMotion(ctx, textureType, noiseGain, filter, stereoPanner) {
   const motionNodes = [];
 
   function addLFO(rate, amount, destination, type = "sine") {
