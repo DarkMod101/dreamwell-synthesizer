@@ -476,8 +476,28 @@ if (voiceSpread > 0) {
   
   noiseSource.connect(noiseGain);
 noiseGain.connect(filter);
-  filter.connect(noteGain);
 
+// Living Texture Engine - Stardust Motion
+const textureType = noiseTypeSelect ? noiseTypeSelect.value : "white";
+
+if (textureType === "dust") {
+  const textureLFO = ctx.createOscillator();
+  const textureLFOGain = ctx.createGain();
+
+  textureLFO.type = "sine";
+  textureLFO.frequency.value = 0.18;
+  textureLFOGain.gain.value = 0.012;
+
+  textureLFO.connect(textureLFOGain);
+  textureLFOGain.connect(noiseGain.gain);
+
+  textureLFO.start();
+
+  noiseSource.textureLFO = textureLFO;
+  noiseSource.textureLFOGain = textureLFOGain;
+}
+
+filter.connect(noteGain);
 noteGain.connect(stereoPanner);
 
 stereoPanner.connect(dryGain);
