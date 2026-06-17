@@ -324,7 +324,7 @@ function getAudioContext() {
     // DreamWell Audio Protection
 const masterLimiter = audioContext.createDynamicsCompressor();
 
-masterLimiter.threshold.value = -6;
+masterLimiter.threshold.value = -8;
 masterLimiter.knee.value = 12;
 masterLimiter.ratio.value = 8;
 masterLimiter.attack.value = 0.003;
