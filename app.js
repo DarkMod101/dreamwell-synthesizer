@@ -664,8 +664,12 @@ subGain,livingTextureNodes, };
 
 function playNote(frequency) {
   if (activeNotes.size >= 4) return;
+ 
   const noteId = String(frequency);
-  if (activeNotes.has(noteId)) return;
+ 
+  if (activeNotes.has(noteId)) {
+  stopNote(frequency);
+}
 
   const note = createNote(frequency);
   activeNotes.set(noteId, note);
