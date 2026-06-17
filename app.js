@@ -737,6 +737,18 @@ if (note.livingTextureNodes) {
     }
   });
 }
+
+if (note.unisonOscillators) {
+  note.unisonOscillators.forEach(({ osc, gain }) => {
+    try {
+      osc.stop(ctx.currentTime + release + 0.05);
+      osc.disconnect();
+      gain.disconnect();
+    } catch (error) {
+      // Safe cleanup
+    }
+  });
+}
   
   activeNotes.delete(noteId);
 }
