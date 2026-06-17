@@ -321,7 +321,17 @@ function getAudioContext() {
 
     masterGain = audioContext.createGain();
     masterGain.gain.value = getValue(masterVolume, 0.25);
-    masterGain.connect(audioContext.destination);
+    // DreamWell Audio Protection
+const masterLimiter = audioContext.createDynamicsCompressor();
+
+masterLimiter.threshold.value = -6;
+masterLimiter.knee.value = 12;
+masterLimiter.ratio.value = 8;
+masterLimiter.attack.value = 0.003;
+masterLimiter.release.value = 0.25;
+
+masterGain.connect(masterLimiter);
+masterLimiter.connect(audioContext.destination);
 
     setupReverb(audioContext);
     setupDelay(audioContext);
