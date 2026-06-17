@@ -663,12 +663,19 @@ subGain,livingTextureNodes, };
 }
 
 function playNote(frequency) {
-  if (activeNotes.size >= 4) return;
- 
   const noteId = String(frequency);
- 
+
   if (activeNotes.has(noteId)) {
-  stopNote(frequency);
+    stopNote(frequency);
+  }
+
+  if (activeNotes.size >= 4) {
+    const oldestNoteId = activeNotes.keys().next().value;
+    stopNote(Number(oldestNoteId));
+  }
+
+  const note = createNote(frequency);
+  activeNotes.set(noteId, note);
 }
 
   const note = createNote(frequency);
