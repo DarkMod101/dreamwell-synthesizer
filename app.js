@@ -663,7 +663,7 @@ subGain,livingTextureNodes, };
 }
 
 function playNote(frequency) {
-  if (activeNotes.size >= 6) return;
+  if (activeNotes.size >= 4) return;
   const noteId = String(frequency);
   if (activeNotes.has(noteId)) return;
 
