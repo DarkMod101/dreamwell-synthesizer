@@ -678,9 +678,6 @@ function playNote(frequency) {
   activeNotes.set(noteId, note);
 }
 
-  const note = createNote(frequency);
-  activeNotes.set(noteId, note);
-}
 
 function stopNote(frequency) {
   const noteId = String(frequency);
