@@ -658,8 +658,8 @@ stereoPanner.connect(delayNode);
   noiseSource.start();
   return { oscillatorA, oscillatorB, noteGain, lfoNodes,
   noiseSource,
-  noiseGain,subOscillator,
-subGain,livingTextureNodes, };
+  noiseGain, subOscillator,
+subGain, livingTextureNodes, unisonOscillators, };
 }
 
 function playNote(frequency) {
