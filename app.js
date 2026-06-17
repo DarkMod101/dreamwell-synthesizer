@@ -669,7 +669,7 @@ function playNote(frequency) {
     stopNote(frequency);
   }
 
-  if (activeNotes.size >= 4) {
+  if (activeNotes.size >= 3) {
     const oldestNoteId = activeNotes.keys().next().value;
     stopNote(Number(oldestNoteId));
   }
