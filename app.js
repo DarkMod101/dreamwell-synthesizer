@@ -1413,6 +1413,8 @@ arpModeSelect.addEventListener("change", () => {
   arpMode = arpModeSelect.value;
 });
 
+arpRateValue.textContent = arpRateLabels[arpRate];
+
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
     playNote(getKeyFrequency(key));
