@@ -784,6 +784,89 @@ function stopAllNotes() {
   });
 }
 
+function getArpIntervalMs() {
+  const rates = {
+    1: 600,
+    2: 300,
+    3: 150,
+    4: 75
+  };
+
+  return rates[arpRate] || 300;
+}
+
+function getSortedArpNotes() {
+  return Array.from(arpHeldNotes)
+    .map(Number)
+    .sort((a, b) => a - b);
+}
+
+function playArpStep() {
+  const notes = getSortedArpNotes();
+
+  if (!dreamArpEnabled || notes.length === 0) {
+    stopDreamArp();
+    return;
+  }
+
+  if (arpActiveNote !== null) {
+    stopNote(arpActiveNote);
+  }
+
+  const note = notes[arpStepIndex % notes.length];
+  playNote(note);
+
+  arpActiveNote = note;
+  arpStepIndex++;
+}
+
+function startDreamArp() {
+  if (arpTimer) return;
+
+  arpStepIndex = 0;
+  playArpStep();
+
+  arpTimer = setInterval(playArpStep, getArpIntervalMs());
+}
+
+function stopDreamArp() {
+  if (arpTimer) {
+    clearInterval(arpTimer);
+    arpTimer = null;
+  }
+
+  if (arpActiveNote !== null) {
+    stopNote(arpActiveNote);
+    arpActiveNote = null;
+  }
+
+  arpStepIndex = 0;
+}
+
+function beginInputNote(frequency) {
+  if (dreamArpEnabled) {
+    arpHeldNotes.add(String(frequency));
+    startDreamArp();
+    return;
+  }
+
+  playNote(frequency);
+}
+
+function endInputNote(frequency) {
+  if (dreamArpEnabled) {
+    arpHeldNotes.delete(String(frequency));
+
+    if (arpHeldNotes.size === 0) {
+      stopDreamArp();
+    }
+
+    return;
+  }
+
+  stopNote(frequency);
+}
+
 function updateKeyboardOctave() {
   keys.forEach((key) => {
     const baseFrequency = Number(key.dataset.note);
