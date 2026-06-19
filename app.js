@@ -1400,6 +1400,19 @@ if (nextPresetButton) {
 
 refreshSavedPresetList();    
 
+dreamArpEnabledCheckbox.addEventListener("change", () => {
+  dreamArpEnabled = dreamArpEnabledCheckbox.checked;
+});
+
+arpRateSlider.addEventListener("input", () => {
+  arpRate = Number(arpRateSlider.value);
+  arpRateValue.textContent = arpRateLabels[arpRate];
+});
+
+arpModeSelect.addEventListener("change", () => {
+  arpMode = arpModeSelect.value;
+});
+
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
     playNote(getKeyFrequency(key));
