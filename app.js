@@ -1497,6 +1497,10 @@ dreamArpEnabledCheckbox.addEventListener("change", () => {
   dreamArpEnabled = dreamArpEnabledCheckbox.checked;
 });
 
+arpLatchCheckbox.addEventListener("change", () => {
+  arpLatchEnabled = arpLatchCheckbox.checked;
+});
+
 arpRateSlider.addEventListener("input", () => {
   arpRate = Number(arpRateSlider.value);
   arpRateValue.textContent = arpRateLabels[arpRate];
