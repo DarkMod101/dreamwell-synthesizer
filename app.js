@@ -1503,6 +1503,12 @@ dreamArpEnabledCheckbox.addEventListener("change", () => {
 
 arpLatchCheckbox.addEventListener("change", () => {
   arpLatchEnabled = arpLatchCheckbox.checked;
+
+  if (!arpLatchEnabled) {
+    arpHeldNotes.clear();
+    stopDreamArp();
+    stopAllNotes();
+  }
 });
 
 arpRateSlider.addEventListener("input", () => {
