@@ -63,6 +63,29 @@ const delayMixSlider = document.getElementById("delayMix");
 const delayTimeSlider = document.getElementById("delayTime");
 const delayFeedbackSlider = document.getElementById("delayFeedback");
 
+const dreamArpEnabledCheckbox =
+  document.getElementById("dreamArpEnabled");
+
+const arpRateSlider =
+  document.getElementById("arpRate");
+
+const arpRateValue =
+  document.getElementById("arpRateValue");
+
+const arpModeSelect =
+  document.getElementById("arpMode");
+
+let dreamArpEnabled = false;
+let arpRate = 2;
+let arpMode = "up";
+
+const arpRateLabels = {
+  1: "1/4",
+  2: "1/8",
+  3: "1/16",
+  4: "1/32"
+};
+
 const presetNameInput =
   document.getElementById("presetNameInput");
 
