@@ -79,6 +79,10 @@ let dreamArpEnabled = false;
 let arpRate = 2;
 let arpMode = "up";
 
+const arpHeldNotes = new Set();
+let arpTimer = null;
+let arpStepIndex = 0;
+
 const arpRateLabels = {
   1: "1/4",
   2: "1/8",
