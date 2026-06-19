@@ -860,6 +860,10 @@ function beginInputNote(frequency) {
 
 function endInputNote(frequency) {
   if (dreamArpEnabled) {
+    if (arpLatchEnabled) {
+      return;
+    }
+
     arpHeldNotes.delete(String(frequency));
 
     if (arpHeldNotes.size === 0) {
