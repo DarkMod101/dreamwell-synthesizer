@@ -82,6 +82,7 @@ let arpMode = "up";
 const arpHeldNotes = new Set();
 let arpTimer = null;
 let arpStepIndex = 0;
+let arpActiveNote = null;
 
 const arpRateLabels = {
   1: "1/4",
