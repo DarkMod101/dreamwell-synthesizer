@@ -896,7 +896,7 @@ function startTouchNote(touch) {
   if (!key) return;
 
   activeTouchKeys.set(touch.identifier, key);
-  playNote(getKeyFrequency(key));
+  beginInputNote(getKeyFrequency(key));
 }
 
 function moveTouchNote(touch) {
@@ -905,17 +905,17 @@ function moveTouchNote(touch) {
 
   if (!newKey || newKey === oldKey) return;
 
-  if (oldKey) stopNote(getKeyFrequency(oldKey));
+  if (oldKey) endInputNote(getKeyFrequency(oldKey));
 
   activeTouchKeys.set(touch.identifier, newKey);
-  playNote(getKeyFrequency(newKey));
+  beginInputNote(getKeyFrequency(newKey));
 }
 
 function stopTouchNote(touch) {
   const key = activeTouchKeys.get(touch.identifier);
   if (!key) return;
 
-  stopNote(getKeyFrequency(key));
+  endInputNote(getKeyFrequency(key));
   activeTouchKeys.delete(touch.identifier);
 }
 
