@@ -75,6 +75,11 @@ const arpRateValue =
 const arpModeSelect =
   document.getElementById("arpMode");
 
+const arpLatchCheckbox =
+  document.getElementById("arpLatch");
+
+let arpLatchEnabled = false;
+
 let dreamArpEnabled = false;
 let arpRate = 2;
 let arpMode = "up";
