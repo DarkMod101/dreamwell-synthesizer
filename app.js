@@ -1505,15 +1505,15 @@ arpRateValue.textContent = arpRateLabels[arpRate];
 
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
-    playNote(getKeyFrequency(key));
+    beginInputNote(getKeyFrequency(key));
   });
 
   key.addEventListener("mouseup", () => {
-    stopNote(getKeyFrequency(key));
+    endInputNote(getKeyFrequency(key));
   });
 
   key.addEventListener("mouseleave", () => {
-    stopNote(getKeyFrequency(key));
+    endInputNote(getKeyFrequency(key));
   });
 });
 
