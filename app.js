@@ -814,8 +814,9 @@ function getArpNotes() {
   const notes = Array.from(arpHeldNotes).map(Number);
 
   if (arpMode === "asPlayed") {
-    return arpPlayedOrder
-      .filter((note) => arpHeldNotes.has(String(note)));
+    return arpPlayedOrder.filter((note) =>
+      arpHeldNotes.has(String(note))
+    );
   }
 
   return notes.sort((a, b) => a - b);
