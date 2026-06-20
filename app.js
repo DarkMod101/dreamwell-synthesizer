@@ -865,6 +865,11 @@ function stopDreamArp() {
     arpTimer = null;
   }
 
+if (arpGateTimer) {
+    clearTimeout(arpGateTimer);
+    arpGateTimer = null;
+}
+  
   if (arpActiveNote !== null) {
     stopNote(arpActiveNote);
     arpActiveNote = null;
