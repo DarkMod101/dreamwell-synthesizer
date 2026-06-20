@@ -94,6 +94,8 @@ let arpGate = 0.7;
 const arpHeldNotes = new Set();
 let arpTimer = null;
 let arpStepIndex = 0;
+let arpDirection = 1;
+let arpPlayedOrder = [];
 let arpActiveNote = null;
 let arpGateTimer = null;
 
