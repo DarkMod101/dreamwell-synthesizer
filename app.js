@@ -1637,6 +1637,8 @@ arpGateSlider.addEventListener("input", () => {
 
 arpModeSelect.addEventListener("change", () => {
   arpMode = arpModeSelect.value;
+  arpStepIndex = 0;
+  arpDirection = 1;
 });
 
 arpRateValue.textContent = arpRateLabels[arpRate];
