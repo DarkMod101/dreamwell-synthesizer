@@ -880,7 +880,19 @@ if (arpGateTimer) {
 
 function beginInputNote(frequency) {
   if (dreamArpEnabled) {
-    arpHeldNotes.add(String(frequency));
+    const noteId = String(frequency);
+
+    if (arpLatchEnabled && arpHeldNotes.has(noteId)) {
+      arpHeldNotes.delete(noteId);
+
+      if (arpHeldNotes.size === 0) {
+        stopDreamArp();
+      }
+
+      return;
+    }
+
+    arpHeldNotes.add(noteId);
     startDreamArp();
     return;
   }
