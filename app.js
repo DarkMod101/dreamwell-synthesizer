@@ -849,6 +849,24 @@ function playArpStep() {
   }, gateDuration);
 }
 
+  
+  const note = notes[arpStepIndex % notes.length];
+  playNote(note);
+
+  arpActiveNote = note;
+  arpStepIndex++;
+
+  const gateDuration =
+    getArpIntervalMs() * arpGate;
+
+  arpGateTimer = setTimeout(() => {
+    if (arpActiveNote !== null) {
+      stopNote(arpActiveNote);
+      arpActiveNote = null;
+    }
+  }, gateDuration);
+}
+
 function startDreamArp() {
   if (arpTimer) return;
 
