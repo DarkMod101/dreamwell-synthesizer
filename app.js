@@ -866,7 +866,6 @@ if (arpMode === "down") {
   playNote(note);
 
   arpActiveNote = note;
-  arpStepIndex++;
 
   const gateDuration =
     getArpIntervalMs() * arpGate;
