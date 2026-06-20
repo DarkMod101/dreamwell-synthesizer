@@ -894,12 +894,20 @@ function setKeyLatched(frequency, latched) {
   });
 }
 
+function clearKeyHighlights() {
+  keys.forEach((key) => {
+    key.classList.remove("key-active");
+    key.classList.remove("key-latched");
+  });
+}
+
 function beginInputNote(frequency) {
   if (dreamArpEnabled) {
     const noteId = String(frequency);
 
     if (arpLatchEnabled && arpHeldNotes.has(noteId)) {
       arpHeldNotes.delete(noteId);
+      setKeyLatched(frequency, false);
 
       if (arpHeldNotes.size === 0) {
         stopDreamArp();
@@ -909,11 +917,13 @@ function beginInputNote(frequency) {
     }
 
     arpHeldNotes.add(noteId);
+    setKeyLatched(frequency, true);
     startDreamArp();
     return;
   }
 
   playNote(frequency);
+  setKeyActive(frequency, true);
 }
 
 function endInputNote(frequency) {
@@ -932,6 +942,7 @@ function endInputNote(frequency) {
   }
 
   stopNote(frequency);
+  setKeyActive(frequency, false);
 }
 
 function updateKeyboardOctave() {
