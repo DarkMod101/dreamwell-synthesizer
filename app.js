@@ -1577,6 +1577,7 @@ arpLatchCheckbox.addEventListener("change", () => {
     arpHeldNotes.clear();
     stopDreamArp();
     stopAllNotes();
+    clearKeyHighlights();
   }
 });
 
