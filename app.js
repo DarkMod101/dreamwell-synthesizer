@@ -1523,6 +1523,12 @@ arpRateSlider.addEventListener("input", () => {
   arpRateValue.textContent = arpRateLabels[arpRate];
 });
 
+arpGateSlider.addEventListener("input", () => {
+  arpGate = Number(arpGateSlider.value) / 100;
+  arpGateValue.textContent =
+    `${arpGateSlider.value}%`;
+});
+
 arpModeSelect.addEventListener("change", () => {
   arpMode = arpModeSelect.value;
 });
