@@ -927,13 +927,16 @@ function beginInputNote(frequency) {
 }
 
 function endInputNote(frequency) {
+  setKeyActive(frequency, false);
+  
   if (dreamArpEnabled) {
     if (arpLatchEnabled) {
       return;
     }
 
     arpHeldNotes.delete(String(frequency));
-
+setKeyLatched(frequency, false);
+    
     if (arpHeldNotes.size === 0) {
       stopDreamArp();
     }
