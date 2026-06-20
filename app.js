@@ -810,14 +810,19 @@ function getArpIntervalMs() {
   return rates[arpRate] || 300;
 }
 
-function getSortedArpNotes() {
-  return Array.from(arpHeldNotes)
-    .map(Number)
-    .sort((a, b) => a - b);
+function getArpNotes() {
+  const notes = Array.from(arpHeldNotes).map(Number);
+
+  if (arpMode === "asPlayed") {
+    return arpPlayedOrder
+      .filter((note) => arpHeldNotes.has(String(note)));
+  }
+
+  return notes.sort((a, b) => a - b);
 }
 
 function playArpStep() {
-  const notes = getSortedArpNotes();
+  const notes = getArpNotes();
 
   if (!dreamArpEnabled || notes.length === 0) {
     stopDreamArp();
@@ -834,7 +839,29 @@ function playArpStep() {
     arpActiveNote = null;
   }
 
-  const note = notes[arpStepIndex % notes.length];
+  let note;
+
+if (arpMode === "down") {
+  note = notes[(notes.length - 1) - (arpStepIndex % notes.length)];
+  arpStepIndex++;
+} else if (arpMode === "updown") {
+  note = notes[arpStepIndex];
+
+  arpStepIndex += arpDirection;
+
+  if (arpStepIndex >= notes.length - 1) {
+    arpDirection = -1;
+  }
+
+  if (arpStepIndex <= 0) {
+    arpDirection = 1;
+  }
+} else if (arpMode === "random") {
+  note = notes[Math.floor(Math.random() * notes.length)];
+} else {
+  note = notes[arpStepIndex % notes.length];
+  arpStepIndex++;
+}
   playNote(note);
 
   arpActiveNote = note;
@@ -909,7 +936,13 @@ function beginInputNote(frequency) {
 
     if (arpLatchEnabled && arpHeldNotes.has(noteId)) {
       arpHeldNotes.delete(noteId);
-      setKeyLatched(frequency, false);
+
+arpPlayedOrder =
+    arpPlayedOrder.filter(
+        (note) => note !== Number(frequency)
+    );
+      
+  setKeyLatched(frequency, false);
 
       if (arpHeldNotes.size === 0) {
         stopDreamArp();
@@ -919,6 +952,11 @@ function beginInputNote(frequency) {
     }
 
     arpHeldNotes.add(noteId);
+
+if (!arpPlayedOrder.includes(Number(frequency))) {
+  arpPlayedOrder.push(Number(frequency));
+}
+    
     setKeyLatched(frequency, true);
     startDreamArp();
     return;
