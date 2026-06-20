@@ -72,6 +72,12 @@ const arpRateSlider =
 const arpRateValue =
   document.getElementById("arpRateValue");
 
+const arpGateSlider =
+  document.getElementById("arpGate");
+
+const arpGateValue =
+  document.getElementById("arpGateValue");
+
 const arpModeSelect =
   document.getElementById("arpMode");
 
@@ -83,6 +89,7 @@ let arpLatchEnabled = false;
 let dreamArpEnabled = false;
 let arpRate = 2;
 let arpMode = "up";
+let arpGate = 0.7;
 
 const arpHeldNotes = new Set();
 let arpTimer = null;
