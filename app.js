@@ -878,6 +878,22 @@ if (arpGateTimer) {
   arpStepIndex = 0;
 }
 
+function setKeyActive(frequency, active) {
+  keys.forEach((key) => {
+    if (Number(key.dataset.currentNote) === Number(frequency)) {
+      key.classList.toggle("key-active", active);
+    }
+  });
+}
+
+function setKeyLatched(frequency, latched) {
+  keys.forEach((key) => {
+    if (Number(key.dataset.currentNote) === Number(frequency)) {
+      key.classList.toggle("key-latched", latched);
+    }
+  });
+}
+
 function beginInputNote(frequency) {
   if (dreamArpEnabled) {
     const noteId = String(frequency);
