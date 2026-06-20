@@ -822,8 +822,14 @@ function playArpStep() {
     return;
   }
 
+  if (arpGateTimer) {
+    clearTimeout(arpGateTimer);
+    arpGateTimer = null;
+  }
+
   if (arpActiveNote !== null) {
     stopNote(arpActiveNote);
+    arpActiveNote = null;
   }
 
   const note = notes[arpStepIndex % notes.length];
@@ -831,6 +837,16 @@ function playArpStep() {
 
   arpActiveNote = note;
   arpStepIndex++;
+
+  const gateDuration =
+    getArpIntervalMs() * arpGate;
+
+  arpGateTimer = setTimeout(() => {
+    if (arpActiveNote !== null) {
+      stopNote(arpActiveNote);
+      arpActiveNote = null;
+    }
+  }, gateDuration);
 }
 
 function startDreamArp() {
