@@ -659,6 +659,29 @@ function updateWaveFusionGains(ctx, oscAGain, oscBGain) {
     );
 }
 
+function startWaveFusionModulation() {
+    if (waveFusionModulationTimer !== null) return;
+
+    waveFusionModulationTimer = setInterval(() => {
+        const ctx = getAudioContext();
+
+        activeNotes.forEach((note) => {
+            if (note.oscAGain && note.oscBGain) {
+                updateWaveFusionGains(
+                    ctx,
+                    note.oscAGain,
+                    note.oscBGain
+                );
+            }
+        });
+
+        if (activeNotes.size === 0) {
+            clearInterval(waveFusionModulationTimer);
+            waveFusionModulationTimer = null;
+        }
+    }, 80);
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
