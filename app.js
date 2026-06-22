@@ -14,6 +14,7 @@ let livingTexturesEnabled = true;
 const activeNotes = new Map();
 const activeTouchKeys = new Map();
 let lastPlayedFrequency = null;
+let waveFusionModulationTimer = null;
 
 const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
