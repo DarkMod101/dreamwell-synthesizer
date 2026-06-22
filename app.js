@@ -36,6 +36,8 @@ const glideTimeValue =
 
 const waveFusionSlider = document.getElementById("waveFusion");
 const waveFusionValue = document.getElementById("waveFusionValue");
+const waveFusionCurveSelect =
+    document.getElementById("waveFusionCurve");
 
 const keys = document.querySelectorAll(".key");
 
