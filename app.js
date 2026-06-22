@@ -33,6 +33,10 @@ const glideTimeSlider =
 
 const glideTimeValue =
     document.getElementById("glideTimeValue");
+
+const waveFusionSlider = document.getElementById("waveFusion");
+const waveFusionValue = document.getElementById("waveFusionValue");
+
 const keys = document.querySelectorAll(".key");
 
 const octaveDownButton = document.getElementById("octaveDown");
@@ -166,7 +170,8 @@ document.getElementById("subLevelValue"),
   delayMix: document.getElementById("delayMixValue"),
   delayTime: document.getElementById("delayTimeValue"),
   delayFeedback: document.getElementById("delayFeedbackValue"),
- glideTime: document.getElementById("glideTimeValue"),   
+ glideTime: document.getElementById("glideTimeValue"),
+  waveFusion: document.getElementById("waveFusionValue"),  
   masterVolume: document.getElementById("masterVolumeValue"),
 };
 
@@ -317,6 +322,11 @@ function updateValueDisplays() {
     seconds(getValue(glideTimeSlider, 0.12))
 );
 
+setDisplay(
+    valueDisplays.waveFusion,
+    `${Math.round(getValue(waveFusionSlider, 50))}%`
+);
+    
 setDisplay(
     valueDisplays.masterVolume,
     percent(getValue(masterVolume, 0.25))
@@ -1151,7 +1161,8 @@ bindSlider(delayFeedbackSlider, () => {
   stereoWidthSlider,
   voiceSpreadSlider,
   noiseAmountSlider,
-  glideTimeSlider,  
+  glideTimeSlider,
+  waveFusionSlider,  
   subLevelSlider,
 ].forEach((slider) => bindSlider(slider));
 
