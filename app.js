@@ -13,6 +13,7 @@ let livingTexturesEnabled = true;
 
 const activeNotes = new Map();
 const activeTouchKeys = new Map();
+let lastPlayedFrequency = null;
 
 const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
@@ -729,8 +730,7 @@ function playNote(frequency) {
 
   const note = createNote(frequency);
   activeNotes.set(noteId, note);
-}
-
+} 
 
 function stopNote(frequency) {
   const noteId = String(frequency);
