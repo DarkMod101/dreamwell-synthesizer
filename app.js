@@ -709,16 +709,7 @@ let waveFusion =
         )
     );
 
-if (morphCurve === "smooth") {
-    waveFusion =
-        waveFusion * waveFusion * (3 - 2 * waveFusion);
-} else if (morphCurve === "deep") {
-    waveFusion =
-        waveFusion * waveFusion;
-} else if (morphCurve === "bright") {
-    waveFusion =
-        Math.sqrt(waveFusion);
-}
+waveFusion = shapeWaveFusion(waveFusion, morphCurve);
 
 const oscBLevel =
     getValue(oscBLevelSlider, 0.35);
