@@ -165,6 +165,7 @@ document.getElementById("subLevelValue"),
   delayMix: document.getElementById("delayMixValue"),
   delayTime: document.getElementById("delayTimeValue"),
   delayFeedback: document.getElementById("delayFeedbackValue"),
+ glideTime: document.getElementById("glideTimeValue"),   
   masterVolume: document.getElementById("masterVolumeValue"),
 };
 
