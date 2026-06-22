@@ -867,7 +867,8 @@ stereoPanner.connect(delayNode);
   livingTextureNodes,
   unisonOscillators,
 };
-
+}
+    
 function playNote(frequency) {
   const noteId = String(frequency);
 
