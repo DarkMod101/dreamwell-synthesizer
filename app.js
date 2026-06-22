@@ -665,18 +665,36 @@ subOscillator.frequency.exponentialRampToValueAtTime(
     ctx.currentTime + glideTime
 );
   
-  const waveFusion =
-  getValue(waveFusionSlider, 50) / 100;
+  const rawWaveFusion =
+    getValue(waveFusionSlider, 50) / 100;
+
+const morphCurve =
+    waveFusionCurveSelect
+        ? waveFusionCurveSelect.value
+        : "smooth";
+
+let waveFusion = rawWaveFusion;
+
+if (morphCurve === "smooth") {
+    waveFusion =
+        rawWaveFusion * rawWaveFusion * (3 - 2 * rawWaveFusion);
+} else if (morphCurve === "deep") {
+    waveFusion =
+        rawWaveFusion * rawWaveFusion;
+} else if (morphCurve === "bright") {
+    waveFusion =
+        Math.sqrt(rawWaveFusion);
+}
 
 const oscBLevel =
-  getValue(oscBLevelSlider, 0.35);
+    getValue(oscBLevelSlider, 0.35);
 
 const fusionA =
     Math.cos(waveFusion * Math.PI * 0.5);
 
 const fusionB =
     Math.sin(waveFusion * Math.PI * 0.5);
-
+    
 oscAGain.gain.value =
     0.65 * fusionA;
 
