@@ -607,6 +607,57 @@ function shapeWaveFusion(value, curve) {
     return value;
 }
 
+function updateWaveFusionGains(ctx, oscAGain, oscBGain) {
+    const rawWaveFusion =
+        getValue(waveFusionSlider, 50) / 100;
+
+    const morphMotion =
+        dreamMorphMotionCheckbox &&
+        dreamMorphMotionCheckbox.checked;
+
+    const morphDrift =
+        morphMotion
+            ? Math.sin(ctx.currentTime * 0.12) * 0.08
+            : 0;
+
+    const morphCurve =
+        waveFusionCurveSelect
+            ? waveFusionCurveSelect.value
+            : "smooth";
+
+    let waveFusion =
+        Math.min(
+            1,
+            Math.max(
+                0,
+                rawWaveFusion + morphDrift
+            )
+        );
+
+    waveFusion = shapeWaveFusion(waveFusion, morphCurve);
+
+    const oscBLevel =
+        getValue(oscBLevelSlider, 0.35);
+
+    const fusionA =
+        Math.cos(waveFusion * Math.PI * 0.5);
+
+    const fusionB =
+        Math.sin(waveFusion * Math.PI * 0.5);
+
+    oscAGain.gain.setTargetAtTime(
+        0.65 * fusionA,
+        ctx.currentTime,
+        0.05
+    );
+
+    oscBGain.gain.setTargetAtTime(
+        oscBLevel * fusionB,
+        ctx.currentTime,
+        0.05
+    );
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
@@ -683,48 +734,7 @@ subOscillator.frequency.exponentialRampToValueAtTime(
     ctx.currentTime + glideTime
 );
   
-  const rawWaveFusion =
-    getValue(waveFusionSlider, 50) / 100;
-
-const morphMotion =
-    dreamMorphMotionCheckbox &&
-    dreamMorphMotionCheckbox.checked;
-
-const morphDrift =
-    morphMotion
-        ? Math.sin(ctx.currentTime * 0.12) * 0.08
-        : 0;
-    
-const morphCurve =
-    waveFusionCurveSelect
-        ? waveFusionCurveSelect.value
-        : "smooth";
-
-let waveFusion =
-    Math.min(
-        1,
-        Math.max(
-            0,
-            rawWaveFusion + morphDrift
-        )
-    );
-
-waveFusion = shapeWaveFusion(waveFusion, morphCurve);
-
-const oscBLevel =
-    getValue(oscBLevelSlider, 0.35);
-
-const fusionA =
-    Math.cos(waveFusion * Math.PI * 0.5);
-
-const fusionB =
-    Math.sin(waveFusion * Math.PI * 0.5);
-    
-oscAGain.gain.value =
-    0.65 * fusionA;
-
-oscBGain.gain.value =
-    oscBLevel * fusionB;
+  updateWaveFusionGains(ctx, oscAGain, oscBGain);
     
 subGain.gain.value =
   getValue(subLevelSlider, 0) / 100 * 0.35;
