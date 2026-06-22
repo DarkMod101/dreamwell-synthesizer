@@ -312,7 +312,15 @@ function updateValueDisplays() {
   setDisplay(valueDisplays.delayMix, percent(getValue(delayMixSlider, 0.55)));
   setDisplay(valueDisplays.delayTime, milliseconds(getValue(delayTimeSlider, 0.55)));
   setDisplay(valueDisplays.delayFeedback, percent(getValue(delayFeedbackSlider, 0.55)));
-  setDisplay(valueDisplays.masterVolume, percent(getValue(masterVolume, 0.25)));
+ setDisplay(
+    valueDisplays.glideTime,
+    seconds(getValue(glideTimeSlider, 0.12))
+);
+
+setDisplay(
+    valueDisplays.masterVolume,
+    percent(getValue(masterVolume, 0.25))
+);
 }
 
 function createReverbImpulse(ctx, decayTime) {
