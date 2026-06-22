@@ -38,6 +38,8 @@ const waveFusionSlider = document.getElementById("waveFusion");
 const waveFusionValue = document.getElementById("waveFusionValue");
 const waveFusionCurveSelect =
     document.getElementById("waveFusionCurve");
+const dreamMorphMotionCheckbox =
+    document.getElementById("dreamMorphMotion");
 
 const keys = document.querySelectorAll(".key");
 
@@ -589,6 +591,22 @@ addOrbit(0.003, 0.014);
   return motionNodes;
 }
 
+function shapeWaveFusion(value, curve) {
+    if (curve === "smooth") {
+        return value * value * (3 - 2 * value);
+    }
+
+    if (curve === "deep") {
+        return value * value;
+    }
+
+    if (curve === "bright") {
+        return Math.sqrt(value);
+    }
+
+    return value;
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
@@ -668,22 +686,38 @@ subOscillator.frequency.exponentialRampToValueAtTime(
   const rawWaveFusion =
     getValue(waveFusionSlider, 50) / 100;
 
+const morphMotion =
+    dreamMorphMotionCheckbox &&
+    dreamMorphMotionCheckbox.checked;
+
+const morphDrift =
+    morphMotion
+        ? Math.sin(ctx.currentTime * 0.12) * 0.08
+        : 0;
+    
 const morphCurve =
     waveFusionCurveSelect
         ? waveFusionCurveSelect.value
         : "smooth";
 
-let waveFusion = rawWaveFusion;
+let waveFusion =
+    Math.min(
+        1,
+        Math.max(
+            0,
+            rawWaveFusion + morphDrift
+        )
+    );
 
 if (morphCurve === "smooth") {
     waveFusion =
-        rawWaveFusion * rawWaveFusion * (3 - 2 * rawWaveFusion);
+        waveFusion * waveFusion * (3 - 2 * waveFusion);
 } else if (morphCurve === "deep") {
     waveFusion =
-        rawWaveFusion * rawWaveFusion;
+        waveFusion * waveFusion;
 } else if (morphCurve === "bright") {
     waveFusion =
-        Math.sqrt(rawWaveFusion);
+        Math.sqrt(waveFusion);
 }
 
 const oscBLevel =
