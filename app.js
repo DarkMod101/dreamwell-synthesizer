@@ -412,6 +412,7 @@ masterLimiter.connect(audioContext.destination);
 
     setupReverb(audioContext);
     setupDelay(audioContext);
+    startWaveFusionModulation();  
   }
 
   if (audioContext.state === "suspended") {
