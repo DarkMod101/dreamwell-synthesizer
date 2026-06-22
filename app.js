@@ -669,11 +669,17 @@ subOscillator.frequency.exponentialRampToValueAtTime(
 const oscBLevel =
   getValue(oscBLevelSlider, 0.35);
 
+const fusionA =
+    Math.cos(waveFusion * Math.PI * 0.5);
+
+const fusionB =
+    Math.sin(waveFusion * Math.PI * 0.5);
+
 oscAGain.gain.value =
-  0.65 * (1 - waveFusion);
+    0.65 * fusionA;
 
 oscBGain.gain.value =
-  oscBLevel * waveFusion;
+    oscBLevel * fusionB;
     
 subGain.gain.value =
   getValue(subLevelSlider, 0) / 100 * 0.35;
