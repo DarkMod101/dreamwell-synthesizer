@@ -1188,6 +1188,13 @@ if (voiceSpreadSlider) {
   voiceSpreadSlider.addEventListener("input", updateValueDisplays);
 }
 
+if (waveFusionCurveSelect) {
+    waveFusionCurveSelect.addEventListener(
+        "change",
+        updateValueDisplays
+    );
+}
+
 const presetBanks = {
   signature: {
     dreamPad: {
