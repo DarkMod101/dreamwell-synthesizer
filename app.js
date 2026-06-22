@@ -663,8 +663,18 @@ subOscillator.frequency.exponentialRampToValueAtTime(
     ctx.currentTime + glideTime
 );
   
-  oscAGain.gain.value = 0.65;
-  oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
+  const waveFusion =
+  getValue(waveFusionSlider, 50) / 100;
+
+const oscBLevel =
+  getValue(oscBLevelSlider, 0.35);
+
+oscAGain.gain.value =
+  0.65 * (1 - waveFusion);
+
+oscBGain.gain.value =
+  oscBLevel * waveFusion;
+    
 subGain.gain.value =
   getValue(subLevelSlider, 0) / 100 * 0.35;
   
