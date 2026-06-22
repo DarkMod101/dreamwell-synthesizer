@@ -1150,6 +1150,7 @@ bindSlider(delayFeedbackSlider, () => {
   stereoWidthSlider,
   voiceSpreadSlider,
   noiseAmountSlider,
+  glideTimeSlider,  
   subLevelSlider,
 ].forEach((slider) => bindSlider(slider));
 
