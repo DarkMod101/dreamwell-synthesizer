@@ -23,6 +23,15 @@ const oscBDetuneSlider = document.getElementById("oscBDetune");
 const subLevelSlider =
 document.getElementById("subLevel");
 const masterVolume = document.getElementById("masterVolume");
+
+const glideEnabledCheckbox =
+    document.getElementById("glideEnabled");
+
+const glideTimeSlider =
+    document.getElementById("glideTime");
+
+const glideTimeValue =
+    document.getElementById("glideTimeValue");
 const keys = document.querySelectorAll(".key");
 
 const octaveDownButton = document.getElementById("octaveDown");
