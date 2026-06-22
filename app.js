@@ -600,10 +600,33 @@ const spreadCents = voiceSpread * 0.35;
 const unisonOscillators = [];
   
   oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
-  oscillatorA.frequency.value = frequency;
+oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
+
+const glideEnabled =
+  glideEnabledCheckbox && glideEnabledCheckbox.checked;
+
+const glideTime =
+  getValue(glideTimeSlider, 0.12);
+
+const startFrequency =
+  glideEnabled && lastPlayedFrequency
+    ? lastPlayedFrequency
+    : frequency;
+
+oscillatorA.frequency.setValueAtTime(startFrequency, ctx.currentTime);
+oscillatorA.frequency.exponentialRampToValueAtTime(
+  frequency,
+  ctx.currentTime + glideTime
+);
+
+oscillatorB.frequency.setValueAtTime(startFrequency, ctx.currentTime);
+oscillatorB.frequency.exponentialRampToValueAtTime(
+  frequency,
+  ctx.currentTime + glideTime
+);
+
 oscillatorA.detune.value = driftCents;
-  oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
-  oscillatorB.frequency.value = frequency;
+
 oscillatorB.detune.value =
   getValue(oscBDetuneSlider, 7) - driftCents;
 
@@ -612,8 +635,15 @@ subOscillator.type =
         ? subWaveformSelect.value
         : "sine";
 
-subOscillator.frequency.value =
-    frequency / 2;
+subOscillator.frequency.setValueAtTime(
+    startFrequency / 2,
+    ctx.currentTime
+);
+
+subOscillator.frequency.exponentialRampToValueAtTime(
+    frequency / 2,
+    ctx.currentTime + glideTime
+);
   
   oscAGain.gain.value = 0.65;
   oscBGain.gain.value = getValue(oscBLevelSlider, 0.35);
