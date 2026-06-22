@@ -883,7 +883,8 @@ function playNote(frequency) {
 
   const note = createNote(frequency);
   activeNotes.set(noteId, note);
-  lastPlayedFrequency = frequency;  
+  lastPlayedFrequency = frequency;
+  startWaveFusionModulation();  
 } 
 
 function stopNote(frequency) {
