@@ -330,6 +330,22 @@
       <div class="panel">
         <h2>Master</h2>
 
+<label class="checkbox-row">
+  <input type="checkbox" id="glideEnabled">
+  Portamento / Glide
+</label>
+
+<label>
+  <span>Glide Time <strong id="glideTimeValue">0.12s</strong></span>
+  <input
+    id="glideTime"
+    type="range"
+    min="0.01"
+    max="1.5"
+    step="0.01"
+    value="0.12">
+</label>
+        
         <label>
           <span>Master Volume <strong id="masterVolumeValue">25%</strong></span>
           <input id="masterVolume" type="range" min="0" max="1" step="0.01" value="0.25">
