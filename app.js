@@ -650,8 +650,7 @@ function updateWaveFusionGains(ctx, oscAGain, oscBGain) {
     waveFusion = shapeWaveFusion(waveFusion, morphCurve);
 
     const oscBLevel =
-    getValue(oscBLevelSlider, 0.35) +
-    presenceAmount * 0.15;
+  getValue(oscBLevelSlider, 0.35);
   
     const fusionA =
         Math.cos(waveFusion * Math.PI * 0.5);
