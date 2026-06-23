@@ -730,7 +730,7 @@ const presenceAmount =
   getValue(presenceSlider, 0) / 100;
 
 const voiceSpread =
-  getValue(voiceSpreadSlider, 0) + presenceAmount * 35;
+  getValue(voiceSpreadSlider, 0) + presenceAmount * 70;
 
 const spreadCents = voiceSpread * 0.35;
 const unisonOscillators = [];
