@@ -25,6 +25,11 @@ const oscBDetuneSlider = document.getElementById("oscBDetune");
 const subLevelSlider =
 document.getElementById("subLevel");
 const masterVolume = document.getElementById("masterVolume");
+const presenceSlider =
+  document.getElementById("presence");
+
+const presenceValue =
+  document.getElementById("presenceValue");
 
 const glideEnabledCheckbox =
     document.getElementById("glideEnabled");
@@ -178,6 +183,7 @@ document.getElementById("subLevelValue"),
  glideTime: document.getElementById("glideTimeValue"),
   waveFusion: document.getElementById("waveFusionValue"),  
   masterVolume: document.getElementById("masterVolumeValue"),
+  presence: document.getElementById("presenceValue"),  
 };
 
 function getValue(element, fallback) {
@@ -336,6 +342,12 @@ setDisplay(
     valueDisplays.masterVolume,
     percent(getValue(masterVolume, 0.25))
 );
+
+setDisplay(
+    valueDisplays.presence,
+    `${Math.round(getValue(presenceSlider, 0))}%`
+);
+    
 }
 
 function createReverbImpulse(ctx, decayTime) {
