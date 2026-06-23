@@ -785,7 +785,9 @@ subGain.gain.value =
   filter.frequency.value = getValue(cutoffSlider, 4000);
   filter.Q.value = getValue(resonanceSlider, 1);
 
-  const noiseAmount = getValue(noiseAmountSlider, 0);
+  const noiseAmount =
+    getValue(noiseAmountSlider, 0) +
+    presenceAmount * 0.05;
 
 noiseSource.buffer = createNoiseBuffer(ctx, noiseTypeSelect ? noiseTypeSelect.value : "white");
 noiseSource.loop = true;
