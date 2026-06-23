@@ -864,6 +864,20 @@ const livingTextureNodes =
 filter.connect(noteGain);
 noteGain.connect(stereoPanner);
 
+const presenceReverbBoost =
+  presenceAmount * 0.03;
+
+if (presenceAmount > 0 && reverbWetGain) {
+  reverbWetGain.gain.setTargetAtTime(
+    Math.min(
+      1,
+      getValue(reverbMixSlider, 0.25) + presenceReverbBoost
+    ),
+    ctx.currentTime,
+    0.05
+  );
+}
+
 stereoPanner.connect(dryGain);
 stereoPanner.connect(reverbNode);
 stereoPanner.connect(delayDryGain);
