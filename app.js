@@ -656,7 +656,7 @@ function updateWaveFusionGains(
 
     const oscBLevel =
   getValue(oscBLevelSlider, 0.35) +
-  presenceAmount * 0.15;
+  presenceAmount * 0.35;
   
     const fusionA =
         Math.cos(waveFusion * Math.PI * 0.5);
