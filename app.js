@@ -1280,7 +1280,8 @@ bindSlider(delayFeedbackSlider, () => {
   voiceSpreadSlider,
   noiseAmountSlider,
   glideTimeSlider,
-  waveFusionSlider,  
+  waveFusionSlider,
+  presenceSlider,
   subLevelSlider,
 ].forEach((slider) => bindSlider(slider));
 
