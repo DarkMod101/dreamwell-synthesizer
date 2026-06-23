@@ -620,7 +620,12 @@ function shapeWaveFusion(value, curve) {
     return value;
 }
 
-function updateWaveFusionGains(ctx, oscAGain, oscBGain) {
+function updateWaveFusionGains(
+  ctx,
+  oscAGain,
+  oscBGain,
+  presenceAmount = 0
+) {
     const rawWaveFusion =
         getValue(waveFusionSlider, 50) / 100;
 
@@ -650,7 +655,8 @@ function updateWaveFusionGains(ctx, oscAGain, oscBGain) {
     waveFusion = shapeWaveFusion(waveFusion, morphCurve);
 
     const oscBLevel =
-  getValue(oscBLevelSlider, 0.35);
+  getValue(oscBLevelSlider, 0.35) +
+  presenceAmount * 0.15;
   
     const fusionA =
         Math.cos(waveFusion * Math.PI * 0.5);
@@ -775,7 +781,7 @@ subOscillator.frequency.exponentialRampToValueAtTime(
     ctx.currentTime + glideTime
 );
   
-  updateWaveFusionGains(ctx, oscAGain, oscBGain);
+  updateWaveFusionGains(ctx, oscAGain, oscBGain, presenceAmount);
     
 subGain.gain.value =
   getValue(subLevelSlider, 0) / 100 * 0.35;
