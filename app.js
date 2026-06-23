@@ -787,7 +787,11 @@ subGain.gain.value =
   getValue(subLevelSlider, 0) / 100 * 0.35;
   
   filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
-  filter.frequency.value = getValue(cutoffSlider, 4000);
+  const baseCutoff =
+  getValue(cutoffSlider, 4000);
+
+filter.frequency.value =
+  baseCutoff + (presenceAmount * 1200);
   filter.Q.value = getValue(resonanceSlider, 1);
 
   const noiseAmount =
