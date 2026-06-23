@@ -62,6 +62,22 @@ const lfoRateSlider = document.getElementById("lfoRate");
 const lfoAmountSlider = document.getElementById("lfoAmount");
 const lfoDestinationSelect = document.getElementById("lfoDestination");
 
+const lfo2EnabledCheckbox =
+  document.getElementById("lfo2Enabled");
+
+const lfo2RateSlider =
+  document.getElementById("lfo2Rate");
+
+const lfo2RateValue =
+  document.getElementById("lfo2RateValue");
+
+const lfo2AmountSlider =
+  document.getElementById("lfo2Amount");
+
+const lfo2AmountValue =
+  document.getElementById("lfo2AmountValue");
+
+
 const driftSlider = document.getElementById("drift");
 const stereoWidthSlider =
   document.getElementById("stereoWidth");
