@@ -634,23 +634,6 @@ function updateWaveFusionGains(ctx, oscAGain, oscBGain) {
                 rawWaveFusion + morphDrift
             )
         );
-
-if (
-    lfo2EnabledCheckbox &&
-    lfo2EnabledCheckbox.checked
-) {
-    const lfo2Amount =
-        getValue(lfo2AmountSlider, 0) / 100;
-
-    waveFusion =
-        Math.min(
-            1,
-            Math.max(
-                0,
-                waveFusion + (waveFusion - 0.5) * lfo2Amount
-            )
-        );
-}
     
     waveFusion = shapeWaveFusion(waveFusion, morphCurve);
 
