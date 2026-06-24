@@ -18,34 +18,26 @@ let waveFusionModulationTimer = null;
 
 const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
-const subWaveformSelect =
-document.getElementById("subWaveform");
+const originSelect = document.getElementById("origin");
+const subWaveformSelect = document.getElementById("subWaveform");
 const oscBLevelSlider = document.getElementById("oscBLevel");
 const oscBDetuneSlider = document.getElementById("oscBDetune");
-const subLevelSlider =
-document.getElementById("subLevel");
+const subLevelSlider = document.getElementById("subLevel");
 const masterVolume = document.getElementById("masterVolume");
-const presenceSlider =
-  document.getElementById("presence");
+const presenceSlider = document.getElementById("presence");
 
-const presenceValue =
-  document.getElementById("presenceValue");
+const presenceValue = document.getElementById("presenceValue");
 
-const glideEnabledCheckbox =
-    document.getElementById("glideEnabled");
+const glideEnabledCheckbox = document.getElementById("glideEnabled");
 
-const glideTimeSlider =
-    document.getElementById("glideTime");
+const glideTimeSlider = document.getElementById("glideTime");
 
-const glideTimeValue =
-    document.getElementById("glideTimeValue");
+const glideTimeValue = document.getElementById("glideTimeValue");
 
 const waveFusionSlider = document.getElementById("waveFusion");
 const waveFusionValue = document.getElementById("waveFusionValue");
-const waveFusionCurveSelect =
-    document.getElementById("waveFusionCurve");
-const dreamMorphMotionCheckbox =
-    document.getElementById("dreamMorphMotion");
+const waveFusionCurveSelect = document.getElementById("waveFusionCurve");
+const dreamMorphMotionCheckbox = document.getElementById("dreamMorphMotion");
 
 const keys = document.querySelectorAll(".key");
 
