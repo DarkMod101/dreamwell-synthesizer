@@ -457,6 +457,24 @@ function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   return { lfo, lfoGain };
 }
 
+function getOriginSettings(origin) {
+  const settings = {
+    driftBoost: 0,
+    filterShift: 0,
+    resonanceBoost: 0,
+    oscBBoost: 0
+  };
+
+  if (origin === "vintage") {
+    settings.driftBoost = 2;
+    settings.filterShift = -300;
+    settings.resonanceBoost = 0.5;
+    settings.oscBBoost = 0.05;
+  }
+
+  return settings;
+}
+
 function createLivingTextureMotion(ctx, textureType, noiseGain, filter, stereoPanner) {
   const motionNodes = [];
 
@@ -715,12 +733,16 @@ const stereoPanner = ctx.createStereoPanner();
 const noiseGain = ctx.createGain();
 stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 0) / 100);
   
-const driftAmount = getValue(driftSlider, 0);
-const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.6;
-
 const presenceAmount =
   getValue(presenceSlider, 0) / 100;
 
+const originSettings = getOriginSettings(
+  originSelect ? originSelect.value : "pure"
+);
+
+const driftAmount = getValue(driftSlider, 0) + originSettings.driftBoost;
+const driftCents = (Math.random() * 2 - 1) * driftAmount * 0.6;
+  
 const voiceSpread =
   getValue(voiceSpreadSlider, 0) + presenceAmount * 70;
 
@@ -780,10 +802,12 @@ subGain.gain.value =
   
   filter.type = filterTypeSelect ? filterTypeSelect.value : "lowpass";
   const baseCutoff =
-  getValue(cutoffSlider, 4000);
+  getValue(cutoffSlider, 4000) +
+  originSettings.filterShift;
 
 filter.frequency.value =
-  baseCutoff + (presenceAmount * 400);
+  Math.max(0, baseCutoff) +
+  (presenceAmount * 400);
   filter.Q.value = getValue(resonanceSlider, 1);
 
   const noiseAmount =
