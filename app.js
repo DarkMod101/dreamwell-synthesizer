@@ -472,6 +472,13 @@ function getOriginSettings(origin) {
     settings.oscBBoost = 0.05;
   }
 
+if (origin === "dream") {
+  settings.driftBoost = 5;
+  settings.filterShift = 250;
+  settings.resonanceBoost = 0.2;
+  settings.oscBBoost = 0.08;
+}
+  
   return settings;
 }
 
