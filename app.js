@@ -485,6 +485,13 @@ if (origin === "glass") {
     settings.resonanceBoost = 0.8;
     settings.oscBBoost = 0.12;
 }
+
+if (origin === "hollow") {
+  settings.driftBoost = 1;
+  settings.filterShift = -150;
+  settings.resonanceBoost = 1.2;
+  settings.oscBBoost = 0.02;
+}
   
   return settings;
 }
