@@ -1306,6 +1306,15 @@ if (waveFusionCurveSelect) {
     );
 }
 
+if (originSelect) {
+    originSelect.addEventListener(
+        "change",
+        () => {
+            // Placeholder for future Origin engine
+        }
+    );
+}
+
 const presetBanks = {
   signature: {
     dreamPad: {
