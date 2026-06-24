@@ -478,6 +478,13 @@ if (origin === "dream") {
   settings.resonanceBoost = 0.2;
   settings.oscBBoost = 0.08;
 }
+
+if (origin === "glass") {
+    settings.driftBoost = 0;
+    settings.filterShift = 600;
+    settings.resonanceBoost = 0.8;
+    settings.oscBBoost = 0.12;
+}
   
   return settings;
 }
