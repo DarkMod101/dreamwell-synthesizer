@@ -812,17 +812,14 @@ const voiceSpread =
 const spreadCents = voiceSpread * 0.35;
 const unisonOscillators = [];
   
-  applyWaveform(
-  oscillatorA,
-  waveformSelect ? waveformSelect.value : "sine",
-  ctx
-);
+  const waveformA =
+  waveformSelect ? waveformSelect.value : "sine";
 
-applyWaveform(
-  oscillatorB,
-  waveformBSelect ? waveformBSelect.value : "sawtooth",
-  ctx
-);
+const waveformB =
+  waveformBSelect ? waveformBSelect.value : "sawtooth";
+
+applyWaveform(oscillatorA, waveformA, ctx);
+applyWaveform(oscillatorB, waveformB, ctx);
 
 const glideEnabled =
   glideEnabledCheckbox && glideEnabledCheckbox.checked;
@@ -913,18 +910,18 @@ if (voiceSpread > 0) {
     unisonOscillators.push({ osc, gain });
   }
 
-  addUnisonOscillator(oscillatorA.type, driftCents - spreadCents);
-  addUnisonOscillator(oscillatorA.type, driftCents + spreadCents);
+  addUnisonOscillator(waveformA, driftCents - spreadCents);
+addUnisonOscillator(waveformA, driftCents + spreadCents);
 
-  addUnisonOscillator(
-    oscillatorB.type,
-    getValue(oscBDetuneSlider, 7) - driftCents - spreadCents
-  );
+addUnisonOscillator(
+  waveformB,
+  getValue(oscBDetuneSlider, 7) - driftCents - spreadCents
+);
 
-  addUnisonOscillator(
-    oscillatorB.type,
-    getValue(oscBDetuneSlider, 7) - driftCents + spreadCents
-  );
+addUnisonOscillator(
+  waveformB,
+  getValue(oscBDetuneSlider, 7) - driftCents + spreadCents
+);
 }
   
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
