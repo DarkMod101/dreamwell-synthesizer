@@ -1821,6 +1821,7 @@ function saveSavedPresets(presets) {
 }
 
 function refreshSavedPresetList() {
+  if (!savedPresetSelect) return;
   const presets = getSavedPresets();
   const names = Object.keys(presets);
 
