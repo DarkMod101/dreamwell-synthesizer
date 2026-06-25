@@ -182,6 +182,31 @@ function getValue(element, fallback) {
   return element ? Number(element.value) : fallback;
 }
 
+function applyWaveform(oscillator, waveform, ctx) {
+  if (waveform === "trapezoid") {
+    const real = new Float32Array([
+      0,
+      1.0,
+      0,
+      0.35,
+      0,
+      0.18,
+      0,
+      0.08
+    ]);
+
+    const imag = new Float32Array(real.length);
+
+    const trapezoidWave =
+      ctx.createPeriodicWave(real, imag);
+
+    oscillator.setPeriodicWave(trapezoidWave);
+    return;
+  }
+
+  oscillator.type = waveform;
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
