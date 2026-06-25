@@ -492,6 +492,13 @@ if (origin === "hollow") {
   settings.resonanceBoost = 1.2;
   settings.oscBBoost = 0.02;
 }
+
+if (origin === "ancient") {
+    settings.driftBoost = 3;
+    settings.filterShift = -450;
+    settings.resonanceBoost = 0.4;
+    settings.oscBBoost = 0.10;
+}
   
   return settings;
 }
