@@ -843,7 +843,9 @@ subGain.gain.value =
 filter.frequency.value =
   Math.max(0, baseCutoff) +
   (presenceAmount * 400);
-  filter.Q.value = getValue(resonanceSlider, 1);
+  filter.Q.value =
+  getValue(resonanceSlider, 1) +
+  originSettings.resonanceBoost;
 
   const noiseAmount =
     getValue(noiseAmountSlider, 0) +
