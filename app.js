@@ -727,9 +727,14 @@ function updateWaveFusionGains(
     
     waveFusion = shapeWaveFusion(waveFusion, morphCurve);
 
-    const oscBLevel =
+    const originSettings = getOriginSettings(
+  originSelect ? originSelect.value : "pure"
+);
+
+const oscBLevel =
   getValue(oscBLevelSlider, 0.35) +
-  presenceAmount * 0.35;
+  presenceAmount * 0.35 +
+  originSettings.oscBBoost;
   
     const fusionA =
         Math.cos(waveFusion * Math.PI * 0.5);
