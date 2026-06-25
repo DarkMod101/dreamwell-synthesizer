@@ -487,10 +487,10 @@ if (origin === "glass") {
 }
 
 if (origin === "hollow") {
-  settings.driftBoost = 1;
-  settings.filterShift = -150;
-  settings.resonanceBoost = 1.2;
-  settings.oscBBoost = 0.02;
+    settings.driftBoost = 2;
+    settings.filterShift = -50;
+    settings.resonanceBoost = 1.4;
+    settings.oscBBoost = -0.05;
 }
 
 if (origin === "ancient") {
