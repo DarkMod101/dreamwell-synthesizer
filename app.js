@@ -501,10 +501,10 @@ if (origin === "ancient") {
 }
 
 if (origin === "cosmic") {
-    settings.driftBoost = 4;
-    settings.filterShift = 350;
-    settings.resonanceBoost = 0.3;
-    settings.oscBBoost = 0.15;
+    settings.driftBoost = 8;
+    settings.filterShift = 500;
+    settings.resonanceBoost = 0.15;
+    settings.oscBBoost = 0.20;
 }
   
   return settings;
