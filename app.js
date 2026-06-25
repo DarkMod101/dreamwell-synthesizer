@@ -901,7 +901,7 @@ if (voiceSpread > 0) {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = type;
+    applyWaveform(osc, type, ctx);
     osc.frequency.value = frequency;
     osc.detune.value = detune;
     gain.gain.value = unisonLevel;
