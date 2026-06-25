@@ -499,6 +499,13 @@ if (origin === "ancient") {
     settings.resonanceBoost = 0.4;
     settings.oscBBoost = 0.10;
 }
+
+if (origin === "cosmic") {
+    settings.driftBoost = 4;
+    settings.filterShift = 350;
+    settings.resonanceBoost = 0.3;
+    settings.oscBBoost = 0.15;
+}
   
   return settings;
 }
