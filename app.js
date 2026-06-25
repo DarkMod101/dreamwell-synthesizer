@@ -40,6 +40,15 @@ const waveFusionValue = document.getElementById("waveFusionValue");
 const waveFusionCurveSelect = document.getElementById("waveFusionCurve");
 const dreamMorphMotionCheckbox = document.getElementById("dreamMorphMotion");
 
+const openPresetBrowserButton =
+  document.getElementById("openPresetBrowser");
+
+const closePresetBrowserButton =
+  document.getElementById("closePresetBrowser");
+
+const presetBrowserOverlay =
+  document.getElementById("presetBrowserOverlay");
+
 const keys = document.querySelectorAll(".key");
 
 const octaveDownButton = document.getElementById("octaveDown");
@@ -2030,6 +2039,32 @@ if (octaveUpButton) {
   octaveUpButton.addEventListener("click", () => {
     octaveShift = Math.min(octaveShift + 1, 2);
     updateKeyboardOctave();
+  });
+}
+
+function openPresetBrowser() {
+  if (!presetBrowserOverlay) return;
+  presetBrowserOverlay.classList.remove("hidden");
+}
+
+function closePresetBrowser() {
+  if (!presetBrowserOverlay) return;
+  presetBrowserOverlay.classList.add("hidden");
+}
+
+if (openPresetBrowserButton) {
+  openPresetBrowserButton.addEventListener("click", openPresetBrowser);
+}
+
+if (closePresetBrowserButton) {
+  closePresetBrowserButton.addEventListener("click", closePresetBrowser);
+}
+
+if (presetBrowserOverlay) {
+  presetBrowserOverlay.addEventListener("click", (event) => {
+    if (event.target === presetBrowserOverlay) {
+      closePresetBrowser();
+    }
   });
 }
 
