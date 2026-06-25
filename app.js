@@ -15,6 +15,7 @@ const activeNotes = new Map();
 const activeTouchKeys = new Map();
 let lastPlayedFrequency = null;
 let waveFusionModulationTimer = null;
+let trapezoidWave = null;
 
 const waveformSelect = document.getElementById("waveform");
 const waveformBSelect = document.getElementById("waveformB");
@@ -184,21 +185,23 @@ function getValue(element, fallback) {
 
 function applyWaveform(oscillator, waveform, ctx) {
   if (waveform === "trapezoid") {
-    const real = new Float32Array([
-      0,
-      1.0,
-      0,
-      0.35,
-      0,
-      0.18,
-      0,
-      0.08
-    ]);
+    if (!trapezoidWave) {
+      const real = new Float32Array([
+        0,
+        1.0,
+        0,
+        0.35,
+        0,
+        0.18,
+        0,
+        0.08
+      ]);
 
-    const imag = new Float32Array(real.length);
+      const imag = new Float32Array(real.length);
 
-    const trapezoidWave =
-      ctx.createPeriodicWave(real, imag);
+      trapezoidWave =
+        ctx.createPeriodicWave(real, imag);
+    }
 
     oscillator.setPeriodicWave(trapezoidWave);
     return;
