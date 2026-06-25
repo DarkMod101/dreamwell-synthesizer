@@ -809,8 +809,17 @@ const voiceSpread =
 const spreadCents = voiceSpread * 0.35;
 const unisonOscillators = [];
   
-  oscillatorA.type = waveformSelect ? waveformSelect.value : "sine";
-oscillatorB.type = waveformBSelect ? waveformBSelect.value : "sawtooth";
+  applyWaveform(
+  oscillatorA,
+  waveformSelect ? waveformSelect.value : "sine",
+  ctx
+);
+
+applyWaveform(
+  oscillatorB,
+  waveformBSelect ? waveformBSelect.value : "sawtooth",
+  ctx
+);
 
 const glideEnabled =
   glideEnabledCheckbox && glideEnabledCheckbox.checked;
