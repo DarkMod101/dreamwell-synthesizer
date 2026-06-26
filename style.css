@@ -489,3 +489,25 @@ input[type="range"] {
     );
   border-radius: 999px;
 }
+
+
+@keyframes activePresetPulse {
+  0%, 100% {
+    border-color: rgba(214, 168, 79, 0.45);
+    box-shadow:
+      0 0 8px rgba(214, 168, 79, 0.15),
+      inset 0 0 6px rgba(214, 168, 79, 0.05);
+  }
+
+  50% {
+    border-color: rgba(214, 168, 79, 0.9);
+    box-shadow:
+      0 0 18px rgba(214, 168, 79, 0.35),
+      0 0 28px rgba(214, 168, 79, 0.18),
+      inset 0 0 10px rgba(214, 168, 79, 0.12);
+  }
+}
+
+.preset-browser-preset.active-preset {
+  animation: activePresetPulse 3s ease-in-out infinite;
+}
