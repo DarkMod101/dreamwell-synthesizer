@@ -497,7 +497,7 @@ input[type="range"] {
   }
 
   50% {
-    filter: brightness(1.08);
+    filter: brightness(1.03);
   }
 }
 
@@ -506,5 +506,5 @@ input[type="range"] {
   box-shadow:
     0 0 10px rgba(214, 168, 79, 0.16),
     inset 0 0 7px rgba(214, 168, 79, 0.06);
-  animation: activePresetPulse 5.5s ease-in-out infinite;
+  animation: activePresetPulse 9s ease-in-out infinite;
 }
