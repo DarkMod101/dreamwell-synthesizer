@@ -65,6 +65,18 @@ function closePresetBrowser() {
   presetBrowserOverlay.classList.add("hidden");
 }
 
+function renderPresetBrowser(bankName) {
+  if (!presetBrowserList) return;
+
+  presetBrowserList.innerHTML = "";
+
+  const title = document.createElement("div");
+  title.textContent = `Selected Bank: ${bankName}`;
+  title.style.padding = "12px";
+
+  presetBrowserList.appendChild(title);
+}
+
 if (openPresetBrowserButton) {
   openPresetBrowserButton.addEventListener("click", openPresetBrowser);
 }
