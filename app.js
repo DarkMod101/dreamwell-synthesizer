@@ -1997,6 +1997,120 @@ silentCathedral: {
     masterVolume: 0.14,
   },
 },
+
+shadowSanctum: {
+  name: "Shadow Sanctum",
+  settings: {
+    waveform: "trapezoid",
+    waveformB: "sawtooth",
+    oscBLevel: 0.36,
+    oscBDetune: -16,
+    voiceSpread: 74,
+
+    attack: 3.6,
+    decay: 2.4,
+    sustain: 0.78,
+    release: 7.5,
+
+    filterType: "lowpass",
+    cutoff: 850,
+    resonance: 4.2,
+
+    lfoRate: 0.07,
+    lfoAmount: 210,
+    lfoDestination: "filter",
+
+    noiseType: "dark",
+    noiseAmount: 24,
+    drift: 28,
+    stereoWidth: 86,
+
+    reverbMix: 0.88,
+    reverbDecay: 8,
+
+    delayMix: 0.22,
+    delayTime: 0.92,
+    delayFeedback: 0.32,
+
+    masterVolume: 0.13,
+  },
+},
+
+forgottenCrypt: {
+  name: "Forgotten Crypt",
+  settings: {
+    waveform: "triangle",
+    waveformB: "square",
+    oscBLevel: 0.3,
+    oscBDetune: -22,
+    voiceSpread: 70,
+
+    attack: 2.8,
+    decay: 2.6,
+    sustain: 0.74,
+    release: 7.8,
+
+    filterType: "lowpass",
+    cutoff: 700,
+    resonance: 5.5,
+
+    lfoRate: 0.05,
+    lfoAmount: 260,
+    lfoDestination: "filter",
+
+    noiseType: "machine",
+    noiseAmount: 18,
+    drift: 30,
+    stereoWidth: 78,
+
+    reverbMix: 0.9,
+    reverbDecay: 8,
+
+    delayMix: 0.18,
+    delayTime: 1.05,
+    delayFeedback: 0.26,
+
+    masterVolume: 0.12,
+  },
+},
+
+desolateMemory: {
+  name: "Desolate Memory",
+  settings: {
+    waveform: "sine",
+    waveformB: "trapezoid",
+    oscBLevel: 0.26,
+    oscBDetune: 13,
+    voiceSpread: 64,
+
+    attack: 4.6,
+    decay: 3,
+    sustain: 0.68,
+    release: 8,
+
+    filterType: "lowpass",
+    cutoff: 620,
+    resonance: 3.8,
+
+    lfoRate: 0.04,
+    lfoAmount: 180,
+    lfoDestination: "filter",
+
+    noiseType: "air",
+    noiseAmount: 20,
+    drift: 34,
+    stereoWidth: 82,
+
+    reverbMix: 0.92,
+    reverbDecay: 8,
+
+    delayMix: 0.14,
+    delayTime: 1.12,
+    delayFeedback: 0.22,
+
+    masterVolume: 0.12,
+  },
+},
 },
     
   leads: {},
