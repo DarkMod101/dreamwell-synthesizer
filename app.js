@@ -70,6 +70,21 @@ function renderPresetBrowser(bankName) {
 
   presetBrowserList.innerHTML = "";
 
+const presets = Object.values(presetBanks[bankName] || {});
+
+presets.forEach((preset) => {
+  const button = document.createElement("button");
+  button.textContent = preset.name;
+  button.className = "preset-browser-preset";
+
+  button.addEventListener("click", () => {
+    applyPresetSettings(preset.settings);
+    closePresetBrowser();
+  });
+
+  presetBrowserList.appendChild(button);
+});
+  
   const title = document.createElement("div");
   title.textContent = `Selected Bank: ${bankName}`;
   title.style.padding = "12px";
