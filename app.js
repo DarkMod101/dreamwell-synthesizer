@@ -78,9 +78,16 @@ presets.forEach((preset) => {
   button.className = "preset-browser-preset";
 
   button.addEventListener("click", () => {
-    applyPresetSettings(preset.settings);
-    closePresetBrowser();
-  });
+  applyPresetSettings(preset.settings);
+
+  presetBrowserList
+    .querySelectorAll(".preset-browser-preset")
+    .forEach((presetButton) => {
+      presetButton.classList.remove("active-preset");
+    });
+
+  button.classList.add("active-preset");
+});
 
   presetBrowserList.appendChild(button);
 });
