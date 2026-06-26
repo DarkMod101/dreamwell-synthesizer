@@ -70,6 +70,16 @@ if (closePresetBrowserButton) {
   closePresetBrowserButton.addEventListener("click", closePresetBrowser);
 }
 
+presetBrowserTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    presetBrowserTabs.forEach((button) => {
+      button.classList.remove("active-bank");
+    });
+
+    tab.classList.add("active-bank");
+  });
+});
+
 if (presetBrowserOverlay) {
   presetBrowserOverlay.addEventListener("click", (event) => {
     if (event.target === presetBrowserOverlay) {
