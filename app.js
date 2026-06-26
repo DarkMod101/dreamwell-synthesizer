@@ -1845,7 +1845,8 @@ const presetBanks = {
     masterVolume: 0.15,
   },
 },
-
+},
+    
   leads: {},
   bass: {},
   textures: {},
