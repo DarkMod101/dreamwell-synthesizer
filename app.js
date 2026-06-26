@@ -49,6 +49,9 @@ const closePresetBrowserButton =
 const presetBrowserOverlay =
   document.getElementById("presetBrowserOverlay");
 
+const presetBrowserTabs =
+  document.querySelectorAll(".preset-browser-tab");
+
 function openPresetBrowser() {
   if (!presetBrowserOverlay) return;
   presetBrowserOverlay.classList.remove("hidden");
