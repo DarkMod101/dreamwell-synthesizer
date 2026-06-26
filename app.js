@@ -92,6 +92,8 @@ presetBrowserTabs.forEach((tab) => {
     });
 
     tab.classList.add("active-bank");
+
+    renderPresetBrowser(tab.dataset.bank);
   });
 });
 
