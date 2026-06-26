@@ -1883,6 +1883,120 @@ const presetBanks = {
     masterVolume: 0.16,
   },
 },  
+
+    celestialMist: {
+  name: "Celestial Mist",
+  settings: {
+    waveform: "trapezoid",
+    waveformB: "sine",
+    oscBLevel: 0.34,
+    oscBDetune: 9,
+    voiceSpread: 80,
+
+    attack: 2.4,
+    decay: 1.9,
+    sustain: 0.84,
+    release: 6.4,
+
+    filterType: "lowpass",
+    cutoff: 2600,
+    resonance: 1.6,
+
+    lfoRate: 0.13,
+    lfoAmount: 140,
+    lfoDestination: "filter",
+
+    noiseType: "dust",
+    noiseAmount: 18,
+    drift: 18,
+    stereoWidth: 78,
+
+    reverbMix: 0.8,
+    reverbDecay: 7.2,
+
+    delayMix: 0.26,
+    delayTime: 0.72,
+    delayFeedback: 0.3,
+
+    masterVolume: 0.16,
+  },
+},
+
+endlessSleep: {
+  name: "Endless Sleep",
+  settings: {
+    waveform: "sine",
+    waveformB: "trapezoid",
+    oscBLevel: 0.28,
+    oscBDetune: -8,
+    voiceSpread: 62,
+
+    attack: 4.2,
+    decay: 2.8,
+    sustain: 0.76,
+    release: 8,
+
+    filterType: "lowpass",
+    cutoff: 1100,
+    resonance: 2.2,
+
+    lfoRate: 0.06,
+    lfoAmount: 90,
+    lfoDestination: "filter",
+
+    noiseType: "air",
+    noiseAmount: 12,
+    drift: 14,
+    stereoWidth: 66,
+
+    reverbMix: 0.86,
+    reverbDecay: 8,
+
+    delayMix: 0.16,
+    delayTime: 0.9,
+    delayFeedback: 0.2,
+
+    masterVolume: 0.15,
+  },
+},
+
+silentCathedral: {
+  name: "Silent Cathedral",
+  settings: {
+    waveform: "triangle",
+    waveformB: "trapezoid",
+    oscBLevel: 0.42,
+    oscBDetune: -18,
+    voiceSpread: 88,
+
+    attack: 3.1,
+    decay: 2.1,
+    sustain: 0.86,
+    release: 7.2,
+
+    filterType: "lowpass",
+    cutoff: 1900,
+    resonance: 3.6,
+
+    lfoRate: 0.09,
+    lfoAmount: 160,
+    lfoDestination: "filter",
+
+    noiseType: "dark",
+    noiseAmount: 18,
+    drift: 22,
+    stereoWidth: 90,
+
+    reverbMix: 0.9,
+    reverbDecay: 8,
+
+    delayMix: 0.2,
+    delayTime: 0.82,
+    delayFeedback: 0.26,
+
+    masterVolume: 0.14,
+  },
+},
 },
     
   leads: {},
