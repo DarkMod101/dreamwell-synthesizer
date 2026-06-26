@@ -1845,6 +1845,44 @@ const presetBanks = {
     masterVolume: 0.15,
   },
 },
+
+  frozenHorizon: {
+  name: "Frozen Horizon",
+  settings: {
+    waveform: "triangle",
+    waveformB: "sawtooth",
+    oscBLevel: 0.28,
+    oscBDetune: -14,
+    voiceSpread: 76,
+
+    attack: 3.4,
+    decay: 2.2,
+    sustain: 0.72,
+    release: 6.8,
+
+    filterType: "lowpass",
+    cutoff: 1400,
+    resonance: 3.1,
+
+    lfoRate: 0.08,
+    lfoAmount: 110,
+    lfoDestination: "filter",
+
+    noiseType: "dark",
+    noiseAmount: 16,
+    drift: 24,
+    stereoWidth: 84,
+
+    reverbMix: 0.78,
+    reverbDecay: 7.8,
+
+    delayMix: 0.18,
+    delayTime: 0.86,
+    delayFeedback: 0.24,
+
+    masterVolume: 0.16,
+  },
+},  
 },
     
   leads: {},
