@@ -74,11 +74,11 @@ const presets = Object.values(presetBanks[bankName] || {});
 
 presets.forEach((preset) => {
   const button = document.createElement("button");
-  button.textContent = preset.name;
+  button.textContent = preset.name || preset.label || "Unnamed Preset";
   button.className = "preset-browser-preset";
 
   button.addEventListener("click", () => {
-  applyPresetSettings(preset.settings);
+  applyPresetSettings(preset.settings || preset);
 
   presetBrowserList
     .querySelectorAll(".preset-browser-preset")
