@@ -1938,6 +1938,123 @@ const presetBanks = {
   },
 },
 
+starlightPassage: {
+  name: "Starlight Passage",
+  collection: "Celestial Dreams",
+  settings: {
+    waveform: "trapezoid",
+    waveformB: "triangle",
+    oscBLevel: 0.36,
+    oscBDetune: 12,
+    voiceSpread: 90,
+
+    attack: 3.2,
+    decay: 2.1,
+    sustain: 0.86,
+    release: 7.6,
+
+    filterType: "lowpass",
+    cutoff: 3600,
+    resonance: 1.2,
+
+    lfoRate: 0.10,
+    lfoAmount: 120,
+    lfoDestination: "filter",
+
+    noiseType: "cosmic",
+    noiseAmount: 20,
+    drift: 22,
+    stereoWidth: 94,
+
+    reverbMix: 0.88,
+    reverbDecay: 8,
+
+    delayMix: 0.34,
+    delayTime: 0.72,
+    delayFeedback: 0.34,
+
+    masterVolume: 0.15,
+  },
+},
+
+heavensGate: {
+  name: "Heaven's Gate",
+  collection: "Celestial Dreams",
+  settings: {
+    waveform: "sawtooth",
+    waveformB: "sine",
+    oscBLevel: 0.30,
+    oscBDetune: 7,
+    voiceSpread: 86,
+
+    attack: 2.6,
+    decay: 1.8,
+    sustain: 0.84,
+    release: 6.8,
+
+    filterType: "lowpass",
+    cutoff: 4200,
+    resonance: 0.9,
+
+    lfoRate: 0.08,
+    lfoAmount: 90,
+    lfoDestination: "filter",
+
+    noiseType: "dust",
+    noiseAmount: 14,
+    drift: 16,
+    stereoWidth: 88,
+
+    reverbMix: 0.9,
+    reverbDecay: 8,
+
+    delayMix: 0.26,
+    delayTime: 0.62,
+    delayFeedback: 0.26,
+
+    masterVolume: 0.14,
+  },
+},
+
+auroraResonance: {
+  name: "Aurora Resonance",
+  collection: "Celestial Dreams",
+  settings: {
+    waveform: "triangle",
+    waveformB: "trapezoid",
+    oscBLevel: 0.40,
+    oscBDetune: 16,
+    voiceSpread: 92,
+
+    attack: 3.8,
+    decay: 2.4,
+    sustain: 0.82,
+    release: 8,
+
+    filterType: "lowpass",
+    cutoff: 3000,
+    resonance: 1.6,
+
+    lfoRate: 0.14,
+    lfoAmount: 180,
+    lfoDestination: "filter",
+
+    noiseType: "cosmic",
+    noiseAmount: 18,
+    drift: 24,
+    stereoWidth: 96,
+
+    reverbMix: 0.86,
+    reverbDecay: 8,
+
+    delayMix: 0.30,
+    delayTime: 0.78,
+    delayFeedback: 0.32,
+
+    masterVolume: 0.15,
+  },
+},
+    
 endlessSleep: {
   name: "Endless Sleep",
   collection: "Lucid Dreaming",
