@@ -2111,7 +2111,45 @@ desolateMemory: {
     masterVolume: 0.12,
   },
 },
+
+hypnagogia: {
+  name: "Hypnagogia",
+  settings: {
+    waveform: "trapezoid",
+    waveformB: "triangle",
+    oscBLevel: 0.31,
+    oscBDetune: 7,
+    voiceSpread: 72,
+
+    attack: 3.8,
+    decay: 2.4,
+    sustain: 0.8,
+    release: 7.6,
+
+    filterType: "lowpass",
+    cutoff: 1700,
+    resonance: 2.4,
+
+    lfoRate: 0.075,
+    lfoAmount: 140,
+    lfoDestination: "filter",
+
+    noiseType: "air",
+    noiseAmount: 18,
+    drift: 26,
+    stereoWidth: 82,
+
+    reverbMix: 0.84,
+    reverbDecay: 7.6,
+
+    delayMix: 0.24,
+    delayTime: 0.88,
+    delayFeedback: 0.28,
+
+    masterVolume: 0.15,
+  },
 },
+},    
     
   leads: {},
   bass: {},
