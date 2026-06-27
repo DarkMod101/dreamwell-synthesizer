@@ -2171,6 +2171,201 @@ hypnagogia: {
     masterVolume: 0.15,
   },
 },
+
+dreamRecall: {
+  name: "Dream Recall",
+  collection: "Lucid Dreaming",
+  settings: {
+    waveform: "triangle",
+    waveformB: "sine",
+    oscBLevel: 0.34,
+    oscBDetune: 5,
+    voiceSpread: 76,
+
+    attack: 2.9,
+    decay: 2.2,
+    sustain: 0.82,
+    release: 6.6,
+
+    filterType: "lowpass",
+    cutoff: 2200,
+    resonance: 1.8,
+
+    lfoRate: 0.10,
+    lfoAmount: 120,
+    lfoDestination: "filter",
+
+    noiseType: "air",
+    noiseAmount: 14,
+    drift: 18,
+    stereoWidth: 74,
+
+    reverbMix: 0.78,
+    reverbDecay: 6.8,
+
+    delayMix: 0.20,
+    delayTime: 0.64,
+    delayFeedback: 0.24,
+
+    masterVolume: 0.16,
+  },
+},
+
+floatingMind: {
+  name: "Floating Mind",
+  collection: "Lucid Dreaming",
+  settings: {
+    waveform: "sine",
+    waveformB: "triangle",
+    oscBLevel: 0.29,
+    oscBDetune: 8,
+    voiceSpread: 84,
+
+    attack: 4.0,
+    decay: 2.6,
+    sustain: 0.86,
+    release: 7.8,
+
+    filterType: "lowpass",
+    cutoff: 1900,
+    resonance: 1.5,
+
+    lfoRate: 0.07,
+    lfoAmount: 150,
+    lfoDestination: "filter",
+
+    noiseType: "air",
+    noiseAmount: 20,
+    drift: 28,
+    stereoWidth: 90,
+
+    reverbMix: 0.86,
+    reverbDecay: 7.8,
+
+    delayMix: 0.24,
+    delayTime: 0.82,
+    delayFeedback: 0.26,
+
+    masterVolume: 0.15,
+  },
+},
+
+consciousDrift: {
+  name: "Conscious Drift",
+  collection: "Lucid Dreaming",
+  settings: {
+    waveform: "triangle",
+    waveformB: "trapezoid",
+    oscBLevel: 0.36,
+    oscBDetune: 10,
+    voiceSpread: 80,
+
+    attack: 3.4,
+    decay: 2.2,
+    sustain: 0.80,
+    release: 7.2,
+
+    filterType: "lowpass",
+    cutoff: 2100,
+    resonance: 2.1,
+
+    lfoRate: 0.09,
+    lfoAmount: 170,
+    lfoDestination: "filter",
+
+    noiseType: "dust",
+    noiseAmount: 18,
+    drift: 22,
+    stereoWidth: 82,
+
+    reverbMix: 0.82,
+    reverbDecay: 7.0,
+
+    delayMix: 0.28,
+    delayTime: 0.74,
+    delayFeedback: 0.32,
+
+    masterVolume: 0.16,
+  },
+},
+
+lucidGateway: {
+  name: "Lucid Gateway",
+  collection: "Lucid Dreaming",
+  settings: {
+    waveform: "sawtooth",
+    waveformB: "triangle",
+    oscBLevel: 0.42,
+    oscBDetune: 15,
+    voiceSpread: 88,
+
+    attack: 2.5,
+    decay: 1.9,
+    sustain: 0.84,
+    release: 6.8,
+
+    filterType: "lowpass",
+    cutoff: 3200,
+    resonance: 1.3,
+
+    lfoRate: 0.12,
+    lfoAmount: 110,
+    lfoDestination: "filter",
+
+    noiseType: "cosmic",
+    noiseAmount: 16,
+    drift: 18,
+    stereoWidth: 92,
+
+    reverbMix: 0.88,
+    reverbDecay: 7.6,
+
+    delayMix: 0.30,
+    delayTime: 0.66,
+    delayFeedback: 0.30,
+
+    masterVolume: 0.15,
+  },
+},
+
+falseAwakening: {
+  name: "False Awakening",
+  collection: "Lucid Dreaming",
+  settings: {
+    waveform: "trapezoid",
+    waveformB: "square",
+    oscBLevel: 0.33,
+    oscBDetune: -9,
+    voiceSpread: 78,
+
+    attack: 3.2,
+    decay: 2.5,
+    sustain: 0.76,
+    release: 7.4,
+
+    filterType: "lowpass",
+    cutoff: 1600,
+    resonance: 2.8,
+
+    lfoRate: 0.08,
+    lfoAmount: 200,
+    lfoDestination: "filter",
+
+    noiseType: "air",
+    noiseAmount: 24,
+    drift: 30,
+    stereoWidth: 86,
+
+    reverbMix: 0.84,
+    reverbDecay: 7.8,
+
+    delayMix: 0.18,
+    delayTime: 0.94,
+    delayFeedback: 0.22,
+
+    masterVolume: 0.15,
+  },
+},
 },    
     
   leads: {},
