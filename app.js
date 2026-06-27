@@ -2572,7 +2572,202 @@ forgottenKingdom: {
     masterVolume: 0.13,
   },
 },   
+
+hollowMonastery: {
+  name: "Hollow Monastery",
+  collection: "Forgotten Realms",
+  settings: {
+    waveform: "triangle",
+    waveformB: "trapezoid",
+    oscBLevel: 0.34,
+    oscBDetune: -18,
+    voiceSpread: 80,
+
+    attack: 4.2,
+    decay: 2.6,
+    sustain: 0.74,
+    release: 8,
+
+    filterType: "lowpass",
+    cutoff: 950,
+    resonance: 4.6,
+
+    lfoRate: 0.055,
+    lfoAmount: 240,
+    lfoDestination: "filter",
+
+    noiseType: "air",
+    noiseAmount: 22,
+    drift: 34,
+    stereoWidth: 92,
+
+    reverbMix: 0.94,
+    reverbDecay: 8,
+
+    delayMix: 0.26,
+    delayTime: 1.02,
+    delayFeedback: 0.30,
+
+    masterVolume: 0.12,
+  },
 },
+
+abandonedThrone: {
+  name: "Abandoned Throne",
+  collection: "Forgotten Realms",
+  settings: {
+    waveform: "square",
+    waveformB: "triangle",
+    oscBLevel: 0.40,
+    oscBDetune: -15,
+    voiceSpread: 70,
+
+    attack: 3.6,
+    decay: 2.4,
+    sustain: 0.82,
+    release: 7.8,
+
+    filterType: "lowpass",
+    cutoff: 820,
+    resonance: 5.2,
+
+    lfoRate: 0.05,
+    lfoAmount: 280,
+    lfoDestination: "filter",
+
+    noiseType: "dark",
+    noiseAmount: 20,
+    drift: 28,
+    stereoWidth: 84,
+
+    reverbMix: 0.90,
+    reverbDecay: 8,
+
+    delayMix: 0.22,
+    delayTime: 0.94,
+    delayFeedback: 0.24,
+
+    masterVolume: 0.12,
+  },
+},
+
+lastShrine: {
+  name: "The Last Shrine",
+  collection: "Forgotten Realms",
+  settings: {
+    waveform: "trapezoid",
+    waveformB: "sine",
+    oscBLevel: 0.30,
+    oscBDetune: 9,
+    voiceSpread: 88,
+
+    attack: 5,
+    decay: 3,
+    sustain: 0.70,
+    release: 8,
+
+    filterType: "lowpass",
+    cutoff: 1200,
+    resonance: 3.4,
+
+    lfoRate: 0.04,
+    lfoAmount: 160,
+    lfoDestination: "filter",
+
+    noiseType: "dust",
+    noiseAmount: 26,
+    drift: 36,
+    stereoWidth: 94,
+
+    reverbMix: 0.96,
+    reverbDecay: 8,
+
+    delayMix: 0.36,
+    delayTime: 1.12,
+    delayFeedback: 0.42,
+
+    masterVolume: 0.11,
+  },
+},
+
+echoingRuins: {
+  name: "Echoing Ruins",
+  collection: "Forgotten Realms",
+  settings: {
+    waveform: "triangle",
+    waveformB: "square",
+    oscBLevel: 0.38,
+    oscBDetune: -10,
+    voiceSpread: 82,
+
+    attack: 3.8,
+    decay: 2.4,
+    sustain: 0.78,
+    release: 7.8,
+
+    filterType: "lowpass",
+    cutoff: 1000,
+    resonance: 4.2,
+
+    lfoRate: 0.07,
+    lfoAmount: 220,
+    lfoDestination: "filter",
+
+    noiseType: "dust",
+    noiseAmount: 28,
+    drift: 30,
+    stereoWidth: 90,
+
+    reverbMix: 0.92,
+    reverbDecay: 8,
+
+    delayMix: 0.40,
+    delayTime: 1.06,
+    delayFeedback: 0.50,
+
+    masterVolume: 0.12,
+  },
+},
+
+forgottenEmpire: {
+  name: "Forgotten Empire",
+  collection: "Forgotten Realms",
+  settings: {
+    waveform: "sawtooth",
+    waveformB: "triangle",
+    oscBLevel: 0.36,
+    oscBDetune: 12,
+    voiceSpread: 86,
+
+    attack: 4.2,
+    decay: 2.6,
+    sustain: 0.82,
+    release: 8,
+
+    filterType: "lowpass",
+    cutoff: 1400,
+    resonance: 3.6,
+
+    lfoRate: 0.06,
+    lfoAmount: 190,
+    lfoDestination: "filter",
+
+    noiseType: "dark",
+    noiseAmount: 18,
+    drift: 34,
+    stereoWidth: 88,
+
+    reverbMix: 0.90,
+    reverbDecay: 8,
+
+    delayMix: 0.30,
+    delayTime: 0.96,
+    delayFeedback: 0.34,
+
+    masterVolume: 0.12,
+  },
+},
+},    
 
     
   leads: {},
