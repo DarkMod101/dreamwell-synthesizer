@@ -1779,6 +1779,7 @@ const presetBanks = {
   pads: {
   dreamVeil: {
     name: "Dream Veil",
+    collection: "Celestial Dreams",
     settings: {
       waveform: "trapezoid",
       waveformB: "triangle",
@@ -1810,6 +1811,7 @@ const presetBanks = {
 
     astralChoir: {
   name: "Astral Choir",
+  collection: "Celestial Dreams",
   settings: {
     waveform: "sawtooth",
     waveformB: "triangle",
@@ -1848,6 +1850,7 @@ const presetBanks = {
 
   frozenHorizon: {
   name: "Frozen Horizon",
+  collection: "Lucid Dreaming",
   settings: {
     waveform: "triangle",
     waveformB: "sawtooth",
@@ -1886,6 +1889,7 @@ const presetBanks = {
 
     celestialMist: {
   name: "Celestial Mist",
+  collection: "Celestial Dreams",  
   settings: {
     waveform: "trapezoid",
     waveformB: "sine",
@@ -1924,6 +1928,7 @@ const presetBanks = {
 
 endlessSleep: {
   name: "Endless Sleep",
+  collection: "Lucid Dreaming",
   settings: {
     waveform: "sine",
     waveformB: "trapezoid",
@@ -1962,6 +1967,7 @@ endlessSleep: {
 
 silentCathedral: {
   name: "Silent Cathedral",
+  collection: "Ancient Worlds",
   settings: {
     waveform: "triangle",
     waveformB: "trapezoid",
@@ -2000,6 +2006,7 @@ silentCathedral: {
 
 shadowSanctum: {
   name: "Shadow Sanctum",
+  collection: "Forgotten Realms",
   settings: {
     waveform: "trapezoid",
     waveformB: "sawtooth",
@@ -2038,6 +2045,7 @@ shadowSanctum: {
 
 forgottenCrypt: {
   name: "Forgotten Crypt",
+  collection: "Forgotten Realms",
   settings: {
     waveform: "triangle",
     waveformB: "square",
@@ -2076,6 +2084,7 @@ forgottenCrypt: {
 
 desolateMemory: {
   name: "Desolate Memory",
+  collection: "Forgotten Realms",
   settings: {
     waveform: "sine",
     waveformB: "trapezoid",
@@ -2114,6 +2123,7 @@ desolateMemory: {
 
 hypnagogia: {
   name: "Hypnagogia",
+  collection: "Lucid Dreaming",
   settings: {
     waveform: "trapezoid",
     waveformB: "triangle",
