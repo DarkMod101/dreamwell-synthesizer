@@ -70,52 +70,45 @@ function renderPresetBrowser(bankName) {
 
   presetBrowserList.innerHTML = "";
 
-const presets = Object.values(presetBanks[bankName] || {});
+  const presets = Object.values(presetBanks[bankName] || {});
+  const groupedPresets = {};
 
-const groupedPresets = {};
+  presets.forEach((preset) => {
+    const collection = preset.collection || "Other";
 
-presets.forEach((preset) => {
-  const collection = preset.collection || "Other";
+    if (!groupedPresets[collection]) {
+      groupedPresets[collection] = [];
+    }
 
-  if (!groupedPresets[collection]) {
-    groupedPresets[collection] = [];
-  }
-
-  groupedPresets[collection].push(preset);
-});
-  
-Object.entries(groupedPresets).forEach(([collection, collectionPresets]) => {
-  const heading = document.createElement("h3");
-  heading.textContent = collection;
-  heading.className = "preset-collection-heading";
-  presetBrowserList.appendChild(heading);
-
-  collectionPresets.forEach((preset) => {
-    const button = document.createElement("button");
-    button.textContent = preset.name || preset.label || "Unnamed Preset";
-    button.className = "preset-browser-preset";
-
-    button.addEventListener("click", () => {
-      applyPresetSettings(preset.settings || preset);
-
-      presetBrowserList
-        .querySelectorAll(".preset-browser-preset")
-        .forEach((presetButton) => {
-          presetButton.classList.remove("active-preset");
-        });
-
-      button.classList.add("active-preset");
-    });
-
-    presetBrowserList.appendChild(button);
+    groupedPresets[collection].push(preset);
   });
-});
-  
-  const title = document.createElement("div");
-  title.textContent = `Selected Bank: ${bankName}`;
-  title.style.padding = "12px";
 
-  presetBrowserList.appendChild(title);
+  Object.entries(groupedPresets).forEach(([collection, collectionPresets]) => {
+    const heading = document.createElement("h3");
+    heading.textContent = collection;
+    heading.className = "preset-collection-heading";
+    presetBrowserList.appendChild(heading);
+
+    collectionPresets.forEach((preset) => {
+      const button = document.createElement("button");
+      button.textContent = preset.name || preset.label || "Unnamed Preset";
+      button.className = "preset-browser-preset";
+
+      button.addEventListener("click", () => {
+        applyPresetSettings(preset.settings || preset);
+
+        presetBrowserList
+          .querySelectorAll(".preset-browser-preset")
+          .forEach((presetButton) => {
+            presetButton.classList.remove("active-preset");
+          });
+
+        button.classList.add("active-preset");
+      });
+
+      presetBrowserList.appendChild(button);
+    });
+  });
 }
 
 if (openPresetBrowserButton) {
