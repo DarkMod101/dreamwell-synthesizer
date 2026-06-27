@@ -72,24 +72,43 @@ function renderPresetBrowser(bankName) {
 
 const presets = Object.values(presetBanks[bankName] || {});
 
+const groupedPresets = {};
+
 presets.forEach((preset) => {
-  const button = document.createElement("button");
-  button.textContent = preset.name || preset.label || "Unnamed Preset";
-  button.className = "preset-browser-preset";
+  const collection = preset.collection || "Other";
 
-  button.addEventListener("click", () => {
-  applyPresetSettings(preset.settings || preset);
+  if (!groupedPresets[collection]) {
+    groupedPresets[collection] = [];
+  }
 
-  presetBrowserList
-    .querySelectorAll(".preset-browser-preset")
-    .forEach((presetButton) => {
-      presetButton.classList.remove("active-preset");
+  groupedPresets[collection].push(preset);
+});
+  
+Object.entries(groupedPresets).forEach(([collection, collectionPresets]) => {
+  const heading = document.createElement("h3");
+  heading.textContent = collection;
+  heading.className = "preset-collection-heading";
+  presetBrowserList.appendChild(heading);
+
+  collectionPresets.forEach((preset) => {
+    const button = document.createElement("button");
+    button.textContent = preset.name || preset.label || "Unnamed Preset";
+    button.className = "preset-browser-preset";
+
+    button.addEventListener("click", () => {
+      applyPresetSettings(preset.settings || preset);
+
+      presetBrowserList
+        .querySelectorAll(".preset-browser-preset")
+        .forEach((presetButton) => {
+          presetButton.classList.remove("active-preset");
+        });
+
+      button.classList.add("active-preset");
     });
 
-  button.classList.add("active-preset");
-});
-
-  presetBrowserList.appendChild(button);
+    presetBrowserList.appendChild(button);
+  });
 });
   
   const title = document.createElement("div");
