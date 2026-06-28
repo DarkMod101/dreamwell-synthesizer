@@ -1090,8 +1090,13 @@ stereoPanner.connect(delayNode);
   unisonOscillators,
 };
 }
-    
+
+
 function playNote(frequency) {
+  if (currentEngine === "piano") {
+  createPianoNote(frequency);
+  return;
+  }
   const noteId = String(frequency);
 
   if (activeNotes.has(noteId)) {
