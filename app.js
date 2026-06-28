@@ -2939,105 +2939,110 @@ forgottenEmpire: {
 };
 
 
+function createPianoHammer(ctx, frequency, now) {
+    const hammer = ctx.createOscillator();
+    const hammerGain = ctx.createGain();
+    const hammerFilter = ctx.createBiquadFilter();
+
+    hammer.type = "triangle";
+    hammer.frequency.setValueAtTime(frequency * 2.4, now);
+
+    hammerFilter.type = "highpass";
+    hammerFilter.frequency.setValueAtTime(900, now);
+
+    hammerGain.gain.setValueAtTime(0.13, now);
+    hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.028);
+
+    hammer.connect(hammerFilter);
+    hammerFilter.connect(hammerGain);
+    hammerGain.connect(masterGain);
+
+    hammer.start(now);
+    hammer.stop(now + 0.035);
+}
+
+function createPianoStrings(ctx, frequency, now) {
+    const string = ctx.createOscillator();
+    const stringGain = ctx.createGain();
+
+    string.type = "triangle";
+    string.frequency.setValueAtTime(frequency, now);
+
+    stringGain.gain.setValueAtTime(0.14, now);
+    stringGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+
+    string.connect(stringGain);
+    stringGain.connect(masterGain);
+
+    string.start(now);
+    string.stop(now + 2.9);
+
+    const harmonic = ctx.createOscillator();
+    const harmonicGain = ctx.createGain();
+    const harmonicFilter = ctx.createBiquadFilter();
+
+    harmonic.type = "sine";
+    harmonic.frequency.setValueAtTime(frequency * 2.01, now);
+
+    harmonicFilter.type = "lowpass";
+    harmonicFilter.frequency.setValueAtTime(5200, now);
+
+    harmonicGain.gain.setValueAtTime(0.055, now);
+    harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
+
+    harmonic.connect(harmonicFilter);
+    harmonicFilter.connect(harmonicGain);
+    harmonicGain.connect(masterGain);
+
+    harmonic.start(now);
+    harmonic.stop(now + 2.0);
+
+    const shimmer = ctx.createOscillator();
+    const shimmerGain = ctx.createGain();
+
+    shimmer.type = "sine";
+    shimmer.frequency.setValueAtTime(frequency * 3.02, now);
+
+    shimmerGain.gain.setValueAtTime(0.025, now);
+    shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+
+    shimmer.connect(shimmerGain);
+    shimmerGain.connect(masterGain);
+
+    shimmer.start(now);
+    shimmer.stop(now + 1.2);
+}
+
+function createPianoBody(ctx, frequency, now) {
+    const body = ctx.createOscillator();
+    const bodyGain = ctx.createGain();
+    const bodyFilter = ctx.createBiquadFilter();
+
+    body.type = "sine";
+    body.frequency.setValueAtTime(frequency * 0.5, now);
+
+    bodyFilter.type = "lowpass";
+    bodyFilter.frequency.setValueAtTime(850, now);
+    bodyFilter.Q.setValueAtTime(1.2, now);
+
+    bodyGain.gain.setValueAtTime(0.055, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
+
+    body.connect(bodyFilter);
+    bodyFilter.connect(bodyGain);
+    bodyGain.connect(masterGain);
+
+    body.start(now);
+    body.stop(now + 2.3);
+}
+
 function createPianoNote(frequency) {
-  const ctx = getAudioContext();
-  const now = ctx.currentTime;
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
 
-  // Hammer strike
-  const hammer = ctx.createOscillator();
-  const hammerGain = ctx.createGain();
-  const hammerFilter = ctx.createBiquadFilter();
-
-  hammer.type = "triangle";
-  hammer.frequency.setValueAtTime(frequency * 2.4, now);
-
-  hammerFilter.type = "highpass";
-  hammerFilter.frequency.setValueAtTime(900, now);
-
-  hammerGain.gain.setValueAtTime(0.13, now);
-  hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.028);
-
-  hammer.connect(hammerFilter);
-  hammerFilter.connect(hammerGain);
-  hammerGain.connect(masterGain);
-
-  hammer.start(now);
-  hammer.stop(now + 0.035);
-
-  // Primary string
-  const string = ctx.createOscillator();
-  const stringGain = ctx.createGain();
-
-  string.type = "triangle";
-  string.frequency.setValueAtTime(frequency, now);
-
-  stringGain.gain.setValueAtTime(0.14, now);
-  stringGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
-
-  string.connect(stringGain);
-  stringGain.connect(masterGain);
-
-  string.start(now);
-  string.stop(now + 2.9);
-
-  // Bright string harmonic
-  const harmonic = ctx.createOscillator();
-  const harmonicGain = ctx.createGain();
-  const harmonicFilter = ctx.createBiquadFilter();
-
-  harmonic.type = "sine";
-  harmonic.frequency.setValueAtTime(frequency * 2.01, now);
-
-  harmonicFilter.type = "lowpass";
-  harmonicFilter.frequency.setValueAtTime(5200, now);
-
-  harmonicGain.gain.setValueAtTime(0.055, now);
-  harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
-
-  harmonic.connect(harmonicFilter);
-  harmonicFilter.connect(harmonicGain);
-  harmonicGain.connect(masterGain);
-
-  harmonic.start(now);
-  harmonic.stop(now + 2.0);
-
-  // Soft upper shimmer
-  const shimmer = ctx.createOscillator();
-  const shimmerGain = ctx.createGain();
-
-  shimmer.type = "sine";
-  shimmer.frequency.setValueAtTime(frequency * 3.02, now);
-
-  shimmerGain.gain.setValueAtTime(0.025, now);
-  shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
-
-  shimmer.connect(shimmerGain);
-  shimmerGain.connect(masterGain);
-
-  shimmer.start(now);
-  shimmer.stop(now + 1.2);
-
-  // Wooden body resonance
-  const body = ctx.createOscillator();
-  const bodyGain = ctx.createGain();
-  const bodyFilter = ctx.createBiquadFilter();
-
-  body.type = "sine";
-  body.frequency.setValueAtTime(frequency * 0.5, now);
-
-  bodyFilter.type = "lowpass";
-  bodyFilter.frequency.setValueAtTime(850, now);
-  bodyFilter.Q.setValueAtTime(1.2, now);
-
-  bodyGain.gain.setValueAtTime(0.055, now);
-  bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
-
-  body.connect(bodyFilter);
-  bodyFilter.connect(bodyGain);
-  bodyGain.connect(masterGain);
-
-  body.start(now);
-  body.stop(now + 2.3);
+    createPianoHammer(ctx, frequency, now);
+    createPianoStrings(ctx, frequency, now);
+    createPianoBody(ctx, frequency, now);
 }
 
 function applyPresetSettings(preset) {
