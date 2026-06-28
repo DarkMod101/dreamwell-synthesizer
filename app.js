@@ -1787,7 +1787,48 @@ const presetBanks = {
     },
   },
 
-  keys: {},
+  keys: {
+  dreamGrandPiano: {
+    name: "Dream Grand Piano",
+    collection: "Core Instruments",
+    settings: {
+      waveform: "triangle",
+      waveformB: "sine",
+      oscBLevel: 0.18,
+      oscBDetune: 2,
+      voiceSpread: 22,
+
+      attack: 0.008,
+      decay: 1.9,
+      sustain: 0.30,
+      release: 2.8,
+
+      filterType: "lowpass",
+      cutoff: 5600,
+      resonance: 0.7,
+
+      lfoRate: 0.02,
+      lfoAmount: 4,
+      lfoDestination: "filter",
+
+      noiseType: "air",
+      noiseAmount: 2,
+      drift: 3,
+      stereoWidth: 30,
+
+      reverbMix: 0.18,
+      reverbDecay: 3.2,
+
+      delayMix: 0.00,
+      delayTime: 0.20,
+      delayFeedback: 0.00,
+
+      masterVolume: 0.20,
+    },
+  },
+},
+ 
+  
   pads: {
   dreamVeil: {
     name: "Dream Veil",
