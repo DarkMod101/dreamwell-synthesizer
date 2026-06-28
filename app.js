@@ -2940,17 +2940,17 @@ forgottenEmpire: {
 
 
 function createPianoNote(frequency) {
-  if (!audioContext || !masterGain) return;
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
 
-  const now = audioContext.currentTime;
-
-  const hammer = audioContext.createOscillator();
-  const hammerGain = audioContext.createGain();
+  // Hammer strike
+  const hammer = ctx.createOscillator();
+  const hammerGain = ctx.createGain();
 
   hammer.type = "triangle";
   hammer.frequency.setValueAtTime(frequency * 2, now);
 
-  hammerGain.gain.setValueAtTime(0.18, now);
+  hammerGain.gain.setValueAtTime(0.16, now);
   hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
 
   hammer.connect(hammerGain);
@@ -2958,8 +2958,29 @@ function createPianoNote(frequency) {
 
   hammer.start(now);
   hammer.stop(now + 0.04);
-}
 
+  // Wooden body resonance
+  const body = ctx.createOscillator();
+  const bodyGain = ctx.createGain();
+  const bodyFilter = ctx.createBiquadFilter();
+
+  body.type = "sine";
+  body.frequency.setValueAtTime(frequency * 0.5, now);
+
+  bodyFilter.type = "lowpass";
+  bodyFilter.frequency.setValueAtTime(900, now);
+  bodyFilter.Q.setValueAtTime(1.4, now);
+
+  bodyGain.gain.setValueAtTime(0.08, now);
+  bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+
+  body.connect(bodyFilter);
+  bodyFilter.connect(bodyGain);
+  bodyGain.connect(masterGain);
+
+  body.start(now);
+  body.stop(now + 1.9);
+}
 
 function applyPresetSettings(preset) {
   if (!preset) return;
