@@ -2962,13 +2962,20 @@ function createPianoHammer(ctx, frequency, now) {
 }
 
 function createPianoStrings(ctx, frequency, now) {
+    const stringFrequencies = [
+    frequency * 0.9985,
+    frequency,
+    frequency * 1.0018
+];
+
+stringFrequencies.forEach(freq => {
     const string = ctx.createOscillator();
     const stringGain = ctx.createGain();
 
     string.type = "triangle";
-    string.frequency.setValueAtTime(frequency, now);
+    string.frequency.setValueAtTime(freq, now);
 
-    stringGain.gain.setValueAtTime(0.14, now);
+    stringGain.gain.setValueAtTime(0.05, now);
     stringGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
 
     string.connect(stringGain);
@@ -2976,7 +2983,7 @@ function createPianoStrings(ctx, frequency, now) {
 
     string.start(now);
     string.stop(now + 2.9);
-
+});
     const harmonic = ctx.createOscillator();
     const harmonicGain = ctx.createGain();
     const harmonicFilter = ctx.createBiquadFilter();
