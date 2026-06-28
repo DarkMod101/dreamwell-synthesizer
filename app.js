@@ -9,6 +9,7 @@ let delayWetGain;
 let delayDryGain;
 // Living Environment Systems
 let livingTexturesEnabled = true;
+let currentEngine = "synth";
 
 
 const activeNotes = new Map();
