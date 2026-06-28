@@ -2933,13 +2933,36 @@ forgottenEmpire: {
   textures: {},
 };
 
+
+function createPianoNote(frequency) {
+  if (!audioContext || !masterGain) return;
+
+  const now = audioContext.currentTime;
+
+  const hammer = audioContext.createOscillator();
+  const hammerGain = audioContext.createGain();
+
+  hammer.type = "triangle";
+  hammer.frequency.setValueAtTime(frequency * 2, now);
+
+  hammerGain.gain.setValueAtTime(0.18, now);
+  hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+
+  hammer.connect(hammerGain);
+  hammerGain.connect(masterGain);
+
+  hammer.start(now);
+  hammer.stop(now + 0.04);
+}
+
+
 function applyPresetSettings(preset) {
   if (!preset) return;
 
 const engine = preset.engine || "synth";
 
 if (engine === "piano") {
-    // Future Piano Engine
+    // Piano presets will use the Piano Engine when notes are triggered.
 }
   
   waveformSelect.value = preset.waveform;
