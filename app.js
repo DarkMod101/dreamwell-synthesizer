@@ -2936,6 +2936,12 @@ forgottenEmpire: {
 function applyPresetSettings(preset) {
   if (!preset) return;
 
+const engine = preset.engine || "synth";
+
+if (engine === "piano") {
+    // Future Piano Engine
+}
+  
   waveformSelect.value = preset.waveform;
   waveformBSelect.value = preset.waveformB;
   oscBLevelSlider.value = preset.oscBLevel;
