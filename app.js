@@ -2960,9 +2960,8 @@ function createPianoNote(frequency) {
 function applyPresetSettings(preset) {
   if (!preset) return;
 
-const engine = preset.engine || "synth";
-
-if (engine === "piano") {
+currentEngine = preset.engine || "synth";
+if (currentEngine === "piano") {
     // Piano presets will use the Piano Engine when notes are triggered.
 }
   
