@@ -3259,6 +3259,48 @@ function createPianoDamperRelease(ctx, frequency, now) {
     damper.stop(now + 0.45);
 }
 
+function createPianoStringInteraction(ctx, frequency, now) {
+    const interactionOut = ctx.createGain();
+    const interactionFilter = ctx.createBiquadFilter();
+
+    interactionOut.gain.setValueAtTime(0.016, now + 0.01);
+    interactionOut.gain.exponentialRampToValueAtTime(0.001, now + 3.6);
+
+    interactionFilter.type = "bandpass";
+    interactionFilter.frequency.setValueAtTime(
+        Math.min(4200, Math.max(220, frequency * 1.2)),
+        now
+    );
+    interactionFilter.Q.setValueAtTime(1.4, now);
+
+    const beatingPairs = [
+        { detune: -2.5, gain: 0.010 },
+        { detune: 2.5, gain: 0.010 },
+        { detune: 4.5, gain: 0.006 }
+    ];
+
+    beatingPairs.forEach((string) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(frequency, now);
+        osc.detune.setValueAtTime(string.detune, now);
+
+        gain.gain.setValueAtTime(string.gain, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 3.4);
+
+        osc.connect(gain);
+        gain.connect(interactionFilter);
+
+        osc.start(now);
+        osc.stop(now + 3.6);
+    });
+
+    interactionFilter.connect(interactionOut);
+    interactionOut.connect(masterGain);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -3267,6 +3309,7 @@ function createPianoNote(frequency) {
     createPianoDamperRelease(ctx, frequency, now);
     createPianoHammer(ctx, frequency, now);
     createPianoStrings(ctx, frequency, now);
+    createPianoStringInteraction(ctx, frequency, now);
     createPianoBody(ctx, frequency, now);
     createPianoCabinet(ctx, frequency, now);
     createPianoSoundboard(ctx, frequency, now);
