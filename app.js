@@ -10,6 +10,8 @@ let delayDryGain;
 // Living Environment Systems
 let livingTexturesEnabled = true;
 let currentEngine = "synth";
+// Piano Engine state
+let pianoSustainPedalActive = false;
 
 
 const activeNotes = new Map();
@@ -3301,6 +3303,53 @@ function createPianoStringInteraction(ctx, frequency, now) {
     interactionOut.connect(masterGain);
 }
 
+function createPianoPedalResonance(ctx, frequency, now) {
+    if (!pianoSustainPedalActive) return;
+
+    const pedalOut = ctx.createGain();
+    const pedalFilter = ctx.createBiquadFilter();
+
+    pedalOut.gain.setValueAtTime(0.022, now + 0.02);
+    pedalOut.gain.exponentialRampToValueAtTime(0.001, now + 5.5);
+
+    pedalFilter.type = "bandpass";
+    pedalFilter.frequency.setValueAtTime(
+        Math.min(4200, Math.max(160, frequency * 1.6)),
+        now
+    );
+    pedalFilter.Q.setValueAtTime(0.9, now);
+
+    const resonances = [
+        { ratio: 1.0, gain: 0.010, detune: -2 },
+        { ratio: 2.0, gain: 0.008, detune: 2 },
+        { ratio: 3.0, gain: 0.004, detune: -3 }
+    ];
+
+    resonances.forEach((res) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(
+            Math.min(6500, Math.max(40, frequency * res.ratio)),
+            now
+        );
+        osc.detune.setValueAtTime(res.detune, now);
+
+        gain.gain.setValueAtTime(res.gain, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 5.2);
+
+        osc.connect(gain);
+        gain.connect(pedalFilter);
+
+        osc.start(now);
+        osc.stop(now + 5.5);
+    });
+
+    pedalFilter.connect(pedalOut);
+    pedalOut.connect(masterGain);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -3315,6 +3364,7 @@ function createPianoNote(frequency) {
     createPianoSoundboard(ctx, frequency, now);
     createPianoSympatheticResonance(ctx, frequency, now);
     createPianoDuplexScale(ctx, frequency, now);
+    createPianoPedalResonance(ctx, frequency, now);
 }
 
 function applyPresetSettings(preset) {
