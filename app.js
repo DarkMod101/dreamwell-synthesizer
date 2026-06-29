@@ -3228,8 +3228,14 @@ function createPianoDuplexScale(ctx, frequency, now) {
     duplexFilter.frequency.setValueAtTime(1800, now);
     duplexFilter.Q.setValueAtTime(0.8, now);
 
-    duplexGain.gain.setValueAtTime(0.010, now + 0.012);
-    duplexGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+    duplexGain.gain.setValueAtTime(
+    0.010 * pianoVoicing.duplexShimmer,
+    now + 0.012
+);
+    duplexGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + (2.8 * pianoVoicing.duplexShimmer)
+);
 
     const partials = [
         { ratio: 2.0, gain: 0.008, detune: 4 },
@@ -3248,8 +3254,14 @@ function createPianoDuplexScale(ctx, frequency, now) {
         );
         osc.detune.setValueAtTime(partial.detune, now);
 
-        gain.gain.setValueAtTime(partial.gain, now + 0.012);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
+        gain.gain.setValueAtTime(
+    partial.gain * pianoVoicing.duplexShimmer,
+    now + 0.012
+);
+        gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + (2.6 * pianoVoicing.duplexShimmer)
+);
 
         osc.connect(gain);
         gain.connect(duplexFilter);
