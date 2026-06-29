@@ -3084,13 +3084,22 @@ function createPianoCabinet(ctx, frequency, now) {
     const cabinetFilter = ctx.createBiquadFilter();
 
     cabinet.type = "sine";
-    cabinet.frequency.setValueAtTime(Math.max(55, frequency * 0.25), now);
+    cabinet.frequency.setValueAtTime(
+    Math.max(45, frequency * (0.25 / pianoVoicing.cabinetSize)),
+    now
+);
 
     cabinetFilter.type = "lowpass";
-    cabinetFilter.frequency.setValueAtTime(420, now);
+    cabinetFilter.frequency.setValueAtTime(
+    420 / pianoVoicing.cabinetSize,
+    now
+);
     cabinetFilter.Q.setValueAtTime(0.8, now);
 
-    cabinetGain.gain.setValueAtTime(0.035, now);
+    cabinetGain.gain.setValueAtTime(
+    0.035 * pianoVoicing.cabinetSize,
+    now
+);
     cabinetGain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
 
     cabinet.connect(cabinetFilter);
