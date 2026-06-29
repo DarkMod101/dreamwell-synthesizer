@@ -3109,6 +3109,52 @@ function createPianoSoundboard(ctx, frequency, now) {
     soundboardGain.connect(masterGain);
 }
 
+function createPianoSympatheticResonance(ctx, frequency, now) {
+    const resonanceOut = ctx.createGain();
+    const resonanceFilter = ctx.createBiquadFilter();
+
+    resonanceOut.gain.setValueAtTime(0.018, now + 0.025);
+    resonanceOut.gain.exponentialRampToValueAtTime(0.001, now + 4.2);
+
+    resonanceFilter.type = "bandpass";
+    resonanceFilter.frequency.setValueAtTime(
+        Math.min(5000, frequency * 2),
+        now
+    );
+    resonanceFilter.Q.setValueAtTime(1.1, now);
+
+    const relatedStrings = [
+        { ratio: 2.0, gain: 0.010, detune: -3 },
+        { ratio: 3.0, gain: 0.006, detune: 2 },
+        { ratio: 1.5, gain: 0.005, detune: -2 },
+        { ratio: 0.5, gain: 0.004, detune: 1 }
+    ];
+
+    relatedStrings.forEach((string) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(
+            Math.max(45, Math.min(6000, frequency * string.ratio)),
+            now
+        );
+        osc.detune.setValueAtTime(string.detune, now);
+
+        gain.gain.setValueAtTime(string.gain, now + 0.025);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
+
+        osc.connect(gain);
+        gain.connect(resonanceFilter);
+
+        osc.start(now);
+        osc.stop(now + 4.2);
+    });
+
+    resonanceFilter.connect(resonanceOut);
+    resonanceOut.connect(masterGain);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -3118,7 +3164,9 @@ function createPianoNote(frequency) {
     createPianoBody(ctx, frequency, now);
     createPianoCabinet(ctx, frequency, now);
     createPianoSoundboard(ctx, frequency, now);
+    createPianoSympatheticResonance(ctx, frequency, now);
 }
+
 function applyPresetSettings(preset) {
   if (!preset) return;
 
