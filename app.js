@@ -3068,6 +3068,47 @@ function createPianoCabinet(ctx, frequency, now) {
     cabinet.stop(now + 2.7);
 }
 
+function createPianoSoundboard(ctx, frequency, now) {
+    const soundboardGain = ctx.createGain();
+    const soundboardFilter = ctx.createBiquadFilter();
+
+    soundboardFilter.type = "bandpass";
+    soundboardFilter.frequency.setValueAtTime(
+        Math.min(900, Math.max(180, frequency * 1.4)),
+        now
+    );
+    soundboardFilter.Q.setValueAtTime(0.7, now);
+
+    soundboardGain.gain.setValueAtTime(0.028, now + 0.015);
+    soundboardGain.gain.exponentialRampToValueAtTime(0.001, now + 3.4);
+
+    const resonances = [
+        { ratio: 0.75, gain: 0.018 },
+        { ratio: 1.00, gain: 0.014 },
+        { ratio: 1.50, gain: 0.010 }
+    ];
+
+    resonances.forEach((res) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(frequency * res.ratio, now);
+
+        gain.gain.setValueAtTime(res.gain, now + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+        osc.connect(gain);
+        gain.connect(soundboardFilter);
+
+        osc.start(now);
+        osc.stop(now + 3.4);
+    });
+
+    soundboardFilter.connect(soundboardGain);
+    soundboardGain.connect(masterGain);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -3076,6 +3117,7 @@ function createPianoNote(frequency) {
     createPianoStrings(ctx, frequency, now);
     createPianoBody(ctx, frequency, now);
     createPianoCabinet(ctx, frequency, now);
+    createPianoSoundboard(ctx, frequency, now);
 }
 function applyPresetSettings(preset) {
   if (!preset) return;
