@@ -3155,16 +3155,93 @@ function createPianoSympatheticResonance(ctx, frequency, now) {
     resonanceOut.connect(masterGain);
 }
 
+function createPianoDuplexScale(ctx, frequency, now) {
+    const duplexGain = ctx.createGain();
+    const duplexFilter = ctx.createBiquadFilter();
+
+    duplexFilter.type = "highpass";
+    duplexFilter.frequency.setValueAtTime(1800, now);
+    duplexFilter.Q.setValueAtTime(0.8, now);
+
+    duplexGain.gain.setValueAtTime(0.010, now + 0.012);
+    duplexGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+
+    const partials = [
+        { ratio: 2.0, gain: 0.008, detune: 4 },
+        { ratio: 2.5, gain: 0.006, detune: -3 },
+        { ratio: 3.0, gain: 0.004, detune: 2 }
+    ];
+
+    partials.forEach(partial => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(
+            Math.min(8000, frequency * partial.ratio),
+            now
+        );
+        osc.detune.setValueAtTime(partial.detune, now);
+
+        gain.gain.setValueAtTime(partial.gain, now + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
+
+        osc.connect(gain);
+        gain.connect(duplexFilter);
+
+        osc.start(now);
+        osc.stop(now + 2.8);
+    });
+
+    duplexFilter.connect(duplexGain);
+    duplexGain.connect(masterGain);
+}
+
+function createPianoMechanicalNoise(ctx, frequency, now) {
+    const noiseBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.18, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+
+    for (let i = 0; i < data.length; i++) {
+        const fade = 1 - i / data.length;
+        data[i] = (Math.random() * 2 - 1) * fade;
+    }
+
+    const noise = ctx.createBufferSource();
+    const noiseGain = ctx.createGain();
+    const noiseFilter = ctx.createBiquadFilter();
+
+    noise.buffer = noiseBuffer;
+
+    noiseFilter.type = "bandpass";
+    noiseFilter.frequency.setValueAtTime(
+        Math.min(3500, Math.max(900, frequency * 3)),
+        now
+    );
+    noiseFilter.Q.setValueAtTime(0.9, now);
+
+    noiseGain.gain.setValueAtTime(0.012, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(masterGain);
+
+    noise.start(now);
+    noise.stop(now + 0.18);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
+    createPianoMechanicalNoise(ctx, frequency, now);
     createPianoHammer(ctx, frequency, now);
     createPianoStrings(ctx, frequency, now);
     createPianoBody(ctx, frequency, now);
     createPianoCabinet(ctx, frequency, now);
     createPianoSoundboard(ctx, frequency, now);
     createPianoSympatheticResonance(ctx, frequency, now);
+    createPianoDuplexScale(ctx, frequency, now);
 }
 
 function applyPresetSettings(preset) {
