@@ -3121,8 +3121,14 @@ function createPianoSoundboard(ctx, frequency, now) {
     );
     soundboardFilter.Q.setValueAtTime(0.7, now);
 
-    soundboardGain.gain.setValueAtTime(0.028, now + 0.015);
-    soundboardGain.gain.exponentialRampToValueAtTime(0.001, now + 3.4);
+    soundboardGain.gain.setValueAtTime(
+    0.028 * pianoVoicing.soundboardBloom,
+    now + 0.015
+);
+    soundboardGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + (3.4 * pianoVoicing.soundboardBloom)
+);
 
     const resonances = [
         { ratio: 0.75, gain: 0.018 },
@@ -3137,8 +3143,14 @@ function createPianoSoundboard(ctx, frequency, now) {
         osc.type = "sine";
         osc.frequency.setValueAtTime(frequency * res.ratio, now);
 
-        gain.gain.setValueAtTime(res.gain, now + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+        gain.gain.setValueAtTime(
+    res.gain * pianoVoicing.soundboardBloom,
+    now + 0.015
+);
+        gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + (3.2 * pianoVoicing.soundboardBloom)
+);
 
         osc.connect(gain);
         gain.connect(soundboardFilter);
