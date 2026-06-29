@@ -3296,8 +3296,14 @@ function createPianoMechanicalNoise(ctx, frequency, now) {
     );
     noiseFilter.Q.setValueAtTime(0.9, now);
 
-    noiseGain.gain.setValueAtTime(0.012, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+    noiseGain.gain.setValueAtTime(
+    0.012 * pianoVoicing.mechanicalAmount,
+    now
+);
+    noiseGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + (0.16 * pianoVoicing.mechanicalAmount)
+);
 
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
