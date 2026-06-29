@@ -12,6 +12,17 @@ let livingTexturesEnabled = true;
 let currentEngine = "synth";
 // Piano Engine state
 let pianoSustainPedalActive = false;
+const pianoVoicing = {
+    hammerBrightness: 1.0,
+    stringWarmth: 1.0,
+    bodyDepth: 1.0,
+    cabinetSize: 1.0,
+    soundboardBloom: 1.0,
+    sympatheticAmount: 1.0,
+    duplexShimmer: 1.0,
+    mechanicalAmount: 1.0,
+    bridgeAmount: 1.0
+};
 
 
 const activeNotes = new Map();
