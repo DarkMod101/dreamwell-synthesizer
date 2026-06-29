@@ -1094,8 +1094,10 @@ stereoPanner.connect(delayNode);
 
 function playNote(frequency) {
   if (currentEngine === "piano") {
-  createPianoNote(frequency);
+    createPianoNote(frequency);
+    return;
   }
+
   const noteId = String(frequency);
 
   if (activeNotes.has(noteId)) {
@@ -1111,7 +1113,7 @@ function playNote(frequency) {
   activeNotes.set(noteId, note);
   lastPlayedFrequency = frequency;
   startWaveFusionModulation();  
-} 
+}
 
 function stopNote(frequency) {
   const noteId = String(frequency);
