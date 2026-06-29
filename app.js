@@ -3350,6 +3350,50 @@ function createPianoPedalResonance(ctx, frequency, now) {
     pedalOut.connect(masterGain);
 }
 
+function createPianoBridge(ctx, frequency, now) {
+    const bridgeOut = ctx.createGain();
+    const bridgeFilter = ctx.createBiquadFilter();
+
+    bridgeFilter.type = "bandpass";
+    bridgeFilter.frequency.setValueAtTime(
+        Math.min(1800, Math.max(220, frequency * 0.9)),
+        now
+    );
+    bridgeFilter.Q.setValueAtTime(0.85, now);
+
+    bridgeOut.gain.setValueAtTime(0.020, now + 0.01);
+    bridgeOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+
+    const bridgeModes = [
+        { ratio: 0.95, gain: 0.012 },
+        { ratio: 1.10, gain: 0.009 },
+        { ratio: 1.30, gain: 0.006 }
+    ];
+
+    bridgeModes.forEach(mode => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(
+            frequency * mode.ratio,
+            now
+        );
+
+        gain.gain.setValueAtTime(mode.gain, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
+
+        osc.connect(gain);
+        gain.connect(bridgeFilter);
+
+        osc.start(now);
+        osc.stop(now + 2.8);
+    });
+
+    bridgeFilter.connect(bridgeOut);
+    bridgeOut.connect(masterGain);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -3359,6 +3403,7 @@ function createPianoNote(frequency) {
     createPianoHammer(ctx, frequency, now);
     createPianoStrings(ctx, frequency, now);
     createPianoStringInteraction(ctx, frequency, now);
+    createPianoBridge(ctx, frequency, now);
     createPianoBody(ctx, frequency, now);
     createPianoCabinet(ctx, frequency, now);
     createPianoSoundboard(ctx, frequency, now);
