@@ -3230,11 +3230,41 @@ function createPianoMechanicalNoise(ctx, frequency, now) {
     noise.stop(now + 0.18);
 }
 
+function createPianoDamperRelease(ctx, frequency, now) {
+    const damper = ctx.createOscillator();
+    const damperGain = ctx.createGain();
+    const damperFilter = ctx.createBiquadFilter();
+
+    damper.type = "sine";
+    damper.frequency.setValueAtTime(
+        Math.min(2800, Math.max(160, frequency * 1.25)),
+        now
+    );
+
+    damperFilter.type = "bandpass";
+    damperFilter.frequency.setValueAtTime(
+        Math.min(2400, Math.max(300, frequency * 1.8)),
+        now
+    );
+    damperFilter.Q.setValueAtTime(0.6, now);
+
+    damperGain.gain.setValueAtTime(0.009, now + 0.03);
+    damperGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+    damper.connect(damperFilter);
+    damperFilter.connect(damperGain);
+    damperGain.connect(masterGain);
+
+    damper.start(now);
+    damper.stop(now + 0.45);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
     createPianoMechanicalNoise(ctx, frequency, now);
+    createPianoDamperRelease(ctx, frequency, now);
     createPianoHammer(ctx, frequency, now);
     createPianoStrings(ctx, frequency, now);
     createPianoBody(ctx, frequency, now);
