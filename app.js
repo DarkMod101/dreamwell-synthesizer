@@ -2995,7 +2995,10 @@ stringFrequencies.forEach(freq => {
     string.type = "triangle";
     string.frequency.setValueAtTime(freq, now);
 
-    stringGain.gain.setValueAtTime(0.05, now);
+    stringGain.gain.setValueAtTime(
+    0.05 * pianoVoicing.stringWarmth,
+    now
+);
     stringGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
 
     string.connect(stringGain);
@@ -3014,7 +3017,10 @@ stringFrequencies.forEach(freq => {
     harmonicFilter.type = "lowpass";
     harmonicFilter.frequency.setValueAtTime(5200, now);
 
-    harmonicGain.gain.setValueAtTime(0.055, now);
+    harmonicGain.gain.setValueAtTime(
+    0.055 / pianoVoicing.stringWarmth,
+    now
+);
     harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
 
     harmonic.connect(harmonicFilter);
@@ -3030,7 +3036,10 @@ stringFrequencies.forEach(freq => {
     shimmer.type = "sine";
     shimmer.frequency.setValueAtTime(frequency * 3.02, now);
 
-    shimmerGain.gain.setValueAtTime(0.025, now);
+    shimmerGain.gain.setValueAtTime(
+    0.025 / pianoVoicing.stringWarmth,
+    now
+);
     shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
 
     shimmer.connect(shimmerGain);
