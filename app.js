@@ -3058,10 +3058,16 @@ function createPianoBody(ctx, frequency, now) {
     body.frequency.setValueAtTime(frequency * 0.5, now);
 
     bodyFilter.type = "lowpass";
-    bodyFilter.frequency.setValueAtTime(850, now);
+    bodyFilter.frequency.setValueAtTime(
+    850 / pianoVoicing.bodyDepth,
+    now
+);
     bodyFilter.Q.setValueAtTime(1.2, now);
 
-    bodyGain.gain.setValueAtTime(0.055, now);
+    bodyGain.gain.setValueAtTime(
+    0.055 * pianoVoicing.bodyDepth,
+    now
+);
     bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
 
     body.connect(bodyFilter);
