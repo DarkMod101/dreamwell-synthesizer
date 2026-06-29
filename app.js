@@ -2960,12 +2960,17 @@ function createPianoHammer(ctx, frequency, now) {
     const hammerFilter = ctx.createBiquadFilter();
 
     hammer.type = "triangle";
-    hammer.frequency.setValueAtTime(frequency * 2.4, now);
-
+    hammer.frequency.setValueAtTime(
+    frequency * (2.4 * pianoVoicing.hammerBrightness),
+    now
+);
     hammerFilter.type = "highpass";
     hammerFilter.frequency.setValueAtTime(900, now);
 
-    hammerGain.gain.setValueAtTime(0.13, now);
+    hammerGain.gain.setValueAtTime(
+    0.13 * pianoVoicing.hammerBrightness,
+    now
+);
     hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.028);
 
     hammer.connect(hammerFilter);
