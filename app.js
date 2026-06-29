@@ -3386,7 +3386,10 @@ function createPianoBridge(ctx, frequency, now) {
     );
     bridgeFilter.Q.setValueAtTime(0.85, now);
 
-    bridgeOut.gain.setValueAtTime(0.020, now + 0.01);
+    bridgeOut.gain.setValueAtTime(
+    0.020 * pianoVoicing.bridgeAmount,
+    now + 0.01
+);
     bridgeOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
 
     const bridgeModes = [
@@ -3405,7 +3408,10 @@ function createPianoBridge(ctx, frequency, now) {
             now
         );
 
-        gain.gain.setValueAtTime(mode.gain, now + 0.01);
+        gain.gain.setValueAtTime(
+    mode.gain * pianoVoicing.bridgeAmount,
+    now + 0.01
+);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
 
         osc.connect(gain);
