@@ -3167,8 +3167,14 @@ function createPianoSympatheticResonance(ctx, frequency, now) {
     const resonanceOut = ctx.createGain();
     const resonanceFilter = ctx.createBiquadFilter();
 
-    resonanceOut.gain.setValueAtTime(0.018, now + 0.025);
-    resonanceOut.gain.exponentialRampToValueAtTime(0.001, now + 4.2);
+    resonanceOut.gain.setValueAtTime(
+    0.018 * pianoVoicing.sympatheticAmount,
+    now + 0.025
+);
+    resonanceOut.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + (4.2 * pianoVoicing.sympatheticAmount)
+);
 
     resonanceFilter.type = "bandpass";
     resonanceFilter.frequency.setValueAtTime(
@@ -3195,9 +3201,14 @@ function createPianoSympatheticResonance(ctx, frequency, now) {
         );
         osc.detune.setValueAtTime(string.detune, now);
 
-        gain.gain.setValueAtTime(string.gain, now + 0.025);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
-
+        gain.gain.setValueAtTime(
+    string.gain * pianoVoicing.sympatheticAmount,
+    now + 0.025
+);
+        gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + (4.0 * pianoVoicing.sympatheticAmount)
+);
         osc.connect(gain);
         gain.connect(resonanceFilter);
 
