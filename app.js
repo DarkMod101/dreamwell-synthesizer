@@ -3043,6 +3043,29 @@ function createPianoBody(ctx, frequency, now) {
     body.stop(now + 2.3);
 }
 
+function createPianoCabinet(ctx, frequency, now) {
+    const cabinet = ctx.createOscillator();
+    const cabinetGain = ctx.createGain();
+    const cabinetFilter = ctx.createBiquadFilter();
+
+    cabinet.type = "sine";
+    cabinet.frequency.setValueAtTime(Math.max(55, frequency * 0.25), now);
+
+    cabinetFilter.type = "lowpass";
+    cabinetFilter.frequency.setValueAtTime(420, now);
+    cabinetFilter.Q.setValueAtTime(0.8, now);
+
+    cabinetGain.gain.setValueAtTime(0.035, now);
+    cabinetGain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
+
+    cabinet.connect(cabinetFilter);
+    cabinetFilter.connect(cabinetGain);
+    cabinetGain.connect(masterGain);
+
+    cabinet.start(now);
+    cabinet.stop(now + 2.7);
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
@@ -3050,8 +3073,8 @@ function createPianoNote(frequency) {
     createPianoHammer(ctx, frequency, now);
     createPianoStrings(ctx, frequency, now);
     createPianoBody(ctx, frequency, now);
+    createPianoCabinet(ctx, frequency, now);
 }
-
 function applyPresetSettings(preset) {
   if (!preset) return;
 
