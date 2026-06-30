@@ -3472,19 +3472,19 @@ function createPianoBridge(ctx, frequency, now, bridgeExcitation) {
         Math.min(1800, Math.max(220, frequency * 0.9)),
         now
     );
-    bridgeFilter.Q.setValueAtTime(0.85, now);
+    bridgeFilter.Q.setValueAtTime(0.35, now);
 
     bridgeOut.gain.setValueAtTime(
-    0.020 * bridgeExcitation,
+    0.006 * bridgeExcitation,
     now + 0.01
 );
     bridgeOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
 
     const bridgeModes = [
-        { ratio: 0.95, gain: 0.012 },
-        { ratio: 1.10, gain: 0.009 },
-        { ratio: 1.30, gain: 0.006 }
-    ];
+    { ratio: 0.95, gain: 0.003 },
+    { ratio: 1.10, gain: 0.002 },
+    { ratio: 1.30, gain: 0.0015 }
+];
 
     bridgeModes.forEach(mode => {
         const osc = ctx.createOscillator();
