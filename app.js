@@ -3034,7 +3034,7 @@ stringFrequencies.forEach(freq => {
     harmonicFilter.frequency.setValueAtTime(5200, now);
 
     harmonicGain.gain.setValueAtTime(
-    0.055 / pianoVoicing.stringWarmth,
+    0.025 / pianoVoicing.stringWarmth,
     now
 );
     harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
@@ -3053,10 +3053,10 @@ stringFrequencies.forEach(freq => {
     shimmer.frequency.setValueAtTime(frequency * 3.02, now);
 
     shimmerGain.gain.setValueAtTime(
-    0.025 / pianoVoicing.stringWarmth,
+    0.006 / pianoVoicing.stringWarmth,
     now
 );
-    shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
 
     shimmer.connect(shimmerGain);
     shimmerGain.connect(masterGain);
