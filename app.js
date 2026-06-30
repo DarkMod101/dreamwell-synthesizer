@@ -12,6 +12,8 @@ let livingTexturesEnabled = true;
 let currentEngine = "synth";
 // Piano Engine state
 let pianoSustainPedalActive = false;
+let pianoAuditionMode = true;
+
 const pianoVoicing = {
     hammerBrightness: 1.0,
     stringWarmth: 1.0,
