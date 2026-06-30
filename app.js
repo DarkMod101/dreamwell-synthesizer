@@ -3532,13 +3532,13 @@ function createPianoNote(frequency) {
 
     // createPianoMechanicalNoise(ctx, frequency, now);
 // createPianoDamperRelease(ctx, frequency, now);
-createPianoHammer(ctx, frequency, now);
+// createPianoHammer(ctx, frequency, now);
 createPianoStrings(ctx, frequency, now);
 // createPianoStringInteraction(ctx, frequency, now);
 // createPianoBridge(ctx, frequency, now, bridgeExcitation);
-createPianoBody(ctx, frequency, now, bodyExcitation);
+// createPianoBody(ctx, frequency, now, bodyExcitation);
 // createPianoCabinet(ctx, frequency, now);
-createPianoSoundboard(ctx, frequency, now);
+// createPianoSoundboard(ctx, frequency, now);
 // createPianoSympatheticResonance(ctx, frequency, now);
 // createPianoDuplexScale(ctx, frequency, now);
 // createPianoPedalResonance(ctx, frequency, now);
