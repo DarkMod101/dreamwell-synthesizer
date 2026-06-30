@@ -2981,13 +2981,13 @@ function createPianoHammer(ctx, frequency, now) {
     hammerGain.gain.setValueAtTime(0.001, now);
 
 hammerGain.gain.exponentialRampToValueAtTime(
-    0.045 * pianoVoicing.hammerBrightness,
-    now + 0.006
+    0.022 * pianoVoicing.hammerBrightness,
+    now + 0.008
 );
 
 hammerGain.gain.exponentialRampToValueAtTime(
     0.001,
-    now + 0.09
+    now + 0.055
 );
     hammer.connect(hammerFilter);
     hammerFilter.connect(hammerGain);
