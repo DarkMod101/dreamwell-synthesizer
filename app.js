@@ -1110,9 +1110,10 @@ stereoPanner.connect(delayNode);
 
 function playNote(frequency) {
   if (currentEngine === "piano") {
-    createPianoNote(frequency);
-    return;
-  }
+  stopAllNotes();
+  createPianoNote(frequency);
+  return;
+}
 
   const noteId = String(frequency);
 
