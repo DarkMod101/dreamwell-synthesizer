@@ -3542,11 +3542,18 @@ function createPianoNote(frequency) {
 function applyPresetSettings(preset) {
   if (!preset) return;
 
-currentEngine = preset.engine || "synth";
-if (currentEngine === "piano") {
-    // Piano presets will use the Piano Engine when notes are triggered.
-}
-  
+  currentEngine = preset.engine || "synth";
+
+  if (currentEngine === "piano") {
+    if (preset.masterVolume !== undefined) {
+      masterVolume.value = preset.masterVolume;
+    }
+
+    updateValueDisplays();
+    stopAllNotes();
+    return;
+  }
+
   waveformSelect.value = preset.waveform;
   waveformBSelect.value = preset.waveformB;
   oscBLevelSlider.value = preset.oscBLevel;
@@ -3565,13 +3572,13 @@ if (currentEngine === "piano") {
   lfoAmountSlider.value = preset.lfoAmount;
   lfoDestinationSelect.value = preset.lfoDestination;
 
-voiceSpreadSlider.value = preset.voiceSpread || 0;
+  voiceSpreadSlider.value = preset.voiceSpread || 0;
 
   noiseTypeSelect.value = preset.noiseType ?? "white";
-noiseAmountSlider.value = preset.noiseAmount ?? 0;
-driftSlider.value = preset.drift ?? 0;
-stereoWidthSlider.value = preset.stereoWidth ?? 0;
-  
+  noiseAmountSlider.value = preset.noiseAmount ?? 0;
+  driftSlider.value = preset.drift ?? 0;
+  stereoWidthSlider.value = preset.stereoWidth ?? 0;
+
   reverbMixSlider.value = preset.reverbMix;
   reverbDecaySlider.value = preset.reverbDecay;
 
@@ -3606,22 +3613,14 @@ function renderPresetBank(bankName) {
 
     button.addEventListener("click", () => {
       applyPresetSettings({
-  ...(presetData.settings || {}),
-  engine: presetData.engine
-});
+        ...(presetData.settings || {}),
+        engine: presetData.engine
+      });
+    });
 
     presetGrid.appendChild(button);
   });
 }
-
-bankButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    bankButtons.forEach((btn) => btn.classList.remove("active-bank"));
-    button.classList.add("active-bank");
-    renderPresetBank(button.dataset.bank);
-  });
-});
-
 function getCurrentPresetSettings() {
   return {
     waveform: waveformSelect.value,
