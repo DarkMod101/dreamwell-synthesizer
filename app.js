@@ -3049,7 +3049,7 @@ stringFrequencies.forEach(freq => {
     shimmer.stop(now + 1.2);
 }
 
-function createPianoBody(ctx, frequency, now) {
+function createPianoBody(ctx, frequency, now, bodyExcitation) {
     const body = ctx.createOscillator();
     const bodyGain = ctx.createGain();
     const bodyFilter = ctx.createBiquadFilter();
@@ -3065,7 +3065,7 @@ function createPianoBody(ctx, frequency, now) {
     bodyFilter.Q.setValueAtTime(1.2, now);
 
     bodyGain.gain.setValueAtTime(
-    0.055 * pianoVoicing.bodyDepth,
+    0.055 * bodyExcitation,
     now
 );
     bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
@@ -3431,7 +3431,7 @@ function createPianoPedalResonance(ctx, frequency, now) {
     pedalOut.connect(masterGain);
 }
 
-function createPianoBridge(ctx, frequency, now) {
+function createPianoBridge(ctx, frequency, now, bridgeExcitation) {
     const bridgeOut = ctx.createGain();
     const bridgeFilter = ctx.createBiquadFilter();
 
@@ -3443,7 +3443,7 @@ function createPianoBridge(ctx, frequency, now) {
     bridgeFilter.Q.setValueAtTime(0.85, now);
 
     bridgeOut.gain.setValueAtTime(
-    0.020 * pianoVoicing.bridgeAmount,
+    0.020 * bridgeExcitation,
     now + 0.01
 );
     bridgeOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
@@ -3465,7 +3465,7 @@ function createPianoBridge(ctx, frequency, now) {
         );
 
         gain.gain.setValueAtTime(
-    mode.gain * pianoVoicing.bridgeAmount,
+    mode.gain * bridgeExcitation,
     now + 0.01
 );
         gain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
@@ -3481,17 +3481,46 @@ function createPianoBridge(ctx, frequency, now) {
     bridgeOut.connect(masterGain);
 }
 
+// ========================================
+// Acoustic Interaction System
+// ========================================
+
+function calculateBridgeExcitation(voicing) {
+    const hammerEnergy =
+        0.75 +
+        (voicing.hammerBrightness * 0.25);
+
+    return hammerEnergy * voicing.bridgeAmount;
+}
+
+function calculateBodyExcitation(voicing, bridgeExcitation) {
+    const bodyCoupling =
+        0.80 +
+        (voicing.bodyDepth * 0.20);
+
+    return bridgeExcitation * bodyCoupling;
+}
+
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
+
+    const bridgeExcitation =
+        calculateBridgeExcitation(pianoVoicing);
+
+    const bodyExcitation =
+        calculateBodyExcitation(
+            pianoVoicing,
+            bridgeExcitation
+        );
 
     createPianoMechanicalNoise(ctx, frequency, now);
     createPianoDamperRelease(ctx, frequency, now);
     createPianoHammer(ctx, frequency, now);
     createPianoStrings(ctx, frequency, now);
     createPianoStringInteraction(ctx, frequency, now);
-    createPianoBridge(ctx, frequency, now);
-    createPianoBody(ctx, frequency, now);
+    createPianoBridge(ctx, frequency, now, bridgeExcitation);
+    createPianoBody(ctx, frequency, now, bodyExcitation);
     createPianoCabinet(ctx, frequency, now);
     createPianoSoundboard(ctx, frequency, now);
     createPianoSympatheticResonance(ctx, frequency, now);
