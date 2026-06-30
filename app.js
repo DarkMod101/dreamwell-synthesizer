@@ -109,7 +109,10 @@ function renderPresetBrowser(bankName) {
       button.className = "preset-browser-preset";
 
       button.addEventListener("click", () => {
-        applyPresetSettings(preset.settings || preset);
+        applyPresetSettings({
+  ...(preset.settings || {}),
+  engine: preset.engine
+});
 
         presetBrowserList
           .querySelectorAll(".preset-browser-preset")
@@ -1536,6 +1539,14 @@ if (originSelect) {
 
 const presetBanks = {
   signature: {
+
+    pianoTest: {
+    name: "Piano Test",
+    engine: "piano",
+    settings: {
+        masterVolume: 0.18,
+    },
+},
     dreamPad: {
       name: "Dream Pad",
       settings: {
@@ -3594,8 +3605,10 @@ function renderPresetBank(bankName) {
     button.textContent = presetData.name;
 
     button.addEventListener("click", () => {
-      applyPresetSettings(presetData.settings);
-    });
+      applyPresetSettings({
+  ...(presetData.settings || {}),
+  engine: presetData.engine
+});
 
     presetGrid.appendChild(button);
   });
