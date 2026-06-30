@@ -3240,7 +3240,7 @@ function createPianoDuplexScale(ctx, frequency, now) {
     duplexFilter.Q.setValueAtTime(0.8, now);
 
     duplexGain.gain.setValueAtTime(
-    0.004 * pianoVoicing.duplexShimmer
+    0.004 * pianoVoicing.duplexShimmer,
     now + 0.012
 );
     duplexGain.gain.exponentialRampToValueAtTime(
