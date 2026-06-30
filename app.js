@@ -2978,12 +2978,17 @@ function createPianoHammer(ctx, frequency, now) {
     hammerFilter.type = "highpass";
     hammerFilter.frequency.setValueAtTime(900, now);
 
-    hammerGain.gain.setValueAtTime(
-    0.13 * pianoVoicing.hammerBrightness,
-    now
-);
-    hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.028);
+    hammerGain.gain.setValueAtTime(0.001, now);
 
+hammerGain.gain.exponentialRampToValueAtTime(
+    0.045 * pianoVoicing.hammerBrightness,
+    now + 0.006
+);
+
+hammerGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + 0.09
+);
     hammer.connect(hammerFilter);
     hammerFilter.connect(hammerGain);
     hammerGain.connect(masterGain);
