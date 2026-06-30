@@ -2999,30 +2999,36 @@ hammerGain.gain.exponentialRampToValueAtTime(
 
 function createPianoStrings(ctx, frequency, now) {
     const stringFrequencies = [
-    frequency * 0.9994,
-    frequency,
-    frequency * 1.0007
-];
+        frequency * 0.9994,
+        frequency,
+        frequency * 1.0007
+    ];
 
-stringFrequencies.forEach(freq => {
-    const string = ctx.createOscillator();
-    const stringGain = ctx.createGain();
+    stringFrequencies.forEach(freq => {
+        const string = ctx.createOscillator();
+        const stringGain = ctx.createGain();
 
-    string.type = "sine";
-    string.frequency.setValueAtTime(freq, now);
+        string.type = "sine";
+        string.frequency.setValueAtTime(freq, now);
 
-    stringGain.gain.setValueAtTime(
-    0.05 * pianoVoicing.stringWarmth,
-    now
-);
-    stringGain.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+        stringGain.gain.setValueAtTime(
+            0.05 * pianoVoicing.stringWarmth,
+            now
+        );
 
-    string.connect(stringGain);
-    stringGain.connect(masterGain);
+        stringGain.gain.exponentialRampToValueAtTime(
+            0.001,
+            now + 2.8
+        );
 
-    string.start(now);
-    string.stop(now + 2.9);
-});
+        string.connect(stringGain);
+        stringGain.connect(masterGain);
+
+        string.start(now);
+        string.stop(now + 2.9);
+    });
+
+    /*
     const harmonic = ctx.createOscillator();
     const harmonicGain = ctx.createGain();
     const harmonicFilter = ctx.createBiquadFilter();
@@ -3034,10 +3040,14 @@ stringFrequencies.forEach(freq => {
     harmonicFilter.frequency.setValueAtTime(5200, now);
 
     harmonicGain.gain.setValueAtTime(
-    0.025 / pianoVoicing.stringWarmth,
-    now
-);
-    harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
+        0.025 / pianoVoicing.stringWarmth,
+        now
+    );
+
+    harmonicGain.gain.exponentialRampToValueAtTime(
+        0.001,
+        now + 1.9
+    );
 
     harmonic.connect(harmonicFilter);
     harmonicFilter.connect(harmonicGain);
@@ -3045,7 +3055,9 @@ stringFrequencies.forEach(freq => {
 
     harmonic.start(now);
     harmonic.stop(now + 2.0);
+    */
 
+    /*
     const shimmer = ctx.createOscillator();
     const shimmerGain = ctx.createGain();
 
@@ -3053,18 +3065,22 @@ stringFrequencies.forEach(freq => {
     shimmer.frequency.setValueAtTime(frequency * 3.02, now);
 
     shimmerGain.gain.setValueAtTime(
-    0.006 / pianoVoicing.stringWarmth,
-    now
-);
-shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        0.006 / pianoVoicing.stringWarmth,
+        now
+    );
+
+    shimmerGain.gain.exponentialRampToValueAtTime(
+        0.001,
+        now + 0.45
+    );
 
     shimmer.connect(shimmerGain);
     shimmerGain.connect(masterGain);
 
     shimmer.start(now);
     shimmer.stop(now + 1.2);
+    */
 }
-
 function createPianoBody(ctx, frequency, now, bodyExcitation) {
     const body = ctx.createOscillator();
     const bodyGain = ctx.createGain();
