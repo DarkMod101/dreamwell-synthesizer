@@ -3855,8 +3855,10 @@ arpRateValue.textContent = arpRateLabels[arpRate];
 
 keys.forEach((key) => {
   key.addEventListener("mousedown", () => {
-    beginInputNote(getKeyFrequency(key));
-  });
+  if (Date.now() - lastTouchTime < 500) return;
+
+  beginInputNote(getKeyFrequency(key));
+});
 
   key.addEventListener("mouseup", () => {
     endInputNote(getKeyFrequency(key));
