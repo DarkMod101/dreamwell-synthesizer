@@ -3051,6 +3051,34 @@ stringGain.gain.linearRampToValueAtTime(
         activePianoNodes.push(string, stringGain);
     });
 
+
+const attackHarmonic = ctx.createOscillator();
+const attackHarmonicGain = ctx.createGain();
+const attackHarmonicFilter = ctx.createBiquadFilter();
+
+attackHarmonic.type = "sine";
+attackHarmonic.frequency.setValueAtTime(frequency * 2.01, now);
+
+attackHarmonicFilter.type = "highpass";
+attackHarmonicFilter.frequency.setValueAtTime(1200, now);
+
+attackHarmonicGain.gain.setValueAtTime(0.0001, now);
+attackHarmonicGain.gain.linearRampToValueAtTime(0.012, now + 0.012);
+attackHarmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+attackHarmonic.connect(attackHarmonicFilter);
+attackHarmonicFilter.connect(attackHarmonicGain);
+attackHarmonicGain.connect(masterGain);
+
+attackHarmonic.start(now);
+attackHarmonic.stop(now + 0.2);
+
+activePianoNodes.push(
+    attackHarmonic,
+    attackHarmonicGain,
+    attackHarmonicFilter
+);
+
     /*
     const harmonic = ctx.createOscillator();
     const harmonicGain = ctx.createGain();
