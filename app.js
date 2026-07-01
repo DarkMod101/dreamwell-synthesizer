@@ -3028,7 +3028,7 @@ function createPianoStrings(ctx, frequency, now) {
         const string = ctx.createOscillator();
         const stringGain = ctx.createGain();
 
-        string.type = "triangle";
+        string.type = "sine";
         string.frequency.setValueAtTime(freq, now);
 
         stringGain.gain.setValueAtTime(0.0001, now);
