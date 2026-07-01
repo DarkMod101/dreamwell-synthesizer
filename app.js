@@ -13,6 +13,7 @@ let currentEngine = "synth";
 // Piano Engine state
 let pianoSustainPedalActive = false;
 let pianoAuditionMode = true;
+let activePianoNodes = [];
 
 const pianoVoicing = {
     hammerBrightness: 1.0,
@@ -1110,9 +1111,25 @@ stereoPanner.connect(delayNode);
 }
 
 
+function stopActivePianoNodes() {
+  activePianoNodes.forEach((node) => {
+    try {
+      if (node.stop) node.stop();
+      node.disconnect();
+    } catch (error) {
+      // Already stopped or disconnected
+    }
+  });
+
+  activePianoNodes = [];
+}
+
 function playNote(frequency) {
   if (currentEngine === "piano") {
-  stopAllNotes();
+  if (pianoAuditionMode) {
+    stopActivePianoNodes();
+  }
+
   createPianoNote(frequency);
   return;
 }
