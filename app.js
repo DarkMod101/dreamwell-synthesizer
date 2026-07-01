@@ -3046,7 +3046,7 @@ stringGain.gain.linearRampToValueAtTime(
         string.connect(stringGain);
         stringGain.connect(masterGain);
 
-        string.start(now);
+        string.start(now + 0.002);
         string.stop(now + 2.9);
         activePianoNodes.push(string, stringGain);
     });
