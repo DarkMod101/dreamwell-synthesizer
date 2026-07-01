@@ -1124,14 +1124,13 @@ function stopActivePianoNodes() {
   activePianoNodes = [];
 }
 
-function playNote(frequency) {
-  if (currentEngine === "piano") {
-    const ctx = getAudioContext();
-    const now = ctx.currentTime;
+if (currentEngine === "piano") {
+  if (pianoAuditionMode) {
+    stopActivePianoNodes();
+  }
 
-    createPianoBridge(ctx, frequency, now, 1);
-
-    return;
+  createPianoNote(frequency);
+  return;
 }
 
   const noteId = String(frequency);
