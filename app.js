@@ -32,6 +32,7 @@ const activeNotes = new Map();
 const activeTouchKeys = new Map();
 let lastPlayedFrequency = null;
 let waveFusionModulationTimer = null;
+let lastTouchTime = 0;
 let trapezoidWave = null;
 
 const waveformSelect = document.getElementById("waveform");
