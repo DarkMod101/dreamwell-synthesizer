@@ -3031,7 +3031,7 @@ function createPianoStrings(ctx, frequency, now) {
         string.type = "sine";
         string.frequency.setValueAtTime(freq, now);
 
-        stringGain.gain.setValueAtTime(0.001, now);
+        stringGain.gain.setValueAtTime(0.0001, now);
 
 stringGain.gain.linearRampToValueAtTime(
     0.05 * pianoVoicing.stringWarmth,
