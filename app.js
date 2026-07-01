@@ -3556,14 +3556,7 @@ function calculateBodyExcitation(voicing, bridgeExcitation) {
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
 
-    if (pianoAuditionMode) {
-        masterGain.gain.cancelScheduledValues(ctx.currentTime);
-        masterGain.gain.setValueAtTime(0.0001, ctx.currentTime);
-        masterGain.gain.linearRampToValueAtTime(
-            getValue(masterVolume, 0.25),
-            ctx.currentTime + 0.03
-        );
-    }
+    
 
     const now = ctx.currentTime;
 
