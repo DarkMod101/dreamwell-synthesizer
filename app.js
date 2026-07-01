@@ -1410,8 +1410,11 @@ setKeyLatched(frequency, false);
     return;
   }
 
+  if (currentEngine !== "piano") {
   stopNote(frequency);
-  setKeyActive(frequency, false);
+}
+
+setKeyActive(frequency, false);
 }
 
 function updateKeyboardOctave() {
