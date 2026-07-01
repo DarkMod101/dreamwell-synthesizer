@@ -3046,6 +3046,7 @@ function createPianoStrings(ctx, frequency, now) {
 
         string.start(now);
         string.stop(now + 2.9);
+        activePianoNodes.push(string, stringGain);
     });
 
     /*
