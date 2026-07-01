@@ -3870,6 +3870,9 @@ keys.forEach((key) => {
 document.addEventListener(
   "touchstart",
   (event) => {
+
+    lastTouchTime = Date.now();
+
     let touchedKeyboard = false;
 
     Array.from(event.changedTouches).forEach((touch) => {
