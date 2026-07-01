@@ -3493,48 +3493,50 @@ function createPianoBridge(ctx, frequency, now, bridgeExcitation) {
 
     bridgeFilter.type = "bandpass";
     bridgeFilter.frequency.setValueAtTime(
-        Math.min(1800, Math.max(220, frequency * 0.9)),
+        Math.min(1400, Math.max(180, frequency * 1.15)),
         now
     );
-    bridgeFilter.Q.setValueAtTime(0.35, now);
+
+    bridgeFilter.Q.setValueAtTime(0.18, now);
 
     bridgeOut.gain.setValueAtTime(
-    0.006 * bridgeExcitation,
-    now + 0.01
-);
-    bridgeOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+        0.0015 * bridgeExcitation,
+        now + 0.018
+    );
 
-    const bridgeModes = [
-    { ratio: 0.95, gain: 0.003 },
-    { ratio: 1.10, gain: 0.002 },
-    { ratio: 1.30, gain: 0.0015 }
-];
+    bridgeOut.gain.exponentialRampToValueAtTime(
+        0.001,
+        now + 0.22
+    );
 
-    bridgeModes.forEach(mode => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+    const bridgeNoiseBuffer = ctx.createBuffer(
+        1,
+        Math.floor(ctx.sampleRate * 0.08),
+        ctx.sampleRate
+    );
 
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(
-            frequency * mode.ratio,
-            now
-        );
+    const data = bridgeNoiseBuffer.getChannelData(0);
 
-        gain.gain.setValueAtTime(
-    mode.gain * bridgeExcitation,
-    now + 0.01
-);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 2.6);
+    for (let i = 0; i < data.length; i++) {
+        const fade = 1 - i / data.length;
+        data[i] = (Math.random() * 2 - 1) * fade * 0.08;
+    }
 
-        osc.connect(gain);
-        gain.connect(bridgeFilter);
+    const bridgeNoise = ctx.createBufferSource();
+    bridgeNoise.buffer = bridgeNoiseBuffer;
 
-        osc.start(now);
-        osc.stop(now + 2.8);
-    });
-
+    bridgeNoise.connect(bridgeFilter);
     bridgeFilter.connect(bridgeOut);
     bridgeOut.connect(masterGain);
+
+    bridgeNoise.start(now);
+    bridgeNoise.stop(now + 0.08);
+
+    activePianoNodes.push(
+        bridgeNoise,
+        bridgeFilter,
+        bridgeOut
+    );
 }
 
 // ========================================
