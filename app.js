@@ -1126,12 +1126,26 @@ function stopActivePianoNodes() {
 
 function playNote(frequency) {
   if (currentEngine === "piano") {
-  if (pianoAuditionMode) {
-    stopActivePianoNodes();
-  }
 
-  createPianoNote(frequency);
-  return;
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(frequency, now);
+
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+    osc.connect(gain);
+    gain.connect(masterGain);
+
+    osc.start(now);
+    osc.stop(now + 1.3);
+
+    return;
 }
 
   const noteId = String(frequency);
