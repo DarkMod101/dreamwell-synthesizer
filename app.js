@@ -1124,6 +1124,7 @@ function stopActivePianoNodes() {
   activePianoNodes = [];
 }
 
+function playNote(frequency) {
 if (currentEngine === "piano") {
   if (pianoAuditionMode) {
     stopActivePianoNodes();
