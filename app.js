@@ -3034,8 +3034,8 @@ function createPianoStrings(ctx, frequency, now) {
         stringGain.gain.setValueAtTime(0.0001, now);
 
 stringGain.gain.linearRampToValueAtTime(
-    0.05 * pianoVoicing.stringWarmth,
-    now + 0.025
+    0.065 * pianoVoicing.stringWarmth
+    now + 0.018
 );
 
         stringGain.gain.exponentialRampToValueAtTime(
