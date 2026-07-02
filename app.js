@@ -3019,10 +3019,10 @@ hammerGain.gain.exponentialRampToValueAtTime(
 
 function createPianoStrings(ctx, frequency, now) {
     const stringFrequencies = [
-        frequency * 0.9994,
-        frequency,
-        frequency * 1.0007
-    ];
+    frequency * 0.9997,
+    frequency,
+    frequency * 1.0003
+];
 
     stringFrequencies.forEach(freq => {
         const string = ctx.createOscillator();
