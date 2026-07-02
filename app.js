@@ -3079,7 +3079,7 @@ activePianoNodes.push(
     attackHarmonicFilter
 );
 
-    /*
+    
     const harmonic = ctx.createOscillator();
     const harmonicGain = ctx.createGain();
     const harmonicFilter = ctx.createBiquadFilter();
@@ -3087,17 +3087,23 @@ activePianoNodes.push(
     harmonic.type = "sine";
     harmonic.frequency.setValueAtTime(frequency * 2.01, now);
 
-    harmonicFilter.type = "lowpass";
-    harmonicFilter.frequency.setValueAtTime(5200, now);
+    harmonicFilter.type = "bandpass";
+harmonicFilter.frequency.setValueAtTime(3200, now);
+harmonicFilter.Q.setValueAtTime(0.45, now);
 
     harmonicGain.gain.setValueAtTime(
-        0.025 / pianoVoicing.stringWarmth,
-        now
-    );
+    0.0001,
+    now
+);
+
+harmonicGain.gain.linearRampToValueAtTime(
+    0.0045 * pianoVoicing.stringWarmth,
+    now + 0.045
+);
 
     harmonicGain.gain.exponentialRampToValueAtTime(
         0.001,
-        now + 1.9
+        now + 2.7
     );
 
     harmonic.connect(harmonicFilter);
@@ -3105,8 +3111,8 @@ activePianoNodes.push(
     harmonicGain.connect(masterGain);
 
     harmonic.start(now);
-    harmonic.stop(now + 2.0);
-    */
+harmonic.stop(now + 2.8);
+    
 
     /*
     const shimmer = ctx.createOscillator();
