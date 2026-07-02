@@ -3088,8 +3088,8 @@ activePianoNodes.push(
     harmonic.frequency.setValueAtTime(frequency * 2.01, now);
 
     harmonicFilter.type = "bandpass";
-harmonicFilter.frequency.setValueAtTime(3200, now);
-harmonicFilter.Q.setValueAtTime(0.45, now);
+harmonicFilter.frequency.setValueAtTime(4200, now);
+harmonicFilter.Q.setValueAtTime(0.28, now);
 
     harmonicGain.gain.setValueAtTime(
     0.0001,
