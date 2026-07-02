@@ -3063,7 +3063,7 @@ attackHarmonicFilter.type = "highpass";
 attackHarmonicFilter.frequency.setValueAtTime(1200, now);
 
 attackHarmonicGain.gain.setValueAtTime(0.0001, now);
-attackHarmonicGain.gain.linearRampToValueAtTime(0.006, now + 0.014);
+attackHarmonicGain.gain.linearRampToValueAtTime(0.008, now + 0.014);
 attackHarmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
 attackHarmonic.connect(attackHarmonicFilter);
