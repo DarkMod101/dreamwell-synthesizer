@@ -3537,7 +3537,7 @@ function createPianoBridge(ctx, frequency, now, bridgeExcitation) {
     bridgeFilter.Q.setValueAtTime(0.18, now);
 
     bridgeOut.gain.setValueAtTime(
-        0.0015 * bridgeExcitation,
+        0.00075 * bridgeExcitation,
         now + 0.018
     );
 
@@ -3617,7 +3617,7 @@ function createPianoNote(frequency) {
     // createPianoHammer(ctx, frequency, now);
     createPianoStrings(ctx, frequency, now);
     // createPianoStringInteraction(ctx, frequency, now);
-    // createPianoBridge(ctx, frequency, now, bridgeExcitation);
+    createPianoBridge(ctx, frequency, now, bridgeExcitation);
     createPianoBody(ctx, frequency, now, bodyExcitation);
     // createPianoCabinet(ctx, frequency, now);
     createPianoSoundboard(ctx, frequency, now);
