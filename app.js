@@ -3525,6 +3525,7 @@ function createPianoPedalResonance(ctx, frequency, now) {
 }
 
 function createPianoBridge(ctx, frequency, now, bridgeExcitation) {
+    return;
     const bridgeOut = ctx.createGain();
     const bridgeFilter = ctx.createBiquadFilter();
 
