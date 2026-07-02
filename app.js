@@ -3151,10 +3151,10 @@ function createPianoBody(ctx, frequency, now, bodyExcitation) {
     850 / pianoVoicing.bodyDepth,
     now
 );
-    bodyFilter.Q.setValueAtTime(1.2, now);
+    bodyFilter.Q.setValueAtTime(0.45, now);
 
     bodyGain.gain.setValueAtTime(
-    0.055 * bodyExcitation,
+    0.018 * bodyExcitation,
     now
 );
     bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
