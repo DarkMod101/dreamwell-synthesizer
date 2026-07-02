@@ -3618,7 +3618,7 @@ function createPianoNote(frequency) {
     createPianoStrings(ctx, frequency, now);
     // createPianoStringInteraction(ctx, frequency, now);
     // createPianoBridge(ctx, frequency, now, bridgeExcitation);
-    // createPianoBody(ctx, frequency, now, bodyExcitation);
+    createPianoBody(ctx, frequency, now, bodyExcitation);
     // createPianoCabinet(ctx, frequency, now);
     // createPianoSoundboard(ctx, frequency, now);
     // createPianoSympatheticResonance(ctx, frequency, now);
