@@ -3024,7 +3024,7 @@ function createPianoStrings(ctx, frequency, now) {
         frequency * 1.0007
     ];
 
-    stringFrequencies.forEach(freq => {
+    stringFrequencies.forEach((freq, index) => {
         const string = ctx.createOscillator();
         const stringGain = ctx.createGain();
 
@@ -3046,7 +3046,7 @@ stringGain.gain.linearRampToValueAtTime(
         string.connect(stringGain);
         stringGain.connect(masterGain);
 
-        string.start(now + 0.002);
+        string.start(now + 0.002 + index * 0.0015);
         string.stop(now + 2.9);
         activePianoNodes.push(string, stringGain);
     });
