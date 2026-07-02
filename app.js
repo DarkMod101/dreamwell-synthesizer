@@ -3063,14 +3063,14 @@ attackHarmonicFilter.type = "highpass";
 attackHarmonicFilter.frequency.setValueAtTime(1200, now);
 
 attackHarmonicGain.gain.setValueAtTime(0.0001, now);
-attackHarmonicGain.gain.linearRampToValueAtTime(0.012, now + 0.012);
+attackHarmonicGain.gain.linearRampToValueAtTime(0.006, now + 0.014);
 attackHarmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
 
 attackHarmonic.connect(attackHarmonicFilter);
 attackHarmonicFilter.connect(attackHarmonicGain);
 attackHarmonicGain.connect(masterGain);
 
-attackHarmonic.start(now);
+attackHarmonic.start(now + 0.002);
 attackHarmonic.stop(now + 0.2);
 
 activePianoNodes.push(
