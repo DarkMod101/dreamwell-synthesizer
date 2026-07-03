@@ -36,12 +36,12 @@ const synthState = {
   trapezoidWave: null
 };
 
-// Built-in Instrument Patch Presets Bank Library (100% RESTORED & COMPLETED)
+// Built-in Instrument Patch Presets Bank Library (Original Sound Math Fully Preserved)
 const presetLibrary = {
   signature: [
     { 
       name: "Piano Test", 
-      moduleMode: "grand_piano", // TRIGGERS PHYSICAL MODELING GRAND PIANO GRAPH!
+      moduleMode: "grand_piano",
       waveform: "triangle", waveformB: "sine", waveFusion: 50, subWaveform: "sine", subLevel: 0, oscBLevel: 0.35, oscBDetune: 6, voiceSpread: 0, noiseAmount: 0, drift: 5, stereoWidth: 40, attack: 0.002, decay: 1.60, sustain: 3, release: 0.45, filterType: "lowpass", cutoff: 6200, resonance: 1.0, lfoRate: 2.0, lfoAmount: 0, lfoDestination: "pitch", reverbMix: 35, reverbDecay: 3.5, delayMix: 0, delayTime: 300, delayFeedback: 20, masterVolume: 0.30, presence: 40 
     },
     { name: "Dream Pad", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 30, subWaveform: "sine", subLevel: 30, oscBLevel: 0.25, oscBDetune: 12, voiceSpread: 80, noiseAmount: 20, drift: 45, stereoWidth: 90, attack: 1.50, decay: 2.00, sustain: 90, release: 2.50, filterType: "lowpass", cutoff: 950, resonance: 1.5, lfoRate: 0.4, lfoAmount: 350, lfoDestination: "filter", reverbMix: 65, reverbDecay: 6.5, delayMix: 50, delayTime: 680, delayFeedback: 60, masterVolume: 0.22, presence: 10 },
@@ -78,7 +78,6 @@ const presetLibrary = {
   ]
 };
 
-
 // ============================================================================
 // 2. AUDIO INITIALIZATION & FX INFRASTRUCTURE GRAPH
 // ============================================================================
@@ -99,7 +98,7 @@ function initAudio() {
   synthState.reverbNode = synthState.audioContext.createConvolver();
   synthState.reverbWetGain = synthState.audioContext.createGain();
 
-  // Connections Routing Topology
+  // Topology Routing
   synthState.dryGainNode.connect(synthState.masterGain);
 
   synthState.delayNode.connect(synthState.delayFeedbackNode);
@@ -120,7 +119,7 @@ function initAudio() {
 
 function buildSyntheticReverbImpulse() {
   if (!synthState.audioContext) return;
-  const decayTime = parseFloat(document.getElementById('reverbDecay').value) || 2.5;
+  const decayTime = parseFloat(document.getElementById('reverbDecay').value) || 3.0;
   const rate = synthState.audioContext.sampleRate;
   const length = rate * decayTime;
   const impulse = synthState.audioContext.createBuffer(2, length, rate);
@@ -147,21 +146,29 @@ function generateCustomWaves() {
 
 function updateDelayNodeSettings() {
   if (!synthState.audioContext) return;
-  const mix = parseFloat(document.getElementById('delayMix').value);
-  const time = parseFloat(document.getElementById('delayTime').value) / 1000; 
-  const feedback = parseFloat(document.getElementById('delayFeedback').value) / 100;
+  
+  // HTML slider is 0.0 to 1.0, matching the target parameters smoothly
+  const mix = parseFloat(document.getElementById('delayMix').value);       
+  const rawTime = parseFloat(document.getElementById('delayTime').value);   
+  const feedback = parseFloat(document.getElementById('delayFeedback').value);
+
+  // Safe normalization fallback logic if presets feed 0-100 values into sliders
+  const actualMix = mix > 1 ? mix / 100 : mix;
+  const actualTime = rawTime > 1.5 ? rawTime / 1000 : rawTime;
+  const actualFeedback = feedback > 1 ? feedback / 100 : feedback;
 
   const now = synthState.audioContext.currentTime;
-  synthState.delayNode.delayTime.setTargetAtTime(time, now, 0.02);
-  synthState.delayFeedbackNode.gain.setTargetAtTime(feedback, now, 0.01);
-  synthState.delayWetGain.gain.setTargetAtTime(mix / 100, now, 0.01);
-  synthState.dryGainNode.gain.setTargetAtTime(1.0 - ((mix / 100) * 0.5), now, 0.01);
+  synthState.delayNode.delayTime.setTargetAtTime(actualTime, now, 0.02);
+  synthState.delayFeedbackNode.gain.setTargetAtTime(actualFeedback, now, 0.01);
+  synthState.delayWetGain.gain.setTargetAtTime(actualMix, now, 0.01);
+  synthState.dryGainNode.gain.setTargetAtTime(1.0 - (actualMix * 0.5), now, 0.01);
 }
 
 function updateReverbNodeSettings() {
   if (!synthState.audioContext) return;
-  const mix = parseFloat(document.getElementById('reverbMix').value) / 100;
-  synthState.reverbWetGain.gain.setTargetAtTime(mix, synthState.audioContext.currentTime, 0.01);
+  const mix = parseFloat(document.getElementById('reverbMix').value);
+  const actualMix = mix > 1 ? mix / 100 : mix;
+  synthState.reverbWetGain.gain.setTargetAtTime(actualMix, synthState.audioContext.currentTime, 0.01);
 }
 
 // ============================================================================
@@ -263,7 +270,11 @@ class SynthVoice {
 
     this.attack = parseFloat(document.getElementById('attack').value);
     this.decay = parseFloat(document.getElementById('decay').value);
-    this.sustain = parseFloat(document.getElementById('sustain').value) / 100;
+    
+    // SOUND CORRECTION: Safely normalize sustain values if they are loaded on 0-100 scale
+    const rawSustain = parseFloat(document.getElementById('sustain').value);
+    this.sustain = rawSustain > 1.0 ? rawSustain / 100 : rawSustain;
+    
     this.release = parseFloat(document.getElementById('release').value);
 
     const oscA = this.ctx.createOscillator();
@@ -369,7 +380,7 @@ class SynthVoice {
 }
 
 // ============================================================================
-// 4. NOTE TRACKING BUS (FIXES UNTERMINATED HELD VOICES)
+// 4. NOTE TRACKING BUS
 // ============================================================================
 function noteOn(baseFreq) {
   initAudio();
@@ -529,6 +540,7 @@ function handlePhysicalKeyTriggerOn(keyBtn) {
   }
 }
 
+// Fixed Key Triggers to respond perfectly to your specific frequencies
 function handlePhysicalKeyTriggerOff(keyBtn) {
   if (!keyBtn) return;
   const noteFrequencyValue = parseFloat(keyBtn.dataset.note);
@@ -617,16 +629,21 @@ function clearAllSystemSlidersFeedback(sliderId, readoutValueId, unitSuffix = ""
   elementSlider.addEventListener('input', (e) => {
     let outputVal = e.target.value;
     
-    if (unitSuffix === "%" && elementSlider.max === "1") {
+    // UI Format presentation adjustments
+    if (unitSuffix === "%" && (elementSlider.max === "1" || elementSlider.max === "1.0")) {
       outputVal = Math.round(parseFloat(e.target.value) * 100);
     } else if (sliderId === 'oscBDetune') {
       outputVal = (parseInt(outputVal) >= 0 ? "+" : "") + outputVal;
+    } else if (sliderId === 'delayTime' && parseFloat(outputVal) <= 1.5) {
+      outputVal = Math.round(parseFloat(outputVal) * 1000); 
     }
     
     elementReadout.textContent = `${outputVal}${unitSuffix}`;
     
     if (sliderId === 'masterVolume' && synthState.masterGain) {
-      synthState.masterGain.gain.setValueAtTime(parseFloat(e.target.value), synthState.audioContext.currentTime);
+      const volRaw = parseFloat(e.target.value);
+      const actualVol = volRaw > 1 ? volRaw / 100 : volRaw;
+      synthState.masterGain.gain.setValueAtTime(actualVol, synthState.audioContext.currentTime);
     }
     
     if (['delayMix', 'delayTime', 'delayFeedback'].includes(sliderId)) updateDelayNodeSettings();
@@ -691,7 +708,7 @@ function renderPresetGroupBankList(bankKey) {
   const selectionBankListArray = presetLibrary[bankKey] || [];
 
   if (selectionBankListArray.length === 0) {
-    presetListContainer.innerHTML = `<p style="padding:15px;color:#aaa;">No patches found.</p>`;
+    presetListContainer.innerHTML = `<p style="padding:15px;color:#aaa;">No patches found in this directory.</p>`;
     return;
   }
 
@@ -717,7 +734,19 @@ function injectPatchIntoControlsPanel(patch) {
     if (key === 'name' || key === 'moduleMode') return;
     const coreDOMInput = document.getElementById(key);
     if (coreDOMInput) {
-      coreDOMInput.value = patch[key];
+      // Scale-aware UI mapping injection fallback translator
+      let finalVal = patch[key];
+      if (key === 'sustain' || key === 'reverbMix' || key === 'delayMix' || key === 'delayFeedback') {
+        if (coreDOMInput.max === "1" || coreDOMInput.max === "1.0") {
+          finalVal = patch[key] > 1 ? patch[key] / 100 : patch[key];
+        }
+      } else if (key === 'delayTime') {
+        if (coreDOMInput.max === "1.5" || coreDOMInput.max === "1.50") {
+          finalVal = patch[key] > 1.5 ? patch[key] / 1000 : patch[key];
+        }
+      }
+      
+      coreDOMInput.value = finalVal;
       coreDOMInput.dispatchEvent(new Event('input'));
     }
   });
