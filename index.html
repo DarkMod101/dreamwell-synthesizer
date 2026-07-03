@@ -1,170 +1,434 @@
-/**
- * Dreamwell Synthesizer - Master Audio Application File
- * Fully Integrated Presets Database, Web Audio Graph Engine & Performance Controls
- */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dreamwell Synthesizer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-// ============================================================================
-// 1. GLOBAL STATE & SYSTEM ARCHITECTURE
-// ============================================================================
-const synthState = {
-  audioContext: null,
-  masterGain: null,
+<body>
+  <main class="app">
+    <header class="logo">
+      <h1>DREAMWELL</h1>
+      <p>SYNTHESIZER</p>
+      <span>Resonant Doorways</span>
+    </header>
+
+<section class="presets">
   
-  // Audio FX Routing Nodes
-  delayNode: null,
-  delayFeedbackNode: null,
-  delayWetGain: null,
-  reverbNode: null,
-  reverbWetGain: null,
-  dryGainNode: null,
+  <button id="openPresetBrowser" class="preset-browser-btn">
+  Presets
+</button>
+  <p id="presetMessage" class="preset-message"></p>
+</section>
+    
+    <section class="controls">
+      <div class="panel">
+        <h2>Oscillator A</h2>
+
+        <label>
+          Waveform A
+          <select id="waveform">
+            <option value="sine">Sine</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth">Saw</option>
+            <option value="square">Square</option>
+            <option value="trapezoid">Trapezoid</option>
+          </select>
+        </label>
+
+        <h2>Oscillator B</h2>
+
+        <label>
+          Waveform B
+          <select id="waveformB">
+            <option value="sine">Sine</option>
+            <option value="triangle">Triangle</option>
+            <option value="sawtooth" selected>Saw</option>
+            <option value="square">Square</option>
+            <option value="trapezoid">Trapezoid</option>
+          </select>
+        </label>
+
+<label>
+  <span>
+    Wave Fusion
+    <strong id="waveFusionValue">50%</strong>
+  </span>
+  <input
+    id="waveFusion"
+    type="range"
+    min="0"
+    max="100"
+    step="1"
+    value="50">
+</label>
+
+<label>
+  <span>Origin</span>
+  <select id="origin">
+    <option value="pure" selected>Pure</option>
+    <option value="vintage">Vintage</option>
+    <option value="dream">Dream</option>
+    <option value="glass">Glass</option>
+    <option value="hollow">Hollow</option>
+    <option value="ancient">Ancient</option>
+    <option value="cosmic">Cosmic</option>
+  </select>
+</label>
+        
+<label>
+  <span>Morph Curve</span>
+  <select id="waveFusionCurve">
+    <option value="linear">Linear</option>
+    <option value="smooth" selected>Smooth</option>
+    <option value="deep">Deep</option>
+    <option value="bright">Bright</option>
+  </select>
+</label>
+
+<label class="checkbox-row">
+  <input type="checkbox" id="dreamMorphMotion">
+  Dream Morph Motion
+</label>
+        
+<label>
+  <span>Sub Waveform</span>
+  <select id="subWaveform">
+    <option value="sine">Sine</option>
+    <option value="triangle">Triangle</option>
+    <option value="square">Square</option>
+  </select>
+</label>
+
+<label>
+  <span>Sub Level <strong id="subLevelValue">0%</strong></span>
+  <input
+    id="subLevel"
+    type="range"
+    min="0"
+    max="100"
+    step="1"
+    value="0">
+</label>
+        
+        <label>
+          <span>Osc B Level <strong id="oscBLevelValue">35%</strong></span>
+          <input id="oscBLevel" type="range" min="0" max="1" step="0.01" value="0.35">
+        </label>
+
+        <label>
+          <span>Osc B Detune <strong id="oscBDetuneValue">+7 cents</strong></span>
+          <input id="oscBDetune" type="range" min="-50" max="50" step="1" value="7">
+        </label>
+
+<label>
+  <span>Voice Spread <strong id="voiceSpreadValue">0%</strong></span>
+  <input id="voiceSpread" type="range" min="0" max="100" step="1" value="0">
+</label>
+
+<label>
+  <span>Texture Type</span>
+  <select id="noiseType">
+    <option value="white">White</option>
+    <option value="dark">Dark Void</option>
+    <option value="air">Air</option>
+    <option value="dust">Stardust</option>
+    <option value="machine">Ancient Machine</option>
+    <option value="cosmic">Cosmic</option>
+  </select>
+</label>
+
+<label class="checkbox-row">
+  <input type="checkbox" id="deepDreamOrbit" checked>
+  Deep Dream Orbit
+</label>
+        
+<label>
+  <span>Noise Layer <strong id="noiseAmountValue">0%</strong></span>
+  <input
+    id="noiseAmount"
+    type="range"
+    min="0"
+    max="100"
+    step="1"
+    value="0">
+</label>
+        
+        
+<label>
+ <span>Drift <strong id="driftValue">0</strong></span>
+<input id="drift" type="range" min="0" max="100" step="1" value="0">
+</label>
+
+<label>
+  <span>Stereo Width <strong id="stereoWidthValue">0%</strong></span>
+  <input id="stereoWidth" type="range" min="0" max="100" step="1" value="0">
+</label>
+        
+      </div>
+
+      <div class="panel">
+        <h2>Envelope</h2>
+
+        <label>
+          <span>Attack <strong id="attackValue">0.05 s</strong></span>
+          <input id="attack" type="range" min="0.01" max="2" step="0.01" value="0.05">
+        </label>
+
+        <label>
+          <span>Decay <strong id="decayValue">0.20 s</strong></span>
+          <input id="decay" type="range" min="0.01" max="2" step="0.01" value="0.20">
+        </label>
+
+        <label>
+          <span>Sustain <strong id="sustainValue">70%</strong></span>
+          <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.70">
+        </label>
+
+        <label>
+          <span>Release <strong id="releaseValue">0.50 s</strong></span>
+          <input id="release" type="range" min="0.01" max="5" step="0.01" value="0.50">
+        </label>
+      </div>
+
+      <div class="panel">
+        <h2>Filter</h2>
+
+        <label>
+          Filter Type
+          <select id="filterType">
+            <option value="lowpass">Low Pass</option>
+            <option value="highpass">High Pass</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Cutoff <strong id="cutoffValue">4000 Hz</strong></span>
+          <input id="cutoff" type="range" min="80" max="12000" step="1" value="4000">
+        </label>
+
+        <label>
+          <span>Resonance <strong id="resonanceValue">Q 1.0</strong></span>
+          <input id="resonance" type="range" min="0" max="20" step="0.1" value="1">
+        </label>
+      </div>
+
+      <div class="panel">
+        <h2>Dream Wave</h2>
+
+        <label>
+          <span>LFO Rate <strong id="lfoRateValue">2.0 Hz</strong></span>
+          <input id="lfoRate" type="range" min="0.1" max="12" step="0.1" value="2">
+        </label>
+
+        <label>
+          <span>LFO Amount <strong id="lfoAmountValue">0</strong></span>
+          <input id="lfoAmount" type="range" min="0" max="3000" step="1" value="0">
+        </label>
+
+        <label>
+          LFO Destination
+          <select id="lfoDestination">
+            <option value="filter">Filter Cutoff</option>
+            <option value="pitch">Pitch</option>
+            <option value="volume">Volume</option>
+          </select>
+        </label>
+
+      </div>
+
+      <div class="panel">
+        <h2>Space</h2>
+
+        <label>
+          <span>Reverb Mix <strong id="reverbMixValue">25%</strong></span>
+          <input id="reverbMix" type="range" min="0" max="1" step="0.01" value="0.25">
+        </label>
+
+        <label>
+          <span>Reverb Decay <strong id="reverbDecayValue">3.0 s</strong></span>
+          <input id="reverbDecay" type="range" min="0.5" max="8" step="0.1" value="3">
+        </label>
+
+        <label>
+          <span>Delay Mix <strong id="delayMixValue">55%</strong></span>
+          <input id="delayMix" type="range" min="0" max="1" step="0.01" value="0.55">
+        </label>
+
+        <label>
+          <span>Delay Time <strong id="delayTimeValue">550 ms</strong></span>
+          <input id="delayTime" type="range" min="0.05" max="1.5" step="0.01" value="0.55">
+        </label>
+
+        <label>
+          <span>Feedback <strong id="delayFeedbackValue">55%</strong></span>
+          <input id="delayFeedback" type="range" min="0" max="0.85" step="0.01" value="0.55">
+        </label>
+      </div>
+
+<div class="panel">
+  <h2>Dream Arpeggiator</h2>
+
+  <label class="checkbox-row">
+    <input type="checkbox" id="dreamArpEnabled">
+    Dream Arpeggiator
+  </label>
+
+<label class="checkbox-row">
+  <input type="checkbox" id="arpLatch">
+  Latch
+</label>
   
-  // Tracking Maps & Registries
-  activeVoices: new Map(),      // Tracks active notes: key = base frequency string, value = voice object
-  heldKeys: [],                 // Ordered array of user notes held down (for Arp)
+  <label>
+    <span>Rate <strong id="arpRateValue">1/8</strong></span>
+    <input
+      id="arpRate"
+      type="range"
+      min="1"
+      max="4"
+      step="1"
+      value="2">
+  </label>
+
+<label>
+  <span>Gate <strong id="arpGateValue">70%</strong></span>
+  <input
+    id="arpGate"
+    type="range"
+    min="10"
+    max="100"
+    step="1"
+    value="70">
+</label>
   
-  // Parameter State Modifiers
-  octaveShift: 0,
-  moduleMode: 'synth',          // Modes: 'synth' or 'grand_piano'
-  
-  // Dream Arpeggiator Engine Variables
-  arpIntervalId: null,
-  arpIndex: 0,
-  arpCurrentNote: null,
-  arpDirectionUp: true,         
-  
-  // Custom Waves (Computed Tables)
-  trapezoidWave: null
-};
+  <label>
+    Mode
+    <select id="arpMode">
+  <option value="up" selected>Up</option>
+  <option value="down">Down</option>
+  <option value="updown">Up / Down</option>
+  <option value="random">Random</option>
+  <option value="asPlayed">As Played</option>
+</select>
+  </label>
+</div>
+      
+      <div class="panel">
+        <h2>Master</h2>
 
-// Built-in Instrument Patch Presets Bank Library (100% Complete)
-const presetLibrary = {
-  signature: [
-    { 
-      name: "Piano Test", 
-      moduleMode: "grand_piano", // TRIGGERS ACOUSTIC GRAPH MODEL!
-      waveform: "triangle", waveformB: "sine", waveFusion: 50, subWaveform: "sine", subLevel: 0, oscBLevel: 0.35, oscBDetune: 6, voiceSpread: 0, noiseAmount: 0, drift: 5, stereoWidth: 40, attack: 0.01, decay: 1.60, sustain: 0.03, release: 0.45, filterType: "lowpass", cutoff: 6200, resonance: 1.0, lfoRate: 2.0, lfoAmount: 0, lfoDestination: "pitch", reverbMix: 0.35, reverbDecay: 3.5, delayMix: 0.0, delayTime: 0.30, delayFeedback: 0.20, masterVolume: 0.30, presence: 40 
-    },
-    { name: "Dream Pad", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 30, subWaveform: "sine", subLevel: 30, oscBLevel: 0.25, oscBDetune: 12, voiceSpread: 80, noiseAmount: 20, drift: 45, stereoWidth: 90, attack: 1.50, decay: 2.00, sustain: 0.90, release: 2.50, filterType: "lowpass", cutoff: 950, resonance: 1.5, lfoRate: 0.4, lfoAmount: 350, lfoDestination: "filter", reverbMix: 0.65, reverbDecay: 6.5, delayMix: 0.50, delayTime: 0.68, delayFeedback: 0.60, masterVolume: 0.22, presence: 10 },
-    { name: "The Well", moduleMode: "synth", waveform: "sine", waveformB: "triangle", waveFusion: 45, subWaveform: "sine", subLevel: 25, oscBLevel: 0.40, oscBDetune: 5, voiceSpread: 30, noiseAmount: 15, drift: 15, stereoWidth: 60, attack: 0.10, decay: 1.00, sustain: 0.60, release: 0.80, filterType: "lowpass", cutoff: 1400, resonance: 2.0, lfoRate: 1.2, lfoAmount: 200, lfoDestination: "filter", reverbMix: 0.40, reverbDecay: 4.0, delayMix: 0.30, delayTime: 0.40, delayFeedback: 0.40, masterVolume: 0.25, presence: 20 },
-    { name: "Abyss", moduleMode: "synth", waveform: "square", waveformB: "sawtooth", waveFusion: 20, subWaveform: "square", subLevel: 70, oscBLevel: 0.50, oscBDetune: 8, voiceSpread: 10, noiseAmount: 30, drift: 8, stereoWidth: 15, attack: 0.01, decay: 0.45, sustain: 0.80, release: 0.35, filterType: "lowpass", cutoff: 450, resonance: 4.0, lfoRate: 0.8, lfoAmount: 150, lfoDestination: "filter", reverbMix: 0.20, reverbDecay: 2.0, delayMix: 0.15, delayTime: 0.25, delayFeedback: 0.30, masterVolume: 0.28, presence: 5 },
-    { name: "Resonant Doorway", moduleMode: "synth", waveform: "sine", waveformB: "sawtooth", waveFusion: 40, subWaveform: "sine", subLevel: 20, oscBLevel: 0.40, oscBDetune: 8, voiceSpread: 35, noiseAmount: 15, drift: 20, stereoWidth: 60, attack: 0.25, decay: 0.60, sustain: 0.75, release: 1.20, filterType: "lowpass", cutoff: 1800, resonance: 2.5, lfoRate: 1.5, lfoAmount: 400, lfoDestination: "filter", reverbMix: 0.45, reverbDecay: 4.5, delayMix: 0.35, delayTime: 0.45, delayFeedback: 0.50, masterVolume: 0.25, presence: 30 },
-    { name: "Falling", moduleMode: "synth", waveform: "sawtooth", waveformB: "sine", waveFusion: 20, subWaveform: "sine", subLevel: 10, oscBLevel: 0.30, oscBDetune: 15, voiceSpread: 50, noiseAmount: 5, drift: 30, stereoWidth: 70, attack: 0.60, decay: 1.20, sustain: 0.50, release: 1.80, filterType: "lowpass", cutoff: 1200, resonance: 1.8, lfoRate: 2.5, lfoAmount: 250, lfoDestination: "filter", reverbMix: 0.50, reverbDecay: 5.0, delayMix: 0.40, delayTime: 0.60, delayFeedback: 0.45, masterVolume: 0.25, presence: 15 },
-    { name: "Void Gate", moduleMode: "synth", waveform: "square", waveformB: "square", waveFusion: 50, subWaveform: "triangle", subLevel: 40, oscBLevel: 0.50, oscBDetune: 5, voiceSpread: 15, noiseAmount: 25, drift: 10, stereoWidth: 20, attack: 0.02, decay: 0.40, sustain: 0.60, release: 0.40, filterType: "lowpass", cutoff: 850, resonance: 3.5, lfoRate: 1.0, lfoAmount: 600, lfoDestination: "filter", reverbMix: 0.30, reverbDecay: 2.5, delayMix: 0.20, delayTime: 0.25, delayFeedback: 0.35, masterVolume: 0.25, presence: 5 },
-    { name: "Astral Piano", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 60, subWaveform: "sine", subLevel: 15, oscBLevel: 0.35, oscBDetune: 10, voiceSpread: 45, noiseAmount: 8, drift: 18, stereoWidth: 65, attack: 0.05, decay: 1.40, sustain: 0.40, release: 0.80, filterType: "lowpass", cutoff: 2500, resonance: 1.5, lfoRate: 3.2, lfoAmount: 180, lfoDestination: "pitch", reverbMix: 0.45, reverbDecay: 4.0, delayMix: 0.25, delayTime: 0.35, delayFeedback: 0.30, masterVolume: 0.26, presence: 35 },
-    { name: "Portal Key", moduleMode: "synth", waveform: "sine", waveformB: "triangle", waveFusion: 65, subWaveform: "sine", subLevel: 15, oscBLevel: 0.45, oscBDetune: 4, voiceSpread: 25, noiseAmount: 8, drift: 12, stereoWidth: 50, attack: 0.01, decay: 0.70, sustain: 0.45, release: 0.55, filterType: "lowpass", cutoff: 2800, resonance: 1.2, lfoRate: 3.8, lfoAmount: 120, lfoDestination: "pitch", reverbMix: 0.30, reverbDecay: 3.0, delayMix: 0.35, delayTime: 0.33, delayFeedback: 0.40, masterVolume: 0.25, presence: 35 },
-    { name: "Cathedral", moduleMode: "synth", waveform: "sawtooth", waveformB: "sawtooth", waveFusion: 50, subWaveform: "sine", subLevel: 50, oscBLevel: 0.60, oscBDetune: 10, voiceSpread: 60, noiseAmount: 10, drift: 20, stereoWidth: 80, attack: 0.40, decay: 1.50, sustain: 0.80, release: 2.00, filterType: "lowpass", cutoff: 2100, resonance: 2.0, lfoRate: 0.8, lfoAmount: 150, lfoDestination: "filter", reverbMix: 0.70, reverbDecay: 6.0, delayMix: 0.30, delayTime: 0.50, delayFeedback: 0.50, masterVolume: 0.22, presence: 45 },
-    { name: "Ancient Machine", moduleMode: "synth", waveform: "triangle", waveformB: "trapezoid", waveFusion: 70, subWaveform: "square", subLevel: 20, oscBLevel: 0.40, oscBDetune: 18, voiceSpread: 85, noiseAmount: 40, drift: 50, stereoWidth: 90, attack: 0.15, decay: 0.90, sustain: 0.50, release: 1.40, filterType: "highpass", cutoff: 1500, resonance: 2.2, lfoRate: 1.2, lfoAmount: 400, lfoDestination: "filter", reverbMix: 0.40, reverbDecay: 4.0, delayMix: 0.50, delayTime: 0.65, delayFeedback: 0.60, masterVolume: 0.20, presence: 25 }
-  ],
-  keys: [
-    { name: "Dream Well Piano", moduleMode: "synth", waveform: "sine", waveformB: "triangle", waveFusion: 30, subWaveform: "sine", subLevel: 10, oscBLevel: 0.40, oscBDetune: 5, voiceSpread: 20, noiseAmount: 5, drift: 10, stereoWidth: 50, attack: 0.01, decay: 0.80, sustain: 0.30, release: 0.50, filterType: "lowpass", cutoff: 2000, resonance: 1.5, lfoRate: 1.0, lfoAmount: 50, lfoDestination: "filter", reverbMix: 0.30, reverbDecay: 3.0, delayMix: 0.20, delayTime: 0.30, delayFeedback: 0.30, masterVolume: 0.25, presence: 30 },
-    { name: "Celestial Rhodes", moduleMode: "synth", waveform: "sine", waveformB: "sine", waveFusion: 50, subWaveform: "sine", subLevel: 0, oscBLevel: 0.30, oscBDetune: 8, voiceSpread: 40, noiseAmount: 0, drift: 15, stereoWidth: 70, attack: 0.01, decay: 1.20, sustain: 0.20, release: 0.80, filterType: "lowpass", cutoff: 1500, resonance: 1.0, lfoRate: 4.0, lfoAmount: 80, lfoDestination: "pitch", reverbMix: 0.40, reverbDecay: 4.5, delayMix: 0.25, delayTime: 0.40, delayFeedback: 0.35, masterVolume: 0.25, presence: 20 }
-  ],
-  pads: [
-    { name: "Ethereal Whispers", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 40, subWaveform: "sine", subLevel: 30, oscBLevel: 0.30, oscBDetune: 15, voiceSpread: 85, noiseAmount: 25, drift: 40, stereoWidth: 95, attack: 2.00, decay: 2.50, sustain: 0.85, release: 3.00, filterType: "lowpass", cutoff: 800, resonance: 1.2, lfoRate: 0.3, lfoAmount: 400, lfoDestination: "filter", reverbMix: 0.70, reverbDecay: 7.0, delayMix: 0.45, delayTime: 0.70, delayFeedback: 0.55, masterVolume: 0.20, presence: 15 },
-    { name: "Cosmic Horizon", moduleMode: "synth", waveform: "sawtooth", waveformB: "triangle", waveFusion: 50, subWaveform: "sine", subLevel: 40, oscBLevel: 0.40, oscBDetune: 10, voiceSpread: 75, noiseAmount: 10, drift: 25, stereoWidth: 85, attack: 1.20, decay: 2.00, sustain: 0.75, release: 2.20, filterType: "lowpass", cutoff: 1100, resonance: 1.6, lfoRate: 0.6, lfoAmount: 200, lfoDestination: "filter", reverbMix: 0.55, reverbDecay: 5.5, delayMix: 0.35, delayTime: 0.55, delayFeedback: 0.45, masterVolume: 0.22, presence: 25 },
-    { name: "Deep Meditation", moduleMode: "synth", waveform: "sine", waveformB: "sine", waveFusion: 50, subWaveform: "sine", subLevel: 50, oscBLevel: 0.20, oscBDetune: 4, voiceSpread: 60, noiseAmount: 5, drift: 12, stereoWidth: 75, attack: 2.50, decay: 3.00, sustain: 0.90, release: 3.50, filterType: "lowpass", cutoff: 500, resonance: 1.0, lfoRate: 0.2, lfoAmount: 100, lfoDestination: "volume", reverbMix: 0.60, reverbDecay: 8.0, delayMix: 0.30, delayTime: 0.60, delayFeedback: 0.40, masterVolume: 0.25, presence: 5 }
-  ],
-  leads: [
-    { name: "Hyperdrive Lead", moduleMode: "synth", waveform: "sawtooth", waveformB: "square", waveFusion: 60, subWaveform: "sawtooth", subLevel: 25, oscBLevel: 0.50, oscBDetune: 14, voiceSpread: 40, noiseAmount: 12, drift: 35, stereoWidth: 60, attack: 0.02, decay: 0.50, sustain: 0.70, release: 0.40, filterType: "lowpass", cutoff: 3500, resonance: 3.0, lfoRate: 5.5, lfoAmount: 150, lfoDestination: "pitch", reverbMix: 0.35, reverbDecay: 3.2, delayMix: 0.40, delayTime: 0.28, delayFeedback: 0.50, masterVolume: 0.24, presence: 40 },
-    { name: "Neon Voyager", moduleMode: "synth", waveform: "square", waveformB: "trapezoid", waveFusion: 45, subWaveform: "triangle", subLevel: 15, oscBLevel: 0.45, oscBDetune: 18, voiceSpread: 55, noiseAmount: 8, drift: 28, stereoWidth: 70, attack: 0.05, decay: 0.70, sustain: 0.60, release: 0.50, filterType: "lowpass", cutoff: 2200, resonance: 2.2, lfoRate: 2.8, lfoAmount: 300, lfoDestination: "filter", reverbMix: 0.40, reverbDecay: 4.0, delayMix: 0.30, delayTime: 0.35, delayFeedback: 0.40, masterVolume: 0.25, presence: 35 }
-  ],
-  bass: [
-    { name: "Subterranean Bass", moduleMode: "synth", waveform: "triangle", waveformB: "square", waveFusion: 20, subWaveform: "sine", subLevel: 85, oscBLevel: 0.35, oscBDetune: 5, voiceSpread: 10, noiseAmount: 15, drift: 10, stereoWidth: 20, attack: 0.01, decay: 0.40, sustain: 0.85, release: 0.30, filterType: "lowpass", cutoff: 350, resonance: 2.0, lfoRate: 1.0, lfoAmount: 80, lfoDestination: "filter", reverbMix: 0.15, reverbDecay: 1.8, delayMix: 0.10, delayTime: 0.20, delayFeedback: 0.25, masterVolume: 0.30, presence: 10 },
-    { name: "Acid Grime", moduleMode: "synth", waveform: "sawtooth", waveformB: "sawtooth", waveFusion: 50, subWaveform: "square", subLevel: 50, oscBLevel: 0.60, oscBDetune: 12, voiceSpread: 25, noiseAmount: 20, drift: 20, stereoWidth: 40, attack: 0.01, decay: 0.35, sustain: 0.65, release: 0.35, filterType: "lowpass", cutoff: 800, resonance: 5.0, lfoRate: 3.5, lfoAmount: 450, lfoDestination: "filter", reverbMix: 0.25, reverbDecay: 2.5, delayMix: 0.20, delayTime: 0.24, delayFeedback: 0.35, masterVolume: 0.26, presence: 25 }
-  ],
-  textures: [
-    { name: "Stardust Rain", moduleMode: "synth", waveform: "sine", waveformB: "trapezoid", waveFusion: 75, subWaveform: "sine", subLevel: 10, oscBLevel: 0.55, oscBDetune: 25, voiceSpread: 90, noiseAmount: 50, drift: 60, stereoWidth: 99, attack: 0.80, decay: 1.80, sustain: 0.50, release: 2.00, filterType: "highpass", cutoff: 2000, resonance: 3.5, lfoRate: 6.0, lfoAmount: 500, lfoDestination: "filter", reverbMix: 0.65, reverbDecay: 5.5, delayMix: 0.55, delayTime: 0.48, delayFeedback: 0.65, masterVolume: 0.20, presence: 50 },
-    { name: "Abandonded Station", moduleMode: "synth", waveform: "square", waveformB: "sawtooth", waveFusion: 50, subWaveform: "square", subLevel: 30, oscBLevel: 0.40, oscBDetune: 22, voiceSpread: 70, noiseAmount: 40, drift: 45, stereoWidth: 80, attack: 0.50, decay: 2.20, sustain: 0.70, release: 2.50, filterType: "lowpass", cutoff: 650, resonance: 2.8, lfoRate: 0.5, lfoAmount: 350, lfoDestination: "pitch", reverbMix: 0.60, reverbDecay: 6.5, delayMix: 0.45, delayTime: 0.65, delayFeedback: 0.60, masterVolume: 0.22, presence: 30 }
-  ]
-};
+<label class="checkbox-row">
+  <input type="checkbox" id="glideEnabled">
+  Portamento / Glide
+</label>
 
-// ============================================================================
-// 2. AUDIO INITIALIZATION & FX INFRASTRUCTURE GRAPH
-// ============================================================================
-function initAudio() {
-  if (synthState.audioContext) return;
+<label>
+  <span>Glide Time <strong id="glideTimeValue">0.12s</strong></span>
+  <input
+    id="glideTime"
+    type="range"
+    min="0.01"
+    max="1.5"
+    step="0.01"
+    value="0.12">
+</label>
+        
+        <label>
+          <span>Master Volume <strong id="masterVolumeValue">25%</strong></span>
+          <input id="masterVolume" type="range" min="0" max="1" step="0.01" value="0.25">
+        </label>
 
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  synthState.audioContext = new AudioContext();
+<label>
+    <span>Presence <strong id="presenceValue">0%</strong></span>
+    <input
+        id="presence"
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+        value="0">
+</label>
+</div>
+</section>
+    
+<section class="octave-controls">
+  <button id="octaveDown" class="octave-btn">◀ OCT</button>
 
-  synthState.masterGain = synthState.audioContext.createGain();
-  synthState.masterGain.gain.setValueAtTime(parseFloat(document.getElementById('masterVolume').value), synthState.audioContext.currentTime);
+  <span id="octaveDisplay">
+    Shift: 0
+  </span>
 
-  synthState.dryGainNode = synthState.audioContext.createGain();
-  synthState.delayNode = synthState.audioContext.createDelay(2.0);
-  synthState.delayFeedbackNode = synthState.audioContext.createGain();
-  synthState.delayWetGain = synthState.audioContext.createGain();
-  
-  synthState.reverbNode = synthState.audioContext.createConvolver();
-  synthState.reverbWetGain = synthState.audioContext.createGain();
+  <button id="octaveUp" class="octave-btn">OCT ▶</button>
+</section>
+    
+    <section class="keyboard">
 
-  // Topology Signal Mapping
-  synthState.dryGainNode.connect(synthState.masterGain);
+  <!-- Octave 3 -->
+  <button class="key" data-note="130.81">C3</button>
+  <button class="key black-key" data-note="138.59">C#3</button>
+  <button class="key" data-note="146.83">D3</button>
+  <button class="key black-key" data-note="155.56">D#3</button>
+  <button class="key" data-note="164.81">E3</button>
+  <button class="key" data-note="174.61">F3</button>
+  <button class="key black-key" data-note="185.00">F#3</button>
+  <button class="key" data-note="196.00">G3</button>
+  <button class="key black-key" data-note="207.65">G#3</button>
+  <button class="key" data-note="220.00">A3</button>
+  <button class="key black-key" data-note="233.08">A#3</button>
+  <button class="key" data-note="246.94">B3</button>
 
-  synthState.delayNode.connect(synthState.delayFeedbackNode);
-  synthState.delayFeedbackNode.connect(synthState.delayNode); 
-  synthState.delayNode.connect(synthState.delayWetGain);
-  synthState.delayWetGain.connect(synthState.masterGain);
+  <!-- Octave 4 -->
+  <button class="key" data-note="261.63">C4</button>
+  <button class="key black-key" data-note="277.18">C#4</button>
+  <button class="key" data-note="293.66">D4</button>
+  <button class="key black-key" data-note="311.13">D#4</button>
+  <button class="key" data-note="329.63">E4</button>
+  <button class="key" data-note="349.23">F4</button>
+  <button class="key black-key" data-note="369.99">F#4</button>
+  <button class="key" data-note="392.00">G4</button>
+  <button class="key black-key" data-note="415.30">G#4</button>
+  <button class="key" data-note="440.00">A4</button>
+  <button class="key black-key" data-note="466.16">A#4</button>
+  <button class="key" data-note="493.88">B4</button>
 
-  buildSyntheticReverbImpulse(); 
-  synthState.reverbNode.connect(synthState.reverbWetGain);
-  synthState.reverbWetGain.connect(synthState.masterGain);
+  <!-- Octave 5 -->
+  <button class="key" data-note="523.25">C5</button>
+  <button class="key black-key" data-note="554.37">C#5</button>
+  <button class="key" data-note="587.33">D5</button>
+  <button class="key black-key" data-note="622.25">D#5</button>
+  <button class="key" data-note="659.25">E5</button>
+  <button class="key" data-note="698.46">F5</button>
+  <button class="key black-key" data-note="739.99">F#5</button>
+  <button class="key" data-note="783.99">G5</button>
+  <button class="key black-key" data-note="830.61">G#5</button>
+  <button class="key" data-note="880.00">A5</button>
+  <button class="key black-key" data-note="932.33">A#5</button>
+  <button class="key" data-note="987.77">B5</button>
 
-  synthState.masterGain.connect(synthState.audioContext.destination);
+</section>
+  </main>
 
-  updateDelayNodeSettings();
-  updateReverbNodeSettings();
-  generateCustomWaves();
-}
+<div id="presetBrowserOverlay" class="preset-browser-overlay hidden">
+  <div class="preset-browser">
+    <div class="preset-browser-header">
+      <h2>Presets</h2>
+      <button id="closePresetBrowser" class="preset-browser-close">×</button>
+    </div>
 
-function buildSyntheticReverbImpulse() {
-  if (!synthState.audioContext) return;
-  const decayTime = parseFloat(document.getElementById('reverbDecay').value) || 3.0;
-  const rate = synthState.audioContext.sampleRate;
-  const length = rate * decayTime;
-  const impulse = synthState.audioContext.createBuffer(2, length, rate);
-  
-  for (let channel = 0; channel < 2; channel++) {
-    const channelData = impulse.getChannelData(channel);
-    for (let i = 0; i < length; i++) {
-      channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
-    }
-  }
-  synthState.reverbNode.buffer = impulse;
-}
+    <div class="preset-browser-tabs">
+      <button class="preset-browser-tab active-bank" data-bank="signature">Signature</button>
+      <button class="preset-browser-tab" data-bank="keys">Keys</button>
+      <button class="preset-browser-tab" data-bank="pads">Pads</button>
+      <button class="preset-browser-tab" data-bank="leads">Leads</button>
+      <button class="preset-browser-tab" data-bank="bass">Bass</button>
+      <button class="preset-browser-tab" data-bank="textures">Textures</button>
+    </div>
 
-function generateCustomWaves() {
-  const real = new Float32Array(64);
-  const imag = new Float32Array(64);
-  for (let n = 1; n < 64; n++) {
-    if (n % 2 !== 0) {
-      real[n] = (8 / Math.PI ** 2) * Math.sin((n * Math.PI) / 3) / (n ** 2);
-    }
-  }
-  synthState.trapezoidWave = synthState.audioContext.createPeriodicWave(real, imag);
-}
+    <div id="presetBrowserList" class="preset-browser-list"></div>
+  </div>
+</div>
 
-function updateDelayNodeSettings() {
-  if (!synthState.audioContext) return;
-  const mix = parseFloat(document.getElementById('delayMix').value);       // Slider is 0.0 to 1.0
-  const time = parseFloat(document.getElementById('delayTime').value);     // Slider is 0.05 to 1.5 seconds
-  const feedback = parseFloat(document.getElementById('delayFeedback').value); // Slider is 0.0 to 0.85
-
-  const now = synthState.audioContext.currentTime;
-  synthState.delayNode.delayTime.setTargetAtTime(time, now, 0.02);
-  synthState.delayFeedbackNode.gain.setTargetAtTime(feedback, now, 0.01);
-  synthState.delayWetGain.gain.setTargetAtTime(mix, now, 0.01);
-  synthState.dryGainNode.gain.setTargetAtTime(1.0 - (mix * 0.5), now, 0.01);
-}
-
-function updateReverbNodeSettings() {
-  if (!synthState.audioContext) return;
-  const mix = parseFloat(document.getElementById('reverbMix').value); // Slider is 0.0 to 1.0
-  synthState.reverbWetGain.gain.setTargetAtTime(mix, synthState.audioContext.currentTime, 0.01);
-}
-
-// ============================================================================
-// 3. POLYPHONIC AUDIO SYNTHESIS ENGINE VOICE CLASS
-// ============================================================================
-class SynthVoice {
-  constructor(frequency, audioContext, targets) {
+  <script src="app.js"></script>
+  </body>
+</html>
