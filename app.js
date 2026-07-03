@@ -3598,33 +3598,61 @@ function calculateBodyExcitation(voicing, bridgeExcitation) {
 }
 
 function createPianoNote(frequency) {
-    const ctx = getAudioContext();
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
 
-    
+  const voiceOut = ctx.createGain();
+  voiceOut.gain.setValueAtTime(0.0001, now);
+  voiceOut.gain.linearRampToValueAtTime(0.42, now + 0.006);
+  voiceOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
 
-    const now = ctx.currentTime;
+  const stringA = ctx.createOscillator();
+  const stringB = ctx.createOscillator();
 
-    const bridgeExcitation =
-        calculateBridgeExcitation(pianoVoicing);
+  const stringAGain = ctx.createGain();
+  const stringBGain = ctx.createGain();
 
-    const bodyExcitation =
-        calculateBodyExcitation(
-            pianoVoicing,
-            bridgeExcitation
-        );
+  stringA.type = "sine";
+  stringB.type = "sine";
 
-    // createPianoMechanicalNoise(ctx, frequency, now);
-    // createPianoDamperRelease(ctx, frequency, now);
-    // createPianoHammer(ctx, frequency, now);
-    createPianoStrings(ctx, frequency, now);
-    // createPianoStringInteraction(ctx, frequency, now);
-    // createPianoBridge(ctx, frequency, now, bridgeExcitation);
-    createPianoBody(ctx, frequency, now, bodyExcitation);
-    // createPianoCabinet(ctx, frequency, now);
-    createPianoSoundboard(ctx, frequency, now);
-    // createPianoSympatheticResonance(ctx, frequency, now);
-    // createPianoDuplexScale(ctx, frequency, now);
-    // createPianoPedalResonance(ctx, frequency, now);
+  stringA.frequency.setValueAtTime(frequency, now);
+  stringB.frequency.setValueAtTime(frequency * 2.002, now);
+
+  stringAGain.gain.setValueAtTime(0.72, now);
+  stringBGain.gain.setValueAtTime(0.18, now);
+
+  const pianoFilter = ctx.createBiquadFilter();
+  pianoFilter.type = "lowpass";
+  pianoFilter.frequency.setValueAtTime(5200, now);
+  pianoFilter.Q.setValueAtTime(0.45, now);
+
+  stringA.connect(stringAGain);
+  stringB.connect(stringBGain);
+
+  stringAGain.connect(pianoFilter);
+  stringBGain.connect(pianoFilter);
+
+  pianoFilter.connect(voiceOut);
+
+  voiceOut.connect(dryGain);
+  voiceOut.connect(reverbNode);
+  voiceOut.connect(delayDryGain);
+  voiceOut.connect(delayNode);
+
+  stringA.start(now + 0.002);
+  stringB.start(now + 0.002);
+
+  stringA.stop(now + 2.9);
+  stringB.stop(now + 2.9);
+
+  activePianoNodes.push(
+    stringA,
+    stringB,
+    stringAGain,
+    stringBGain,
+    pianoFilter,
+    voiceOut
+  );
 }
 function applyPresetSettings(preset) {
   if (!preset) return;
