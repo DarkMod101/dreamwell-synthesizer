@@ -3623,7 +3623,7 @@ console.log("NEW CLEAN PIANO CORE ACTIVE");
     
   const voiceOut = ctx.createGain();
   voiceOut.gain.setValueAtTime(0.0001, now);
-  voiceOut.gain.linearRampToValueAtTime(0.42, now + 0.006);
+  voiceOut.gain.linearRampToValueAtTime(0.30, now + 0.008);
   voiceOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
 
   const stringA = ctx.createOscillator();
