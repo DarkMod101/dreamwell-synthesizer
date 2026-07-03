@@ -3601,6 +3601,8 @@ function createPianoNote(frequency) {
   const ctx = getAudioContext();
   const now = ctx.currentTime;
 
+console.log("NEW CLEAN PIANO CORE ACTIVE");
+    
   const voiceOut = ctx.createGain();
   voiceOut.gain.setValueAtTime(0.0001, now);
   voiceOut.gain.linearRampToValueAtTime(0.42, now + 0.006);
