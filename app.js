@@ -3601,6 +3601,24 @@ function createPianoNote(frequency) {
   const ctx = getAudioContext();
   const now = ctx.currentTime;
 
+const presence =
+    getValue(presenceSlider, 0) / 100;
+
+pianoVoicing.stringWarmth =
+    1.0 + (presence * 0.45);
+
+pianoVoicing.bodyDepth =
+    1.0 + (presence * 0.35);
+
+pianoVoicing.soundboardBloom =
+    1.0 + (presence * 0.50);
+
+pianoVoicing.cabinetSize =
+    1.0 + (presence * 0.25);
+
+pianoVoicing.duplexShimmer =
+    1.0 + (presence * 0.30);
+    
 console.log("NEW CLEAN PIANO CORE ACTIVE");
     
   const voiceOut = ctx.createGain();
