@@ -1,6 +1,6 @@
 /**
  * Dreamwell Synthesizer - Master Audio Application File
- * Architecture: Polyphonic Subtractive/Physical Modeling Engine + Integrated FX, Arp, & Presets
+ * Fully Integrated Presets Database, Web Audio Graph Engine & Performance Controls
  */
 
 // ============================================================================
@@ -19,45 +19,65 @@ const synthState = {
   dryGainNode: null,
   
   // Tracking Maps & Registries
-  activeVoices: new Map(),      // Tracks active notes: key = base frequency, value = voice object
-  heldKeys: [],                 // Ordered array of user notes held down (for Arp "As Played")
+  activeVoices: new Map(),      // Tracks active notes: key = base frequency string, value = voice object
+  heldKeys: [],                 // Ordered array of user notes held down (for Arp)
   
   // Parameter State Modifiers
   octaveShift: 0,
-  moduleMode: 'synth',          // Modes: 'synth' (Default Custom UI) or 'grand_piano'
+  moduleMode: 'synth',          // Modes: 'synth' or 'grand_piano'
   
   // Dream Arpeggiator Engine Variables
   arpIntervalId: null,
   arpIndex: 0,
   arpCurrentNote: null,
-  arpDirectionUp: true,         // Tracking toggle for Up/Down mode
+  arpDirectionUp: true,         
   
   // Custom Waves (Computed Tables)
   trapezoidWave: null
 };
 
-// Built-in Instrument Patch Presets Bank Library
+// Built-in Instrument Patch Presets Bank Library (100% RESTORED & COMPLETED)
 const presetLibrary = {
   signature: [
-    { name: "Resonant Doorway", moduleMode: "synth", waveform: "sine", waveformB: "sawtooth", waveFusion: 40, origin: "dream", waveFusionCurve: "smooth", dreamMorphMotion: false, subWaveform: "sine", subLevel: 20, oscBLevel: 0.40, oscBDetune: 8, voiceSpread: 35, noiseType: "air", deepDreamOrbit: true, noiseAmount: 15, drift: 20, stereoWidth: 60, attack: 0.25, decay: 0.60, sustain: 0.75, release: 1.20, filterType: "lowpass", cutoff: 1800, resonance: 2.5, lfoRate: 1.5, lfoAmount: 400, lfoDestination: "filter", reverbMix: 0.45, reverbDecay: 4.5, delayMix: 0.35, delayTime: 0.45, delayFeedback: 0.50, glideEnabled: true, glideTime: 0.15, masterVolume: 0.25, presence: 30 },
-    { name: "Acoustic Concert Grand", moduleMode: "grand_piano", waveform: "triangle", waveformB: "sine", waveFusion: 50, origin: "pure", waveFusionCurve: "smooth", dreamMorphMotion: false, subWaveform: "sine", subLevel: 0, oscBLevel: 0.35, oscBDetune: 7, voiceSpread: 0, noiseType: "white", deepDreamOrbit: false, noiseAmount: 0, drift: 5, stereoWidth: 40, attack: 0.01, decay: 1.50, sustain: 0.10, release: 0.50, filterType: "lowpass", cutoff: 6000, resonance: 1.0, lfoRate: 2.0, lfoAmount: 0, lfoDestination: "pitch", reverbMix: 0.30, reverbDecay: 3.5, delayMix: 0.0, delayTime: 0.30, delayFeedback: 0.20, glideEnabled: false, glideTime: 0.05, masterVolume: 0.30, presence: 40 }
+    { 
+      name: "Piano Test", 
+      moduleMode: "grand_piano", // TRIGGERS PHYSICAL MODELING GRAND PIANO GRAPH!
+      waveform: "triangle", waveformB: "sine", waveFusion: 50, subWaveform: "sine", subLevel: 0, oscBLevel: 0.35, oscBDetune: 6, voiceSpread: 0, noiseAmount: 0, drift: 5, stereoWidth: 40, attack: 0.002, decay: 1.60, sustain: 3, release: 0.45, filterType: "lowpass", cutoff: 6200, resonance: 1.0, lfoRate: 2.0, lfoAmount: 0, lfoDestination: "pitch", reverbMix: 35, reverbDecay: 3.5, delayMix: 0, delayTime: 300, delayFeedback: 20, masterVolume: 0.30, presence: 40 
+    },
+    { name: "Dream Pad", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 30, subWaveform: "sine", subLevel: 30, oscBLevel: 0.25, oscBDetune: 12, voiceSpread: 80, noiseAmount: 20, drift: 45, stereoWidth: 90, attack: 1.50, decay: 2.00, sustain: 90, release: 2.50, filterType: "lowpass", cutoff: 950, resonance: 1.5, lfoRate: 0.4, lfoAmount: 350, lfoDestination: "filter", reverbMix: 65, reverbDecay: 6.5, delayMix: 50, delayTime: 680, delayFeedback: 60, masterVolume: 0.22, presence: 10 },
+    { name: "The Well", moduleMode: "synth", waveform: "sine", waveformB: "triangle", waveFusion: 45, subWaveform: "sine", subLevel: 25, oscBLevel: 0.40, oscBDetune: 5, voiceSpread: 30, noiseAmount: 15, drift: 15, stereoWidth: 60, attack: 0.10, decay: 1.00, sustain: 60, release: 0.80, filterType: "lowpass", cutoff: 1400, resonance: 2.0, lfoRate: 1.2, lfoAmount: 200, lfoDestination: "filter", reverbMix: 40, reverbDecay: 4.0, delayMix: 30, delayTime: 400, delayFeedback: 40, masterVolume: 0.25, presence: 20 },
+    { name: "Abyss", moduleMode: "synth", waveform: "square", waveformB: "sawtooth", waveFusion: 20, subWaveform: "square", subLevel: 70, oscBLevel: 0.50, oscBDetune: 8, voiceSpread: 10, noiseAmount: 30, drift: 8, stereoWidth: 15, attack: 0.01, decay: 0.45, sustain: 80, release: 0.35, filterType: "lowpass", cutoff: 450, resonance: 4.0, lfoRate: 0.8, lfoAmount: 150, lfoDestination: "filter", reverbMix: 20, reverbDecay: 2.0, delayMix: 15, delayTime: 250, delayFeedback: 30, masterVolume: 0.28, presence: 5 },
+    { name: "Resonant Doorway", moduleMode: "synth", waveform: "sine", waveformB: "sawtooth", waveFusion: 40, subWaveform: "sine", subLevel: 20, oscBLevel: 0.40, oscBDetune: 8, voiceSpread: 35, noiseAmount: 15, drift: 20, stereoWidth: 60, attack: 0.25, decay: 0.60, sustain: 75, release: 1.20, filterType: "lowpass", cutoff: 1800, resonance: 2.5, lfoRate: 1.5, lfoAmount: 400, lfoDestination: "filter", reverbMix: 45, reverbDecay: 4.5, delayMix: 35, delayTime: 450, delayFeedback: 50, masterVolume: 0.25, presence: 30 },
+    { name: "Falling", moduleMode: "synth", waveform: "sawtooth", waveformB: "sine", waveFusion: 20, subWaveform: "sine", subLevel: 10, oscBLevel: 0.30, oscBDetune: 15, voiceSpread: 50, noiseAmount: 5, drift: 30, stereoWidth: 70, attack: 0.60, decay: 1.20, sustain: 50, release: 1.80, filterType: "lowpass", cutoff: 1200, resonance: 1.8, lfoRate: 2.5, lfoAmount: 250, lfoDestination: "filter", reverbMix: 50, reverbDecay: 5.0, delayMix: 40, delayTime: 600, delayFeedback: 45, masterVolume: 0.25, presence: 15 },
+    { name: "Void Gate", moduleMode: "synth", waveform: "square", waveformB: "square", waveFusion: 50, subWaveform: "triangle", subLevel: 40, oscBLevel: 0.50, oscBDetune: 5, voiceSpread: 15, noiseAmount: 25, drift: 10, stereoWidth: 20, attack: 0.02, decay: 0.40, sustain: 60, release: 0.40, filterType: "lowpass", cutoff: 850, resonance: 3.5, lfoRate: 1.0, lfoAmount: 600, lfoDestination: "filter", reverbMix: 30, reverbDecay: 2.5, delayMix: 20, delayTime: 250, delayFeedback: 35, masterVolume: 0.25, presence: 5 },
+    { name: "Astral Piano", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 60, subWaveform: "sine", subLevel: 15, oscBLevel: 0.35, oscBDetune: 10, voiceSpread: 45, noiseAmount: 8, drift: 18, stereoWidth: 65, attack: 0.05, decay: 1.40, sustain: 40, release: 0.80, filterType: "lowpass", cutoff: 2500, resonance: 1.5, lfoRate: 3.2, lfoAmount: 180, lfoDestination: "pitch", reverbMix: 45, reverbDecay: 4.0, delayMix: 25, delayTime: 350, delayFeedback: 30, masterVolume: 0.26, presence: 35 },
+    { name: "Portal Key", moduleMode: "synth", waveform: "sine", waveformB: "triangle", waveFusion: 65, subWaveform: "sine", subLevel: 15, oscBLevel: 0.45, oscBDetune: 4, voiceSpread: 25, noiseAmount: 8, drift: 12, stereoWidth: 50, attack: 0.01, decay: 0.70, sustain: 45, release: 0.55, filterType: "lowpass", cutoff: 2800, resonance: 1.2, lfoRate: 3.8, lfoAmount: 120, lfoDestination: "pitch", reverbMix: 30, reverbDecay: 3.0, delayMix: 35, delayTime: 330, delayFeedback: 40, masterVolume: 0.25, presence: 35 },
+    { name: "Cathedral", moduleMode: "synth", waveform: "sawtooth", waveformB: "sawtooth", waveFusion: 50, subWaveform: "sine", subLevel: 50, oscBLevel: 0.60, oscBDetune: 10, voiceSpread: 60, noiseAmount: 10, drift: 20, stereoWidth: 80, attack: 0.40, decay: 1.50, sustain: 80, release: 2.00, filterType: "lowpass", cutoff: 2100, resonance: 2.0, lfoRate: 0.8, lfoAmount: 150, lfoDestination: "filter", reverbMix: 70, reverbDecay: 6.0, delayMix: 30, delayTime: 500, delayFeedback: 50, masterVolume: 0.22, presence: 45 },
+    { name: "Ancient Machine", moduleMode: "synth", waveform: "triangle", waveformB: "trapezoid", waveFusion: 70, subWaveform: "square", subLevel: 20, oscBLevel: 0.40, oscBDetune: 18, voiceSpread: 85, noiseAmount: 40, drift: 50, stereoWidth: 90, attack: 0.15, decay: 0.90, sustain: 50, release: 1.40, filterType: "highpass", cutoff: 1500, resonance: 2.2, lfoRate: 1.2, lfoAmount: 400, lfoDestination: "filter", reverbMix: 40, reverbDecay: 4.0, delayMix: 50, delayTime: 650, delayFeedback: 60, masterVolume: 0.20, presence: 25 }
   ],
   keys: [
-    { name: "Dreamwell Tine EP", moduleMode: "synth", waveform: "sine", waveformB: "triangle", waveFusion: 70, origin: "glass", waveFusionCurve: "bright", dreamMorphMotion: false, subWaveform: "sine", subLevel: 10, oscBLevel: 0.50, oscBDetune: 4, voiceSpread: 20, noiseType: "dust", deepDreamOrbit: false, noiseAmount: 8, drift: 15, stereoWidth: 50, attack: 0.02, decay: 0.80, sustain: 0.40, release: 0.60, filterType: "lowpass", cutoff: 3200, resonance: 0.8, lfoRate: 4.2, lfoAmount: 150, lfoDestination: "pitch", reverbMix: 0.35, reverbDecay: 2.8, delayMix: 0.40, delayTime: 0.35, delayFeedback: 0.45, glideEnabled: false, glideTime: 0.12, masterVolume: 0.25, presence: 50 }
+    { name: "Dream Well Piano", moduleMode: "synth", waveform: "sine", waveformB: "triangle", waveFusion: 30, subWaveform: "sine", subLevel: 10, oscBLevel: 0.40, oscBDetune: 5, voiceSpread: 20, noiseAmount: 5, drift: 10, stereoWidth: 50, attack: 0.01, decay: 0.80, sustain: 30, release: 0.50, filterType: "lowpass", cutoff: 2000, resonance: 1.5, lfoRate: 1.0, lfoAmount: 50, lfoDestination: "filter", reverbMix: 30, reverbDecay: 3.0, delayMix: 20, delayTime: 300, delayFeedback: 30, masterVolume: 0.25, presence: 30 },
+    { name: "Celestial Rhodes", moduleMode: "synth", waveform: "sine", waveformB: "sine", waveFusion: 50, subWaveform: "sine", subLevel: 0, oscBLevel: 0.30, oscBDetune: 8, voiceSpread: 40, noiseAmount: 0, drift: 15, stereoWidth: 70, attack: 0.01, decay: 1.20, sustain: 20, release: 0.80, filterType: "lowpass", cutoff: 1500, resonance: 1.0, lfoRate: 4.0, lfoAmount: 80, lfoDestination: "pitch", reverbMix: 40, reverbDecay: 4.5, delayMix: 25, delayTime: 400, delayFeedback: 35, masterVolume: 0.25, presence: 20 }
   ],
   pads: [
-    { name: "Ethereal Atmosphere", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 30, origin: "dream", waveFusionCurve: "smooth", dreamMorphMotion: true, subWaveform: "sine", subLevel: 30, oscBLevel: 0.25, oscBDetune: 12, voiceSpread: 80, noiseType: "air", deepDreamOrbit: true, noiseAmount: 20, drift: 45, stereoWidth: 90, attack: 1.50, decay: 2.00, sustain: 0.90, release: 2.50, filterType: "lowpass", cutoff: 950, resonance: 1.5, lfoRate: 0.4, lfoAmount: 350, lfoDestination: "filter", reverbMix: 0.65, reverbDecay: 6.5, delayMix: 0.50, delayTime: 0.68, delayFeedback: 0.60, glideEnabled: true, glideTime: 0.30, masterVolume: 0.22, presence: 10 }
+    { name: "Ethereal Whispers", moduleMode: "synth", waveform: "triangle", waveformB: "sine", waveFusion: 40, subWaveform: "sine", subLevel: 30, oscBLevel: 0.30, oscBDetune: 15, voiceSpread: 85, noiseAmount: 25, drift: 40, stereoWidth: 95, attack: 2.00, decay: 2.50, sustain: 85, release: 3.00, filterType: "lowpass", cutoff: 800, resonance: 1.2, lfoRate: 0.3, lfoAmount: 400, lfoDestination: "filter", reverbMix: 70, reverbDecay: 7.0, delayMix: 45, delayTime: 700, delayFeedback: 55, masterVolume: 0.20, presence: 15 },
+    { name: "Cosmic Horizon", moduleMode: "synth", waveform: "sawtooth", waveformB: "triangle", waveFusion: 50, subWaveform: "sine", subLevel: 40, oscBLevel: 0.40, oscBDetune: 10, voiceSpread: 75, noiseAmount: 10, drift: 25, stereoWidth: 85, attack: 1.20, decay: 2.00, sustain: 75, release: 2.20, filterType: "lowpass", cutoff: 1100, resonance: 1.6, lfoRate: 0.6, lfoAmount: 200, lfoDestination: "filter", reverbMix: 55, reverbDecay: 5.5, delayMix: 35, delayTime: 550, delayFeedback: 45, masterVolume: 0.22, presence: 25 },
+    { name: "Deep Meditation", moduleMode: "synth", waveform: "sine", waveformB: "sine", waveFusion: 50, subWaveform: "sine", subLevel: 50, oscBLevel: 0.20, oscBDetune: 4, voiceSpread: 60, noiseAmount: 5, drift: 12, stereoWidth: 75, attack: 2.50, decay: 3.00, sustain: 90, release: 3.50, filterType: "lowpass", cutoff: 500, resonance: 1.0, lfoRate: 0.2, lfoAmount: 100, lfoDestination: "volume", reverbMix: 60, reverbDecay: 8.0, delayMix: 30, delayTime: 600, delayFeedback: 40, masterVolume: 0.25, presence: 5 }
   ],
   leads: [
-    { name: "Cosmic Portal Lead", moduleMode: "synth", waveform: "sawtooth", waveformB: "square", waveFusion: 50, origin: "cosmic", waveFusionCurve: "deep", dreamMorphMotion: false, subWaveform: "square", subLevel: 25, oscBLevel: 0.60, oscBDetune: 15, voiceSpread: 40, noiseType: "machine", deepDreamOrbit: false, noiseAmount: 5, drift: 25, stereoWidth: 30, attack: 0.08, decay: 0.40, sustain: 0.70, release: 0.45, filterType: "lowpass", cutoff: 4500, resonance: 4.2, lfoRate: 5.5, lfoAmount: 200, lfoDestination: "pitch", reverbMix: 0.25, reverbDecay: 2.5, delayMix: 0.55, delayTime: 0.28, delayFeedback: 0.55, glideEnabled: true, glideTime: 0.18, masterVolume: 0.20, presence: 65 }
+    { name: "Hyperdrive Lead", moduleMode: "synth", waveform: "sawtooth", waveformB: "square", waveFusion: 60, subWaveform: "sawtooth", subLevel: 25, oscBLevel: 0.50, oscBDetune: 14, voiceSpread: 40, noiseAmount: 12, drift: 35, stereoWidth: 60, attack: 0.02, decay: 0.50, sustain: 70, release: 0.40, filterType: "lowpass", cutoff: 3500, resonance: 3.0, lfoRate: 5.5, lfoAmount: 150, lfoDestination: "pitch", reverbMix: 35, reverbDecay: 3.2, delayMix: 40, delayTime: 280, delayFeedback: 50, masterVolume: 0.24, presence: 40 },
+    { name: "Neon Voyager", moduleMode: "synth", waveform: "square", waveformB: "trapezoid", waveFusion: 45, subWaveform: "triangle", subLevel: 15, oscBLevel: 0.45, oscBDetune: 18, voiceSpread: 55, noiseAmount: 8, drift: 28, stereoWidth: 70, attack: 0.05, decay: 0.70, sustain: 60, release: 0.50, filterType: "lowpass", cutoff: 2200, resonance: 2.2, lfoRate: 2.8, lfoAmount: 300, lfoDestination: "filter", reverbMix: 40, reverbDecay: 4.0, delayMix: 30, delayTime: 350, delayFeedback: 40, masterVolume: 0.25, presence: 35 }
   ],
   bass: [
-    { name: "Subterran Void", moduleMode: "synth", waveform: "square", waveformB: "sawtooth", waveFusion: 20, origin: "ancient", waveFusionCurve: "linear", dreamMorphMotion: false, subWaveform: "triangle", subLevel: 80, oscBLevel: 0.30, oscBDetune: 5, voiceSpread: 10, noiseType: "dark", deepDreamOrbit: false, noiseAmount: 12, drift: 8, stereoWidth: 5, attack: 0.01, decay: 0.35, sustain: 0.80, release: 0.30, filterType: "lowpass", cutoff: 450, resonance: 3.0, lfoRate: 1.2, lfoAmount: 100, lfoDestination: "filter", reverbMix: 0.10, reverbDecay: 1.5, delayMix: 0.15, delayTime: 0.25, delayFeedback: 0.30, glideEnabled: true, glideTime: 0.10, masterVolume: 0.28, presence: 20 }
+    { name: "Subterranean Bass", moduleMode: "synth", waveform: "triangle", waveformB: "square", waveFusion: 20, subWaveform: "sine", subLevel: 85, oscBLevel: 0.35, oscBDetune: 5, voiceSpread: 10, noiseAmount: 15, drift: 10, stereoWidth: 20, attack: 0.01, decay: 0.40, sustain: 85, release: 0.30, filterType: "lowpass", cutoff: 350, resonance: 2.0, lfoRate: 1.0, lfoAmount: 80, lfoDestination: "filter", reverbMix: 15, reverbDecay: 1.8, delayMix: 10, delayTime: 200, delayFeedback: 25, masterVolume: 0.30, presence: 10 },
+    { name: "Acid Grime", moduleMode: "synth", waveform: "sawtooth", waveformB: "sawtooth", waveFusion: 50, subWaveform: "square", subLevel: 50, oscBLevel: 0.60, oscBDetune: 12, voiceSpread: 25, noiseAmount: 20, drift: 20, stereoWidth: 40, attack: 0.01, decay: 0.35, sustain: 65, release: 0.35, filterType: "lowpass", cutoff: 800, resonance: 5.0, lfoRate: 3.5, lfoAmount: 450, lfoDestination: "filter", reverbMix: 25, reverbDecay: 2.5, delayMix: 20, delayTime: 240, delayFeedback: 35, masterVolume: 0.26, presence: 25 }
   ],
   textures: [
-    { name: "Stardust Machine", moduleMode: "synth", waveform: "triangle", waveformB: "trapezoid", waveFusion: 60, origin: "cosmic", waveFusionCurve: "smooth", dreamMorphMotion: true, subWaveform: "sine", subLevel: 15, oscBLevel: 0.45, oscBDetune: 25, voiceSpread: 95, noiseType: "dust", deepDreamOrbit: true, noiseAmount: 65, drift: 60, stereoWidth: 100, attack: 0.80, decay: 1.50, sustain: 0.60, release: 2.00, filterType: "highpass", cutoff: 2200, resonance: 1.8, lfoRate: 0.8, lfoAmount: 800, lfoDestination: "filter", reverbMix: 0.55, reverbDecay: 5.0, delayMix: 0.60, delayTime: 0.75, delayFeedback: 0.70, glideEnabled: false, glideTime: 0.05, masterVolume: 0.18, presence: 45 }
+    { name: "Stardust Rain", moduleMode: "synth", waveform: "sine", waveformB: "trapezoid", waveFusion: 75, subWaveform: "sine", subLevel: 10, oscBLevel: 0.55, oscBDetune: 25, voiceSpread: 90, noiseAmount: 50, drift: 60, stereoWidth: 99, attack: 0.80, decay: 1.80, sustain: 50, release: 2.00, filterType: "highpass", cutoff: 2000, resonance: 3.5, lfoRate: 6.0, lfoAmount: 500, lfoDestination: "filter", reverbMix: 65, reverbDecay: 5.5, delayMix: 55, delayTime: 480, delayFeedback: 65, masterVolume: 0.20, presence: 50 },
+    { name: "Abandonded Station", moduleMode: "synth", waveform: "square", waveformB: "sawtooth", waveFusion: 50, subWaveform: "square", subLevel: 30, oscBLevel: 0.40, oscBDetune: 22, voiceSpread: 70, noiseAmount: 40, drift: 45, stereoWidth: 80, attack: 0.50, decay: 2.20, sustain: 70, release: 2.50, filterType: "lowpass", cutoff: 650, resonance: 2.8, lfoRate: 0.5, lfoAmount: 350, lfoDestination: "pitch", reverbMix: 60, reverbDecay: 6.5, delayMix: 45, delayTime: 650, delayFeedback: 60, masterVolume: 0.22, presence: 30 }
   ]
 };
+
 
 // ============================================================================
 // 2. AUDIO INITIALIZATION & FX INFRASTRUCTURE GRAPH
@@ -68,7 +88,6 @@ function initAudio() {
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   synthState.audioContext = new AudioContext();
 
-  // Setup Routing Infrastructure Nodes
   synthState.masterGain = synthState.audioContext.createGain();
   synthState.masterGain.gain.setValueAtTime(parseFloat(document.getElementById('masterVolume').value), synthState.audioContext.currentTime);
 
@@ -80,34 +99,28 @@ function initAudio() {
   synthState.reverbNode = synthState.audioContext.createConvolver();
   synthState.reverbWetGain = synthState.audioContext.createGain();
 
-  // Establish Routing Connections Matrix Graph
-  // Dry Path
+  // Connections Routing Topology
   synthState.dryGainNode.connect(synthState.masterGain);
 
-  // Delay Feedback Loop Path
   synthState.delayNode.connect(synthState.delayFeedbackNode);
-  synthState.delayFeedbackNode.connect(synthState.delayNode); // Feedback loop
+  synthState.delayFeedbackNode.connect(synthState.delayNode); 
   synthState.delayNode.connect(synthState.delayWetGain);
   synthState.delayWetGain.connect(synthState.masterGain);
 
-  // Reverb Routing (Fed from Dry path to remain parallel)
   buildSyntheticReverbImpulse(); 
   synthState.reverbNode.connect(synthState.reverbWetGain);
   synthState.reverbWetGain.connect(synthState.masterGain);
 
-  // Core Final Output Node Destination Bound
   synthState.masterGain.connect(synthState.audioContext.destination);
 
-  // Build Real-Time Parameters from Sliders Configuration Update
   updateDelayNodeSettings();
   updateReverbNodeSettings();
   generateCustomWaves();
 }
 
-// Generates an mathematical algorithmic white-noise decay sample array for the Convolver reverb
 function buildSyntheticReverbImpulse() {
   if (!synthState.audioContext) return;
-  const decayTime = parseFloat(document.getElementById('reverbDecay').value);
+  const decayTime = parseFloat(document.getElementById('reverbDecay').value) || 2.5;
   const rate = synthState.audioContext.sampleRate;
   const length = rate * decayTime;
   const impulse = synthState.audioContext.createBuffer(2, length, rate);
@@ -115,14 +128,12 @@ function buildSyntheticReverbImpulse() {
   for (let channel = 0; channel < 2; channel++) {
     const channelData = impulse.getChannelData(channel);
     for (let i = 0; i < length; i++) {
-      // Exponentially decaying white noise matrix formula
       channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
     }
   }
   synthState.reverbNode.buffer = impulse;
 }
 
-// Periodic Waveform Drawing Math for custom Trapezoidal shape selection
 function generateCustomWaves() {
   const real = new Float32Array(64);
   const imag = new Float32Array(64);
@@ -134,23 +145,22 @@ function generateCustomWaves() {
   synthState.trapezoidWave = synthState.audioContext.createPeriodicWave(real, imag);
 }
 
-// Live Dynamic Matrix updates for Reverb/Delay Mix configurations
 function updateDelayNodeSettings() {
   if (!synthState.audioContext) return;
   const mix = parseFloat(document.getElementById('delayMix').value);
-  const time = parseFloat(document.getElementById('delayTime').value);
-  const feedback = parseFloat(document.getElementById('delayFeedback').value);
+  const time = parseFloat(document.getElementById('delayTime').value) / 1000; 
+  const feedback = parseFloat(document.getElementById('delayFeedback').value) / 100;
 
   const now = synthState.audioContext.currentTime;
   synthState.delayNode.delayTime.setTargetAtTime(time, now, 0.02);
   synthState.delayFeedbackNode.gain.setTargetAtTime(feedback, now, 0.01);
-  synthState.delayWetGain.gain.setTargetAtTime(mix, now, 0.01);
-  synthState.dryGainNode.gain.setTargetAtTime(1.0 - (mix * 0.5), now, 0.01); // Prevent clipping clipping
+  synthState.delayWetGain.gain.setTargetAtTime(mix / 100, now, 0.01);
+  synthState.dryGainNode.gain.setTargetAtTime(1.0 - ((mix / 100) * 0.5), now, 0.01);
 }
 
 function updateReverbNodeSettings() {
   if (!synthState.audioContext) return;
-  const mix = parseFloat(document.getElementById('reverbMix').value);
+  const mix = parseFloat(document.getElementById('reverbMix').value) / 100;
   synthState.reverbWetGain.gain.setTargetAtTime(mix, synthState.audioContext.currentTime, 0.01);
 }
 
@@ -161,23 +171,17 @@ class SynthVoice {
   constructor(frequency, audioContext, targets) {
     this.ctx = audioContext;
     this.freq = frequency;
-    this.targets = targets;
     this.now = this.ctx.currentTime;
     
-    // Voice Envelope Node Configuration Boundary Bound
     this.voiceGain = this.ctx.createGain();
     this.voiceGain.gain.setValueAtTime(0, this.now);
     
-    // Route Voice to Audio Graph Ends
     this.voiceGain.connect(targets.dry);
     this.voiceGain.connect(targets.delay);
     this.voiceGain.connect(targets.reverb);
 
-    // Audio Elements Structural Mapping
     this.oscillators = [];
-    this.gainNodes = [];
     this.lfo = null;
-    this.lfoGain = null;
 
     if (synthState.moduleMode === 'grand_piano') {
       this.assembleGrandPianoEngine();
@@ -186,40 +190,33 @@ class SynthVoice {
     }
   }
 
-  /**
-   * INTERACTIVE ACOUSTIC GRAND PIANO EMULATION SCHEMATIC
-   */
   assembleGrandPianoEngine() {
-    // 1. Strings Multi-Harmonic Unison Layer
     const oscString1 = this.ctx.createOscillator();
     oscString1.type = 'triangle';
     oscString1.frequency.setValueAtTime(this.freq, this.now);
 
     const oscString2 = this.ctx.createOscillator();
     oscString2.type = 'sine';
-    oscString2.frequency.setValueAtTime(this.freq * 2.002, this.now); // Sympathetic overtone string string alignment
+    oscString2.frequency.setValueAtTime(this.freq * 2.002, this.now); 
 
     const gainStr1 = this.ctx.createGain();
     const gainStr2 = this.ctx.createGain();
-    gainStr1.gain.setValueAtTime(0.60, this.now);
-    gainStr2.gain.setValueAtTime(0.30, this.now);
+    gainStr1.gain.setValueAtTime(0.65, this.now);
+    gainStr2.gain.setValueAtTime(0.35, this.now);
 
-    // 2. Acoustic Hammer Impact Simulation Transient
     const oscHammer = this.ctx.createOscillator();
     oscHammer.type = 'sine';
-    oscHammer.frequency.setValueAtTime(this.freq * 5.2, this.now); // Short metallic ping simulation
+    oscHammer.frequency.setValueAtTime(this.freq * 5.2, this.now); 
 
     const gainHammer = this.ctx.createGain();
-    gainHammer.gain.setValueAtTime(0.75, this.now);
+    gainHammer.gain.setValueAtTime(0.80, this.now);
 
-    // 3. High Damping Filter Topology Module
     const dampingFilter = this.ctx.createBiquadFilter();
     dampingFilter.type = 'lowpass';
     const cutoffBase = Math.min(11000, this.freq * 3.8);
     dampingFilter.frequency.setValueAtTime(cutoffBase, this.now);
     dampingFilter.Q.setValueAtTime(1.1, this.now);
 
-    // Presence Processing Chain Element Configuration
     const presenceVal = parseFloat(document.getElementById('presence').value) / 100;
     let finalOutputNode = dampingFilter;
     if (presenceVal > 0) {
@@ -231,7 +228,6 @@ class SynthVoice {
       finalOutputNode = presFilter;
     }
 
-    // Wiring Engine Graphs
     oscString1.connect(gainStr1);
     oscString2.connect(gainStr2);
     oscHammer.connect(gainHammer);
@@ -243,22 +239,16 @@ class SynthVoice {
     finalOutputNode.connect(this.voiceGain);
 
     this.oscillators.push(oscString1, oscString2, oscHammer);
-    this.gainNodes.push(gainStr1, gainStr2, gainHammer);
 
-    // Rigid Fixed Envelope Standard Dimensions for Grand Piano
     this.attack = 0.002;
-    this.decay = Math.max(0.5, 3.8 - (this.freq / 300)); // Higher strings damp out out faster
-    this.sustain = 0.03;                                // Pianos naturally decay entirely over time if key is held
-    this.release = 0.40;
+    this.decay = Math.max(0.5, 3.8 - (this.freq / 300)); 
+    this.sustain = 0.03;                                
+    this.release = 0.45;
 
-    // Fast decay sweep trigger for hammer attack snap
-    gainHammer.gain.setValueAtTime(0.75, this.now);
+    gainHammer.gain.setValueAtTime(0.80, this.now);
     gainHammer.gain.exponentialRampToValueAtTime(0.0001, this.now + 0.03); 
   }
 
-  /**
-   * SUBTRACTIVE SYNTHESIZER ENGINE CONFIGURATION DIAGRAM
-   */
   assembleSubtractiveSynthEngine() {
     const waveA = document.getElementById('waveform').value;
     const waveB = document.getElementById('waveformB').value;
@@ -271,13 +261,11 @@ class SynthVoice {
     const resonance = parseFloat(document.getElementById('resonance').value);
     const presenceVal = parseFloat(document.getElementById('presence').value) / 100;
 
-    // Read Envelope Modifiers Configuration sliders
     this.attack = parseFloat(document.getElementById('attack').value);
     this.decay = parseFloat(document.getElementById('decay').value);
-    this.sustain = parseFloat(document.getElementById('sustain').value);
+    this.sustain = parseFloat(document.getElementById('sustain').value) / 100;
     this.release = parseFloat(document.getElementById('release').value);
 
-    // Audio Oscillators Instantiation Map
     const oscA = this.ctx.createOscillator();
     const oscB = this.ctx.createOscillator();
     const oscSub = this.ctx.createOscillator();
@@ -288,7 +276,6 @@ class SynthVoice {
 
     const synthFilter = this.ctx.createBiquadFilter();
 
-    // Mapping Waveform Types Matrix
     if (waveA === 'trapezoid') oscA.setPeriodicWave(synthState.trapezoidWave);
     else oscA.type = waveA;
 
@@ -297,18 +284,15 @@ class SynthVoice {
 
     oscSub.type = subWave;
 
-    // Scaling Core Frequencies
     oscA.frequency.setValueAtTime(this.freq, this.now);
     oscB.frequency.setValueAtTime(this.freq, this.now);
     oscB.detune.setValueAtTime(detune, this.now);
-    oscSub.frequency.setValueAtTime(this.freq * 0.5, this.now); // Sub is exactly 1 octave lower
+    oscSub.frequency.setValueAtTime(this.freq * 0.5, this.now); 
 
-    // Volume Crossfading Math Map (Based on HTML Wave Fusion Selector)
     gainA.gain.setValueAtTime(1.0 - fusion, this.now);
     gainB.gain.setValueAtTime(fusion * oscBVol, this.now);
     gainSub.gain.setValueAtTime(subLevel, this.now);
 
-    // Primary Filters Matrix Alignment Routing
     synthFilter.type = document.getElementById('filterType').value;
     synthFilter.frequency.setValueAtTime(cutoff, this.now);
     synthFilter.Q.setValueAtTime(resonance, this.now);
@@ -323,7 +307,6 @@ class SynthVoice {
       finalFilterOutput = presFilter;
     }
 
-    // Connect Sub-Engine Infrastructure Node Lines
     oscA.connect(gainA);
     oscB.connect(gainB);
     oscSub.connect(gainSub);
@@ -335,9 +318,7 @@ class SynthVoice {
     finalFilterOutput.connect(this.voiceGain);
 
     this.oscillators.push(oscA, oscB, oscSub);
-    this.gainNodes.push(gainA, gainB, gainSub);
 
-    // --- DREAM WAVE LFO ROUTING INTEGRATION MATRIX ---
     const lfoAmt = parseFloat(document.getElementById('lfoAmount').value);
     const lfoDestination = document.getElementById('lfoDestination').value;
     
@@ -352,15 +333,14 @@ class SynthVoice {
       if (lfoDestination === 'filter') {
         this.lfoGain.gain.setValueAtTime(lfoAmt, this.now);
         this.lfo.connect(this.lfoGain);
-        this.lfoGain.connect(synthFilter.frequency); // Target destination route: Cutoff
+        this.lfoGain.connect(synthFilter.frequency);
       } else if (lfoDestination === 'pitch') {
-        // Detune relies on unit measurements of cents (100 cents = 1 semitone)
         this.lfoGain.gain.setValueAtTime(lfoAmt * 0.1, this.now);
         this.lfo.connect(this.lfoGain);
         this.lfoGain.connect(oscA.detune);
         this.lfoGain.connect(oscB.detune);
       } else if (lfoDestination === 'volume') {
-        this.lfoGain.gain.setValueAtTime(lfoAmt / 3000 * 0.4, this.now); // Normalize parameter input space
+        this.lfoGain.gain.setValueAtTime(lfoAmt / 3000 * 0.4, this.now);
         this.lfo.connect(this.lfoGain);
         this.lfoGain.connect(this.voiceGain.gain);
       }
@@ -368,43 +348,36 @@ class SynthVoice {
     }
   }
 
-  // Executes Primary Trigger Gate Envelope Curve Sequence
   start() {
     const startNow = this.ctx.currentTime;
     this.voiceGain.gain.setValueAtTime(0, startNow);
     this.voiceGain.gain.linearRampToValueAtTime(1.0, startNow + this.attack);
     this.voiceGain.gain.exponentialRampToValueAtTime(Math.max(this.sustain, 0.001), startNow + this.attack + this.decay);
 
-    // Ignite internal generator banks
     this.oscillators.forEach(osc => osc.start(startNow));
   }
 
-  // Initiates Gate Key Release Envelope Cycle Execution End
   stop() {
     const stopNow = this.ctx.currentTime;
     this.voiceGain.gain.cancelScheduledValues(stopNow);
     this.voiceGain.gain.setValueAtTime(this.voiceGain.gain.value, stopNow);
     this.voiceGain.gain.exponentialRampToValueAtTime(0.0001, stopNow + this.release);
     
-    // Decommission hardware voice lines after complete envelope cycle termination release window passes
     this.oscillators.forEach(osc => osc.stop(stopNow + this.release));
-    if (this.lfo) {
-      this.lfo.stop(stopNow + this.release);
-    }
+    if (this.lfo) this.lfo.stop(stopNow + this.release);
   }
 }
 
 // ============================================================================
-// 4. GENERAL GATE CONTROL ROUTING BUS (NOTE ON / NOTE OFF)
+// 4. NOTE TRACKING BUS (FIXES UNTERMINATED HELD VOICES)
 // ============================================================================
 function noteOn(baseFreq) {
   initAudio();
   
-  // Apply pitch shift multiplier algorithm formula
   const adjustedFreq = baseFreq * Math.pow(2, synthState.octaveShift);
-  
-  // Terminate voice collisions if key is already active
-  if (synthState.activeVoices.has(adjustedFreq)) return;
+  const voiceLookupKey = baseFreq.toFixed(2); 
+
+  if (synthState.activeVoices.has(voiceLookupKey)) return;
 
   const internalRoutingTargets = {
     dry: synthState.dryGainNode,
@@ -414,15 +387,15 @@ function noteOn(baseFreq) {
 
   const voiceInstance = new SynthVoice(adjustedFreq, synthState.audioContext, internalRoutingTargets);
   voiceInstance.start();
-  synthState.activeVoices.set(adjustedFreq, voiceInstance);
+  synthState.activeVoices.set(voiceLookupKey, voiceInstance);
 }
 
 function noteOff(baseFreq) {
-  const adjustedFreq = baseFreq * Math.pow(2, synthState.octaveShift);
-  const voiceInstance = synthState.activeVoices.get(adjustedFreq);
+  const voiceLookupKey = baseFreq.toFixed(2);
+  const voiceInstance = synthState.activeVoices.get(voiceLookupKey);
   if (voiceInstance) {
     voiceInstance.stop();
-    synthState.activeVoices.delete(adjustedFreq);
+    synthState.activeVoices.delete(voiceLookupKey);
   }
 }
 
@@ -433,7 +406,6 @@ function manageArpeggiatorExecution() {
   const arpEnabled = document.getElementById('dreamArpEnabled').checked;
 
   if (!arpEnabled || synthState.heldKeys.length === 0) {
-    // Terminate Arpeggiator Clock Loop if empty
     if (synthState.arpIntervalId) {
       clearInterval(synthState.arpIntervalId);
       synthState.arpIntervalId = null;
@@ -445,15 +417,13 @@ function manageArpeggiatorExecution() {
     return;
   }
 
-  // Read rate timing configuration values from UI dashboard layout mapping values
-  const rateSelection = parseInt(document.getElementById('arpRate').value); // Sliders 1 to 4 mapping range bounds
-  let intervalMs = 250; // Default baseline state: Eighth Note (1/8 selection equivalent)
-  if (rateSelection === 1) intervalMs = 500;  // Quarter Note (1/4)
-  if (rateSelection === 2) intervalMs = 250;  // Eighth Note (1/8)
-  if (rateSelection === 3) intervalMs = 125;  // Sixteenth Note (1/16)
-  if (rateSelection === 4) intervalMs = 62.5; // Thirty-Second Note (1/32)
+  const rateSelection = parseInt(document.getElementById('arpRate').value); 
+  let intervalMs = 250; 
+  if (rateSelection === 1) intervalMs = 500;  
+  if (rateSelection === 2) intervalMs = 250;  
+  if (rateSelection === 3) intervalMs = 125;  
+  if (rateSelection === 4) intervalMs = 62.5; 
 
-  // Clear existing loop trackers before re-allocating new interval arrays
   if (synthState.arpIntervalId) clearInterval(synthState.arpIntervalId);
 
   synthState.arpIntervalId = setInterval(() => {
@@ -464,29 +434,25 @@ function manageArpeggiatorExecution() {
 function executeArpNextStep() {
   if (synthState.heldKeys.length === 0) return;
 
-  // Turn off previous note before striking the next step
   if (synthState.arpCurrentNote) {
     noteOff(synthState.arpCurrentNote);
   }
 
   const mode = document.getElementById('arpMode').value;
-  let notesSorted = [...synthState.heldKeys].sort((a, b) => a - b); // Ascending default order sorting configuration
+  let notesSorted = [...synthState.heldKeys].sort((a, b) => a - b);
 
-  // Execute Mode Filtering Array Logic
   switch (mode) {
     case 'up':
       if (synthState.arpIndex >= notesSorted.length) synthState.arpIndex = 0;
       synthState.arpCurrentNote = notesSorted[synthState.arpIndex];
       synthState.arpIndex++;
       break;
-      
     case 'down':
       notesSorted.reverse();
       if (synthState.arpIndex >= notesSorted.length) synthState.arpIndex = 0;
       synthState.arpCurrentNote = notesSorted[synthState.arpIndex];
       synthState.arpIndex++;
       break;
-      
     case 'updown':
       if (notesSorted.length === 1) {
         synthState.arpCurrentNote = notesSorted[0];
@@ -502,12 +468,10 @@ function executeArpNextStep() {
       synthState.arpCurrentNote = notesSorted[synthState.arpIndex];
       synthState.arpIndex += synthState.arpDirectionUp ? 1 : -1;
       break;
-      
     case 'random':
       const randomIndex = Math.floor(Math.random() * notesSorted.length);
       synthState.arpCurrentNote = notesSorted[randomIndex];
       break;
-      
     case 'asPlayed':
       if (synthState.arpIndex >= synthState.heldKeys.length) synthState.arpIndex = 0;
       synthState.arpCurrentNote = synthState.heldKeys[synthState.arpIndex];
@@ -515,18 +479,15 @@ function executeArpNextStep() {
       break;
   }
 
-  // Trigger audio execution step array mapping
   if (synthState.arpCurrentNote) {
     noteOn(synthState.arpCurrentNote);
     
-    // Visual Highlight Indicator Logic tracking arpeggiator keys across the DOM elements
     const pianoKeys = document.querySelectorAll('.key');
     pianoKeys.forEach(key => {
       if (parseFloat(key.dataset.note) === synthState.arpCurrentNote) {
         key.classList.add('key-active');
-        // Clear highlight tracking immediately right before Gate calculation parameter ends
         const gatePercent = parseFloat(document.getElementById('arpGate').value) / 100;
-        const gateDuration = 250 * gatePercent; // Scaled estimate bound matching step size
+        const gateDuration = 250 * gatePercent; 
         setTimeout(() => key.classList.remove('key-active'), gateDuration);
       }
     });
@@ -534,11 +495,10 @@ function executeArpNextStep() {
 }
 
 // ============================================================================
-// 6. DOM INTERACTIVE MATRIX EVENT MAPPING (KEYBOARD INTERFACE BOUNDS)
+// 6. DOM INTERACTIVE PIANO KEYBOARD LISTENERS
 // ============================================================================
 const keyboardElement = document.querySelector('.keyboard');
 
-// Primary Key Extraction Mapping Event Function
 function handlePhysicalKeyTriggerOn(keyBtn) {
   if (!keyBtn) return;
   const noteFrequencyValue = parseFloat(keyBtn.dataset.note);
@@ -548,17 +508,14 @@ function handlePhysicalKeyTriggerOn(keyBtn) {
   if (arpEnabled) {
     if (!synthState.heldKeys.includes(noteFrequencyValue)) {
       synthState.heldKeys.push(noteFrequencyValue);
-      if (latchEnabled) {
-        keyBtn.classList.add('key-latched');
-      } else {
-        keyBtn.classList.add('key-active');
-      }
+      if (latchEnabled) keyBtn.classList.add('key-latched');
+      else keyBtn.classList.add('key-active');
       manageArpeggiatorExecution();
     }
   } else {
     if (latchEnabled) {
-      if (synthState.activeVoices.has(noteFrequencyValue * Math.pow(2, synthState.octaveShift))) {
-        // Toggle release if key is re-tapped in Latch mode
+      const activeKeyCheck = noteFrequencyValue.toFixed(2);
+      if (synthState.activeVoices.has(activeKeyCheck)) {
         noteOff(noteFrequencyValue);
         keyBtn.classList.remove('key-latched');
       } else {
@@ -578,7 +535,7 @@ function handlePhysicalKeyTriggerOff(keyBtn) {
   const arpEnabled = document.getElementById('dreamArpEnabled').checked;
   const latchEnabled = document.getElementById('arpLatch').checked;
 
-  if (latchEnabled) return; // Ignore input release commands if structural Latched Mode locks state array
+  if (latchEnabled) return; 
 
   if (arpEnabled) {
     synthState.heldKeys = synthState.heldKeys.filter(freq => freq !== noteFrequencyValue);
@@ -590,7 +547,6 @@ function handlePhysicalKeyTriggerOff(keyBtn) {
   }
 }
 
-// Attach Core Mouse Interaction Event Listeners
 keyboardElement.addEventListener('mousedown', (e) => {
   const targetKey = e.target.closest('.key');
   handlePhysicalKeyTriggerOn(targetKey);
@@ -607,7 +563,6 @@ window.addEventListener('mouseup', () => {
   });
 });
 
-// Mobile Multi-Touch Compatibility Engine Graph Configuration Mapping
 keyboardElement.addEventListener('touchstart', (e) => {
   e.preventDefault();
   const targetKey = e.target.closest('.key');
@@ -620,7 +575,7 @@ keyboardElement.addEventListener('touchend', (e) => {
 });
 
 // ============================================================================
-// 7. MODULE SYSTEM CONTROLS & SHIFT CONTROLLER NAVIGATOR
+// 7. SYSTEM CONTROLS & SHIFT CONTROLLER NAVIGATOR
 // ============================================================================
 const textOctaveDisplay = document.getElementById('octaveDisplay');
 
@@ -638,12 +593,9 @@ document.getElementById('octaveUp').addEventListener('click', () => {
   }
 });
 
-// Clear latched controls when Arp toggles are altered or state flags drop
 document.getElementById('arpLatch').addEventListener('change', (e) => {
   if (!e.target.checked) {
-    document.querySelectorAll('.key').forEach(k => {
-      k.classList.remove('key-latched');
-    });
+    document.querySelectorAll('.key').forEach(k => k.classList.remove('key-latched'));
     synthState.heldKeys = [];
     manageArpeggiatorExecution();
   }
@@ -665,7 +617,6 @@ function clearAllSystemSlidersFeedback(sliderId, readoutValueId, unitSuffix = ""
   elementSlider.addEventListener('input', (e) => {
     let outputVal = e.target.value;
     
-    // Scale percentages formatting for text readouts
     if (unitSuffix === "%" && elementSlider.max === "1") {
       outputVal = Math.round(parseFloat(e.target.value) * 100);
     } else if (sliderId === 'oscBDetune') {
@@ -674,19 +625,16 @@ function clearAllSystemSlidersFeedback(sliderId, readoutValueId, unitSuffix = ""
     
     elementReadout.textContent = `${outputVal}${unitSuffix}`;
     
-    // Hot-swap hardware context master gains mapping
     if (sliderId === 'masterVolume' && synthState.masterGain) {
       synthState.masterGain.gain.setValueAtTime(parseFloat(e.target.value), synthState.audioContext.currentTime);
     }
     
-    // Route live modifier adjustments into Delay/Reverb matrix structures on slider adjustment interaction
     if (['delayMix', 'delayTime', 'delayFeedback'].includes(sliderId)) updateDelayNodeSettings();
     if (sliderId === 'reverbMix') updateReverbNodeSettings();
     if (sliderId === 'reverbDecay') buildSyntheticReverbImpulse();
   });
 }
 
-// Run mapping loops to match labels inside HTML
 clearAllSystemSlidersFeedback('waveFusion', 'waveFusionValue', '%');
 clearAllSystemSlidersFeedback('subLevel', 'subLevelValue', '%');
 clearAllSystemSlidersFeedback('oscBLevel', 'oscBLevelValue', '%');
@@ -723,14 +671,13 @@ const messageIndicatorElement = document.getElementById('presetMessage');
 
 document.getElementById('openPresetBrowser').addEventListener('click', () => {
   modalOverlay.classList.remove('hidden');
-  renderPresetGroupBankList('signature'); // Initialize listing with Signature bank view open
+  renderPresetGroupBankList('signature'); 
 });
 
 document.getElementById('closePresetBrowser').addEventListener('click', () => {
   modalOverlay.classList.add('hidden');
 });
 
-// Wire navigation selectors for the library tabs
 document.querySelectorAll('.preset-browser-tab').forEach(tabBtn => {
   tabBtn.addEventListener('click', (e) => {
     document.querySelectorAll('.preset-browser-tab').forEach(t => t.classList.remove('active-bank'));
@@ -744,7 +691,7 @@ function renderPresetGroupBankList(bankKey) {
   const selectionBankListArray = presetLibrary[bankKey] || [];
 
   if (selectionBankListArray.length === 0) {
-    presetListContainer.innerHTML = `<p style="padding:15px;color:#aaa;">No patches found in this bank directory.</p>`;
+    presetListContainer.innerHTML = `<p style="padding:15px;color:#aaa;">No patches found.</p>`;
     return;
   }
 
@@ -764,22 +711,19 @@ function renderPresetGroupBankList(bankKey) {
 
 function injectPatchIntoControlsPanel(patch) {
   initAudio();
-  
-  // Set tracking system state keys
   synthState.moduleMode = patch.moduleMode;
 
-  // Process mapping updates to raw dashboard nodes securely
   Object.keys(patch).forEach(key => {
     if (key === 'name' || key === 'moduleMode') return;
     const coreDOMInput = document.getElementById(key);
     if (coreDOMInput) {
       coreDOMInput.value = patch[key];
-      // Fire mock event handlers to force label monitor strings to synchronize instantly
       coreDOMInput.dispatchEvent(new Event('input'));
     }
   });
 
-  // Post success notifications across the HUD interface area
-  messageIndicatorElement.textContent = `Loaded Patch Configuration: "${patch.name}" successfully.`;
-  setTimeout(() => { messageIndicatorElement.textContent = ""; }, 4000);
+  if (messageIndicatorElement) {
+    messageIndicatorElement.textContent = `Loaded Patch: "${patch.name}"`;
+    setTimeout(() => { messageIndicatorElement.textContent = ""; }, 4000);
+  }
 }
