@@ -14,6 +14,7 @@ let currentEngine = "synth";
 let pianoSustainPedalActive = false;
 let pianoAuditionMode = true;
 let activePianoNodes = [];
+const MAX_PIANO_VOICES = 18;
 
 const pianoVoicing = {
     hammerBrightness: 1.0,
@@ -3601,6 +3602,22 @@ function createPianoNote(frequency) {
   const ctx = getAudioContext();
   const now = ctx.currentTime;
 
+while (activePianoNodes.length >= MAX_PIANO_VOICES) {
+    const oldVoice = activePianoNodes.shift();
+
+    try {
+        oldVoice.oscillators.forEach(node => {
+            if (node.stop) node.stop();
+        });
+
+        oldVoice.nodes.forEach(node => {
+            if (node.disconnect) node.disconnect();
+        });
+    } catch (e) {
+        // Safe cleanup
+    }
+}
+    
 const presence =
     getValue(presenceSlider, 0) / 100;
 
@@ -3665,15 +3682,16 @@ console.log("NEW CLEAN PIANO CORE ACTIVE");
   stringA.stop(now + 2.9);
   stringB.stop(now + 2.9);
 
-  activePianoNodes.push(
-    stringA,
-    stringB,
-    stringAGain,
-    stringBGain,
-    pianoFilter,
-    voiceOut
-  );
-}
+  activePianoNodes.push({
+    oscillators: [stringA, stringB],
+    nodes: [
+        stringAGain,
+        stringBGain,
+        pianoFilter,
+        voiceOut
+    ]
+});
+    }
 function applyPresetSettings(preset) {
   if (!preset) return;
 
