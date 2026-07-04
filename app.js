@@ -9,7 +9,8 @@ let delayWetGain;
 let delayDryGain;
 // Living Environment Systems
 let livingTexturesEnabled = true;
-let currentEngine = "synth";
+let currentResonanceSource = "synth";
+let currentEngine = currentResonanceSource; // temporary compatibility bridge
 // Piano Engine state
 let pianoSustainPedalActive = false;
 let pianoAuditionMode = true;
@@ -1137,7 +1138,7 @@ function stopActivePianoNodes() {
 }
 
 function playNote(frequency) {
-if (currentEngine === "piano") {
+if (currentResonanceSource === "piano") {
   createPianoNote(frequency);
   return;
 }
@@ -1421,7 +1422,7 @@ setKeyLatched(frequency, false);
     return;
   }
 
-  if (currentEngine !== "piano") {
+  if (currentResonanceSource !== "piano") {
   stopNote(frequency);
 }
 
@@ -3705,9 +3706,10 @@ console.log("NEW CLEAN PIANO CORE ACTIVE");
 function applyPresetSettings(preset) {
   if (!preset) return;
 
-  currentEngine = preset.engine || "synth";
-
-  if (currentEngine === "piano") {
+  currentResonanceSource = preset.engine || "synth";
+currentEngine = currentResonanceSource; // temporary compatibility bridge
+    
+  if (currentResonanceSource === "piano") {
     if (preset.masterVolume !== undefined) {
       masterVolume.value = preset.masterVolume;
     }
