@@ -1114,10 +1114,20 @@ stereoPanner.connect(delayNode);
 
 
 function stopActivePianoNodes() {
-  activePianoNodes.forEach((node) => {
+  activePianoNodes.forEach((voice) => {
     try {
-      if (node.stop) node.stop();
-      node.disconnect();
+      if (voice.oscillators) {
+        voice.oscillators.forEach((node) => {
+          if (node.stop) node.stop();
+          if (node.disconnect) node.disconnect();
+        });
+      }
+
+      if (voice.nodes) {
+        voice.nodes.forEach((node) => {
+          if (node.disconnect) node.disconnect();
+        });
+      }
     } catch (error) {
       // Already stopped or disconnected
     }
