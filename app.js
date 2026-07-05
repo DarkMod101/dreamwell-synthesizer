@@ -3628,6 +3628,10 @@ while (activePianoNodes.length >= MAX_PIANO_VOICES) {
         // Safe cleanup
     }
 }
+
+const originSettings = getOriginSettings(
+    originSelect ? originSelect.value : "pure"
+);
     
 const presence =
     getValue(presenceSlider, 0) / 100;
@@ -3671,9 +3675,15 @@ console.log("NEW CLEAN PIANO CORE ACTIVE");
 
   const pianoFilter = ctx.createBiquadFilter();
   pianoFilter.type = "lowpass";
-  pianoFilter.frequency.setValueAtTime(5200, now);
-  pianoFilter.Q.setValueAtTime(0.45, now);
+  pianoFilter.frequency.setValueAtTime(
+    Math.max(900, 5200 + originSettings.filterShift),
+    now
+);
 
+pianoFilter.Q.setValueAtTime(
+    Math.max(0.2, 0.45 + originSettings.resonanceBoost * 0.25),
+    now
+);
   stringA.connect(stringAGain);
   stringB.connect(stringBGain);
 
