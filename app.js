@@ -3667,9 +3667,17 @@ console.log("NEW CLEAN PIANO CORE ACTIVE");
   stringA.type = "sine";
   stringB.type = "sine";
 
-  stringA.frequency.setValueAtTime(frequency, now);
-  stringB.frequency.setValueAtTime(frequency * 2.002, now);
+  const detuneAmount = 0.0012;
 
+stringA.frequency.setValueAtTime(
+    frequency * (1 - detuneAmount),
+    now
+);
+
+stringB.frequency.setValueAtTime(
+    (frequency * 2.002) * (1 + detuneAmount),
+    now
+);
   stringAGain.gain.setValueAtTime(0.72, now);
   stringBGain.gain.setValueAtTime(0.18, now);
 
