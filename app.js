@@ -3684,7 +3684,12 @@ stringB.frequency.setValueAtTime(
   const pianoFilter = ctx.createBiquadFilter();
   pianoFilter.type = "lowpass";
   pianoFilter.frequency.setValueAtTime(
-    Math.max(900, 5200 + originSettings.filterShift),
+    Math.max(
+        900,
+        5200 +
+        originSettings.filterShift +
+        (presence * 900)
+    ),
     now
 );
 
