@@ -3654,9 +3654,38 @@ pianoVoicing.duplexShimmer =
 console.log("NEW CLEAN PIANO CORE ACTIVE");
     
   const voiceOut = ctx.createGain();
-  voiceOut.gain.setValueAtTime(0.0001, now);
-  voiceOut.gain.linearRampToValueAtTime(0.30, now + 0.008);
-  voiceOut.gain.exponentialRampToValueAtTime(0.001, now + 2.8);
+  const pianoAttack =
+    Math.min(0.04, Math.max(0.004, getValue(attackSlider, 0.01) * 0.5));
+
+const pianoDecay =
+    Math.min(4.0, Math.max(0.8, getValue(decaySlider, 1.8)));
+
+const pianoSustain =
+    Math.min(0.45, Math.max(0.03, getValue(sustainSlider, 0.25)));
+
+const pianoRelease =
+    Math.min(5.0, Math.max(1.2, getValue(releaseSlider, 2.8)));
+
+const pianoPeak = 0.30;
+const pianoTailEnd =
+    now + pianoAttack + pianoDecay + pianoRelease;
+
+voiceOut.gain.setValueAtTime(0.0001, now);
+
+voiceOut.gain.linearRampToValueAtTime(
+    pianoPeak,
+    now + pianoAttack
+);
+
+voiceOut.gain.exponentialRampToValueAtTime(
+    Math.max(0.001, pianoPeak * pianoSustain),
+    now + pianoAttack + pianoDecay
+);
+
+voiceOut.gain.exponentialRampToValueAtTime(
+    0.001,
+    pianoTailEnd
+);
 
   const stringA = ctx.createOscillator();
   const stringB = ctx.createOscillator();
@@ -3713,9 +3742,8 @@ pianoFilter.Q.setValueAtTime(
   stringA.start(now + 0.002);
   stringB.start(now + 0.002);
 
-  stringA.stop(now + 2.9);
-  stringB.stop(now + 2.9);
-
+  stringA.stop(pianoTailEnd + 0.1);
+stringB.stop(pianoTailEnd + 0.1);
   activePianoNodes.push({
     oscillators: [stringA, stringB],
     nodes: [
