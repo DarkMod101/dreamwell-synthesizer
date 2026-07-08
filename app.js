@@ -3778,7 +3778,13 @@ hammerGain.connect(pianoFilter);
   voiceOut.connect(reverbNode);
   voiceOut.connect(delayDryGain);
   voiceOut.connect(delayNode);
+createPianoSoundboard(
+    ctx,
+    frequency,
+    now
+);
 
+    
   stringA.start(now + 0.002);
   stringB.start(now + 0.002);
 
