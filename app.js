@@ -3613,6 +3613,8 @@ function createPianoNote(frequency) {
   const ctx = getAudioContext();
   const now = ctx.currentTime;
 
+  const noteVariation = (Math.random() - 0.5) * 0.004;  
+    
 while (activePianoNodes.length >= MAX_PIANO_VOICES) {
     const oldVoice = activePianoNodes.shift();
 
@@ -3699,12 +3701,12 @@ voiceOut.gain.exponentialRampToValueAtTime(
   const detuneAmount = 0.0012;
 
 stringA.frequency.setValueAtTime(
-    frequency * (1 - detuneAmount),
+    frequency * (1 - detuneAmount + noteVariation),
     now
 );
 
 stringB.frequency.setValueAtTime(
-    (frequency * 2.002) * (1 + detuneAmount),
+    (frequency * 2.002) * (1 + detuneAmount - noteVariation),
     now
 );
   stringAGain.gain.setValueAtTime(0.62, now);
