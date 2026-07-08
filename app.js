@@ -3703,20 +3703,14 @@ const hammerFilter = ctx.createBiquadFilter();
   stringB.type = "sine";
 
 hammer.type = "triangle";
-hammer.frequency.setValueAtTime(
-    frequency * (3.01 + presence * 0.65 + originBrightness),
-    now
-);
+hammer.frequency.setValueAtTime(frequency * 3.01, now);
 
 hammerFilter.type = "highpass";
 hammerFilter.frequency.setValueAtTime(1800, now);
 hammerFilter.Q.setValueAtTime(0.35, now);
 
 hammerGain.gain.setValueAtTime(0.0001, now);
-hammerGain.gain.linearRampToValueAtTime(
-    0.014 + (presence * 0.030) + Math.max(0, originColor * 0.08),
-    now + 0.006
-);
+hammerGain.gain.linearRampToValueAtTime(0.018, now + 0.006);
 hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
     
   const detuneAmount = 0.0012;
@@ -3730,21 +3724,8 @@ stringB.frequency.setValueAtTime(
     (frequency * 2.002) * (1 + detuneAmount - noteVariation),
     now
 );
-  const originBrightness =
-    originSettings.filterShift / 1000;
-
-const originColor =
-    originSettings.oscBBoost;
-
-stringAGain.gain.setValueAtTime(
-    0.58 + (presence * 0.10),
-    now
-);
-
-stringBGain.gain.setValueAtTime(
-    0.16 + (presence * 0.16) + originColor,
-    now
-);
+  stringAGain.gain.setValueAtTime(0.62, now);
+  stringBGain.gain.setValueAtTime(0.18, now);
 
   const pianoFilter = ctx.createBiquadFilter();
   pianoFilter.type = "lowpass";
