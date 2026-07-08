@@ -3259,13 +3259,14 @@ function createPianoSoundboard(ctx, frequency, now) {
 
         osc.start(now);
         osc.stop(now + 3.4);
-        activePianoNodes.push(osc, gain);
-    });
 
-    soundboardFilter.connect(soundboardGain);
-    soundboardGain.connect(masterGain);
-activePianoNodes.push(soundboardGain, soundboardFilter);
-    
+// activePianoNodes.push(osc, gain);
+});
+
+soundboardFilter.connect(soundboardGain);
+soundboardGain.connect(masterGain);
+
+// activePianoNodes.push(soundboardGain, soundboardFilter);
 }
 
 function createPianoSympatheticResonance(ctx, frequency, now) {
