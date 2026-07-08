@@ -3721,7 +3721,7 @@ hammerFilter.Q.setValueAtTime(0.35, now);
 
 hammerGain.gain.setValueAtTime(0.0001, now);
 hammerGain.gain.linearRampToValueAtTime(
-    0.014 + (presence * 0.030) + Math.max(0, originColor * 0.08),
+    0.004 + (presence * 0.006) + Math.max(0, originColor * 0.012),
     now + 0.006
 );
 hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
