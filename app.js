@@ -3117,8 +3117,8 @@ stringB.frequency.setValueAtTime(
     (frequency * 2.002) * (1 + detuneAmount - noteVariation),
     now
 );
-  stringAGain.gain.setValueAtTime(0.62, now);
-  stringBGain.gain.setValueAtTime(0.18, now);
+  stringAGain.gain.setValueAtTime(0.58, now);
+stringBGain.gain.setValueAtTime(0.22, now);
 
   const pianoFilter = ctx.createBiquadFilter();
   pianoFilter.type = "lowpass";
