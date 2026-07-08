@@ -3692,12 +3692,27 @@ voiceOut.gain.exponentialRampToValueAtTime(
   const stringA = ctx.createOscillator();
   const stringB = ctx.createOscillator();
 
+  const hammer = ctx.createOscillator();
+const hammerGain = ctx.createGain();
+const hammerFilter = ctx.createBiquadFilter();
+    
   const stringAGain = ctx.createGain();
   const stringBGain = ctx.createGain();
 
   stringA.type = "sine";
   stringB.type = "sine";
 
+hammer.type = "triangle";
+hammer.frequency.setValueAtTime(frequency * 3.01, now);
+
+hammerFilter.type = "highpass";
+hammerFilter.frequency.setValueAtTime(1800, now);
+hammerFilter.Q.setValueAtTime(0.35, now);
+
+hammerGain.gain.setValueAtTime(0.0001, now);
+hammerGain.gain.linearRampToValueAtTime(0.018, now + 0.006);
+hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
+    
   const detuneAmount = 0.0012;
 
 stringA.frequency.setValueAtTime(
@@ -3734,6 +3749,10 @@ pianoFilter.Q.setValueAtTime(
   stringAGain.connect(pianoFilter);
   stringBGain.connect(pianoFilter);
 
+hammer.connect(hammerFilter);
+hammerFilter.connect(hammerGain);
+hammerGain.connect(pianoFilter);
+    
   pianoFilter.connect(voiceOut);
 
   voiceOut.connect(dryGain);
@@ -3744,11 +3763,16 @@ pianoFilter.Q.setValueAtTime(
   stringA.start(now + 0.002);
   stringB.start(now + 0.002);
 
+hammer.start(now + 0.001);
+    
   stringA.stop(pianoTailEnd + 0.1);
 stringB.stop(pianoTailEnd + 0.1);
+    hammer.stop(now + 0.09);
   activePianoNodes.push({
-    oscillators: [stringA, stringB],
+    oscillators: [stringA, stringB, hammer],
     nodes: [
+        hammerGain,
+        hammerFilter,
         stringAGain,
         stringBGain,
         pianoFilter,
