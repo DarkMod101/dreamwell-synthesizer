@@ -3702,6 +3702,12 @@ const hammerFilter = ctx.createBiquadFilter();
   stringA.type = "sine";
   stringB.type = "sine";
 
+const originBrightness =
+    originSettings.filterShift / 1000;
+
+const originColor =
+    originSettings.oscBBoost;
+    
 hammer.type = "triangle";
 hammer.frequency.setValueAtTime(
     frequency * (3.01 + presence * 0.65 + originBrightness),
@@ -3730,11 +3736,7 @@ stringB.frequency.setValueAtTime(
     (frequency * 2.002) * (1 + detuneAmount - noteVariation),
     now
 );
-  const originBrightness =
-    originSettings.filterShift / 1000;
-
-const originColor =
-    originSettings.oscBBoost;
+  
 
 stringAGain.gain.setValueAtTime(
     0.58 + (presence * 0.10),
