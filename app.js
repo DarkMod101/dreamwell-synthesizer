@@ -3259,14 +3259,13 @@ function createPianoSoundboard(ctx, frequency, now) {
 
         osc.start(now);
         osc.stop(now + 3.4);
+        activePianoNodes.push(osc, gain);
+    });
 
-// activePianoNodes.push(osc, gain);
-});
-
-soundboardFilter.connect(soundboardGain);
-soundboardGain.connect(masterGain);
-
-// activePianoNodes.push(soundboardGain, soundboardFilter);
+    soundboardFilter.connect(soundboardGain);
+    soundboardGain.connect(masterGain);
+activePianoNodes.push(soundboardGain, soundboardFilter);
+    
 }
 
 function createPianoSympatheticResonance(ctx, frequency, now) {
@@ -3703,12 +3702,6 @@ const hammerFilter = ctx.createBiquadFilter();
   stringA.type = "sine";
   stringB.type = "sine";
 
-const originBrightness =
-    originSettings.filterShift / 1000;
-
-const originColor =
-    originSettings.oscBBoost;
-    
 hammer.type = "triangle";
 hammer.frequency.setValueAtTime(
     frequency * (3.01 + presence * 0.65 + originBrightness),
@@ -3721,7 +3714,7 @@ hammerFilter.Q.setValueAtTime(0.35, now);
 
 hammerGain.gain.setValueAtTime(0.0001, now);
 hammerGain.gain.linearRampToValueAtTime(
-    0.004 + (presence * 0.006) + Math.max(0, originColor * 0.012),
+    0.014 + (presence * 0.030) + Math.max(0, originColor * 0.08),
     now + 0.006
 );
 hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
@@ -3737,7 +3730,11 @@ stringB.frequency.setValueAtTime(
     (frequency * 2.002) * (1 + detuneAmount - noteVariation),
     now
 );
-  
+  const originBrightness =
+    originSettings.filterShift / 1000;
+
+const originColor =
+    originSettings.oscBBoost;
 
 stringAGain.gain.setValueAtTime(
     0.58 + (presence * 0.10),
