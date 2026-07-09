@@ -3154,8 +3154,11 @@ stringA.detune.setValueAtTime(
     now
 );
 
+const inharmonicity =
+    1.002 + (notePosition * 0.006);
+
 stringB.frequency.setValueAtTime(
-    (frequency * 2.002) * (1 + detuneAmount - noteVariation),
+    (frequency * 2.0 * inharmonicity) * (1 + detuneAmount - noteVariation),
     now
 );
 
