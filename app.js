@@ -3007,6 +3007,8 @@ function createPianoNote(frequency) {
   const now = ctx.currentTime;
 
   const noteVariation = (Math.random() - 0.5) * 0.004;  
+
+const pitchDrift = (Math.random() - 0.5) * 0.8;
     
 while (activePianoNodes.length >= MAX_PIANO_VOICES) {
     const oldVoice = activePianoNodes.shift();
@@ -3140,10 +3142,21 @@ stringA.frequency.setValueAtTime(
     now
 );
 
+stringA.detune.setValueAtTime(
+    pitchDrift,
+    now
+);
+    
 stringB.frequency.setValueAtTime(
     (frequency * 2.002) * (1 + detuneAmount - noteVariation),
     now
 );
+
+stringB.detune.setValueAtTime(
+    -pitchDrift * 0.6,
+    now
+);
+    
   const stringFundamental =
     0.68 - (notePosition * 0.12);
 
