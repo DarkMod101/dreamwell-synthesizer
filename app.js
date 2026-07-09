@@ -3292,14 +3292,25 @@ function applyPresetSettings(preset) {
 currentEngine = currentResonanceSource; // temporary compatibility bridge
     
   if (currentResonanceSource === "piano") {
-    if (preset.masterVolume !== undefined) {
-      masterVolume.value = preset.masterVolume;
-    }
+    if (preset.attack !== undefined) attackSlider.value = preset.attack;
+    if (preset.decay !== undefined) decaySlider.value = preset.decay;
+    if (preset.sustain !== undefined) sustainSlider.value = preset.sustain;
+    if (preset.release !== undefined) releaseSlider.value = preset.release;
+
+    if (preset.reverbMix !== undefined) reverbMixSlider.value = preset.reverbMix;
+    if (preset.reverbDecay !== undefined) reverbDecaySlider.value = preset.reverbDecay;
+
+    if (preset.delayMix !== undefined) delayMixSlider.value = preset.delayMix;
+    if (preset.delayTime !== undefined) delayTimeSlider.value = preset.delayTime;
+    if (preset.delayFeedback !== undefined) delayFeedbackSlider.value = preset.delayFeedback;
+
+    if (preset.presence !== undefined) presenceSlider.value = preset.presence;
+    if (preset.masterVolume !== undefined) masterVolume.value = preset.masterVolume;
 
     updateValueDisplays();
     stopAllNotes();
     return;
-  }
+}
 
   waveformSelect.value = preset.waveform;
   waveformBSelect.value = preset.waveformB;
