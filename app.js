@@ -3106,7 +3106,14 @@ hammerGain.gain.setValueAtTime(0.0001, now);
 hammerGain.gain.linearRampToValueAtTime(0.018, now + 0.006);
 hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
     
-  const detuneAmount = 0.0012;
+  const notePosition =
+    Math.min(1, Math.max(0, (frequency - 80) / 1200));
+
+const lowWeight =
+    1 - notePosition;
+
+const detuneAmount =
+    0.0007 + (lowWeight * 0.0014);
 
 stringA.frequency.setValueAtTime(
     frequency * (1 - detuneAmount + noteVariation),
