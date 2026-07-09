@@ -3031,20 +3031,26 @@ const originSettings = getOriginSettings(
 const presence =
     getValue(presenceSlider, 0) / 100;
 
+const normalizedRange =
+    Math.min(1, Math.max(0, (frequency - 80) / 1800));
+
+const lowRange = 1 - normalizedRange;
+const highRange = normalizedRange;
+    
 pianoVoicing.stringWarmth =
-    1.0 + (presence * 0.45);
+    1.0 + (presence * 0.35) + (lowRange * 0.18);
 
 pianoVoicing.bodyDepth =
-    1.0 + (presence * 0.35);
+    1.0 + (presence * 0.25) + (lowRange * 0.22);
 
 pianoVoicing.soundboardBloom =
-    1.0 + (presence * 0.50);
+    1.0 + (presence * 0.35) + (lowRange * 0.15);
 
 pianoVoicing.cabinetSize =
-    1.0 + (presence * 0.25);
+    1.0 + (presence * 0.20) + (lowRange * 0.18);
 
 pianoVoicing.duplexShimmer =
-    1.0 + (presence * 0.30);
+    1.0 + (presence * 0.20) + (highRange * 0.28);
     
 console.log("NEW CLEAN PIANO CORE ACTIVE");
     
