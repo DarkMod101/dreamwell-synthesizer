@@ -3111,6 +3111,9 @@ const hammerFilter = ctx.createBiquadFilter();
 const stringAGain = ctx.createGain();
 const stringBGain = ctx.createGain();
 
+const sympatheticGain = ctx.createGain();
+const sympatheticFilter = ctx.createBiquadFilter();
+    
 stringA.type = "sine";
 stringB.type = "sine";
 
@@ -3137,6 +3140,25 @@ hammerFilter.type = "highpass";
 hammerFilter.frequency.setValueAtTime(1800, now);
 hammerFilter.Q.setValueAtTime(0.35, now);
 
+sympatheticFilter.type = "bandpass";
+
+sympatheticFilter.frequency.setValueAtTime(
+    frequency * 2.0,
+    now
+);
+
+sympatheticFilter.Q.setValueAtTime(1.2, now);
+
+sympatheticGain.gain.setValueAtTime(
+    0.012 * pianoVoicing.sympatheticAmount,
+    now
+);
+
+sympatheticGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + 2.8
+);
+    
 hammerGain.gain.setValueAtTime(0.0001, now);
 hammerGain.gain.linearRampToValueAtTime(
     0.018 * hammerVariation,
