@@ -3113,6 +3113,9 @@ const stringBGain = ctx.createGain();
 
 const sympatheticGain = ctx.createGain();
 const sympatheticFilter = ctx.createBiquadFilter();
+
+const cabinetGain = ctx.createGain();
+const cabinetFilter = ctx.createBiquadFilter();
     
 stringA.type = "sine";
 stringB.type = "sine";
@@ -3157,6 +3160,28 @@ sympatheticGain.gain.setValueAtTime(
 sympatheticGain.gain.exponentialRampToValueAtTime(
     0.001,
     now + 2.8
+);
+
+cabinetFilter.type = "lowpass";
+
+cabinetFilter.frequency.setValueAtTime(
+    320,
+    now
+);
+
+cabinetFilter.Q.setValueAtTime(
+    0.7,
+    now
+);
+
+cabinetGain.gain.setValueAtTime(
+    0.018 * pianoVoicing.cabinetSize,
+    now
+);
+
+cabinetGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + 3.4
 );
     
 hammerGain.gain.setValueAtTime(0.0001, now);
