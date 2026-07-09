@@ -3209,7 +3209,23 @@ hammer.connect(hammerFilter);
 hammerFilter.connect(hammerGain);
 hammerGain.connect(pianoFilter);
     
-  pianoFilter.connect(voiceOut);
+  // Piano signal now blooms through soundboardBloom before voiceOut.
+
+const soundboardBloom = ctx.createGain();
+
+soundboardBloom.gain.setValueAtTime(
+    0.065 * pianoVoicing.soundboardBloom,
+    now + 0.018
+);
+
+soundboardBloom.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + 2.8
+);
+
+pianoFilter.connect(soundboardBloom);
+soundboardBloom.connect(voiceOut);
+    
 voiceOut.connect(pianoPan);
 
   pianoPan.connect(dryGain);
