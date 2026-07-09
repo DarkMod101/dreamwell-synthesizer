@@ -3227,11 +3227,6 @@ pianoFilter.Q.setValueAtTime(
   stringAGain.connect(pianoFilter);
   stringBGain.connect(pianoFilter);
 
-stringAGain.connect(sympatheticFilter);
-stringBGain.connect(sympatheticFilter);
-sympatheticFilter.connect(sympatheticGain);
-sympatheticGain.connect(voiceOut);
-    
 hammer.connect(hammerFilter);
 hammerFilter.connect(hammerGain);
 hammerGain.connect(pianoFilter);
