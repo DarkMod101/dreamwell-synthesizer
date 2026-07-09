@@ -3115,7 +3115,13 @@ const hammerFilter = ctx.createBiquadFilter();
   stringB.type = "sine";
 
 hammer.type = "triangle";
-hammer.frequency.setValueAtTime(frequency * 3.01, now);
+const hammerRatio =
+    2.7 + (notePosition * 0.7);
+
+hammer.frequency.setValueAtTime(
+    frequency * hammerRatio,
+    now
+);
 
 hammerFilter.type = "highpass";
 hammerFilter.frequency.setValueAtTime(1800, now);
