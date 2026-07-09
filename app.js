@@ -1576,16 +1576,6 @@ const presetBanks = {
     name: "Piano Test",
     engine: "piano",
     settings: {
-        attack: 0.01,
-        decay: 1.8,
-        sustain: 0.25,
-        release: 2.8,
-        reverbMix: 0.16,
-        reverbDecay: 3.2,
-        delayMix: 0,
-        delayTime: 0.25,
-        delayFeedback: 0,
-        presence: 0,
         masterVolume: 0.18,
     },
 },
@@ -3237,6 +3227,11 @@ pianoFilter.Q.setValueAtTime(
   stringAGain.connect(pianoFilter);
   stringBGain.connect(pianoFilter);
 
+stringAGain.connect(sympatheticFilter);
+stringBGain.connect(sympatheticFilter);
+sympatheticFilter.connect(sympatheticGain);
+sympatheticGain.connect(voiceOut);
+    
 hammer.connect(hammerFilter);
 hammerFilter.connect(hammerGain);
 hammerGain.connect(pianoFilter);
@@ -3246,7 +3241,7 @@ hammerGain.connect(pianoFilter);
 const soundboardBloom = ctx.createGain();
 
 soundboardBloom.gain.setValueAtTime(
-    0.035 * pianoVoicing.soundboardBloom,
+    0.065 * pianoVoicing.soundboardBloom,
     now + 0.018
 );
 
@@ -3255,7 +3250,6 @@ soundboardBloom.gain.exponentialRampToValueAtTime(
     now + 2.8
 );
 
-pianoFilter.connect(voiceOut);    
 pianoFilter.connect(soundboardBloom);
 soundboardBloom.connect(voiceOut);
     
@@ -3293,25 +3287,14 @@ function applyPresetSettings(preset) {
 currentEngine = currentResonanceSource; // temporary compatibility bridge
     
   if (currentResonanceSource === "piano") {
-    if (preset.attack !== undefined) attackSlider.value = preset.attack;
-    if (preset.decay !== undefined) decaySlider.value = preset.decay;
-    if (preset.sustain !== undefined) sustainSlider.value = preset.sustain;
-    if (preset.release !== undefined) releaseSlider.value = preset.release;
-
-    if (preset.reverbMix !== undefined) reverbMixSlider.value = preset.reverbMix;
-    if (preset.reverbDecay !== undefined) reverbDecaySlider.value = preset.reverbDecay;
-
-    if (preset.delayMix !== undefined) delayMixSlider.value = preset.delayMix;
-    if (preset.delayTime !== undefined) delayTimeSlider.value = preset.delayTime;
-    if (preset.delayFeedback !== undefined) delayFeedbackSlider.value = preset.delayFeedback;
-
-    if (preset.presence !== undefined) presenceSlider.value = preset.presence;
-    if (preset.masterVolume !== undefined) masterVolume.value = preset.masterVolume;
+    if (preset.masterVolume !== undefined) {
+      masterVolume.value = preset.masterVolume;
+    }
 
     updateValueDisplays();
     stopAllNotes();
     return;
-}
+  }
 
   waveformSelect.value = preset.waveform;
   waveformBSelect.value = preset.waveformB;
