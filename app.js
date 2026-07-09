@@ -3118,6 +3118,9 @@ hammer.type = "triangle";
 const hammerRatio =
     2.7 + (notePosition * 0.7);
 
+const hammerRatio =
+    2.7 + (notePosition * 0.7);
+
 hammer.frequency.setValueAtTime(
     frequency * hammerRatio,
     now
