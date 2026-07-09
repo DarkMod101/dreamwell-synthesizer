@@ -3031,6 +3031,9 @@ const originSettings = getOriginSettings(
 const presence =
     getValue(presenceSlider, 0) / 100;
 
+const hammerVariation =
+    0.92 + Math.random() * 0.16;
+    
 const normalizedRange =
     Math.min(1, Math.max(0, (frequency - 80) / 1800));
 
@@ -3117,7 +3120,10 @@ hammerFilter.frequency.setValueAtTime(1800, now);
 hammerFilter.Q.setValueAtTime(0.35, now);
 
 hammerGain.gain.setValueAtTime(0.0001, now);
-hammerGain.gain.linearRampToValueAtTime(0.018, now + 0.006);
+hammerGain.gain.linearRampToValueAtTime(
+    0.018 * hammerVariation,
+    now + 0.006
+);
 hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
     
   const notePosition =
