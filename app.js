@@ -3038,11 +3038,6 @@ const hammerVariation =
     
 const normalizedRange =
     Math.min(1, Math.max(0, (frequency - 80) / 1800));
-
-pianoPan.pan.setValueAtTime(
-    (normalizedRange * 1.2) - 0.6,
-    now
-);
     
 const lowRange = 1 - normalizedRange;
 const highRange = normalizedRange;
@@ -3067,6 +3062,11 @@ console.log("NEW CLEAN PIANO CORE ACTIVE");
   const voiceOut = ctx.createGain();
 
 const pianoPan = ctx.createStereoPanner();
+
+pianoPan.pan.setValueAtTime(
+    (normalizedRange * 1.2) - 0.6,
+    now
+);
     
   const pianoAttack =
     Math.min(0.04, Math.max(0.004, getValue(attackSlider, 0.01) * 0.5));
