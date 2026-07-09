@@ -3257,9 +3257,7 @@ stringBGain.connect(sympatheticFilter);
 sympatheticFilter.connect(sympatheticGain);
 sympatheticGain.connect(voiceOut);
 
-stringAGain.connect(cabinetFilter);
-cabinetFilter.connect(cabinetGain);
-cabinetGain.connect(voiceOut);
+
     
 hammer.connect(hammerFilter);
 hammerFilter.connect(hammerGain);
