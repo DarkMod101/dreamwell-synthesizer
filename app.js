@@ -3034,6 +3034,11 @@ const presence =
 const normalizedRange =
     Math.min(1, Math.max(0, (frequency - 80) / 1800));
 
+pianoPan.pan.setValueAtTime(
+    (normalizedRange * 1.2) - 0.6,
+    now
+);
+    
 const lowRange = 1 - normalizedRange;
 const highRange = normalizedRange;
     
@@ -3055,6 +3060,9 @@ pianoVoicing.duplexShimmer =
 console.log("NEW CLEAN PIANO CORE ACTIVE");
     
   const voiceOut = ctx.createGain();
+
+const pianoPan = ctx.createStereoPanner();
+    
   const pianoAttack =
     Math.min(0.04, Math.max(0.004, getValue(attackSlider, 0.01) * 0.5));
 
@@ -3173,11 +3181,12 @@ hammerFilter.connect(hammerGain);
 hammerGain.connect(pianoFilter);
     
   pianoFilter.connect(voiceOut);
+voiceOut.connect(pianoPan);
 
-  voiceOut.connect(dryGain);
-  voiceOut.connect(reverbNode);
-  voiceOut.connect(delayDryGain);
-  voiceOut.connect(delayNode);
+  pianoPan.connect(dryGain);
+  pianoPan.connect(reverbNode);
+  pianoPan.connect(delayDryGain);
+  pianoPan.connect(delayNode);
 
   stringA.start(now + 0.002);
   stringB.start(now + 0.002);
