@@ -3124,8 +3124,21 @@ stringB.frequency.setValueAtTime(
     (frequency * 2.002) * (1 + detuneAmount - noteVariation),
     now
 );
-  stringAGain.gain.setValueAtTime(0.58, now);
-stringBGain.gain.setValueAtTime(0.22, now);
+  const stringFundamental =
+    0.68 - (notePosition * 0.12);
+
+const stringHarmonic =
+    0.12 + (notePosition * 0.12);
+
+stringAGain.gain.setValueAtTime(
+    stringFundamental,
+    now
+);
+
+stringBGain.gain.setValueAtTime(
+    stringHarmonic,
+    now
+);
 
   const pianoFilter = ctx.createBiquadFilter();
   pianoFilter.type = "lowpass";
