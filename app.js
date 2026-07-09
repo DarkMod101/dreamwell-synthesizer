@@ -3255,6 +3255,7 @@ soundboardBloom.gain.exponentialRampToValueAtTime(
     now + 2.8
 );
 
+pianoFilter.connect(voiceOut);    
 pianoFilter.connect(soundboardBloom);
 soundboardBloom.connect(voiceOut);
     
