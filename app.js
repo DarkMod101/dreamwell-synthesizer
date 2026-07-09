@@ -3194,8 +3194,8 @@ voiceOut.connect(pianoPan);
   pianoPan.connect(delayDryGain);
   pianoPan.connect(delayNode);
 
-  stringA.start(now + 0.002);
-  stringB.start(now + 0.002);
+  stringA.start(now + 0.0018);
+stringB.start(now + 0.0035);
 
 hammer.start(now + 0.001);
     
