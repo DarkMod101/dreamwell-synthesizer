@@ -3003,7 +3003,8 @@ forgottenEmpire: {
 
 
 function createPianoNote(frequency) {
-  const ctx = getAudioContext();
+ alert("PIANO VERSION TEST");
+    const ctx = getAudioContext();
   const now = ctx.currentTime;
 
   const noteVariation = (Math.random() - 0.5) * 0.004;  
