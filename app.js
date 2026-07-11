@@ -3080,7 +3080,8 @@ const pianoSustain =
 const pianoRelease =
     Math.min(5.0, Math.max(1.2, getValue(releaseSlider, 2.8)));
 
-const pianoPeak = 0.48;
+const pianoPeak =
+    0.48 + (presence * 0.12);
 const pianoTailEnd =
     now + pianoAttack + pianoDecay + pianoRelease;
 
@@ -3207,13 +3208,16 @@ stringBGain.gain.setValueAtTime(
 
   const pianoFilter = ctx.createBiquadFilter();
   pianoFilter.type = "lowpass";
-  pianoFilter.frequency.setValueAtTime(
+  const pianoPresenceCutoff =
     Math.max(
         900,
-        5200 +
+        4200 +
         originSettings.filterShift +
-        (presence * 900)
-    ),
+        (presence * 3200)
+    );
+
+pianoFilter.frequency.setValueAtTime(
+    pianoPresenceCutoff,
     now
 );
 
