@@ -3080,7 +3080,7 @@ const pianoSustain =
 const pianoRelease =
     Math.min(5.0, Math.max(1.2, getValue(releaseSlider, 2.8)));
 
-const pianoPeak = 0.30;
+const pianoPeak = 0.48;
 const pianoTailEnd =
     now + pianoAttack + pianoDecay + pianoRelease;
 
