@@ -1576,7 +1576,7 @@ const presetBanks = {
     name: "Piano Test",
     engine: "piano",
     settings: {
-        masterVolume: 0.18,
+        masterVolume: 0.8,
     },
 },
     dreamPad: {
@@ -3126,7 +3126,7 @@ const lowWeight =
 const detuneAmount =
     0.0007 + (lowWeight * 0.0014);
 
-hammer.type = "triangle";
+hammer.type = "sine";
 
 const hammerRatio =
     2.7 + (notePosition * 0.7);
@@ -3295,13 +3295,22 @@ currentEngine = currentResonanceSource; // temporary compatibility bridge
     
   if (currentResonanceSource === "piano") {
     if (preset.masterVolume !== undefined) {
-      masterVolume.value = preset.masterVolume;
+        masterVolume.value = preset.masterVolume;
+
+        if (audioContext && masterGain) {
+            masterGain.gain.setTargetAtTime(
+                Number(preset.masterVolume),
+                audioContext.currentTime,
+                0.01
+            );
+        }
     }
 
     updateValueDisplays();
     stopAllNotes();
+    stopActivePianoNodes();
     return;
-  }
+}
 
   waveformSelect.value = preset.waveform;
   waveformBSelect.value = preset.waveformB;
