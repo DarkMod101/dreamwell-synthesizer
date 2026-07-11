@@ -3241,7 +3241,12 @@ hammerGain.connect(pianoFilter);
 const soundboardBloom = ctx.createGain();
 
 soundboardBloom.gain.setValueAtTime(
-    0.065 * pianoVoicing.soundboardBloom,
+    0.0001,
+    now
+);
+
+soundboardBloom.gain.linearRampToValueAtTime(
+    0.035 * pianoVoicing.soundboardBloom,
     now + 0.018
 );
 
