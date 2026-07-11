@@ -3003,7 +3003,6 @@ forgottenEmpire: {
 
 
 function createPianoNote(frequency) {
- alert("PIANO VERSION TEST");
     const ctx = getAudioContext();
   const now = ctx.currentTime;
 
