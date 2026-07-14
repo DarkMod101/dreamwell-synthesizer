@@ -3106,6 +3106,9 @@ const stringA = ctx.createOscillator();
 const stringB = ctx.createOscillator();
 
 const hammer = ctx.createOscillator();
+    const boundResonance = ctx.createOscillator();
+const boundResonanceGain = ctx.createGain();
+const boundResonanceFilter = ctx.createBiquadFilter();
 const hammerGain = ctx.createGain();
 const hammerFilter = ctx.createBiquadFilter();
 
@@ -3118,6 +3121,39 @@ const sympatheticFilter = ctx.createBiquadFilter();
 stringA.type = "sine";
 stringB.type = "sine";
 
+boundResonance.type = "sine";
+
+boundResonance.frequency.setValueAtTime(
+    frequency * 0.5,
+    now
+);
+
+boundResonanceFilter.type = "lowpass";
+boundResonanceFilter.frequency.setValueAtTime(
+    1200,
+    now
+);
+
+boundResonanceFilter.Q.setValueAtTime(
+    0.7,
+    now
+);
+
+boundResonanceGain.gain.setValueAtTime(
+    0.0001,
+    now
+);
+
+boundResonanceGain.gain.linearRampToValueAtTime(
+    0.035,
+    now + 0.08
+);
+
+boundResonanceGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    pianoTailEnd
+);
+    
 const notePosition =
     Math.min(1, Math.max(0, (frequency - 80) / 1200));
 
