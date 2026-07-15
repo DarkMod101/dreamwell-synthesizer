@@ -3106,9 +3106,16 @@ const stringA = ctx.createOscillator();
 const stringB = ctx.createOscillator();
 
 const hammer = ctx.createOscillator();
-    const boundResonance = ctx.createOscillator();
-const boundResonanceGain = ctx.createGain();
-const boundResonanceFilter = ctx.createBiquadFilter();
+    
+const boundResonanceA = ctx.createOscillator();
+const boundResonanceB = ctx.createOscillator();
+
+const boundResonanceGainA = ctx.createGain();
+const boundResonanceGainB = ctx.createGain();
+
+const boundResonanceFilterA = ctx.createBiquadFilter();
+const boundResonanceFilterB = ctx.createBiquadFilter();
+    
 const hammerGain = ctx.createGain();
 const hammerFilter = ctx.createBiquadFilter();
 
@@ -3121,49 +3128,78 @@ const sympatheticFilter = ctx.createBiquadFilter();
 stringA.type = "sine";
 stringB.type = "sine";
 
-const waveFusion =
-    getValue(waveFusionSlider, 50) / 100;
-
-const boundWaveform =
-    waveFusion < 0.5
-        ? (waveformSelect?.value || "sine")
-        : (waveformBSelect?.value || "triangle");
-
-console.log("Bound waveform:", boundWaveform);
     
 applyWaveform(
-    boundResonance,
-    boundWaveform,
+    boundResonanceA,
+    waveformSelect?.value || "sine",
     ctx
 );
 
-boundResonance.frequency.setValueAtTime(
-    frequency * 1.0,
+applyWaveform(
+    boundResonanceB,
+    waveformBSelect?.value || "triangle",
+    ctx
+);
+
+boundResonanceA.frequency.setValueAtTime(
+    frequency,
     now
 );
 
-boundResonanceFilter.type = "lowpass";
-boundResonanceFilter.frequency.setValueAtTime(
+boundResonanceB.frequency.setValueAtTime(
+    frequency,
+    now
+);
+
+boundResonanceFilterA.type = "lowpass";
+boundResonanceFilterB.type = "lowpass";
+
+boundResonanceFilterA.frequency.setValueAtTime(
     4000,
     now
 );
 
-boundResonanceFilter.Q.setValueAtTime(
+boundResonanceFilterB.frequency.setValueAtTime(
+    4000,
+    now
+);
+
+boundResonanceFilterA.Q.setValueAtTime(
     1.5,
     now
 );
 
-boundResonanceGain.gain.setValueAtTime(
+boundResonanceFilterB.Q.setValueAtTime(
+    1.5,
+    now
+);
+
+boundResonanceGainA.gain.setValueAtTime(
     0.0001,
     now
 );
 
-boundResonanceGain.gain.linearRampToValueAtTime(
+boundResonanceGainB.gain.setValueAtTime(
+    0.0001,
+    now
+);
+
+boundResonanceGainA.gain.linearRampToValueAtTime(
     0.20,
     now + 0.08
 );
 
-boundResonanceGain.gain.exponentialRampToValueAtTime(
+boundResonanceGainB.gain.linearRampToValueAtTime(
+    0.20,
+    now + 0.08
+);
+
+boundResonanceGainA.gain.exponentialRampToValueAtTime(
+    0.001,
+    pianoTailEnd
+);
+
+boundResonanceGainB.gain.exponentialRampToValueAtTime(
     0.001,
     pianoTailEnd
 );
