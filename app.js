@@ -3184,13 +3184,34 @@ boundResonanceGainB.gain.setValueAtTime(
     now
 );
 
+const rawWaveFusion =
+    getValue(waveFusionSlider, 50) / 100;
+
+const fusionCurve =
+    waveFusionCurveSelect
+        ? waveFusionCurveSelect.value
+        : "smooth";
+
+const shapedWaveFusion =
+    shapeWaveFusion(rawWaveFusion, fusionCurve);
+
+const boundGainA =
+    0.20 * Math.cos(
+        shapedWaveFusion * Math.PI * 0.5
+    );
+
+const boundGainB =
+    0.20 * Math.sin(
+        shapedWaveFusion * Math.PI * 0.5
+    );
+
 boundResonanceGainA.gain.linearRampToValueAtTime(
-    0.20,
+    Math.max(0.0001, boundGainA),
     now + 0.08
 );
 
 boundResonanceGainB.gain.linearRampToValueAtTime(
-    0.20,
+    Math.max(0.0001, boundGainB),
     now + 0.08
 );
 
