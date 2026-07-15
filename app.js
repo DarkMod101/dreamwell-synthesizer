@@ -3124,6 +3124,8 @@ stringB.type = "sine";
 const boundWaveform =
     waveformSelect ? waveformSelect.value : "sine";
 
+console.log("Bound waveform:", boundWaveform);
+    
 applyWaveform(
     boundResonance,
     boundWaveform,
