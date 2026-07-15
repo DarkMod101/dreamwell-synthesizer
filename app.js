@@ -3121,8 +3121,13 @@ const sympatheticFilter = ctx.createBiquadFilter();
 stringA.type = "sine";
 stringB.type = "sine";
 
+const waveFusion =
+    getValue(waveFusionSlider, 50) / 100;
+
 const boundWaveform =
-    waveformSelect ? waveformSelect.value : "sine";
+    waveFusion < 0.5
+        ? (waveformSelect?.value || "sine")
+        : (waveformBSelect?.value || "triangle");
 
 console.log("Bound waveform:", boundWaveform);
     
