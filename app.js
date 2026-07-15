@@ -3364,23 +3364,28 @@ voiceOut.connect(pianoPan);
   pianoPan.connect(reverbNode);
   pianoPan.connect(delayDryGain);
   pianoPan.connect(delayNode);
-
-  stringA.start(now + 0.0018);
+ 
+stringA.start(now + 0.0018);
 stringB.start(now + 0.0035);
 
-boundResonance.start(now + 0.004);
+boundResonanceA.start(now + 0.004);
+boundResonanceB.start(now + 0.004);
+    
 hammer.start(now + 0.001);
     
-  stringA.stop(pianoTailEnd + 0.1);
+stringA.stop(pianoTailEnd + 0.1);
 stringB.stop(pianoTailEnd + 0.1);
-boundResonance.stop(pianoTailEnd + 0.1);
+boundResonanceA.stop(pianoTailEnd + 0.1);
+boundResonanceB.stop(pianoTailEnd + 0.1);
+
 hammer.stop(now + 0.09);
     
   activePianoNodes.push({
     oscillators: [
     stringA,
     stringB,
-    boundResonance,
+    boundResonanceA,
+    boundResonanceB,
     hammer
 ],
     nodes: [
@@ -3389,8 +3394,10 @@ hammer.stop(now + 0.09);
         stringAGain,
         stringBGain,
         pianoFilter,
-        boundResonanceGain,
-        boundResonanceFilter,
+        boundResonanceGainA,
+        boundResonanceGainB,
+        boundResonanceFilterA,
+        boundResonanceFilterB,
         voiceOut
     ]
 });
