@@ -3133,18 +3133,18 @@ applyWaveform(
 );
 
 boundResonance.frequency.setValueAtTime(
-    frequency * 0.5,
+    frequency * 1.0,
     now
 );
 
 boundResonanceFilter.type = "lowpass";
 boundResonanceFilter.frequency.setValueAtTime(
-    1200,
+    4000,
     now
 );
 
 boundResonanceFilter.Q.setValueAtTime(
-    0.7,
+    1.5,
     now
 );
 
