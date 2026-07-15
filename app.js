@@ -3267,6 +3267,10 @@ pianoFilter.Q.setValueAtTime(
   stringAGain.connect(pianoFilter);
   stringBGain.connect(pianoFilter);
 
+boundResonance.connect(boundResonanceFilter);
+boundResonanceFilter.connect(boundResonanceGain);
+boundResonanceGain.connect(voiceOut);
+    
 stringAGain.connect(sympatheticFilter);
 stringBGain.connect(sympatheticFilter);
 sympatheticFilter.connect(sympatheticGain);
@@ -3310,19 +3314,29 @@ voiceOut.connect(pianoPan);
   stringA.start(now + 0.0018);
 stringB.start(now + 0.0035);
 
+boundResonance.start(now + 0.004);
 hammer.start(now + 0.001);
     
   stringA.stop(pianoTailEnd + 0.1);
 stringB.stop(pianoTailEnd + 0.1);
-    hammer.stop(now + 0.09);
+boundResonance.stop(pianoTailEnd + 0.1);
+hammer.stop(now + 0.09);
+    
   activePianoNodes.push({
-    oscillators: [stringA, stringB, hammer],
+    oscillators: [
+    stringA,
+    stringB,
+    boundResonance,
+    hammer
+],
     nodes: [
         hammerGain,
         hammerFilter,
         stringAGain,
         stringBGain,
         pianoFilter,
+        boundResonanceGain,
+        boundResonanceFilter,
         voiceOut
     ]
 });
