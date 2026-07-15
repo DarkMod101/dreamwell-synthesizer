@@ -3121,7 +3121,14 @@ const sympatheticFilter = ctx.createBiquadFilter();
 stringA.type = "sine";
 stringB.type = "sine";
 
-boundResonance.type = "sine";
+const boundWaveform =
+    waveformSelect ? waveformSelect.value : "sine";
+
+applyWaveform(
+    boundResonance,
+    boundWaveform,
+    ctx
+);
 
 boundResonance.frequency.setValueAtTime(
     frequency * 0.5,
