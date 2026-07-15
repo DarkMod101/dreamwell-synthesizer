@@ -3317,9 +3317,13 @@ pianoFilter.Q.setValueAtTime(
   stringAGain.connect(pianoFilter);
   stringBGain.connect(pianoFilter);
 
-boundResonance.connect(boundResonanceFilter);
-boundResonanceFilter.connect(boundResonanceGain);
-boundResonanceGain.connect(voiceOut);
+boundResonanceA.connect(boundResonanceFilterA);
+boundResonanceFilterA.connect(boundResonanceGainA);
+boundResonanceGainA.connect(voiceOut);
+
+boundResonanceB.connect(boundResonanceFilterB);
+boundResonanceFilterB.connect(boundResonanceGainB);
+boundResonanceGainB.connect(voiceOut);
     
 stringAGain.connect(sympatheticFilter);
 stringBGain.connect(sympatheticFilter);
