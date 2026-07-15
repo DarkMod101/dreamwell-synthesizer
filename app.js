@@ -3154,7 +3154,7 @@ boundResonanceGain.gain.setValueAtTime(
 );
 
 boundResonanceGain.gain.linearRampToValueAtTime(
-    0.035,
+    0.20,
     now + 0.08
 );
 
