@@ -3067,6 +3067,26 @@ pianoPan.pan.setValueAtTime(
     (normalizedRange * 1.2) - 0.6,
     now
 );
+
+const pianoOrbitLFO = ctx.createOscillator();
+const pianoOrbitDepth = ctx.createGain();
+
+pianoOrbitLFO.type = "sine";
+
+pianoOrbitLFO.frequency.setValueAtTime(
+    0.035,
+    now
+);
+
+pianoOrbitDepth.gain.setValueAtTime(
+    deepDreamOrbitCheckbox?.checked
+        ? 0.16 + (presence * 0.08)
+        : 0,
+    now
+);
+
+pianoOrbitLFO.connect(pianoOrbitDepth);
+pianoOrbitDepth.connect(pianoPan.pan);
     
   const pianoAttack =
     Math.min(0.04, Math.max(0.004, getValue(attackSlider, 0.01) * 0.5));
@@ -3413,6 +3433,8 @@ stringB.start(now + 0.0035);
 
 boundResonanceA.start(now + 0.004);
 boundResonanceB.start(now + 0.004);
+
+pianoOrbitLFO.start(now);
     
 hammer.start(now + 0.001);
     
@@ -3420,6 +3442,8 @@ stringA.stop(pianoTailEnd + 0.1);
 stringB.stop(pianoTailEnd + 0.1);
 boundResonanceA.stop(pianoTailEnd + 0.1);
 boundResonanceB.stop(pianoTailEnd + 0.1);
+
+pianoOrbitLFO.stop(pianoTailEnd + 0.1);
 
 hammer.stop(now + 0.09);
     
@@ -3429,20 +3453,22 @@ hammer.stop(now + 0.09);
     stringB,
     boundResonanceA,
     boundResonanceB,
+    pianoOrbitLFO,
     hammer
 ],
     nodes: [
-        hammerGain,
-        hammerFilter,
-        stringAGain,
-        stringBGain,
-        pianoFilter,
-        boundResonanceGainA,
-        boundResonanceGainB,
-        boundResonanceFilterA,
-        boundResonanceFilterB,
-        voiceOut
-    ]
+    hammerGain,
+    hammerFilter,
+    stringAGain,
+    stringBGain,
+    pianoFilter,
+    boundResonanceGainA,
+    boundResonanceGainB,
+    boundResonanceFilterA,
+    boundResonanceFilterB,
+    pianoOrbitDepth,
+    voiceOut
+]
 });
     }
 function applyPresetSettings(preset) {
