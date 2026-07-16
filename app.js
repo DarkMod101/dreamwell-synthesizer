@@ -3154,23 +3154,38 @@ boundResonanceB.frequency.setValueAtTime(
 boundResonanceFilterA.type = "lowpass";
 boundResonanceFilterB.type = "lowpass";
 
+const boundOriginCutoff =
+    Math.max(
+        700,
+        Math.min(
+            8000,
+            4000 + originSettings.filterShift
+        )
+    );
+
+const boundOriginResonance =
+    Math.max(
+        0.3,
+        1.5 + originSettings.resonanceBoost
+    );
+
 boundResonanceFilterA.frequency.setValueAtTime(
-    4000,
+    boundOriginCutoff,
     now
 );
 
 boundResonanceFilterB.frequency.setValueAtTime(
-    4000,
+    boundOriginCutoff,
     now
 );
 
 boundResonanceFilterA.Q.setValueAtTime(
-    1.5,
+    boundOriginResonance,
     now
 );
 
 boundResonanceFilterB.Q.setValueAtTime(
-    1.5,
+    boundOriginResonance,
     now
 );
 
