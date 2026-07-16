@@ -1572,8 +1572,8 @@ if (originSelect) {
 const presetBanks = {
   signature: {
 
-    pianoTest: {
-    name: "Piano Test",
+    grandPiano: {
+    name: "Grand Piano",
     engine: "piano",
     settings: {
         masterVolume: 0.8,
