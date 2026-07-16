@@ -960,21 +960,21 @@ function startPianoWaveFusionModulation() {
 
         activePianoNodes.forEach((voice) => {
             if (
-                voice.boundResonanceGainA &&
-                voice.boundResonanceGainB
-            ) {
-                voice.boundResonanceGainA.gain.setTargetAtTime(
-                    Math.max(0.0001, boundGainA),
-                    ctx.currentTime,
-                    0.05
-                );
+    voice.boundResonanceMorphGainA &&
+    voice.boundResonanceMorphGainB
+) {
+    voice.boundResonanceMorphGainA.gain.setTargetAtTime(
+        Math.max(0.0001, boundGainA),
+        ctx.currentTime,
+        0.08
+    );
 
-                voice.boundResonanceGainB.gain.setTargetAtTime(
-                    Math.max(0.0001, boundGainB),
-                    ctx.currentTime,
-                    0.05
-                );
-            }
+    voice.boundResonanceMorphGainB.gain.setTargetAtTime(
+        Math.max(0.0001, boundGainB),
+        ctx.currentTime,
+        0.08
+    );
+}
         });
 
         if (activePianoNodes.length === 0) {
@@ -3220,6 +3220,9 @@ const boundResonanceB = ctx.createOscillator();
 const boundResonanceGainA = ctx.createGain();
 const boundResonanceGainB = ctx.createGain();
 
+const boundResonanceMorphGainA = ctx.createGain();
+const boundResonanceMorphGainB = ctx.createGain();
+    
 const boundResonanceFilterA = ctx.createBiquadFilter();
 const boundResonanceFilterB = ctx.createBiquadFilter();
     
@@ -3335,15 +3338,25 @@ const boundGainB =
     );
 
 boundResonanceGainA.gain.linearRampToValueAtTime(
-    Math.max(0.0001, boundGainA),
+    1.0,
     now + 0.08
 );
 
 boundResonanceGainB.gain.linearRampToValueAtTime(
-    Math.max(0.0001, boundGainB),
+    1.0,
     now + 0.08
 );
 
+boundResonanceMorphGainA.gain.setValueAtTime(
+    Math.max(0.0001, boundGainA),
+    now
+);
+
+boundResonanceMorphGainB.gain.setValueAtTime(
+    Math.max(0.0001, boundGainB),
+    now
+);
+    
 boundResonanceGainA.gain.exponentialRampToValueAtTime(
     0.001,
     pianoTailEnd
@@ -3469,11 +3482,13 @@ pianoFilter.Q.setValueAtTime(
 
 boundResonanceA.connect(boundResonanceFilterA);
 boundResonanceFilterA.connect(boundResonanceGainA);
-boundResonanceGainA.connect(voiceOut);
+boundResonanceGainA.connect(boundResonanceMorphGainA);
+boundResonanceMorphGainA.connect(voiceOut);
 
 boundResonanceB.connect(boundResonanceFilterB);
 boundResonanceFilterB.connect(boundResonanceGainB);
-boundResonanceGainB.connect(voiceOut);
+boundResonanceGainB.connect(boundResonanceMorphGainB);
+boundResonanceMorphGainB.connect(voiceOut);
     
 stringAGain.connect(sympatheticFilter);
 stringBGain.connect(sympatheticFilter);
@@ -3535,8 +3550,8 @@ pianoOrbitLFO.stop(pianoTailEnd + 0.1);
 hammer.stop(now + 0.09);
     
   activePianoNodes.push({
-    boundResonanceGainA,
-    boundResonanceGainB,
+    boundResonanceMorphGainA,
+    boundResonanceMorphGainB,
 
     oscillators: [
     stringA,
@@ -3552,10 +3567,16 @@ hammer.stop(now + 0.09);
     stringAGain,
     stringBGain,
     pianoFilter,
+
     boundResonanceGainA,
     boundResonanceGainB,
+
+    boundResonanceMorphGainA,
+    boundResonanceMorphGainB,
+
     boundResonanceFilterA,
     boundResonanceFilterB,
+
     pianoOrbitDepth,
     voiceOut
 ]
