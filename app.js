@@ -3210,13 +3210,20 @@ const fusionCurve =
 const shapedWaveFusion =
     shapeWaveFusion(rawWaveFusion, fusionCurve);
 
+const boundPresenceBoost =
+    1.0 + (presence * 0.75);
+
 const boundGainA =
-    0.20 * Math.cos(
+    0.20 *
+    boundPresenceBoost *
+    Math.cos(
         shapedWaveFusion * Math.PI * 0.5
     );
 
 const boundGainB =
-    0.20 * Math.sin(
+    0.20 *
+    boundPresenceBoost *
+    Math.sin(
         shapedWaveFusion * Math.PI * 0.5
     );
 
