@@ -34,6 +34,7 @@ const activeNotes = new Map();
 const activeTouchKeys = new Map();
 let lastPlayedFrequency = null;
 let waveFusionModulationTimer = null;
+let pianoWaveFusionModulationTimer = null;
 let lastTouchTime = 0;
 let trapezoidWave = null;
 
@@ -896,6 +897,92 @@ function startWaveFusionModulation() {
         if (activeNotes.size === 0) {
             clearInterval(waveFusionModulationTimer);
             waveFusionModulationTimer = null;
+        }
+    }, 80);
+}
+
+function startPianoWaveFusionModulation() {
+    if (pianoWaveFusionModulationTimer !== null) return;
+
+    pianoWaveFusionModulationTimer = setInterval(() => {
+        if (!audioContext) return;
+
+        const ctx = audioContext;
+
+        const rawWaveFusion =
+            getValue(waveFusionSlider, 50) / 100;
+
+        const morphMotion =
+            dreamMorphMotionCheckbox?.checked;
+
+        const morphDrift =
+            morphMotion
+                ? Math.sin(ctx.currentTime * 0.12) * 0.08
+                : 0;
+
+        const fusionCurve =
+            waveFusionCurveSelect?.value || "smooth";
+
+        const adjustedWaveFusion =
+            Math.min(
+                1,
+                Math.max(
+                    0,
+                    rawWaveFusion + morphDrift
+                )
+            );
+
+        const shapedWaveFusion =
+            shapeWaveFusion(
+                adjustedWaveFusion,
+                fusionCurve
+            );
+
+        const presence =
+            getValue(presenceSlider, 0) / 100;
+
+        const boundPresenceBoost =
+            1.0 + (presence * 0.75);
+
+        const boundGainA =
+            0.20 *
+            boundPresenceBoost *
+            Math.cos(
+                shapedWaveFusion * Math.PI * 0.5
+            );
+
+        const boundGainB =
+            0.20 *
+            boundPresenceBoost *
+            Math.sin(
+                shapedWaveFusion * Math.PI * 0.5
+            );
+
+        activePianoNodes.forEach((voice) => {
+            if (
+                voice.boundResonanceGainA &&
+                voice.boundResonanceGainB
+            ) {
+                voice.boundResonanceGainA.gain.setTargetAtTime(
+                    Math.max(0.0001, boundGainA),
+                    ctx.currentTime,
+                    0.05
+                );
+
+                voice.boundResonanceGainB.gain.setTargetAtTime(
+                    Math.max(0.0001, boundGainB),
+                    ctx.currentTime,
+                    0.05
+                );
+            }
+        });
+
+        if (activePianoNodes.length === 0) {
+            clearInterval(
+                pianoWaveFusionModulationTimer
+            );
+
+            pianoWaveFusionModulationTimer = null;
         }
     }, 80);
 }
@@ -3448,6 +3535,9 @@ pianoOrbitLFO.stop(pianoTailEnd + 0.1);
 hammer.stop(now + 0.09);
     
   activePianoNodes.push({
+    boundResonanceGainA,
+    boundResonanceGainB,
+
     oscillators: [
     stringA,
     stringB,
@@ -3470,6 +3560,7 @@ hammer.stop(now + 0.09);
     voiceOut
 ]
 });
+    startPianoWaveFusionModulation();
     }
 function applyPresetSettings(preset) {
   if (!preset) return;
