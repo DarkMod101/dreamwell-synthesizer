@@ -3252,8 +3252,20 @@ pianoTextureSource.loop = true;
 
 pianoTextureFilter.type = "lowpass";
 
+const pianoTextureCutoffs = {
+    white: 4800,
+    air: 6200,
+    dust: 5600,
+    dark: 2400,
+    cosmic: 3800,
+    machine: 4600
+};
+
+const pianoTextureCutoff =
+    pianoTextureCutoffs[pianoTextureType] || 4800;
+
 pianoTextureFilter.frequency.setValueAtTime(
-    4800 + (presence * 1200),
+    pianoTextureCutoff + (presence * 1200),
     now
 );
 
@@ -3262,9 +3274,22 @@ pianoTextureFilter.Q.setValueAtTime(
     now
 );
 
+const pianoTextureLevelBoosts = {
+    white: 1.0,
+    air: 1.0,
+    dust: 1.0,
+    dark: 1.15,
+    cosmic: 2.4,
+    machine: 2.1
+};
+
+const pianoTextureLevelBoost =
+    pianoTextureLevelBoosts[pianoTextureType] || 1.0;
+
 const pianoTextureLevel =
     pianoTextureAmount *
     0.045 *
+    pianoTextureLevelBoost *
     (1.0 + presence * 0.5);
 
 pianoTextureGain.gain.setValueAtTime(
