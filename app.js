@@ -3096,6 +3096,16 @@ function createPianoNote(frequency) {
   const noteVariation = (Math.random() - 0.5) * 0.004;  
 
 const pitchDrift = (Math.random() - 0.5) * 0.8;
+
+const repeatedVoice = activePianoNodes.find(
+    (voice) =>
+        Math.abs(voice.frequency - frequency) < 0.01 &&
+        !voice.cleaned
+);
+
+if (repeatedVoice?.steal) {
+    repeatedVoice.steal();
+}
     
 if (activePianoNodes.length >= MAX_PIANO_VOICES) {
     const oldVoice = activePianoNodes.shift();
@@ -3719,6 +3729,10 @@ function cleanupPianoVoice() {
 
     pianoVoiceCleaned = true;
 
+if (pianoVoice) {
+    pianoVoice.cleaned = true;
+}
+   
     if (pianoVoiceCleanupTimer !== null) {
         clearTimeout(pianoVoiceCleanupTimer);
         pianoVoiceCleanupTimer = null;
@@ -3813,9 +3827,12 @@ function stealPianoVoice() {
 }
 
 pianoVoice = {
+    frequency,
+    cleaned: false,
+
     boundResonanceMorphGainA,
     boundResonanceMorphGainB,
-
+    
     oscillators: pianoOscillators,
     nodes: pianoProcessingNodes,
 
