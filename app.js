@@ -3234,6 +3234,53 @@ const stringBGain = ctx.createGain();
 
 const sympatheticGain = ctx.createGain();
 const sympatheticFilter = ctx.createBiquadFilter();
+
+const pianoTextureSource = ctx.createBufferSource();
+const pianoTextureGain = ctx.createGain();
+const pianoTextureFilter = ctx.createBiquadFilter();
+
+const pianoTextureType =
+    noiseTypeSelect?.value || "white";
+
+const pianoTextureAmount =
+    getValue(noiseAmountSlider, 0) / 100;
+
+pianoTextureSource.buffer =
+    createNoiseBuffer(ctx, pianoTextureType);
+
+pianoTextureSource.loop = true;
+
+pianoTextureFilter.type = "lowpass";
+
+pianoTextureFilter.frequency.setValueAtTime(
+    4800 + (presence * 1200),
+    now
+);
+
+pianoTextureFilter.Q.setValueAtTime(
+    0.6,
+    now
+);
+
+const pianoTextureLevel =
+    pianoTextureAmount *
+    0.045 *
+    (1.0 + presence * 0.5);
+
+pianoTextureGain.gain.setValueAtTime(
+    0.0001,
+    now
+);
+
+pianoTextureGain.gain.linearRampToValueAtTime(
+    Math.max(0.0001, pianoTextureLevel),
+    now + 0.12
+);
+
+pianoTextureGain.gain.exponentialRampToValueAtTime(
+    0.001,
+    pianoTailEnd
+);
     
 stringA.type = "sine";
 stringB.type = "sine";
@@ -3498,6 +3545,10 @@ sympatheticGain.connect(voiceOut);
 hammer.connect(hammerFilter);
 hammerFilter.connect(hammerGain);
 hammerGain.connect(pianoFilter);
+
+pianoTextureSource.connect(pianoTextureFilter);
+pianoTextureFilter.connect(pianoTextureGain);
+pianoTextureGain.connect(voiceOut);
     
   // Piano signal now blooms through soundboardBloom before voiceOut.
 
@@ -3536,6 +3587,8 @@ stringB.start(now + 0.0035);
 boundResonanceA.start(now + 0.004);
 boundResonanceB.start(now + 0.004);
 
+pianoTextureSource.start(now);
+    
 pianoOrbitLFO.start(now);
     
 hammer.start(now + 0.001);
@@ -3545,6 +3598,8 @@ stringB.stop(pianoTailEnd + 0.1);
 boundResonanceA.stop(pianoTailEnd + 0.1);
 boundResonanceB.stop(pianoTailEnd + 0.1);
 
+pianoTextureSource.stop(pianoTailEnd + 0.1);
+    
 pianoOrbitLFO.stop(pianoTailEnd + 0.1);
 
 hammer.stop(now + 0.09);
@@ -3558,6 +3613,7 @@ hammer.stop(now + 0.09);
     stringB,
     boundResonanceA,
     boundResonanceB,
+    pianoTextureSource,
     pianoOrbitLFO,
     hammer
 ],
@@ -3577,6 +3633,9 @@ hammer.stop(now + 0.09);
     boundResonanceFilterA,
     boundResonanceFilterB,
 
+    pianoTextureGain,
+    pianoTextureFilter,
+        
     pianoOrbitDepth,
     voiceOut
 ]
