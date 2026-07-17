@@ -3555,16 +3555,24 @@ stringBGain.gain.setValueAtTime(
   const pianoFilter = ctx.createBiquadFilter();
   pianoFilter.type = "lowpass";
   const pianoPresenceCutoff =
+  Math.min(
+    7200,
     Math.max(
-        900,
-        4200 +
-        originSettings.filterShift +
-        (presence * 3200)
-    );
+      900,
+      4200 +
+      originSettings.filterShift +
+      (presence * 2200)
+    )
+  );
 
 pianoFilter.frequency.setValueAtTime(
-    pianoPresenceCutoff,
-    now
+  Math.max(900, pianoPresenceCutoff * 0.72),
+  now
+);
+
+pianoFilter.frequency.exponentialRampToValueAtTime(
+  pianoPresenceCutoff,
+  now + 0.018
 );
 
 pianoFilter.Q.setValueAtTime(
@@ -3610,10 +3618,11 @@ soundboardBloom.gain.setValueAtTime(
 );
 
 soundboardBloom.gain.linearRampToValueAtTime(
-    0.035 * pianoVoicing.soundboardBloom,
-    now + 0.018
+  0.035 *
+  pianoVoicing.soundboardBloom *
+  (1 - presence * 0.18),
+  now + 0.018
 );
-
 soundboardBloom.gain.exponentialRampToValueAtTime(
     0.001,
     now + 2.8
