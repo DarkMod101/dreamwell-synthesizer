@@ -1472,7 +1472,7 @@ arpPlayedOrder =
         (note) => note !== Number(frequency)
     );
       
-  setKeyLatched(frequency, false);
+  refreshLatchedKeyHighlights();
 
       if (arpHeldNotes.size === 0) {
         stopDreamArp();
@@ -1493,7 +1493,7 @@ if (!arpPlayedOrder.includes(Number(frequency))) {
   }
 
   playNote(frequency);
-  setKeyActive(frequency, true);
+  refreshLatchedKeyHighlights();
 }
 
 function endInputNote(frequency) {
