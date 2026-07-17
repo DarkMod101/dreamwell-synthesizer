@@ -1512,8 +1512,11 @@ setKeyActive(frequency, false);
 function updateKeyboardOctave() {
   keys.forEach((key) => {
     const baseFrequency = Number(key.dataset.note);
-    const shiftedFrequency = baseFrequency * Math.pow(2, octaveShift);
-    key.dataset.currentNote = shiftedFrequency.toFixed(2);
+    const shiftedFrequency =
+      baseFrequency * Math.pow(2, octaveShift);
+
+    key.dataset.currentNote =
+      shiftedFrequency.toFixed(2);
   });
 
   if (octaveDisplay) {
@@ -1522,6 +1525,10 @@ function updateKeyboardOctave() {
   }
 
   stopAllNotes();
+
+  if (activePianoNodes.length > 0) {
+    stopActivePianoNodes();
+  }
 }
 
 function getKeyFrequency(key) {
