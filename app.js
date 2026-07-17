@@ -3265,8 +3265,14 @@ const pianoTextureCutoff =
     pianoTextureCutoffs[pianoTextureType] || 4800;
 
 pianoTextureFilter.frequency.setValueAtTime(
-    pianoTextureCutoff + (presence * 1200),
+    200,
     now
+);
+
+pianoTextureFilter.frequency.setTargetAtTime(
+    pianoTextureCutoff + (presence * 1200),
+    now,
+    0.03
 );
 
 pianoTextureFilter.Q.setValueAtTime(
@@ -3292,14 +3298,17 @@ const pianoTextureLevel =
     pianoTextureLevelBoost *
     (1.0 + presence * 0.5);
 
+pianoTextureGain.gain.cancelScheduledValues(now);
+
 pianoTextureGain.gain.setValueAtTime(
     0.0001,
     now
 );
 
-pianoTextureGain.gain.linearRampToValueAtTime(
+pianoTextureGain.gain.setTargetAtTime(
     Math.max(0.0001, pianoTextureLevel),
-    now + 0.12
+    now,
+    0.04
 );
 
 pianoTextureGain.gain.exponentialRampToValueAtTime(
@@ -3612,7 +3621,7 @@ stringB.start(now + 0.0035);
 boundResonanceA.start(now + 0.004);
 boundResonanceB.start(now + 0.004);
 
-pianoTextureSource.start(now);
+pianoTextureSource.start(now + 0.005);
     
 pianoOrbitLFO.start(now);
     
