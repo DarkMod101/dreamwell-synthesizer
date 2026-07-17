@@ -3159,8 +3159,27 @@ pianoOrbitDepth.gain.setValueAtTime(
 pianoOrbitLFO.connect(pianoOrbitDepth);
 pianoOrbitDepth.connect(pianoPan.pan);
     
-  const pianoAttack =
-    Math.min(0.04, Math.max(0.004, getValue(attackSlider, 0.01) * 0.5));
+  const basePianoAttack =
+    Math.min(
+        0.04,
+        Math.max(
+            0.004,
+            getValue(attackSlider, 0.01) * 0.5
+        )
+    );
+
+const lowNoteAttackProtection =
+    frequency < 110
+        ? 0.012
+        : frequency < 220
+            ? 0.008
+            : 0;
+
+const pianoAttack =
+    Math.max(
+        basePianoAttack,
+        lowNoteAttackProtection
+    );
 
 const pianoDecay =
     Math.min(4.0, Math.max(0.8, getValue(decaySlider, 1.8)));
@@ -3733,9 +3752,15 @@ function stealPianoVoice() {
     pianoVoiceStopRequested = true;
 
     const stealNow = ctx.currentTime;
-    const fadeDuration = 0.035;
+    const fadeDuration =
+    frequency < 110
+        ? 0.085
+        : frequency < 220
+            ? 0.06
+            : 0.04;
+    
     const stopTime =
-        stealNow + fadeDuration + 0.015;
+    stealNow + fadeDuration + 0.025;
 
     voiceOut.gain.cancelScheduledValues(
         stealNow
