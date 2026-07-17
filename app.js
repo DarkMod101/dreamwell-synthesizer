@@ -1202,26 +1202,19 @@ stereoPanner.connect(delayNode);
 
 
 function stopActivePianoNodes() {
-  activePianoNodes.forEach((voice) => {
-    try {
-      if (voice.oscillators) {
-        voice.oscillators.forEach((node) => {
-          if (node.stop) node.stop();
-          if (node.disconnect) node.disconnect();
-        });
-      }
+    const voices = [...activePianoNodes];
 
-      if (voice.nodes) {
-        voice.nodes.forEach((node) => {
-          if (node.disconnect) node.disconnect();
-        });
-      }
-    } catch (error) {
-      // Already stopped or disconnected
-    }
-  });
-
-  activePianoNodes = [];
+    voices.forEach((voice) => {
+        try {
+            if (voice.steal) {
+                voice.steal();
+            } else if (voice.cleanup) {
+                voice.cleanup();
+            }
+        } catch (error) {
+            // Voice was already stopped.
+        }
+    });
 }
 
 function playNote(frequency) {
@@ -3097,22 +3090,13 @@ function createPianoNote(frequency) {
 
 const pitchDrift = (Math.random() - 0.5) * 0.8;
     
-while (activePianoNodes.length >= MAX_PIANO_VOICES) {
+if (activePianoNodes.length >= MAX_PIANO_VOICES) {
     const oldVoice = activePianoNodes.shift();
 
-    try {
-        oldVoice.oscillators.forEach(node => {
-            if (node.stop) node.stop();
-        });
-
-        oldVoice.nodes.forEach(node => {
-            if (node.disconnect) node.disconnect();
-        });
-    } catch (e) {
-        // Safe cleanup
+    if (oldVoice?.steal) {
+        oldVoice.steal();
     }
 }
-
 const originSettings = getOriginSettings(
     originSelect ? originSelect.value : "pure"
 );
@@ -3638,11 +3622,11 @@ pianoOrbitLFO.stop(pianoTailEnd + 0.1);
 
 hammer.stop(now + 0.09);
     
-  activePianoNodes.push({
-    boundResonanceMorphGainA,
-    boundResonanceMorphGainB,
+  let pianoVoiceCleaned = false;
+let pianoVoiceStopRequested = false;
+let pianoVoiceCleanupTimer = null;
 
-    oscillators: [
+const pianoOscillators = [
     stringA,
     stringB,
     boundResonanceA,
@@ -3650,13 +3634,18 @@ hammer.stop(now + 0.09);
     pianoTextureSource,
     pianoOrbitLFO,
     hammer
-],
-    nodes: [
+];
+
+const pianoProcessingNodes = [
     hammerGain,
     hammerFilter,
+
     stringAGain,
     stringBGain,
     pianoFilter,
+
+    sympatheticGain,
+    sympatheticFilter,
 
     boundResonanceGainA,
     boundResonanceGainB,
@@ -3669,13 +3658,157 @@ hammer.stop(now + 0.09);
 
     pianoTextureGain,
     pianoTextureFilter,
-        
+
     pianoOrbitDepth,
+    pianoPan,
+
+    soundboardBloom,
     voiceOut
-]
-});
-    startPianoWaveFusionModulation();
+];
+
+let pianoVoice = null;
+
+function removePianoVoiceReference() {
+    const voiceIndex =
+        activePianoNodes.indexOf(pianoVoice);
+
+    if (voiceIndex !== -1) {
+        activePianoNodes.splice(voiceIndex, 1);
     }
+
+    if (
+        activePianoNodes.length === 0 &&
+        pianoWaveFusionModulationTimer !== null
+    ) {
+        clearInterval(
+            pianoWaveFusionModulationTimer
+        );
+
+        pianoWaveFusionModulationTimer = null;
+    }
+}
+
+function cleanupPianoVoice() {
+    if (pianoVoiceCleaned) return;
+
+    pianoVoiceCleaned = true;
+
+    if (pianoVoiceCleanupTimer !== null) {
+        clearTimeout(pianoVoiceCleanupTimer);
+        pianoVoiceCleanupTimer = null;
+    }
+
+    pianoOscillators.forEach((node) => {
+        if (!node) return;
+
+        try {
+            node.onended = null;
+            node.disconnect();
+        } catch (error) {
+            // Node was already disconnected.
+        }
+    });
+
+    pianoProcessingNodes.forEach((node) => {
+        if (!node) return;
+
+        try {
+            node.disconnect();
+        } catch (error) {
+            // Node was already disconnected.
+        }
+    });
+
+    removePianoVoiceReference();
+}
+
+function stealPianoVoice() {
+    if (
+        pianoVoiceCleaned ||
+        pianoVoiceStopRequested
+    ) {
+        return;
+    }
+
+    pianoVoiceStopRequested = true;
+
+    const stealNow = ctx.currentTime;
+    const fadeDuration = 0.035;
+    const stopTime =
+        stealNow + fadeDuration + 0.015;
+
+    voiceOut.gain.cancelScheduledValues(
+        stealNow
+    );
+
+    voiceOut.gain.setValueAtTime(
+        Math.max(
+            0.0001,
+            voiceOut.gain.value
+        ),
+        stealNow
+    );
+
+    voiceOut.gain.exponentialRampToValueAtTime(
+        0.0001,
+        stealNow + fadeDuration
+    );
+
+    pianoTextureGain.gain.cancelScheduledValues(
+        stealNow
+    );
+
+    pianoTextureGain.gain.setTargetAtTime(
+        0.0001,
+        stealNow,
+        0.012
+    );
+
+    pianoOscillators.forEach((node) => {
+        if (!node?.stop) return;
+
+        try {
+            node.stop(stopTime);
+        } catch (error) {
+            // Source may already have a stop time.
+        }
+    });
+
+    pianoVoiceCleanupTimer = setTimeout(
+        cleanupPianoVoice,
+        (fadeDuration + 0.08) * 1000
+    );
+}
+
+pianoVoice = {
+    boundResonanceMorphGainA,
+    boundResonanceMorphGainB,
+
+    oscillators: pianoOscillators,
+    nodes: pianoProcessingNodes,
+
+    steal: stealPianoVoice,
+    cleanup: cleanupPianoVoice
+};
+
+activePianoNodes.push(pianoVoice);
+
+const naturalCleanupDelay =
+    Math.max(
+        0,
+        pianoTailEnd -
+        ctx.currentTime +
+        0.25
+    ) * 1000;
+
+pianoVoiceCleanupTimer = setTimeout(
+    cleanupPianoVoice,
+    naturalCleanupDelay
+);
+
+startPianoWaveFusionModulation();
+}
+
 function applyPresetSettings(preset) {
   if (!preset) return;
 
