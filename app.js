@@ -1536,7 +1536,8 @@ function updateKeyboardOctave() {
       `Shift: ${octaveShift > 0 ? "+" : ""}${octaveShift}`;
   }
 
-  stopAllNotes();
+    stopAllNotes();
+  refreshLatchedKeyHighlights();
 }
 
 function getKeyFrequency(key) {
