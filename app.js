@@ -1441,6 +1441,18 @@ function setKeyLatched(frequency, latched) {
   });
 }
 
+function refreshLatchedKeyHighlights() {
+  keys.forEach((key) => {
+    const frequency = getKeyFrequency(key);
+    const noteId = String(frequency);
+
+    key.classList.toggle(
+      "key-latched",
+      arpHeldNotes.has(noteId)
+    );
+  });
+}
+
 function clearKeyHighlights() {
   keys.forEach((key) => {
     key.classList.remove("key-active");
