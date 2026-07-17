@@ -1525,10 +1525,6 @@ function updateKeyboardOctave() {
   }
 
   stopAllNotes();
-
-  if (activePianoNodes.length > 0) {
-    stopActivePianoNodes();
-  }
 }
 
 function getKeyFrequency(key) {
