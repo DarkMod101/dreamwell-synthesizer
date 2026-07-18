@@ -16,6 +16,7 @@ let pianoSustainPedalActive = false;
 let pianoAuditionMode = true;
 let activePianoNodes = [];
 const MAX_PIANO_VOICES = 18;
+let pianoPresetSoundboardBloom = 1.0;
 
 const pianoVoicing = {
     hammerBrightness: 1.0,
@@ -1946,6 +1947,7 @@ grandPiano: {
     engine: "piano",
     settings: {
         masterVolume: 0.8,
+        soundboardBloom: 1.0,
     },
 },
 
@@ -1954,6 +1956,7 @@ dreamGrand: {
     engine: "piano",
     settings: {
         masterVolume: 0.8,
+        soundboardBloom: 1.25,
     },
 },
       
@@ -3156,7 +3159,12 @@ pianoVoicing.bodyDepth =
     1.0 + (presence * 0.25) + (lowRange * 0.22);
 
 pianoVoicing.soundboardBloom =
-    1.0 + (presence * 0.35) + (lowRange * 0.15);
+    pianoPresetSoundboardBloom *
+    (
+        1.0 +
+        (presence * 0.35) +
+        (lowRange * 0.15)
+    );
 
 pianoVoicing.cabinetSize =
     1.0 + (presence * 0.20) + (lowRange * 0.18);
@@ -3893,6 +3901,9 @@ function applyPresetSettings(preset) {
 currentEngine = currentResonanceSource; // temporary compatibility bridge
     
   if (currentResonanceSource === "piano") {
+    pianoPresetSoundboardBloom =
+        preset.soundboardBloom ?? 1.0;
+
     if (preset.masterVolume !== undefined) {
         masterVolume.value = preset.masterVolume;
 
