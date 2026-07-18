@@ -1956,7 +1956,7 @@ dreamGrand: {
     engine: "piano",
     settings: {
         masterVolume: 0.8,
-        soundboardBloom: 1.25,
+        soundboardBloom: 6.0,
     },
 },
       
