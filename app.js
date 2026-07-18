@@ -1945,7 +1945,33 @@ const presetBanks = {
 grandPiano: {
     name: "Grand Piano",
     engine: "piano",
+
     settings: {
+        attack: 0.02,
+        decay: 1.8,
+        sustain: 0.25,
+        release: 2.8,
+
+        origin: "pure",
+        presence: 15,
+
+        waveFusion: 0,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: false,
+
+        noiseType: "air",
+        noiseAmount: 0,
+        drift: 0,
+        stereoWidth: 30,
+        deepDreamOrbit: false,
+
+        reverbMix: 0.18,
+        reverbDecay: 3.2,
+
+        delayMix: 0,
+        delayTime: 0.2,
+        delayFeedback: 0,
+
         masterVolume: 0.8,
         soundboardBloom: 1.0,
     },
@@ -1954,9 +1980,35 @@ grandPiano: {
 dreamGrand: {
     name: "Dream Grand",
     engine: "piano",
+
     settings: {
+        attack: 0.035,
+        decay: 2.6,
+        sustain: 0.32,
+        release: 4.2,
+
+        origin: "dream",
+        presence: 38,
+
+        waveFusion: 22,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: true,
+
+        noiseType: "air",
+        noiseAmount: 4,
+        drift: 5,
+        stereoWidth: 58,
+        deepDreamOrbit: true,
+
+        reverbMix: 0.42,
+        reverbDecay: 5.8,
+
+        delayMix: 0.1,
+        delayTime: 0.48,
+        delayFeedback: 0.16,
+
         masterVolume: 0.8,
-        soundboardBloom: 6.0,
+        soundboardBloom: 2.5,
     },
 },
       
@@ -3895,22 +3947,321 @@ startPianoWaveFusionModulation();
 }
 
 function applyPresetSettings(preset) {
-  if (!preset) return;
+function applyPresetSettings(preset) {
+    if (!preset) return;
 
-  currentResonanceSource = preset.engine || "synth";
-currentEngine = currentResonanceSource; // temporary compatibility bridge
-    
-  if (currentResonanceSource === "piano") {
-    pianoPresetSoundboardBloom =
-        preset.soundboardBloom ?? 1.0;
+    currentResonanceSource =
+        preset.engine || "synth";
 
-    if (preset.masterVolume !== undefined) {
-        masterVolume.value = preset.masterVolume;
+    currentEngine =
+        currentResonanceSource; // temporary compatibility bridge
 
-        if (audioContext && masterGain) {
+    function setControl(control, value) {
+        if (
+            control &&
+            value !== undefined &&
+            value !== null
+        ) {
+            control.value = value;
+        }
+    }
+
+    function setCheckbox(control, value) {
+        if (
+            control &&
+            value !== undefined &&
+            value !== null
+        ) {
+            control.checked = Boolean(value);
+        }
+    }
+
+    // ========================================
+    // Shared controls
+    // These can be used by synth and piano
+    // ========================================
+
+    setControl(
+        attackSlider,
+        preset.attack
+    );
+
+    setControl(
+        decaySlider,
+        preset.decay
+    );
+
+    setControl(
+        sustainSlider,
+        preset.sustain
+    );
+
+    setControl(
+        releaseSlider,
+        preset.release
+    );
+
+    setControl(
+        originSelect,
+        preset.origin
+    );
+
+    setControl(
+        presenceSlider,
+        preset.presence
+    );
+
+    setControl(
+        waveFusionSlider,
+        preset.waveFusion
+    );
+
+    setControl(
+        waveFusionCurveSelect,
+        preset.waveFusionCurve
+    );
+
+    setCheckbox(
+        dreamMorphMotionCheckbox,
+        preset.dreamMorphMotion
+    );
+
+    setControl(
+        noiseTypeSelect,
+        preset.noiseType
+    );
+
+    setControl(
+        noiseAmountSlider,
+        preset.noiseAmount
+    );
+
+    setControl(
+        driftSlider,
+        preset.drift
+    );
+
+    setControl(
+        stereoWidthSlider,
+        preset.stereoWidth
+    );
+
+    setCheckbox(
+        deepDreamOrbitCheckbox,
+        preset.deepDreamOrbit
+    );
+
+    setControl(
+        reverbMixSlider,
+        preset.reverbMix
+    );
+
+    setControl(
+        reverbDecaySlider,
+        preset.reverbDecay
+    );
+
+    setControl(
+        delayMixSlider,
+        preset.delayMix
+    );
+
+    setControl(
+        delayTimeSlider,
+        preset.delayTime
+    );
+
+    setControl(
+        delayFeedbackSlider,
+        preset.delayFeedback
+    );
+
+    setControl(
+        masterVolume,
+        preset.masterVolume
+    );
+
+    // ========================================
+    // Piano-specific controls
+    // ========================================
+
+    if (currentResonanceSource === "piano") {
+        pianoPresetSoundboardBloom =
+            preset.soundboardBloom ?? 1.0;
+    }
+
+    // ========================================
+    // Synth-specific controls
+    // ========================================
+
+    if (currentResonanceSource === "synth") {
+        setControl(
+            waveformSelect,
+            preset.waveform
+        );
+
+        setControl(
+            waveformBSelect,
+            preset.waveformB
+        );
+
+        setControl(
+            oscBLevelSlider,
+            preset.oscBLevel
+        );
+
+        setControl(
+            oscBDetuneSlider,
+            preset.oscBDetune
+        );
+
+        setControl(
+            subWaveformSelect,
+            preset.subWaveform
+        );
+
+        setControl(
+            subLevelSlider,
+            preset.subLevel
+        );
+
+        setControl(
+            filterTypeSelect,
+            preset.filterType
+        );
+
+        setControl(
+            cutoffSlider,
+            preset.cutoff
+        );
+
+        setControl(
+            resonanceSlider,
+            preset.resonance
+        );
+
+        setControl(
+            lfoRateSlider,
+            preset.lfoRate
+        );
+
+        setControl(
+            lfoAmountSlider,
+            preset.lfoAmount
+        );
+
+        setControl(
+            lfoDestinationSelect,
+            preset.lfoDestination
+        );
+
+        setControl(
+            voiceSpreadSlider,
+            preset.voiceSpread
+        );
+
+        setControl(
+            glideTimeSlider,
+            preset.glideTime
+        );
+
+        setCheckbox(
+            glideEnabledCheckbox,
+            preset.glideEnabled
+        );
+    }
+
+    // ========================================
+    // Apply shared effects to active audio nodes
+    // Programmatically changing slider.value does
+    // not trigger the slider input listeners.
+    // ========================================
+
+    if (audioContext) {
+        const now = audioContext.currentTime;
+
+        if (
+            masterGain &&
+            preset.masterVolume !== undefined
+        ) {
             masterGain.gain.setTargetAtTime(
-                Number(preset.masterVolume),
-                audioContext.currentTime,
+                Number(masterVolume.value),
+                now,
+                0.01
+            );
+        }
+
+        if (
+            dryGain &&
+            reverbWetGain &&
+            preset.reverbMix !== undefined
+        ) {
+            const reverbMix =
+                Number(reverbMixSlider.value);
+
+            dryGain.gain.setTargetAtTime(
+                1 - reverbMix,
+                now,
+                0.01
+            );
+
+            reverbWetGain.gain.setTargetAtTime(
+                reverbMix,
+                now,
+                0.01
+            );
+        }
+
+        if (
+            reverbNode &&
+            preset.reverbDecay !== undefined
+        ) {
+            reverbNode.buffer =
+                createReverbImpulse(
+                    audioContext,
+                    Number(reverbDecaySlider.value)
+                );
+        }
+
+        if (
+            delayDryGain &&
+            delayWetGain &&
+            preset.delayMix !== undefined
+        ) {
+            const delayMix =
+                Number(delayMixSlider.value);
+
+            delayDryGain.gain.setTargetAtTime(
+                1 - delayMix,
+                now,
+                0.01
+            );
+
+            delayWetGain.gain.setTargetAtTime(
+                delayMix,
+                now,
+                0.01
+            );
+        }
+
+        if (
+            delayNode &&
+            preset.delayTime !== undefined
+        ) {
+            delayNode.delayTime.setTargetAtTime(
+                Number(delayTimeSlider.value),
+                now,
+                0.01
+            );
+        }
+
+        if (
+            delayFeedbackGain &&
+            preset.delayFeedback !== undefined
+        ) {
+            delayFeedbackGain.gain.setTargetAtTime(
+                Number(delayFeedbackSlider.value),
+                now,
                 0.01
             );
         }
@@ -3919,45 +4270,6 @@ currentEngine = currentResonanceSource; // temporary compatibility bridge
     updateValueDisplays();
     stopAllNotes();
     stopActivePianoNodes();
-    return;
-}
-
-  waveformSelect.value = preset.waveform;
-  waveformBSelect.value = preset.waveformB;
-  oscBLevelSlider.value = preset.oscBLevel;
-  oscBDetuneSlider.value = preset.oscBDetune;
-
-  attackSlider.value = preset.attack;
-  decaySlider.value = preset.decay;
-  sustainSlider.value = preset.sustain;
-  releaseSlider.value = preset.release;
-
-  filterTypeSelect.value = preset.filterType;
-  cutoffSlider.value = preset.cutoff;
-  resonanceSlider.value = preset.resonance;
-
-  lfoRateSlider.value = preset.lfoRate;
-  lfoAmountSlider.value = preset.lfoAmount;
-  lfoDestinationSelect.value = preset.lfoDestination;
-
-  voiceSpreadSlider.value = preset.voiceSpread || 0;
-
-  noiseTypeSelect.value = preset.noiseType ?? "white";
-  noiseAmountSlider.value = preset.noiseAmount ?? 0;
-  driftSlider.value = preset.drift ?? 0;
-  stereoWidthSlider.value = preset.stereoWidth ?? 0;
-
-  reverbMixSlider.value = preset.reverbMix;
-  reverbDecaySlider.value = preset.reverbDecay;
-
-  delayMixSlider.value = preset.delayMix;
-  delayTimeSlider.value = preset.delayTime;
-  delayFeedbackSlider.value = preset.delayFeedback;
-
-  masterVolume.value = preset.masterVolume;
-
-  updateValueDisplays();
-  stopAllNotes();
 }
 
 function renderPresetBank(bankName) {
