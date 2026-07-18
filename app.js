@@ -1948,6 +1948,14 @@ grandPiano: {
         masterVolume: 0.8,
     },
 },
+
+dreamGrand: {
+    name: "Dream Grand",
+    engine: "piano",
+    settings: {
+        masterVolume: 0.8,
+    },
+},
       
   reunited: {
   name: "Reunited",
