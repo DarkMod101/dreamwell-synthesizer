@@ -1667,14 +1667,7 @@ if (originSelect) {
 
 const presetBanks = {
   signature: {
-
-    grandPiano: {
-    name: "Grand Piano",
-    engine: "piano",
-    settings: {
-        masterVolume: 0.8,
-    },
-},
+      
     dreamPad: {
       name: "Dream Pad",
       settings: {
@@ -1947,6 +1940,15 @@ const presetBanks = {
   },
 
   keys: {
+
+grandPiano: {
+    name: "Grand Piano",
+    engine: "piano",
+    settings: {
+        masterVolume: 0.8,
+    },
+},
+      
   reunited: {
   name: "Reunited",
   collection: "Dream Memories",
