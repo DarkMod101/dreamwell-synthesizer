@@ -3947,7 +3947,6 @@ startPianoWaveFusionModulation();
 }
 
 function applyPresetSettings(preset) {
-function applyPresetSettings(preset) {
     if (!preset) return;
 
     currentResonanceSource =
