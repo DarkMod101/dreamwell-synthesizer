@@ -1953,7 +1953,7 @@ grandPiano: {
         release: 2.8,
 
         origin: "pure",
-        presence: 15,
+        presence: 10,
 
         waveFusion: 0,
         waveFusionCurve: "smooth",
@@ -1965,8 +1965,8 @@ grandPiano: {
         stereoWidth: 30,
         deepDreamOrbit: false,
 
-        reverbMix: 0.18,
-        reverbDecay: 3.2,
+        reverbMix: 0.08,
+        reverbDecay: 2.4,
 
         delayMix: 0,
         delayTime: 0.2,
@@ -1988,7 +1988,7 @@ dreamGrand: {
         release: 4.2,
 
         origin: "dream",
-        presence: 38,
+        presence: 24,
 
         waveFusion: 22,
         waveFusionCurve: "smooth",
@@ -2000,8 +2000,8 @@ dreamGrand: {
         stereoWidth: 58,
         deepDreamOrbit: true,
 
-        reverbMix: 0.42,
-        reverbDecay: 5.8,
+        reverbMix: 0.58,
+        reverbDecay: 6.2,
 
         delayMix: 0.1,
         delayTime: 0.48,
