@@ -1222,6 +1222,22 @@ function stopActivePianoNodes() {
     });
 }
 
+function stopActiveChoirNodes() {
+    const voices = [...activeChoirNodes];
+
+    voices.forEach((voice) => {
+        try {
+            if (voice.steal) {
+                voice.steal();
+            } else if (voice.cleanup) {
+                voice.cleanup();
+            }
+        } catch (error) {
+            // Voice was already stopped.
+        }
+    });
+}
+
 function playNote(frequency) {
 if (currentResonanceSource === "piano") {
   createPianoNote(frequency);
