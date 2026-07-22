@@ -1239,10 +1239,15 @@ function stopActiveChoirNodes() {
 }
 
 function playNote(frequency) {
-if (currentResonanceSource === "piano") {
-  createPianoNote(frequency);
-  return;
-}
+  if (currentResonanceSource === "piano") {
+    createPianoNote(frequency);
+    return;
+  }
+
+  if (currentResonanceSource === "choir") {
+    createChoirNote(frequency);
+    return;
+  }
 
   const noteId = String(frequency);
 
