@@ -3178,9 +3178,47 @@ forgottenEmpire: {
 
     
   leads: {},
-  bass: {},
-  textures: {},
+bass: {},
+
+choir: {
+    dreamChoir: {
+        name: "Dream Choir",
+        engine: "choir",
+
+        settings: {
+            attack: 1.4,
+            decay: 2.0,
+            sustain: 0.78,
+            release: 3.8,
+
+            origin: "pure",
+            presence: 12,
+
+            waveFusion: 0,
+            waveFusionCurve: "smooth",
+            dreamMorphMotion: false,
+
+            noiseType: "air",
+            noiseAmount: 0,
+            drift: 2,
+            stereoWidth: 45,
+            deepDreamOrbit: false,
+
+            reverbMix: 0.55,
+            reverbDecay: 7.0,
+
+            delayMix: 0.10,
+            delayTime: 0.42,
+            delayFeedback: 0.18,
+
+            masterVolume: 0.20,
+        },
+    },
+},
+
+textures: {},
 };
+    
 
 
 // ========================================
