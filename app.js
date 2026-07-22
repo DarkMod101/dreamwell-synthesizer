@@ -4669,6 +4669,7 @@ function applyPresetSettings(preset) {
     updateValueDisplays();
     stopAllNotes();
     stopActivePianoNodes();
+    stopActiveChoirNodes();
 }
 
 function renderPresetBank(bankName) {
