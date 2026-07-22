@@ -3187,6 +3187,86 @@ forgottenEmpire: {
 // Piano Engine
 // ========================================
 
+function stealOldestChoirVoice() {
+    if (activeChoirNodes.length >= MAX_CHOIR_VOICES) {
+        const oldest = activeChoirNodes.shift();
+
+        if (oldest && oldest.steal) {
+            oldest.steal();
+        }
+    }
+}
+
+function createChoirNote(frequency) {
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+
+    stealOldestChoirVoice();
+
+    const choirVoiceOut = ctx.createGain();
+    const choirPan = ctx.createStereoPanner();
+
+    const choirAttack =
+        Math.min(
+            4.0,
+            Math.max(
+                0.08,
+                getValue(attackSlider, 1.4)
+            )
+        );
+
+    const choirSustain =
+        Math.min(
+            0.95,
+            Math.max(
+                0.15,
+                getValue(sustainSlider, 0.78)
+            )
+        );
+
+    const choirRelease =
+        Math.min(
+            8.0,
+            Math.max(
+                0.8,
+                getValue(releaseSlider, 3.8)
+            )
+        );
+
+    const choirPeak = 0.22;
+
+    choirVoiceOut.gain.setValueAtTime(
+        0.0001,
+        now
+    );
+
+    choirVoiceOut.gain.linearRampToValueAtTime(
+        choirPeak,
+        now + choirAttack
+    );
+
+    choirVoiceOut.gain.setValueAtTime(
+        choirPeak * choirSustain,
+        now + choirAttack + 0.8
+    );
+
+    choirVoiceOut.gain.exponentialRampToValueAtTime(
+        0.001,
+        now + choirAttack + 0.8 + choirRelease
+    );
+
+    choirPan.pan.setValueAtTime(
+        (Math.random() * 2 - 1) * 0.35,
+        now
+    );
+
+    choirVoiceOut.connect(choirPan);
+
+    choirPan.connect(dryGain);
+    choirPan.connect(reverbNode);
+    choirPan.connect(delayDryGain);
+    choirPan.connect(delayNode);
+}
 
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
