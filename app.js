@@ -3632,10 +3632,11 @@ function releaseChoirVoice() {
     }
 
     choirVoice = {
-        frequency,
-        steal: stealChoirVoice,
-        cleanup: cleanupChoirVoice
-    };
+    frequency,
+    release: releaseChoirVoice,
+    steal: stealChoirVoice,
+    cleanup: cleanupChoirVoice
+};
 
     activeChoirNodes.push(choirVoice);
 
