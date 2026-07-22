@@ -3541,6 +3541,55 @@ function createChoirNote(frequency) {
         removeChoirVoiceReference();
     }
 
+function releaseChoirVoice() {
+    if (choirVoiceCleaned) return;
+
+    const releaseNow = ctx.currentTime;
+
+    const releaseDuration =
+        Math.min(
+            8.0,
+            Math.max(
+                0.8,
+                getValue(releaseSlider, 3.8)
+            )
+        );
+
+    choirVoiceOut.gain.cancelScheduledValues(
+        releaseNow
+    );
+
+    choirVoiceOut.gain.setValueAtTime(
+        Math.max(
+            0.0001,
+            choirVoiceOut.gain.value
+        ),
+        releaseNow
+    );
+
+    choirVoiceOut.gain.exponentialRampToValueAtTime(
+        0.0001,
+        releaseNow + releaseDuration
+    );
+
+    choirSources.forEach((node) => {
+        try {
+            node.stop(
+                releaseNow +
+                releaseDuration +
+                0.05
+            );
+        } catch (error) {
+            // Source may already have a stop time.
+        }
+    });
+
+    choirCleanupTimer = setTimeout(
+        cleanupChoirVoice,
+        (releaseDuration + 0.12) * 1000
+    );
+}
+    
     function stealChoirVoice() {
         if (choirVoiceCleaned) return;
 
