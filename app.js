@@ -18,6 +18,10 @@ let activePianoNodes = [];
 const MAX_PIANO_VOICES = 18;
 let pianoPresetSoundboardBloom = 1.0;
 
+// Choir Engine state
+let activeChoirNodes = [];
+const MAX_CHOIR_VOICES = 12;
+
 const pianoVoicing = {
     hammerBrightness: 1.0,
     stringWarmth: 1.0,
