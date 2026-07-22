@@ -3206,6 +3206,20 @@ function createChoirNote(frequency) {
     const choirVoiceOut = ctx.createGain();
     const choirPan = ctx.createStereoPanner();
 
+    const choirOscillatorA = ctx.createOscillator();
+    const choirOscillatorB = ctx.createOscillator();
+    const choirOscillatorC = ctx.createOscillator();
+
+    const choirOscillatorGainA = ctx.createGain();
+    const choirOscillatorGainB = ctx.createGain();
+    const choirOscillatorGainC = ctx.createGain();
+
+    const choirFormantLow = ctx.createBiquadFilter();
+    const choirFormantHigh = ctx.createBiquadFilter();
+
+    const choirFormantLowGain = ctx.createGain();
+    const choirFormantHighGain = ctx.createGain();
+
     const choirAttack =
         Math.min(
             4.0,
@@ -3235,6 +3249,105 @@ function createChoirNote(frequency) {
 
     const choirPeak = 0.22;
 
+    const choirEndTime =
+        now +
+        choirAttack +
+        1.2 +
+        choirRelease;
+
+    // ========================================
+    // Vocal oscillator group
+    // ========================================
+
+    choirOscillatorA.type = "triangle";
+    choirOscillatorB.type = "triangle";
+    choirOscillatorC.type = "sawtooth";
+
+    choirOscillatorA.frequency.setValueAtTime(
+        frequency,
+        now
+    );
+
+    choirOscillatorB.frequency.setValueAtTime(
+        frequency,
+        now
+    );
+
+    choirOscillatorC.frequency.setValueAtTime(
+        frequency * 2,
+        now
+    );
+
+    choirOscillatorA.detune.setValueAtTime(
+        -7,
+        now
+    );
+
+    choirOscillatorB.detune.setValueAtTime(
+        7,
+        now
+    );
+
+    choirOscillatorC.detune.setValueAtTime(
+        2,
+        now
+    );
+
+    choirOscillatorGainA.gain.setValueAtTime(
+        0.34,
+        now
+    );
+
+    choirOscillatorGainB.gain.setValueAtTime(
+        0.34,
+        now
+    );
+
+    choirOscillatorGainC.gain.setValueAtTime(
+        0.08,
+        now
+    );
+
+    // ========================================
+    // Basic Ah / Oh formant shape
+    // ========================================
+
+    choirFormantLow.type = "bandpass";
+    choirFormantLow.frequency.setValueAtTime(
+        800,
+        now
+    );
+
+    choirFormantLow.Q.setValueAtTime(
+        3.2,
+        now
+    );
+
+    choirFormantHigh.type = "bandpass";
+    choirFormantHigh.frequency.setValueAtTime(
+        1150,
+        now
+    );
+
+    choirFormantHigh.Q.setValueAtTime(
+        4.0,
+        now
+    );
+
+    choirFormantLowGain.gain.setValueAtTime(
+        0.72,
+        now
+    );
+
+    choirFormantHighGain.gain.setValueAtTime(
+        0.44,
+        now
+    );
+
+    // ========================================
+    // Choir amplitude envelope
+    // ========================================
+
     choirVoiceOut.gain.setValueAtTime(
         0.0001,
         now
@@ -3245,19 +3358,66 @@ function createChoirNote(frequency) {
         now + choirAttack
     );
 
-    choirVoiceOut.gain.setValueAtTime(
-        choirPeak * choirSustain,
-        now + choirAttack + 0.8
+    choirVoiceOut.gain.exponentialRampToValueAtTime(
+        Math.max(
+            0.001,
+            choirPeak * choirSustain
+        ),
+        now + choirAttack + 1.2
     );
 
     choirVoiceOut.gain.exponentialRampToValueAtTime(
         0.001,
-        now + choirAttack + 0.8 + choirRelease
+        choirEndTime
     );
 
     choirPan.pan.setValueAtTime(
         (Math.random() * 2 - 1) * 0.35,
         now
+    );
+
+    // ========================================
+    // Signal routing
+    // ========================================
+
+    choirOscillatorA.connect(
+        choirOscillatorGainA
+    );
+
+    choirOscillatorB.connect(
+        choirOscillatorGainB
+    );
+
+    choirOscillatorC.connect(
+        choirOscillatorGainC
+    );
+
+    choirOscillatorGainA.connect(
+        choirFormantLow
+    );
+
+    choirOscillatorGainB.connect(
+        choirFormantLow
+    );
+
+    choirOscillatorGainC.connect(
+        choirFormantHigh
+    );
+
+    choirFormantLow.connect(
+        choirFormantLowGain
+    );
+
+    choirFormantHigh.connect(
+        choirFormantHighGain
+    );
+
+    choirFormantLowGain.connect(
+        choirVoiceOut
+    );
+
+    choirFormantHighGain.connect(
+        choirVoiceOut
     );
 
     choirVoiceOut.connect(choirPan);
@@ -3266,6 +3426,141 @@ function createChoirNote(frequency) {
     choirPan.connect(reverbNode);
     choirPan.connect(delayDryGain);
     choirPan.connect(delayNode);
+
+    // ========================================
+    // Start and stop sources
+    // ========================================
+
+    choirOscillatorA.start(now);
+    choirOscillatorB.start(now);
+    choirOscillatorC.start(now);
+
+    choirOscillatorA.stop(choirEndTime + 0.1);
+    choirOscillatorB.stop(choirEndTime + 0.1);
+    choirOscillatorC.stop(choirEndTime + 0.1);
+
+    let choirVoiceCleaned = false;
+    let choirCleanupTimer = null;
+
+    const choirSources = [
+        choirOscillatorA,
+        choirOscillatorB,
+        choirOscillatorC
+    ];
+
+    const choirProcessingNodes = [
+        choirOscillatorGainA,
+        choirOscillatorGainB,
+        choirOscillatorGainC,
+        choirFormantLow,
+        choirFormantHigh,
+        choirFormantLowGain,
+        choirFormantHighGain,
+        choirVoiceOut,
+        choirPan
+    ];
+
+    let choirVoice = null;
+
+    function removeChoirVoiceReference() {
+        const voiceIndex =
+            activeChoirNodes.indexOf(choirVoice);
+
+        if (voiceIndex !== -1) {
+            activeChoirNodes.splice(
+                voiceIndex,
+                1
+            );
+        }
+    }
+
+    function cleanupChoirVoice() {
+        if (choirVoiceCleaned) return;
+
+        choirVoiceCleaned = true;
+
+        if (choirCleanupTimer !== null) {
+            clearTimeout(choirCleanupTimer);
+            choirCleanupTimer = null;
+        }
+
+        choirSources.forEach((node) => {
+            try {
+                node.disconnect();
+            } catch (error) {
+                // Source was already disconnected.
+            }
+        });
+
+        choirProcessingNodes.forEach((node) => {
+            try {
+                node.disconnect();
+            } catch (error) {
+                // Node was already disconnected.
+            }
+        });
+
+        removeChoirVoiceReference();
+    }
+
+    function stealChoirVoice() {
+        if (choirVoiceCleaned) return;
+
+        const stealNow = ctx.currentTime;
+        const fadeDuration = 0.08;
+
+        choirVoiceOut.gain.cancelScheduledValues(
+            stealNow
+        );
+
+        choirVoiceOut.gain.setValueAtTime(
+            Math.max(
+                0.0001,
+                choirVoiceOut.gain.value
+            ),
+            stealNow
+        );
+
+        choirVoiceOut.gain.exponentialRampToValueAtTime(
+            0.0001,
+            stealNow + fadeDuration
+        );
+
+        choirSources.forEach((node) => {
+            try {
+                node.stop(
+                    stealNow +
+                    fadeDuration +
+                    0.03
+                );
+            } catch (error) {
+                // Source may already have a stop time.
+            }
+        });
+
+        choirCleanupTimer = setTimeout(
+            cleanupChoirVoice,
+            140
+        );
+    }
+
+    choirVoice = {
+        frequency,
+        steal: stealChoirVoice,
+        cleanup: cleanupChoirVoice
+    };
+
+    activeChoirNodes.push(choirVoice);
+
+    choirCleanupTimer = setTimeout(
+        cleanupChoirVoice,
+        Math.max(
+            0,
+            choirEndTime -
+            ctx.currentTime +
+            0.2
+        ) * 1000
+    );
 }
 
 function createPianoNote(frequency) {
