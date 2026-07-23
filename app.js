@@ -3212,7 +3212,7 @@ choir: {
             delayTime: 0.42,
             delayFeedback: 0.18,
 
-            masterVolume: 0.20,
+            masterVolume: 0.65,
         },
     },
 },
@@ -3292,7 +3292,7 @@ console.log(
             )
         );
 
-    const choirPeak = 0.22;
+    const choirPeak = 0.75;
 
     const choirEndTime =
         now +
@@ -3420,45 +3420,12 @@ choirVoiceOut.gain.exponentialRampToValueAtTime(
     // Signal routing
     // ========================================
 
-    choirOscillatorA.connect(
-        choirOscillatorGainA
-    );
+    // Temporary clean Choir audibility test
+choirOscillatorGainA.connect(choirVoiceOut);
+choirOscillatorGainB.connect(choirVoiceOut);
+choirOscillatorGainC.connect(choirVoiceOut);
 
-    choirOscillatorB.connect(
-        choirOscillatorGainB
-    );
-
-    choirOscillatorC.connect(
-        choirOscillatorGainC
-    );
-
-    choirOscillatorGainA.connect(
-        choirFormantLow
-    );
-
-    choirOscillatorGainB.connect(
-        choirFormantLow
-    );
-
-    choirOscillatorGainC.connect(
-        choirFormantHigh
-    );
-
-    choirFormantLow.connect(
-        choirFormantLowGain
-    );
-
-    choirFormantHigh.connect(
-        choirFormantHighGain
-    );
-
-    choirFormantLowGain.connect(
-        choirVoiceOut
-    );
-
-    choirFormantHighGain.connect(
-        choirVoiceOut
-    );
+    
 
     choirVoiceOut.connect(choirPan);
 
