@@ -3191,7 +3191,7 @@ choir: {
             attack: 0.12,
             decay: 2.0,
             sustain: 0.78,
-            release: 3.8,
+            release: 1.6,
 
             origin: "pure",
             presence: 12,
