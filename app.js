@@ -3212,7 +3212,7 @@ choir: {
             delayTime: 0.42,
             delayFeedback: 0.18,
 
-            masterVolume: 0.65,
+            masterVolume: 0.35,
         },
     },
 },
@@ -3292,8 +3292,7 @@ console.log(
             )
         );
 
-    const choirPeak = 0.75;
-
+    const choirPeak = 1.0;
     const choirEndTime =
         now +
         choirAttack +
@@ -3339,19 +3338,19 @@ console.log(
     );
 
     choirOscillatorGainA.gain.setValueAtTime(
-        0.34,
-        now
-    );
+    0.72,
+    now
+);
 
-    choirOscillatorGainB.gain.setValueAtTime(
-        0.34,
-        now
-    );
+choirOscillatorGainB.gain.setValueAtTime(
+    0.72,
+    now
+);
 
-    choirOscillatorGainC.gain.setValueAtTime(
-        0.08,
-        now
-    );
+choirOscillatorGainC.gain.setValueAtTime(
+    0.18,
+    now
+);
 
     // ========================================
     // Basic Ah / Oh formant shape
