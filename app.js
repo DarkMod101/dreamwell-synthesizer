@@ -3238,6 +3238,7 @@ function stealOldestChoirVoice() {
 
 function createChoirNote(frequency) {
     const ctx = getAudioContext();
+    alert("CHOIR ENGINE STARTED");
     const now = ctx.currentTime;
 
 console.log(
