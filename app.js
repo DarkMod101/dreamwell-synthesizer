@@ -3425,13 +3425,17 @@ choirVoiceOut.gain.exponentialRampToValueAtTime(
     // ========================================
 
     // Temporary clean Choir audibility test
+// Temporary clean Choir audibility test
+
+choirOscillatorA.connect(choirOscillatorGainA);
+choirOscillatorB.connect(choirOscillatorGainB);
+choirOscillatorC.connect(choirOscillatorGainC);
+
 choirOscillatorGainA.connect(choirVoiceOut);
 choirOscillatorGainB.connect(choirVoiceOut);
 choirOscillatorGainC.connect(choirVoiceOut);
 
-    
-
-    choirVoiceOut.connect(choirPan);
+choirVoiceOut.connect(choirPan);
 
     choirPan.connect(dryGain);
     choirPan.connect(reverbNode);
