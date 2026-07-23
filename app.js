@@ -3387,27 +3387,22 @@ function createChoirNote(frequency) {
     // ========================================
 
     choirVoiceOut.gain.setValueAtTime(
-        0.0001,
-        now
-    );
+    0.0001,
+    now
+);
 
-    choirVoiceOut.gain.linearRampToValueAtTime(
-        choirPeak,
-        now + choirAttack
-    );
+choirVoiceOut.gain.linearRampToValueAtTime(
+    choirPeak,
+    now + choirAttack
+);
 
-    choirVoiceOut.gain.exponentialRampToValueAtTime(
-        Math.max(
-            0.001,
-            choirPeak * choirSustain
-        ),
-        now + choirAttack + 1.2
-    );
-
-    choirVoiceOut.gain.exponentialRampToValueAtTime(
+choirVoiceOut.gain.exponentialRampToValueAtTime(
+    Math.max(
         0.001,
-        choirEndTime
-    );
+        choirPeak * choirSustain
+    ),
+    now + choirAttack + 1.2
+);
 
     choirPan.pan.setValueAtTime(
         (Math.random() * 2 - 1) * 0.35,
@@ -3473,10 +3468,7 @@ function createChoirNote(frequency) {
     choirOscillatorB.start(now);
     choirOscillatorC.start(now);
 
-    choirOscillatorA.stop(choirEndTime + 0.1);
-    choirOscillatorB.stop(choirEndTime + 0.1);
-    choirOscillatorC.stop(choirEndTime + 0.1);
-
+    
     let choirVoiceCleaned = false;
     let choirCleanupTimer = null;
 
