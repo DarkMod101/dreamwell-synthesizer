@@ -1518,6 +1518,7 @@ if (!arpPlayedOrder.includes(Number(frequency))) {
     return;
   }
 
+  setKeyActive(frequency, true); 
   playNote(frequency);
   refreshLatchedKeyHighlights();
 }
