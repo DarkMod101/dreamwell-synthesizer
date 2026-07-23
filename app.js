@@ -3187,7 +3187,7 @@ choir: {
         engine: "choir",
 
         settings: {
-            attack: 1.4,
+            attack: 0.12,
             decay: 2.0,
             sustain: 0.78,
             release: 3.8,
@@ -3212,7 +3212,7 @@ choir: {
             delayTime: 0.42,
             delayFeedback: 0.18,
 
-            masterVolume: 0.35,
+            masterVolume: 0.20,
         },
     },
 },
@@ -3292,7 +3292,7 @@ console.log(
             )
         );
 
-    const choirPeak = 1.0;
+    const choirPeak = 0.75;
     const choirEndTime =
         now +
         choirAttack +
@@ -3338,17 +3338,17 @@ console.log(
     );
 
     choirOscillatorGainA.gain.setValueAtTime(
-    0.72,
+    0.34,
     now
 );
 
 choirOscillatorGainB.gain.setValueAtTime(
-    0.72,
+    0.34,
     now
 );
 
 choirOscillatorGainC.gain.setValueAtTime(
-    0.18,
+    0.08,
     now
 );
 
