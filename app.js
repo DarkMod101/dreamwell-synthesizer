@@ -3240,6 +3240,12 @@ function createChoirNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
+console.log(
+    "CHOIR NOTE ACTIVE",
+    frequency,
+    currentResonanceSource
+);
+    
     stealOldestChoirVoice();
 
     const choirVoiceOut = ctx.createGain();
@@ -3264,7 +3270,7 @@ function createChoirNote(frequency) {
             4.0,
             Math.max(
                 0.08,
-                getValue(attackSlider, 1.4)
+                getValue(attackSlider, 0.12)
             )
         );
 
