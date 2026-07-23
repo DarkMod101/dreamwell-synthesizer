@@ -1239,6 +1239,10 @@ function stopActiveChoirNodes() {
 }
 
 function playNote(frequency) {
+    alert(
+    "ACTIVE SOURCE: " +
+    currentResonanceSource
+);
   if (currentResonanceSource === "piano") {
     createPianoNote(frequency);
     return;
