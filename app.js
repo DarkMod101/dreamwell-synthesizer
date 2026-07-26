@@ -3289,11 +3289,7 @@ function createChoirNote(frequency) {
         );
 
     const choirPeak = 0.75;
-    const choirEndTime =
-        now +
-        choirAttack +
-        1.2 +
-        choirRelease;
+    
 
     // ========================================
     // Vocal oscillator group
@@ -3627,16 +3623,6 @@ function releaseChoirVoice() {
 };
 
     activeChoirNodes.push(choirVoice);
-
-    choirCleanupTimer = setTimeout(
-        cleanupChoirVoice,
-        Math.max(
-            0,
-            choirEndTime -
-            ctx.currentTime +
-            0.2
-        ) * 1000
-    );
 }
 
 function createPianoNote(frequency) {
