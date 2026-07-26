@@ -3353,37 +3353,46 @@ choirOscillatorGainC.gain.setValueAtTime(
     // ========================================
 
     choirFormantLow.type = "bandpass";
-    choirFormantLow.frequency.setValueAtTime(
-        730,
-        now
-    );
+choirFormantLow.frequency.setValueAtTime(
+    730,
+    now
+);
 
-    choirFormantLow.Q.setValueAtTime(
-        1.8,
-        now
-    );
+choirFormantLow.frequency.linearRampToValueAtTime(
+    745,
+    now + 2.5
+);
 
-    choirFormantHigh.type = "bandpass";
-    choirFormantHigh.frequency.setValueAtTime(
-        1280,
-        now
-    );
+choirFormantLow.Q.setValueAtTime(
+    1.8,
+    now
+);
 
-    choirFormantHigh.Q.setValueAtTime(
-        2.1,
-        now
-    );
+choirFormantHigh.type = "bandpass";
+choirFormantHigh.frequency.setValueAtTime(
+    1280,
+    now
+);
 
-    choirFormantLowGain.gain.setValueAtTime(
-        0.72,
-        now
-    );
+choirFormantHigh.frequency.linearRampToValueAtTime(
+    1265,
+    now + 2.5
+);
 
-    choirFormantHighGain.gain.setValueAtTime(
-        0.44,
-        now
-    );
+choirFormantHigh.Q.setValueAtTime(
+    2.1,
+    now
+);
 
+choirFormantLowGain.gain.setValueAtTime(
+    0.72,
+    now
+);
+
+choirFormantHighGain.gain.setValueAtTime(
+    0.44,
+    now
+);
     // ========================================
     // Choir amplitude envelope
     // ========================================
