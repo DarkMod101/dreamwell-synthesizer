@@ -3422,19 +3422,22 @@ choirOscillatorA.connect(choirOscillatorGainA);
 choirOscillatorB.connect(choirOscillatorGainB);
 choirOscillatorC.connect(choirOscillatorGainC);
 
+// Oscillators into filters
 choirOscillatorGainA.connect(choirFormantLow);
 choirOscillatorGainB.connect(choirFormantLow);
+choirOscillatorGainC.connect(choirFormantHigh);
 
-choirOscillatorGainC.connect(choirVoiceOut);
-
+// Formants into the main output
 choirFormantLow.connect(choirVoiceOut);
-    
+choirFormantHigh.connect(choirVoiceOut);
+
+// Continue through the existing output chain
 choirVoiceOut.connect(choirPan);
 
-    choirPan.connect(dryGain);
-    choirPan.connect(reverbNode);
-    choirPan.connect(delayDryGain);
-    choirPan.connect(delayNode);
+choirPan.connect(dryGain);
+choirPan.connect(reverbNode);
+choirPan.connect(delayDryGain);
+choirPan.connect(delayNode);
 
     // ========================================
     // Start and stop sources
