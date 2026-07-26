@@ -3422,10 +3422,13 @@ choirOscillatorA.connect(choirOscillatorGainA);
 choirOscillatorB.connect(choirOscillatorGainB);
 choirOscillatorC.connect(choirOscillatorGainC);
 
-choirOscillatorGainA.connect(choirVoiceOut);
-choirOscillatorGainB.connect(choirVoiceOut);
+choirOscillatorGainA.connect(choirFormantLow);
+choirOscillatorGainB.connect(choirFormantLow);
+
 choirOscillatorGainC.connect(choirVoiceOut);
 
+choirFormantLow.connect(choirVoiceOut);
+    
 choirVoiceOut.connect(choirPan);
 
     choirPan.connect(dryGain);
