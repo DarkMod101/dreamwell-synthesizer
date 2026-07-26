@@ -3415,23 +3415,31 @@ choirVoiceOut.gain.exponentialRampToValueAtTime(
     // Signal routing
     // ========================================
 
-    // Temporary clean Choir audibility test
-// Temporary clean Choir audibility test
+    // ========================================
+// Choir vocal routing
+// ========================================
 
+// Oscillators into their individual gain controls
 choirOscillatorA.connect(choirOscillatorGainA);
 choirOscillatorB.connect(choirOscillatorGainB);
 choirOscillatorC.connect(choirOscillatorGainC);
 
-// Oscillators into filters
+// Lower voices feed the low vocal formant
 choirOscillatorGainA.connect(choirFormantLow);
-choirOscillatorGainB.connect(choirFormantLow);
+
+// Upper voices feed the high vocal formant
+choirOscillatorGainB.connect(choirFormantHigh);
 choirOscillatorGainC.connect(choirFormantHigh);
 
-// Formants into the main output
-choirFormantLow.connect(choirVoiceOut);
-choirFormantHigh.connect(choirVoiceOut);
+// Formant filters feed their own level controls
+choirFormantLow.connect(choirFormantLowGain);
+choirFormantHigh.connect(choirFormantHighGain);
 
-// Continue through the existing output chain
+// Formant levels combine into the main Choir envelope
+choirFormantLowGain.connect(choirVoiceOut);
+choirFormantHighGain.connect(choirVoiceOut);
+
+// Continue through stereo positioning
 choirVoiceOut.connect(choirPan);
 
 choirPan.connect(dryGain);
