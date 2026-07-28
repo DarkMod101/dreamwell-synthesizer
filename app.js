@@ -3520,8 +3520,12 @@ choirOscillatorA.connect(choirOscillatorGainA);
 choirOscillatorB.connect(choirOscillatorGainB);
 choirOscillatorC.connect(choirOscillatorGainC);
 
-// Lower voices feed the low vocal formant
+// Lower vocal body
 choirOscillatorGainA.connect(choirFormantLow);
+
+// Harmonic-rich source gives the low formant
+// enough material to sculpt a recognizable vowel.
+choirOscillatorGainC.connect(choirFormantLow);
 
 // Upper voices feed the high vocal formant
 choirOscillatorGainB.connect(choirFormantHigh);
