@@ -3435,7 +3435,7 @@ choirFormantPresence.Q.setValueAtTime(
 );
 
 choirFormantPresenceGain.gain.setValueAtTime(
-    0.14,
+    1.0,
     now
 );
     
