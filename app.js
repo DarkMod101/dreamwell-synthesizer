@@ -3258,11 +3258,6 @@ function stealOldestChoirVoice() {
 }
 
 function createChoirNote(frequency) {
-    console.log(
-        "CURRENT CHOIR FUNCTION ACTIVE",
-        frequency
-    );
-
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
