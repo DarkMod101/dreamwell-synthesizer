@@ -1250,8 +1250,9 @@ function playNote(frequency) {
     const existingVoice = activeNotes.get(String(frequency));
 
     if (existingVoice?.release) {
-        existingVoice.release();
-    }
+    existingVoice.release();
+    activeNotes.delete(String(frequency));
+}
 
     const choirVoice = createChoirNote(frequency);
 
