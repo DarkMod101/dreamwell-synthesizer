@@ -3276,10 +3276,12 @@ function createChoirNote(frequency) {
     const choirOscillatorGainC = ctx.createGain();
 
     const choirFormantLow = ctx.createBiquadFilter();
-    const choirFormantHigh = ctx.createBiquadFilter();
+const choirFormantHigh = ctx.createBiquadFilter();
+const choirFormantPresence = ctx.createBiquadFilter();
 
-    const choirFormantLowGain = ctx.createGain();
-    const choirFormantHighGain = ctx.createGain();
+const choirFormantLowGain = ctx.createGain();
+const choirFormantHighGain = ctx.createGain();
+const choirFormantPresenceGain = ctx.createGain();
 
 // ========================================
 // Subtle formant breathing
