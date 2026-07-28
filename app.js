@@ -1286,6 +1286,12 @@ function stopNote(frequency) {
 
   if (!note) return;
 
+if (note.release) {
+    note.release();
+    activeNotes.delete(noteId);
+    return;
+}
+    
   const ctx = getAudioContext();
   const release = getValue(releaseSlider, 0.5);
 
