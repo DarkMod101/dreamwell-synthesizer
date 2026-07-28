@@ -3281,6 +3281,16 @@ function createChoirNote(frequency) {
     const choirFormantLowGain = ctx.createGain();
     const choirFormantHighGain = ctx.createGain();
 
+// ========================================
+// Subtle formant breathing
+// ========================================
+
+const choirFormantLowBreath = ctx.createOscillator();
+const choirFormantHighBreath = ctx.createOscillator();
+
+const choirFormantLowBreathDepth = ctx.createGain();
+const choirFormantHighBreathDepth = ctx.createGain();
+    
     const choirAttack =
         Math.min(
             4.0,
@@ -3369,14 +3379,10 @@ choirOscillatorGainC.gain.setValueAtTime(
     // ========================================
 
     choirFormantLow.type = "bandpass";
-choirFormantLow.frequency.setValueAtTime(
-    730,
-    now
-);
 
-choirFormantLow.frequency.linearRampToValueAtTime(
-    745,
-    now + 2.5
+choirFormantLow.frequency.setValueAtTime(
+    737,
+    now
 );
 
 choirFormantLow.Q.setValueAtTime(
@@ -3385,18 +3391,46 @@ choirFormantLow.Q.setValueAtTime(
 );
 
 choirFormantHigh.type = "bandpass";
-choirFormantHigh.frequency.setValueAtTime(
-    1280,
-    now
-);
 
-choirFormantHigh.frequency.linearRampToValueAtTime(
-    1265,
-    now + 2.5
+choirFormantHigh.frequency.setValueAtTime(
+    1273,
+    now
 );
 
 choirFormantHigh.Q.setValueAtTime(
     2.1,
+    now
+);
+
+// ========================================
+// Subtle formant breathing configuration
+// ========================================
+
+// Slow, slightly different breathing speeds keep
+// the two formants from moving mechanically together.
+choirFormantLowBreath.type = "sine";
+choirFormantHighBreath.type = "sine";
+
+choirFormantLowBreath.frequency.setValueAtTime(
+    0.075,
+    now
+);
+
+choirFormantHighBreath.frequency.setValueAtTime(
+    0.061,
+    now
+);
+
+// Very small frequency movement.
+// These values are measured in Hz because the gains
+// modulate the filters' frequency AudioParams.
+choirFormantLowBreathDepth.gain.setValueAtTime(
+    6,
+    now
+);
+
+choirFormantHighBreathDepth.gain.setValueAtTime(
+    9,
     now
 );
 
@@ -3456,6 +3490,24 @@ choirOscillatorGainA.connect(choirFormantLow);
 choirOscillatorGainB.connect(choirFormantHigh);
 choirOscillatorGainC.connect(choirFormantHigh);
 
+// Slowly breathe the vowel formants.
+// These modulation signals affect filter frequency only.
+choirFormantLowBreath.connect(
+    choirFormantLowBreathDepth
+);
+
+choirFormantLowBreathDepth.connect(
+    choirFormantLow.frequency
+);
+
+choirFormantHighBreath.connect(
+    choirFormantHighBreathDepth
+);
+
+choirFormantHighBreathDepth.connect(
+    choirFormantHigh.frequency
+);
+    
 // Formant filters feed their own level controls
 choirFormantLow.connect(choirFormantLowGain);
 choirFormantHigh.connect(choirFormantHighGain);
@@ -3477,30 +3529,37 @@ choirPan.connect(delayNode);
     // ========================================
 
     choirOscillatorA.start(now);
-    choirOscillatorB.start(now);
-    choirOscillatorC.start(now);
+choirOscillatorB.start(now);
+choirOscillatorC.start(now);
+
+choirFormantLowBreath.start(now);
+choirFormantHighBreath.start(now);
 
     
     let choirVoiceCleaned = false;
     let choirCleanupTimer = null;
 
     const choirSources = [
-        choirOscillatorA,
-        choirOscillatorB,
-        choirOscillatorC
-    ];
+    choirOscillatorA,
+    choirOscillatorB,
+    choirOscillatorC,
+    choirFormantLowBreath,
+    choirFormantHighBreath
+];
 
     const choirProcessingNodes = [
-        choirOscillatorGainA,
-        choirOscillatorGainB,
-        choirOscillatorGainC,
-        choirFormantLow,
-        choirFormantHigh,
-        choirFormantLowGain,
-        choirFormantHighGain,
-        choirVoiceOut,
-        choirPan
-    ];
+    choirOscillatorGainA,
+    choirOscillatorGainB,
+    choirOscillatorGainC,
+    choirFormantLowBreathDepth,
+    choirFormantHighBreathDepth,
+    choirFormantLow,
+    choirFormantHigh,
+    choirFormantLowGain,
+    choirFormantHighGain,
+    choirVoiceOut,
+    choirPan
+];
 
     let choirVoice = null;
 
