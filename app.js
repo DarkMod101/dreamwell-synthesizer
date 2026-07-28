@@ -3385,7 +3385,7 @@ choirOscillatorGainB.gain.setValueAtTime(
 );
 
 choirOscillatorGainC.gain.setValueAtTime(
-    0.08,
+    0.22,
     now
 );
 
