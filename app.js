@@ -3344,20 +3344,33 @@ const choirFormantHighBreathDepth = ctx.createGain();
         now
     );
 
-    choirOscillatorA.detune.setValueAtTime(
-        -7,
-        now
-    );
+    // ========================================
+// Subtle ensemble drift
+// ========================================
 
-    choirOscillatorB.detune.setValueAtTime(
-        7,
-        now
-    );
+const choirDriftA =
+    (Math.random() * 1.6) - 0.8;
 
-    choirOscillatorC.detune.setValueAtTime(
-        2,
-        now
-    );
+const choirDriftB =
+    (Math.random() * 1.6) - 0.8;
+
+const choirDriftC =
+    (Math.random() * 1.2) - 0.6;
+
+choirOscillatorA.detune.setValueAtTime(
+    -7 + choirDriftA,
+    now
+);
+
+choirOscillatorB.detune.setValueAtTime(
+    7 + choirDriftB,
+    now
+);
+
+choirOscillatorC.detune.setValueAtTime(
+    2 + choirDriftC,
+    now
+);
 
     choirOscillatorGainA.gain.setValueAtTime(
     0.34,
