@@ -3418,6 +3418,28 @@ choirFormantHigh.Q.setValueAtTime(
 );
 
 // ========================================
+// Third vocal resonance (F3)
+// Adds facial and throat presence
+// ========================================
+
+choirFormantPresence.type = "bandpass";
+
+choirFormantPresence.frequency.setValueAtTime(
+    2550,
+    now
+);
+
+choirFormantPresence.Q.setValueAtTime(
+    3.2,
+    now
+);
+
+choirFormantPresenceGain.gain.setValueAtTime(
+    0.14,
+    now
+);
+    
+// ========================================
 // Subtle formant breathing configuration
 // ========================================
 
@@ -3505,6 +3527,11 @@ choirOscillatorGainA.connect(choirFormantLow);
 choirOscillatorGainB.connect(choirFormantHigh);
 choirOscillatorGainC.connect(choirFormantHigh);
 
+// Upper harmonic source also feeds the third vocal resonance
+choirOscillatorGainC.connect(
+    choirFormantPresence
+);
+    
 // Slowly breathe the vowel formants.
 // These modulation signals affect filter frequency only.
 choirFormantLowBreath.connect(
@@ -3526,10 +3553,12 @@ choirFormantHighBreathDepth.connect(
 // Formant filters feed their own level controls
 choirFormantLow.connect(choirFormantLowGain);
 choirFormantHigh.connect(choirFormantHighGain);
+choirFormantPresence.connect(choirFormantPresenceGain);
 
 // Formant levels combine into the main Choir envelope
 choirFormantLowGain.connect(choirVoiceOut);
 choirFormantHighGain.connect(choirVoiceOut);
+choirFormantPresenceGain.connect(choirVoiceOut);
 
 // Continue through stereo positioning
 choirVoiceOut.connect(choirPan);
@@ -3570,8 +3599,10 @@ choirFormantHighBreath.start(now);
     choirFormantHighBreathDepth,
     choirFormantLow,
     choirFormantHigh,
+    choirFormantPresence,
     choirFormantLowGain,
     choirFormantHighGain,
+    choirFormantPresenceGain,
     choirVoiceOut,
     choirPan
 ];
