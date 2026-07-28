@@ -3381,7 +3381,7 @@ choirOscillatorGainC.gain.setValueAtTime(
     choirFormantLow.type = "bandpass";
 
 choirFormantLow.frequency.setValueAtTime(
-    737,
+    800,
     now
 );
 
@@ -3393,7 +3393,7 @@ choirFormantLow.Q.setValueAtTime(
 choirFormantHigh.type = "bandpass";
 
 choirFormantHigh.frequency.setValueAtTime(
-    1273,
+    1150,
     now
 );
 
@@ -3435,12 +3435,12 @@ choirFormantHighBreathDepth.gain.setValueAtTime(
 );
 
 choirFormantLowGain.gain.setValueAtTime(
-    0.72,
+    0.82,
     now
 );
 
 choirFormantHighGain.gain.setValueAtTime(
-    0.44,
+    0.34,
     now
 );
     // ========================================
