@@ -1246,9 +1246,22 @@ function playNote(frequency) {
   }
 
   if (currentResonanceSource === "choir") {
-    createChoirNote(frequency);
+
+    const existingVoice = activeNotes.get(String(frequency));
+
+    if (existingVoice?.release) {
+        existingVoice.release();
+    }
+
+    const choirVoice = createChoirNote(frequency);
+
+    activeNotes.set(
+        String(frequency),
+        choirVoice
+    );
+
     return;
-  }
+}
 
   const noteId = String(frequency);
 
@@ -3623,6 +3636,8 @@ function releaseChoirVoice() {
 };
 
     activeChoirNodes.push(choirVoice);
+
+return choirVoice;
 }
 
 function createPianoNote(frequency) {
