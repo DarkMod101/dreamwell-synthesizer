@@ -3244,15 +3244,15 @@ textures: {},
 
 
 // ========================================
-// Piano Engine
+// Choir Engine
 // ========================================
 
 function stealOldestChoirVoice() {
     if (activeChoirNodes.length >= MAX_CHOIR_VOICES) {
-        const oldest = activeChoirNodes.shift();
+        const oldestVoice = activeChoirNodes.shift();
 
-        if (oldest && oldest.steal) {
-            oldest.steal();
+        if (oldestVoice && oldestVoice.steal) {
+            oldestVoice.steal();
         }
     }
 }
@@ -3261,356 +3261,460 @@ function createChoirNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
-    
     stealOldestChoirVoice();
 
+    // ========================================
+    // Main Choir voice output
+    // ========================================
+
     const choirVoiceOut = ctx.createGain();
-    const choirPan = ctx.createStereoPanner();
 
-    const choirOscillatorA = ctx.createOscillator();
-    const choirOscillatorB = ctx.createOscillator();
-    const choirOscillatorC = ctx.createOscillator();
-
-    const choirOscillatorGainA = ctx.createGain();
-    const choirOscillatorGainB = ctx.createGain();
-    const choirOscillatorGainC = ctx.createGain();
-
-    const choirFormantLow = ctx.createBiquadFilter();
-const choirFormantHigh = ctx.createBiquadFilter();
-const choirFormantPresence = ctx.createBiquadFilter();
-
-const choirFormantLowGain = ctx.createGain();
-const choirFormantHighGain = ctx.createGain();
-const choirFormantPresenceGain = ctx.createGain();
-
-// ========================================
-// Subtle formant breathing
-// ========================================
-
-const choirFormantLowBreath = ctx.createOscillator();
-const choirFormantHighBreath = ctx.createOscillator();
-
-const choirFormantLowBreathDepth = ctx.createGain();
-const choirFormantHighBreathDepth = ctx.createGain();
-    
-    const choirAttack =
-        Math.min(
-            4.0,
-            Math.max(
-                0.08,
-                getValue(attackSlider, 0.12)
-            )
-        );
-
-    const choirSustain =
-        Math.min(
-            0.95,
-            Math.max(
-                0.15,
-                getValue(sustainSlider, 0.78)
-            )
-        );
-
-    const choirRelease =
-        Math.min(
-            8.0,
-            Math.max(
-                0.8,
-                getValue(releaseSlider, 3.8)
-            )
-        );
-
-    const choirPeak = 0.75;
-    
-
-    // ========================================
-    // Vocal oscillator group
-    // ========================================
-
-    choirOscillatorA.type = "triangle";
-    choirOscillatorB.type = "triangle";
-    choirOscillatorC.type = "sawtooth";
-
-    choirOscillatorA.frequency.setValueAtTime(
-        frequency,
-        now
+    const choirAttack = Math.min(
+        4.0,
+        Math.max(
+            0.08,
+            getValue(attackSlider, 0.12)
+        )
     );
 
-    choirOscillatorB.frequency.setValueAtTime(
-        frequency,
-        now
+    const choirSustain = Math.min(
+        0.95,
+        Math.max(
+            0.15,
+            getValue(sustainSlider, 0.78)
+        )
     );
 
-    choirOscillatorC.frequency.setValueAtTime(
-        frequency * 2,
-        now
-    );
-
-    // ========================================
-// Subtle ensemble drift
-// ========================================
-
-const choirDriftA =
-    (Math.random() * 1.6) - 0.8;
-
-const choirDriftB =
-    (Math.random() * 1.6) - 0.8;
-
-const choirDriftC =
-    (Math.random() * 1.2) - 0.6;
-
-choirOscillatorA.detune.setValueAtTime(
-    -7 + choirDriftA,
-    now
-);
-
-choirOscillatorB.detune.setValueAtTime(
-    7 + choirDriftB,
-    now
-);
-
-choirOscillatorC.detune.setValueAtTime(
-    2 + choirDriftC,
-    now
-);
-
-    choirOscillatorGainA.gain.setValueAtTime(
-    0.34,
-    now
-);
-
-choirOscillatorGainB.gain.setValueAtTime(
-    0.34,
-    now
-);
-
-choirOscillatorGainC.gain.setValueAtTime(
-    0.22,
-    now
-);
-
-    // ========================================
-    // Basic Ah / Oh formant shape
-    // ========================================
-
-    choirFormantLow.type = "bandpass";
-
-choirFormantLow.frequency.setValueAtTime(
-    800,
-    now
-);
-
-choirFormantLow.Q.setValueAtTime(
-    1.8,
-    now
-);
-
-choirFormantHigh.type = "bandpass";
-
-choirFormantHigh.frequency.setValueAtTime(
-    1150,
-    now
-);
-
-choirFormantHigh.Q.setValueAtTime(
-    2.1,
-    now
-);
-
-// ========================================
-// Third vocal resonance (F3)
-// Adds facial and throat presence
-// ========================================
-
-choirFormantPresence.type = "bandpass";
-
-choirFormantPresence.frequency.setValueAtTime(
-    2550,
-    now
-);
-
-choirFormantPresence.Q.setValueAtTime(
-    3.2,
-    now
-);
-
-choirFormantPresenceGain.gain.setValueAtTime(
-    1.0,
-    now
-);
-    
-// ========================================
-// Subtle formant breathing configuration
-// ========================================
-
-// Slow, slightly different breathing speeds keep
-// the two formants from moving mechanically together.
-choirFormantLowBreath.type = "sine";
-choirFormantHighBreath.type = "sine";
-
-choirFormantLowBreath.frequency.setValueAtTime(
-    0.075,
-    now
-);
-
-choirFormantHighBreath.frequency.setValueAtTime(
-    0.061,
-    now
-);
-
-// Very small frequency movement.
-// These values are measured in Hz because the gains
-// modulate the filters' frequency AudioParams.
-choirFormantLowBreathDepth.gain.setValueAtTime(
-    6,
-    now
-);
-
-choirFormantHighBreathDepth.gain.setValueAtTime(
-    9,
-    now
-);
-
-choirFormantLowGain.gain.setValueAtTime(
-    0.82,
-    now
-);
-
-choirFormantHighGain.gain.setValueAtTime(
-    0.34,
-    now
-);
-    // ========================================
-    // Choir amplitude envelope
-    // ========================================
+    const choirPeak = 0.32;
 
     choirVoiceOut.gain.setValueAtTime(
-    0.0001,
-    now
-);
-
-choirVoiceOut.gain.linearRampToValueAtTime(
-    choirPeak,
-    now + choirAttack
-);
-
-choirVoiceOut.gain.exponentialRampToValueAtTime(
-    Math.max(
-        0.001,
-        choirPeak * choirSustain
-    ),
-    now + choirAttack + 1.2
-);
-
-    choirPan.pan.setValueAtTime(
-        (Math.random() * 2 - 1) * 0.35,
+        0.0001,
         now
     );
 
-    // ========================================
-    // Signal routing
-    // ========================================
+    choirVoiceOut.gain.linearRampToValueAtTime(
+        choirPeak,
+        now + choirAttack
+    );
+
+    choirVoiceOut.gain.exponentialRampToValueAtTime(
+        Math.max(
+            0.001,
+            choirPeak * choirSustain
+        ),
+        now + choirAttack + 1.4
+    );
+
+    choirVoiceOut.connect(dryGain);
+    choirVoiceOut.connect(reverbNode);
+    choirVoiceOut.connect(delayDryGain);
+    choirVoiceOut.connect(delayNode);
 
     // ========================================
-// Choir vocal routing
-// ========================================
-
-// Oscillators into their individual gain controls
-choirOscillatorA.connect(choirOscillatorGainA);
-choirOscillatorB.connect(choirOscillatorGainB);
-choirOscillatorC.connect(choirOscillatorGainC);
-
-// Lower vocal body
-choirOscillatorGainA.connect(choirFormantLow);
-
-// Harmonic-rich source gives the low formant
-// enough material to sculpt a recognizable vowel.
-choirOscillatorGainC.connect(choirFormantLow);
-
-// Upper voices feed the high vocal formant
-choirOscillatorGainB.connect(choirFormantHigh);
-choirOscillatorGainC.connect(choirFormantHigh);
-
-// Upper harmonic source also feeds the third vocal resonance
-choirOscillatorGainC.connect(
-    choirFormantPresence
-);
-    
-// Slowly breathe the vowel formants.
-// These modulation signals affect filter frequency only.
-choirFormantLowBreath.connect(
-    choirFormantLowBreathDepth
-);
-
-choirFormantLowBreathDepth.connect(
-    choirFormantLow.frequency
-);
-
-choirFormantHighBreath.connect(
-    choirFormantHighBreathDepth
-);
-
-choirFormantHighBreathDepth.connect(
-    choirFormantHigh.frequency
-);
-    
-// Formant filters feed their own level controls
-choirFormantLow.connect(choirFormantLowGain);
-choirFormantHigh.connect(choirFormantHighGain);
-choirFormantPresence.connect(choirFormantPresenceGain);
-
-// Formant levels combine into the main Choir envelope
-choirFormantLowGain.connect(choirVoiceOut);
-choirFormantHighGain.connect(choirVoiceOut);
-choirFormantPresenceGain.connect(choirVoiceOut);
-
-// Continue through stereo positioning
-choirVoiceOut.connect(choirPan);
-
-choirPan.connect(dryGain);
-choirPan.connect(reverbNode);
-choirPan.connect(delayDryGain);
-choirPan.connect(delayNode);
-
-    // ========================================
-    // Start and stop sources
+    // Virtual singer configuration
     // ========================================
 
-    choirOscillatorA.start(now);
-choirOscillatorB.start(now);
-choirOscillatorC.start(now);
+    const singerConfigurations = [
+        {
+            detune: -11,
+            pan: -0.34,
+            level: 0.31,
+            formantScale: 0.975,
+            vibratoRate: 4.55,
+            vibratoDepth: 4.2
+        },
+        {
+            detune: -3,
+            pan: -0.11,
+            level: 0.29,
+            formantScale: 1.0,
+            vibratoRate: 4.83,
+            vibratoDepth: 3.5
+        },
+        {
+            detune: 5,
+            pan: 0.13,
+            level: 0.29,
+            formantScale: 1.025,
+            vibratoRate: 5.07,
+            vibratoDepth: 3.8
+        },
+        {
+            detune: 12,
+            pan: 0.36,
+            level: 0.27,
+            formantScale: 1.05,
+            vibratoRate: 5.31,
+            vibratoDepth: 4.4
+        }
+    ];
 
-choirFormantLowBreath.start(now);
-choirFormantHighBreath.start(now);
+    const choirSources = [];
+    const choirProcessingNodes = [];
 
-    
+    // ========================================
+    // Reusable white-noise buffer
+    // ========================================
+
+    const noiseBufferLength = Math.max(
+        1,
+        Math.floor(ctx.sampleRate * 0.5)
+    );
+
+    const choirNoiseBuffer = ctx.createBuffer(
+        1,
+        noiseBufferLength,
+        ctx.sampleRate
+    );
+
+    const noiseData =
+        choirNoiseBuffer.getChannelData(0);
+
+    for (
+        let sampleIndex = 0;
+        sampleIndex < noiseBufferLength;
+        sampleIndex += 1
+    ) {
+        noiseData[sampleIndex] =
+            Math.random() * 2 - 1;
+    }
+
+    // ========================================
+    // Build one virtual singer
+    // ========================================
+
+    function createVirtualSinger(configuration, singerIndex) {
+        const singerInput = ctx.createGain();
+        const singerOutput = ctx.createGain();
+        const singerPan = ctx.createStereoPanner();
+
+        const vocalOscillator = ctx.createOscillator();
+        const vocalBodyOscillator = ctx.createOscillator();
+
+        const vocalOscillatorGain = ctx.createGain();
+        const vocalBodyGain = ctx.createGain();
+
+        const formantOne = ctx.createBiquadFilter();
+        const formantTwo = ctx.createBiquadFilter();
+        const formantThree = ctx.createBiquadFilter();
+
+        const formantOneGain = ctx.createGain();
+        const formantTwoGain = ctx.createGain();
+        const formantThreeGain = ctx.createGain();
+
+        const vibratoOscillator = ctx.createOscillator();
+        const vibratoDepth = ctx.createGain();
+
+        const formantBreathOscillator =
+            ctx.createOscillator();
+
+        const formantBreathDepth = ctx.createGain();
+
+        const breathSource = ctx.createBufferSource();
+        const breathFilter = ctx.createBiquadFilter();
+        const breathGain = ctx.createGain();
+
+        const randomDetune =
+            (Math.random() * 1.6) - 0.8;
+
+        const randomFormantScale =
+            1 + ((Math.random() * 0.012) - 0.006);
+
+        const singerFormantScale =
+            configuration.formantScale *
+            randomFormantScale;
+
+        // ========================================
+        // Vocal-cord excitation
+        // ========================================
+
+        vocalOscillator.type = "sawtooth";
+
+        vocalOscillator.frequency.setValueAtTime(
+            frequency,
+            now
+        );
+
+        vocalOscillator.detune.setValueAtTime(
+            configuration.detune + randomDetune,
+            now
+        );
+
+        vocalOscillatorGain.gain.setValueAtTime(
+            0.24,
+            now
+        );
+
+        vocalBodyOscillator.type = "triangle";
+
+        vocalBodyOscillator.frequency.setValueAtTime(
+            frequency,
+            now
+        );
+
+        vocalBodyOscillator.detune.setValueAtTime(
+            configuration.detune -
+            randomDetune * 0.5,
+            now
+        );
+
+        vocalBodyGain.gain.setValueAtTime(
+            0.15,
+            now
+        );
+
+        vocalOscillator.connect(
+            vocalOscillatorGain
+        );
+
+        vocalBodyOscillator.connect(
+            vocalBodyGain
+        );
+
+        vocalOscillatorGain.connect(
+            singerInput
+        );
+
+        vocalBodyGain.connect(
+            singerInput
+        );
+
+        // ========================================
+        // True "Ah" vowel resonances
+        // ========================================
+
+        formantOne.type = "bandpass";
+
+        formantOne.frequency.setValueAtTime(
+            730 * singerFormantScale,
+            now
+        );
+
+        formantOne.Q.setValueAtTime(
+            5.2,
+            now
+        );
+
+        formantOneGain.gain.setValueAtTime(
+            1.0,
+            now
+        );
+
+        formantTwo.type = "bandpass";
+
+        formantTwo.frequency.setValueAtTime(
+            1090 * singerFormantScale,
+            now
+        );
+
+        formantTwo.Q.setValueAtTime(
+            6.0,
+            now
+        );
+
+        formantTwoGain.gain.setValueAtTime(
+            0.72,
+            now
+        );
+
+        formantThree.type = "bandpass";
+
+        formantThree.frequency.setValueAtTime(
+            2440 * singerFormantScale,
+            now
+        );
+
+        formantThree.Q.setValueAtTime(
+            7.2,
+            now
+        );
+
+        formantThreeGain.gain.setValueAtTime(
+            0.24,
+            now
+        );
+
+        singerInput.connect(formantOne);
+        singerInput.connect(formantTwo);
+        singerInput.connect(formantThree);
+
+        formantOne.connect(formantOneGain);
+        formantTwo.connect(formantTwoGain);
+        formantThree.connect(formantThreeGain);
+
+        formantOneGain.connect(singerOutput);
+        formantTwoGain.connect(singerOutput);
+        formantThreeGain.connect(singerOutput);
+
+        // ========================================
+        // Natural singer vibrato
+        // ========================================
+
+        vibratoOscillator.type = "sine";
+
+        vibratoOscillator.frequency.setValueAtTime(
+            configuration.vibratoRate +
+            ((Math.random() * 0.12) - 0.06),
+            now
+        );
+
+        vibratoDepth.gain.setValueAtTime(
+            0,
+            now
+        );
+
+        vibratoDepth.gain.linearRampToValueAtTime(
+            configuration.vibratoDepth,
+            now + choirAttack + 0.75
+        );
+
+        vibratoOscillator.connect(vibratoDepth);
+
+        vibratoDepth.connect(
+            vocalOscillator.detune
+        );
+
+        vibratoDepth.connect(
+            vocalBodyOscillator.detune
+        );
+
+        // ========================================
+        // Slow vowel movement
+        // ========================================
+
+        formantBreathOscillator.type = "sine";
+
+        formantBreathOscillator.frequency.setValueAtTime(
+            0.09 + singerIndex * 0.013,
+            now
+        );
+
+        formantBreathDepth.gain.setValueAtTime(
+            5 + singerIndex,
+            now
+        );
+
+        formantBreathOscillator.connect(
+            formantBreathDepth
+        );
+
+        formantBreathDepth.connect(
+            formantOne.frequency
+        );
+
+        formantBreathDepth.connect(
+            formantTwo.frequency
+        );
+
+        // ========================================
+        // Breath and aspiration
+        // ========================================
+
+        breathSource.buffer = choirNoiseBuffer;
+        breathSource.loop = true;
+
+        breathFilter.type = "bandpass";
+
+        breathFilter.frequency.setValueAtTime(
+            3100 + singerIndex * 120,
+            now
+        );
+
+        breathFilter.Q.setValueAtTime(
+            0.8,
+            now
+        );
+
+        breathGain.gain.setValueAtTime(
+            0.0001,
+            now
+        );
+
+        breathGain.gain.linearRampToValueAtTime(
+            0.012,
+            now + Math.min(0.3, choirAttack)
+        );
+
+        breathGain.gain.linearRampToValueAtTime(
+            0.005,
+            now + choirAttack + 0.5
+        );
+
+        breathSource.connect(breathFilter);
+        breathFilter.connect(breathGain);
+        breathGain.connect(singerOutput);
+
+        // ========================================
+        // Singer level and stereo position
+        // ========================================
+
+        singerOutput.gain.setValueAtTime(
+            configuration.level,
+            now
+        );
+
+        singerPan.pan.setValueAtTime(
+            configuration.pan +
+            ((Math.random() * 0.04) - 0.02),
+            now
+        );
+
+        singerOutput.connect(singerPan);
+        singerPan.connect(choirVoiceOut);
+
+        vocalOscillator.start(now);
+        vocalBodyOscillator.start(now);
+        vibratoOscillator.start(now);
+        formantBreathOscillator.start(now);
+        breathSource.start(now);
+
+        choirSources.push(
+            vocalOscillator,
+            vocalBodyOscillator,
+            vibratoOscillator,
+            formantBreathOscillator,
+            breathSource
+        );
+
+        choirProcessingNodes.push(
+            singerInput,
+            singerOutput,
+            singerPan,
+            vocalOscillatorGain,
+            vocalBodyGain,
+            formantOne,
+            formantTwo,
+            formantThree,
+            formantOneGain,
+            formantTwoGain,
+            formantThreeGain,
+            vibratoDepth,
+            formantBreathDepth,
+            breathFilter,
+            breathGain
+        );
+    }
+
+    singerConfigurations.forEach(
+        (configuration, singerIndex) => {
+            createVirtualSinger(
+                configuration,
+                singerIndex
+            );
+        }
+    );
+
+    choirProcessingNodes.push(
+        choirVoiceOut
+    );
+
+    // ========================================
+    // Choir lifecycle
+    // ========================================
+
     let choirVoiceCleaned = false;
+    let choirVoiceReleased = false;
     let choirCleanupTimer = null;
-
-    const choirSources = [
-    choirOscillatorA,
-    choirOscillatorB,
-    choirOscillatorC,
-    choirFormantLowBreath,
-    choirFormantHighBreath
-];
-
-    const choirProcessingNodes = [
-    choirOscillatorGainA,
-    choirOscillatorGainB,
-    choirOscillatorGainC,
-    choirFormantLowBreathDepth,
-    choirFormantHighBreathDepth,
-    choirFormantLow,
-    choirFormantHigh,
-    choirFormantPresence,
-    choirFormantLowGain,
-    choirFormantHighGain,
-    choirFormantPresenceGain,
-    choirVoiceOut,
-    choirPan
-];
-
     let choirVoice = null;
 
     function removeChoirVoiceReference() {
@@ -3625,6 +3729,16 @@ choirFormantHighBreath.start(now);
         }
     }
 
+    function stopChoirSources(stopTime) {
+        choirSources.forEach((sourceNode) => {
+            try {
+                sourceNode.stop(stopTime);
+            } catch (error) {
+                // Source may already have a stop time.
+            }
+        });
+    }
+
     function cleanupChoirVoice() {
         if (choirVoiceCleaned) return;
 
@@ -3635,32 +3749,40 @@ choirFormantHighBreath.start(now);
             choirCleanupTimer = null;
         }
 
-        choirSources.forEach((node) => {
+        choirSources.forEach((sourceNode) => {
             try {
-                node.disconnect();
+                sourceNode.disconnect();
             } catch (error) {
                 // Source was already disconnected.
             }
         });
 
-        choirProcessingNodes.forEach((node) => {
-            try {
-                node.disconnect();
-            } catch (error) {
-                // Node was already disconnected.
+        choirProcessingNodes.forEach(
+            (processingNode) => {
+                try {
+                    processingNode.disconnect();
+                } catch (error) {
+                    // Node was already disconnected.
+                }
             }
-        });
+        );
 
         removeChoirVoiceReference();
     }
 
-function releaseChoirVoice() {
-    if (choirVoiceCleaned) return;
+    function releaseChoirVoice() {
+        if (
+            choirVoiceCleaned ||
+            choirVoiceReleased
+        ) {
+            return;
+        }
 
-    const releaseNow = ctx.currentTime;
+        choirVoiceReleased = true;
 
-    const releaseDuration =
-        Math.min(
+        const releaseNow = ctx.currentTime;
+
+        const releaseDuration = Math.min(
             8.0,
             Math.max(
                 0.8,
@@ -3668,46 +3790,40 @@ function releaseChoirVoice() {
             )
         );
 
-    choirVoiceOut.gain.cancelScheduledValues(
-        releaseNow
-    );
+        choirVoiceOut.gain.cancelScheduledValues(
+            releaseNow
+        );
 
-    choirVoiceOut.gain.setValueAtTime(
-        Math.max(
+        choirVoiceOut.gain.setValueAtTime(
+            Math.max(
+                0.0001,
+                choirVoiceOut.gain.value
+            ),
+            releaseNow
+        );
+
+        choirVoiceOut.gain.exponentialRampToValueAtTime(
             0.0001,
-            choirVoiceOut.gain.value
-        ),
-        releaseNow
-    );
+            releaseNow + releaseDuration
+        );
 
-    choirVoiceOut.gain.exponentialRampToValueAtTime(
-        0.0001,
-        releaseNow + releaseDuration
-    );
+        stopChoirSources(
+            releaseNow + releaseDuration + 0.08
+        );
 
-    choirSources.forEach((node) => {
-        try {
-            node.stop(
-                releaseNow +
-                releaseDuration +
-                0.05
-            );
-        } catch (error) {
-            // Source may already have a stop time.
-        }
-    });
+        choirCleanupTimer = setTimeout(
+            cleanupChoirVoice,
+            (releaseDuration + 0.16) * 1000
+        );
+    }
 
-    choirCleanupTimer = setTimeout(
-        cleanupChoirVoice,
-        (releaseDuration + 0.12) * 1000
-    );
-}
-    
     function stealChoirVoice() {
         if (choirVoiceCleaned) return;
 
+        choirVoiceReleased = true;
+
         const stealNow = ctx.currentTime;
-        const fadeDuration = 0.08;
+        const fadeDuration = 0.07;
 
         choirVoiceOut.gain.cancelScheduledValues(
             stealNow
@@ -3726,35 +3842,33 @@ function releaseChoirVoice() {
             stealNow + fadeDuration
         );
 
-        choirSources.forEach((node) => {
-            try {
-                node.stop(
-                    stealNow +
-                    fadeDuration +
-                    0.03
-                );
-            } catch (error) {
-                // Source may already have a stop time.
-            }
-        });
+        stopChoirSources(
+            stealNow + fadeDuration + 0.04
+        );
 
         choirCleanupTimer = setTimeout(
             cleanupChoirVoice,
-            140
+            150
         );
     }
 
     choirVoice = {
-    frequency,
-    release: releaseChoirVoice,
-    steal: stealChoirVoice,
-    cleanup: cleanupChoirVoice
-};
+        frequency,
+        release: releaseChoirVoice,
+        steal: stealChoirVoice,
+        cleanup: cleanupChoirVoice
+    };
 
     activeChoirNodes.push(choirVoice);
 
-return choirVoice;
+    return choirVoice;
 }
+
+
+// ========================================
+// Piano Engine
+// ========================================
+
 
 function createPianoNote(frequency) {
     const ctx = getAudioContext();
