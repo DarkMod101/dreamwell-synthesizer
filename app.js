@@ -3448,9 +3448,9 @@ function createChoirNote(frequency) {
         );
 
         vocalOscillatorGain.gain.setValueAtTime(
-            0.24,
-            now
-        );
+    0.36,
+    now
+);
 
         vocalBodyOscillator.type = "triangle";
 
@@ -3466,9 +3466,9 @@ function createChoirNote(frequency) {
         );
 
         vocalBodyGain.gain.setValueAtTime(
-            0.15,
-            now
-        );
+    0.225,
+    now
+);
 
         vocalOscillator.connect(
             vocalOscillatorGain
