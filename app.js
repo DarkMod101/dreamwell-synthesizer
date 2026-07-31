@@ -3323,39 +3323,39 @@ function createChoirNote(frequency) {
     // ========================================
 
     const singerConfigurations = [
-        {
-            detune: -11,
-            pan: -0.34,
-            level: 0.31,
-            formantScale: 0.975,
-            vibratoRate: 4.55,
-            vibratoDepth: 4.2
-        },
-        {
-            detune: -3,
-            pan: -0.11,
-            level: 0.29,
-            formantScale: 1.0,
-            vibratoRate: 4.83,
-            vibratoDepth: 3.5
-        },
-        {
-            detune: 5,
-            pan: 0.13,
-            level: 0.29,
-            formantScale: 1.025,
-            vibratoRate: 5.07,
-            vibratoDepth: 3.8
-        },
-        {
-            detune: 12,
-            pan: 0.36,
-            level: 0.27,
-            formantScale: 1.05,
-            vibratoRate: 5.31,
-            vibratoDepth: 4.4
-        }
-    ];
+    {
+        detune: -11,
+        pan: -0.34,
+        level: 0.50,
+        formantScale: 0.975,
+        vibratoRate: 4.55,
+        vibratoDepth: 4.2
+    },
+    {
+        detune: -3,
+        pan: -0.11,
+        level: 0.47,
+        formantScale: 1.0,
+        vibratoRate: 4.83,
+        vibratoDepth: 3.5
+    },
+    {
+        detune: 5,
+        pan: 0.13,
+        level: 0.47,
+        formantScale: 1.025,
+        vibratoRate: 5.07,
+        vibratoDepth: 3.8
+    },
+    {
+        detune: 12,
+        pan: 0.36,
+        level: 0.44,
+        formantScale: 1.05,
+        vibratoRate: 5.31,
+        vibratoDepth: 4.4
+    }
+];
 
     const choirSources = [];
     const choirProcessingNodes = [];
