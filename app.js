@@ -3326,7 +3326,7 @@ function createChoirNote(frequency) {
     {
         detune: -11,
         pan: -0.34,
-        level: 0.50,
+        level: 0.625,
         formantScale: 0.975,
         vibratoRate: 4.55,
         vibratoDepth: 4.2
@@ -3334,7 +3334,7 @@ function createChoirNote(frequency) {
     {
         detune: -3,
         pan: -0.11,
-        level: 0.47,
+        level: 0.588,
         formantScale: 1.0,
         vibratoRate: 4.83,
         vibratoDepth: 3.5
@@ -3342,7 +3342,7 @@ function createChoirNote(frequency) {
     {
         detune: 5,
         pan: 0.13,
-        level: 0.47,
+        level: 0.588,
         formantScale: 1.025,
         vibratoRate: 5.07,
         vibratoDepth: 3.8
@@ -3350,7 +3350,7 @@ function createChoirNote(frequency) {
     {
         detune: 12,
         pan: 0.36,
-        level: 0.44,
+        level: 0.55,
         formantScale: 1.05,
         vibratoRate: 5.31,
         vibratoDepth: 4.4
