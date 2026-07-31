@@ -3617,39 +3617,42 @@ function createChoirNote(frequency) {
         // ========================================
         // Breath and aspiration
         // ========================================
+        
+breathSource.buffer = choirNoiseBuffer;
+breathSource.loop = true;
 
-        breathSource.buffer = choirNoiseBuffer;
-        breathSource.loop = true;
+breathFilter.type = "bandpass";
 
-        breathFilter.type = "bandpass";
-
-        breathFilter.frequency.setValueAtTime(
+breathFilter.frequency.setValueAtTime(
     1400 + singerIndex * 60,
     now
 );
 
-        breathFilter.Q.setValueAtTime(
-            0.8,
-            now
-        );
+breathFilter.Q.setValueAtTime(
+    0.8,
+    now
+);
 
-        breathGain.gain.setValueAtTime(0, now);
-        );
+breathGain.gain.setValueAtTime(
+    0,
+    now
+);
 
-        breathGain.gain.linearRampToValueAtTime(
-            0.012,
-            now + Math.min(0.3, choirAttack)
-        );
+breathGain.gain.linearRampToValueAtTime(
+    0.012,
+    now + Math.min(0.3, choirAttack)
+);
 
-        breathGain.gain.linearRampToValueAtTime(
-            0.005,
-            now + choirAttack + 0.5
-        );
+breathGain.gain.linearRampToValueAtTime(
+    0.005,
+    now + choirAttack + 0.5
+);
 
-        breathSource.connect(breathFilter);
-        breathFilter.connect(breathGain);
-        breathGain.connect(singerOutput);
-
+// Routing
+breathSource.connect(breathFilter);
+breathFilter.connect(breathGain);
+breathGain.connect(singerOutput);
+        
         // ========================================
         // Singer level and stereo position
         // ========================================
