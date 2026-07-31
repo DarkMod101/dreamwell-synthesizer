@@ -3647,10 +3647,12 @@ breathGain.gain.linearRampToValueAtTime(
     now + choirAttack + 0.5
 );
 
-// Routing
+// Route aspiration through the same vocal tract
+// as the pitched excitation so both components
+// share one unified vowel character.
 breathSource.connect(breathFilter);
 breathFilter.connect(breathGain);
-breathGain.connect(singerOutput);
+breathGain.connect(singerInput);
         
         // ========================================
         // Singer level and stereo position
