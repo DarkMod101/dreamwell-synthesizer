@@ -3633,9 +3633,7 @@ function createChoirNote(frequency) {
             now
         );
 
-        breathGain.gain.setValueAtTime(
-            0.0001,
-            now
+        breathGain.gain.setValueAtTime(0, now);
         );
 
         breathGain.gain.linearRampToValueAtTime(
