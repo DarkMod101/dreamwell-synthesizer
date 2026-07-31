@@ -3624,9 +3624,9 @@ function createChoirNote(frequency) {
         breathFilter.type = "bandpass";
 
         breathFilter.frequency.setValueAtTime(
-            3100 + singerIndex * 120,
-            now
-        );
+    1400 + singerIndex * 60,
+    now
+);
 
         breathFilter.Q.setValueAtTime(
             0.8,
