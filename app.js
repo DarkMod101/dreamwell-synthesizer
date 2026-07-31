@@ -3448,7 +3448,7 @@ function createChoirNote(frequency) {
         );
 
         vocalOscillatorGain.gain.setValueAtTime(
-    0.36,
+    0.54,
     now
 );
 
@@ -3466,7 +3466,7 @@ function createChoirNote(frequency) {
         );
 
         vocalBodyGain.gain.setValueAtTime(
-    0.225,
+    0.3375,
     now
 );
 
