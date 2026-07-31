@@ -1246,18 +1246,27 @@ function playNote(frequency) {
   }
 
   if (currentResonanceSource === "choir") {
+    const noteId = String(frequency);
 
-    const existingVoice = activeNotes.get(String(frequency));
+    const existingVoice =
+        activeNotes.get(noteId);
 
-    if (existingVoice?.release) {
-    existingVoice.release();
-    activeNotes.delete(String(frequency));
-}
+    // A repeated press should quickly retire the
+    // previous choir voice instead of allowing its
+    // full release tail to overlap the new voice.
+    if (existingVoice?.steal) {
+        existingVoice.steal();
+        activeNotes.delete(noteId);
+    } else if (existingVoice?.release) {
+        existingVoice.release();
+        activeNotes.delete(noteId);
+    }
 
-    const choirVoice = createChoirNote(frequency);
+    const choirVoice =
+        createChoirNote(frequency);
 
     activeNotes.set(
-        String(frequency),
+        noteId,
         choirVoice
     );
 
