@@ -3448,7 +3448,7 @@ function createChoirNote(frequency) {
         );
 
         vocalOscillatorGain.gain.setValueAtTime(
-    0.54,
+    0.44,
     now
 );
 
@@ -3466,7 +3466,7 @@ function createChoirNote(frequency) {
         );
 
         vocalBodyGain.gain.setValueAtTime(
-    0.3375,
+    0.28,
     now
 );
 
@@ -3503,9 +3503,9 @@ function createChoirNote(frequency) {
         );
 
         formantOneGain.gain.setValueAtTime(
-            1.0,
-            now
-        );
+    1.08,
+    now
+);
 
         formantTwo.type = "bandpass";
 
@@ -3520,9 +3520,9 @@ function createChoirNote(frequency) {
         );
 
         formantTwoGain.gain.setValueAtTime(
-            0.72,
-            now
-        );
+    1.0,
+    now
+);
 
         formantThree.type = "bandpass";
 
@@ -3537,9 +3537,9 @@ function createChoirNote(frequency) {
         );
 
         formantThreeGain.gain.setValueAtTime(
-            0.24,
-            now
-        );
+    0.34,
+    now
+);
 
         singerInput.connect(formantOne);
         singerInput.connect(formantTwo);
