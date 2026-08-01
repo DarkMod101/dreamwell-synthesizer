@@ -3435,7 +3435,7 @@ function createChoirNote(frequency) {
         // Vocal-cord excitation
         // ========================================
 
-        vocalOscillator.type = "sawtooth";
+        vocalOscillator.type = "triangle";
 
         vocalOscillator.frequency.setValueAtTime(
             frequency,
@@ -3452,7 +3452,8 @@ function createChoirNote(frequency) {
     now
 );
 
-        vocalBodyOscillator.type = "triangle";
+        applyWaveform(vocalBodyOscillator,"trapezoid",ctx
+);
 
         vocalBodyOscillator.frequency.setValueAtTime(
             frequency,
