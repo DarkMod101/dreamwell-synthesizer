@@ -3673,13 +3673,13 @@ breathGain.gain.setValueAtTime(
 );
 
 breathGain.gain.linearRampToValueAtTime(
-    0.012,
-    now + Math.min(0.3, choirAttack)
+    0.005,
+    now + Math.min(0.4, choirAttack)
 );
 
 breathGain.gain.linearRampToValueAtTime(
-    0.005,
-    now + choirAttack + 0.5
+    0.002,
+    now + choirAttack + 0.65
 );
 
 // Route aspiration through the same vocal tract
