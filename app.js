@@ -3412,6 +3412,9 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         const formantTwoGain = ctx.createGain();
         const formantThreeGain = ctx.createGain();
 
+        const throatResonance = ctx.createBiquadFilter();
+        const throatGain = ctx.createGain();
+        
         const vibratoOscillator = ctx.createOscillator();
         const vibratoDepth = ctx.createGain();
 
@@ -3545,12 +3548,12 @@ vocalHarmonicFilter.Q.setValueAtTime(
         );
 
         formantOne.Q.setValueAtTime(
-            5.2,
-            now
-        );
+    2.8,
+    now
+);
 
         formantOneGain.gain.setValueAtTime(
-    1.08,
+    1.35,
     now
 );
 
@@ -3567,7 +3570,7 @@ vocalHarmonicFilter.Q.setValueAtTime(
         );
 
         formantTwoGain.gain.setValueAtTime(
-    1.15,
+    0.90,
     now
 );
 
@@ -3587,6 +3590,7 @@ vocalHarmonicFilter.Q.setValueAtTime(
     0.34,
     now
 );
+    
 
         singerInput.connect(formantOne);
         singerInput.connect(formantTwo);
@@ -3599,7 +3603,32 @@ vocalHarmonicFilter.Q.setValueAtTime(
         formantOneGain.connect(singerOutput);
         formantTwoGain.connect(singerOutput);
         formantThreeGain.connect(singerOutput);
+        singerInput.connect(throatResonance);
+        throatResonance.connect(throatGain);
+        throatGain.connect(singerOutput);
 
+        
+// ========================================
+// Open throat resonance
+// ========================================
+
+throatResonance.type = "bandpass";
+
+throatResonance.frequency.setValueAtTime(
+    300,
+    now
+);
+
+throatResonance.Q.setValueAtTime(
+    0.8,
+    now
+);
+
+throatGain.gain.setValueAtTime(
+    0.22,
+    now
+);
+        
         // ========================================
         // Natural singer vibrato
         // ========================================
@@ -3753,6 +3782,8 @@ vibratoOscillator.start(now);
             formantOneGain,
             formantTwoGain,
             formantThreeGain,
+            throatResonance,
+            throatGain,
             vibratoDepth,
             formantBreathDepth,
             breathFilter,
