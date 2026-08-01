@@ -3521,7 +3521,7 @@ function createChoirNote(frequency) {
         );
 
         formantTwoGain.gain.setValueAtTime(
-    1.0,
+    1.15,
     now
 );
 
