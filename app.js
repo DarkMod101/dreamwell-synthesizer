@@ -3402,6 +3402,7 @@ const vocalHarmonicOscillator = ctx.createOscillator();
 const vocalOscillatorGain = ctx.createGain();
 const vocalBodyGain = ctx.createGain();
 const vocalHarmonicGain = ctx.createGain();
+const vocalHarmonicFilter = ctx.createBiquadFilter();
 
         const formantOne = ctx.createBiquadFilter();
         const formantTwo = ctx.createBiquadFilter();
@@ -3482,10 +3483,14 @@ vocalBodyOscillator.connect(
 );
 
 vocalHarmonicOscillator.connect(
+    vocalHarmonicFilter
+);
+
+vocalHarmonicFilter.connect(
     vocalHarmonicGain
 );
 
-        vocalOscillatorGain.connect(
+vocalOscillatorGain.connect(
     singerInput
 );
 
@@ -3516,6 +3521,17 @@ vocalHarmonicGain.gain.setValueAtTime(
     now
 );
 
+        vocalHarmonicFilter.type = "lowpass";
+
+vocalHarmonicFilter.frequency.setValueAtTime(
+    1450 + singerIndex * 70,
+    now
+);
+
+vocalHarmonicFilter.Q.setValueAtTime(
+    0.55,
+    now
+);
         
         // ========================================
         // True "Ah" vowel resonances
@@ -3730,6 +3746,7 @@ vibratoOscillator.start(now);
             vocalOscillatorGain,
             vocalBodyGain,
             vocalHarmonicGain,
+            vocalHarmonicFilter,
             formantOne,
             formantTwo,
             formantThree,
