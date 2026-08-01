@@ -3542,10 +3542,13 @@ vocalHarmonicFilter.Q.setValueAtTime(
 
         formantOne.type = "bandpass";
 
-        formantOne.frequency.setValueAtTime(
-            730 * singerFormantScale,
-            now
-        );
+        const singerFormantOne =
+    730 + ((Math.random() * 40) - 20);
+
+formantOne.frequency.setValueAtTime(
+    singerFormantOne * singerFormantScale,
+    now
+);
 
         formantOne.Q.setValueAtTime(
     2.8,
