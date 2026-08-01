@@ -3396,10 +3396,12 @@ function createChoirNote(frequency) {
         const singerPan = ctx.createStereoPanner();
 
         const vocalOscillator = ctx.createOscillator();
-        const vocalBodyOscillator = ctx.createOscillator();
+const vocalBodyOscillator = ctx.createOscillator();
+const vocalHarmonicOscillator = ctx.createOscillator();
 
-        const vocalOscillatorGain = ctx.createGain();
-        const vocalBodyGain = ctx.createGain();
+const vocalOscillatorGain = ctx.createGain();
+const vocalBodyGain = ctx.createGain();
+const vocalHarmonicGain = ctx.createGain();
 
         const formantOne = ctx.createBiquadFilter();
         const formantTwo = ctx.createBiquadFilter();
@@ -3472,21 +3474,49 @@ function createChoirNote(frequency) {
 );
 
         vocalOscillator.connect(
-            vocalOscillatorGain
-        );
+    vocalOscillatorGain
+);
 
-        vocalBodyOscillator.connect(
-            vocalBodyGain
-        );
+vocalBodyOscillator.connect(
+    vocalBodyGain
+);
+
+vocalHarmonicOscillator.connect(
+    vocalHarmonicGain
+);
 
         vocalOscillatorGain.connect(
-            singerInput
-        );
+    singerInput
+);
 
-        vocalBodyGain.connect(
-            singerInput
-        );
+vocalBodyGain.connect(
+    singerInput
+);
 
+vocalHarmonicGain.connect(
+    singerInput
+);
+
+// Subtle harmonic excitation
+vocalHarmonicOscillator.type = "sawtooth";
+
+vocalHarmonicOscillator.frequency.setValueAtTime(
+    frequency,
+    now
+);
+
+vocalHarmonicOscillator.detune.setValueAtTime(
+    configuration.detune +
+    randomDetune * 0.25,
+    now
+);
+
+vocalHarmonicGain.gain.setValueAtTime(
+    0.055,
+    now
+);
+
+        
         // ========================================
         // True "Ah" vowel resonances
         // ========================================
@@ -3586,6 +3616,10 @@ function createChoirNote(frequency) {
             vocalBodyOscillator.detune
         );
 
+        vibratoDepth.connect(
+    vocalHarmonicOscillator.detune
+);
+        
         // ========================================
         // Slow vowel movement
         // ========================================
@@ -3674,18 +3708,20 @@ breathGain.connect(singerInput);
         singerPan.connect(choirVoiceOut);
 
         vocalOscillator.start(now);
-        vocalBodyOscillator.start(now);
-        vibratoOscillator.start(now);
+vocalBodyOscillator.start(now);
+vocalHarmonicOscillator.start(now);
+vibratoOscillator.start(now);
         formantBreathOscillator.start(now);
         breathSource.start(now);
 
         choirSources.push(
-            vocalOscillator,
-            vocalBodyOscillator,
-            vibratoOscillator,
-            formantBreathOscillator,
-            breathSource
-        );
+    vocalOscillator,
+    vocalBodyOscillator,
+    vocalHarmonicOscillator,
+    vibratoOscillator,
+    formantBreathOscillator,
+    breathSource
+);
 
         choirProcessingNodes.push(
             singerInput,
@@ -3693,6 +3729,7 @@ breathGain.connect(singerInput);
             singerPan,
             vocalOscillatorGain,
             vocalBodyGain,
+            vocalHarmonicGain,
             formantOne,
             formantTwo,
             formantThree,
