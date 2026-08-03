@@ -3544,10 +3544,7 @@ vocalHarmonicFilter.Q.setValueAtTime(
 
         const singerFormantOne =
     730 + ((Math.random() * 40) - 20);
-
-const singerFormantOne =
-    730 + ((Math.random() * 40) - 20);
-
+        
 formantOne.frequency.setValueAtTime(
     singerFormantOne * singerFormantScale,
     now
