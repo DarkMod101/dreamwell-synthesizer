@@ -3436,6 +3436,9 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         const randomDetune =
             (Math.random() * 1.6) - 0.8;
 
+        const singerEntranceDelay =
+            0.008 + Math.random() * 0.024;
+        
         const randomFormantScale =
             1 + ((Math.random() * 0.012) - 0.006);
 
@@ -3812,9 +3815,14 @@ breathGain.connect(singerInput);
         // ========================================
 
         singerOutput.gain.setValueAtTime(
-            configuration.level,
-            now
-        );
+    0.0001,
+    now
+);
+
+singerOutput.gain.linearRampToValueAtTime(
+    configuration.level,
+    now + singerEntranceDelay + 0.035
+);
 
         singerPan.pan.setValueAtTime(
             configuration.pan +
