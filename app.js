@@ -3562,10 +3562,13 @@ formantOne.frequency.setValueAtTime(
 
         formantTwo.type = "bandpass";
 
-        formantTwo.frequency.setValueAtTime(
-            1090 * singerFormantScale,
-            now
-        );
+        const singerFormantTwo =
+    1090 + ((Math.random() * 50) - 25);
+
+formantTwo.frequency.setValueAtTime(
+    singerFormantTwo * singerFormantScale,
+    now
+);
 
         formantTwo.Q.setValueAtTime(
             6.0,
@@ -3579,10 +3582,13 @@ formantOne.frequency.setValueAtTime(
 
         formantThree.type = "bandpass";
 
-        formantThree.frequency.setValueAtTime(
-            2440 * singerFormantScale,
-            now
-        );
+        const singerFormantThree =
+    2440 + ((Math.random() * 90) - 45);
+
+formantThree.frequency.setValueAtTime(
+    singerFormantThree * singerFormantScale,
+    now
+);
 
         formantThree.Q.setValueAtTime(
             7.2,
