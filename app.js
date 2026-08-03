@@ -3420,6 +3420,9 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
 
         const vocalDriftOscillator = ctx.createOscillator();
         const vocalDriftDepth = ctx.createGain();
+
+        const vocalPulseOscillator = ctx.createOscillator();
+        const vocalPulseDepth = ctx.createGain();
         
         const formantBreathOscillator =
             ctx.createOscillator();
@@ -3708,6 +3711,32 @@ vocalDriftDepth.connect(
     vocalHarmonicOscillator.detune
 );
 
+
+
+// ========================================
+// Micro vocal pulse
+// ========================================
+
+vocalPulseOscillator.type = "sine";
+
+vocalPulseOscillator.frequency.setValueAtTime(
+    0.35 + Math.random() * 0.55,
+    now
+);
+
+vocalPulseDepth.gain.setValueAtTime(
+    0.012,
+    now
+);
+
+vocalPulseOscillator.connect(
+    vocalPulseDepth
+);
+
+vocalPulseDepth.connect(
+    singerOutput.gain
+);
+
         
         // ========================================
         // Slow vowel movement
@@ -3801,6 +3830,7 @@ breathGain.connect(singerInput);
         vocalHarmonicOscillator.start(now);
         vibratoOscillator.start(now);
         vocalDriftOscillator.start(now);
+        vocalPulseOscillator.start(now);
         formantBreathOscillator.start(now);
         breathSource.start(now);
 
@@ -3810,6 +3840,7 @@ breathGain.connect(singerInput);
         vocalHarmonicOscillator,
         vibratoOscillator,
         vocalDriftOscillator,
+        vocalPulseOscillator,
         formantBreathOscillator,
         breathSource
         );
@@ -3832,6 +3863,7 @@ breathGain.connect(singerInput);
             throatGain,
             vibratoDepth,
             vocalDriftDepth,
+            vocalPulseDepth,
             formantBreathDepth,
             breathFilter,
             breathGain
