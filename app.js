@@ -3323,13 +3323,18 @@ function createChoirNote(frequency) {
     // ========================================
 
     const singerConfigurations = [
+    const singerConfigurations = [
     {
         detune: -11,
         pan: -0.34,
         level: 0.8125,
         formantScale: 0.975,
         vibratoRate: 4.55,
-        vibratoDepth: 4.2
+        vibratoDepth: 4.2,
+
+        vocalLevel: 0.96,
+        bodyLevel: 1.08,
+        harmonicLevel: 0.86
     },
     {
         detune: -3,
@@ -3337,7 +3342,11 @@ function createChoirNote(frequency) {
         level: 0.764,
         formantScale: 1.0,
         vibratoRate: 4.83,
-        vibratoDepth: 3.5
+        vibratoDepth: 3.5,
+
+        vocalLevel: 1.03,
+        bodyLevel: 0.97,
+        harmonicLevel: 1.04
     },
     {
         detune: 5,
@@ -3345,7 +3354,11 @@ function createChoirNote(frequency) {
         level: 0.764,
         formantScale: 1.025,
         vibratoRate: 5.07,
-        vibratoDepth: 3.8
+        vibratoDepth: 3.8,
+
+        vocalLevel: 1.0,
+        bodyLevel: 1.04,
+        harmonicLevel: 0.92
     },
     {
         detune: 12,
@@ -3353,7 +3366,11 @@ function createChoirNote(frequency) {
         level: 0.715,
         formantScale: 1.05,
         vibratoRate: 5.31,
-        vibratoDepth: 4.4
+        vibratoDepth: 4.4,
+
+        vocalLevel: 1.06,
+        bodyLevel: 0.94,
+        harmonicLevel: 1.08
     }
 ];
     const choirSources = [];
@@ -3463,7 +3480,7 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         );
 
         vocalOscillatorGain.gain.setValueAtTime(
-    0.44,
+    0.44 * configuration.vocalLevel,
     now
 );
 
@@ -3482,7 +3499,7 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         );
 
         vocalBodyGain.gain.setValueAtTime(
-    0.28,
+    0.28 * configuration.bodyLevel,
     now
 );
 
@@ -3529,7 +3546,7 @@ vocalHarmonicOscillator.detune.setValueAtTime(
 );
 
 vocalHarmonicGain.gain.setValueAtTime(
-    0.055,
+    0.055 * configuration.harmonicLevel,
     now
 );
 
