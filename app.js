@@ -3217,10 +3217,10 @@ choir: {
         engine: "choir",
 
         settings: {
-            attack: 0.12,
-            decay: 2.0,
-            sustain: 0.78,
-            release: 1.6,
+            attack: 0.45,
+            decay: 1.4,
+            sustain: 0.82,
+            release: 2.2,
 
             origin: "pure",
             presence: 12,
