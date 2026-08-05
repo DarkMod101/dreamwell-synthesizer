@@ -3659,7 +3659,7 @@ throatResonance.Q.setValueAtTime(
 );
 
 throatGain.gain.setValueAtTime(
-    0.22,
+    0,
     now
 );
         
