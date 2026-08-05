@@ -3323,7 +3323,6 @@ function createChoirNote(frequency) {
     // ========================================
 
     const singerConfigurations = [
-    const singerConfigurations = [
     {
         detune: -11,
         pan: -0.34,
