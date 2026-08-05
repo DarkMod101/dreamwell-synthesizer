@@ -3531,7 +3531,36 @@ vocalHarmonicGain.connect(
 );
 
 // Subtle harmonic excitation
-vocalHarmonicOscillator.type = "sawtooth";
+const glottalReal = new Float32Array([
+    0,
+    1.0,
+    0.48,
+    0.30,
+    0.20,
+    0.14,
+    0.10,
+    0.075,
+    0.055,
+    0.042,
+    0.032,
+    0.025
+]);
+
+const glottalImag = new Float32Array(
+    glottalReal.length
+);
+
+const glottalWave = ctx.createPeriodicWave(
+    glottalReal,
+    glottalImag,
+    {
+        disableNormalization: false
+    }
+);
+
+vocalHarmonicOscillator.setPeriodicWave(
+    glottalWave
+);
 
 vocalHarmonicOscillator.frequency.setValueAtTime(
     frequency,
