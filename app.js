@@ -3596,9 +3596,9 @@ formantTwo.frequency.setValueAtTime(
 );
 
         formantTwo.Q.setValueAtTime(
-            6.0,
-            now
-        );
+    3.5,
+    now
+);
 
         formantTwoGain.gain.setValueAtTime(
     1.12,
