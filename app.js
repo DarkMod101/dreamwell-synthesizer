@@ -3552,7 +3552,7 @@ vocalHarmonicGain.gain.setValueAtTime(
         vocalHarmonicFilter.type = "lowpass";
 
 vocalHarmonicFilter.frequency.setValueAtTime(
-    1450 + singerIndex * 70,
+    3600 + singerIndex * 90,
     now
 );
 
