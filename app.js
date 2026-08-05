@@ -3424,6 +3424,7 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         const formantTwo = ctx.createBiquadFilter();
         const formantThree = ctx.createBiquadFilter();
         const vocalTractShape = ctx.createBiquadFilter();
+        const vocalSpectralTilt = ctx.createBiquadFilter();
         
         const formantOneGain = ctx.createGain();
         const formantTwoGain = ctx.createGain();
@@ -3593,6 +3594,23 @@ vocalHarmonicFilter.Q.setValueAtTime(
 
 
 // ========================================
+// Vocal spectral tilt
+// ========================================
+
+vocalSpectralTilt.type = "lowpass";
+
+vocalSpectralTilt.frequency.setValueAtTime(
+    2600,
+    now
+);
+
+vocalSpectralTilt.Q.setValueAtTime(
+    0.45,
+    now
+);
+
+        
+// ========================================
 // Shared vocal tract shaping
 // ========================================
 
@@ -3679,8 +3697,9 @@ formantThree.frequency.setValueAtTime(
 );
     
 
-        singerInput.connect(vocalTractShape);
-
+        singerInput.connect(vocalSpectralTilt);
+vocalSpectralTilt.connect(vocalTractShape);
+        
 vocalTractShape.connect(formantOne);
 vocalTractShape.connect(formantTwo);
 vocalTractShape.connect(formantThree);
@@ -3932,6 +3951,7 @@ singerOutput.gain.linearRampToValueAtTime(
             vocalBodyGain,
             vocalHarmonicGain,
             vocalHarmonicFilter,
+            vocalSpectralTilt,
             vocalTractShape,
             formantOne,
             formantTwo,
