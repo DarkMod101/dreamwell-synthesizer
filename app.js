@@ -3581,7 +3581,7 @@ formantOne.frequency.setValueAtTime(
 );
 
         formantOneGain.gain.setValueAtTime(
-    1.35,
+    1.65,
     now
 );
 
@@ -3601,7 +3601,7 @@ formantTwo.frequency.setValueAtTime(
         );
 
         formantTwoGain.gain.setValueAtTime(
-    0.90,
+    1.12,
     now
 );
 
@@ -3621,7 +3621,7 @@ formantThree.frequency.setValueAtTime(
         );
 
         formantThreeGain.gain.setValueAtTime(
-    0.34,
+    0.30,
     now
 );
     
