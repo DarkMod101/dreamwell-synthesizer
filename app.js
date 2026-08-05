@@ -3423,7 +3423,8 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         const formantOne = ctx.createBiquadFilter();
         const formantTwo = ctx.createBiquadFilter();
         const formantThree = ctx.createBiquadFilter();
-
+        const vocalTractShape = ctx.createBiquadFilter();
+        
         const formantOneGain = ctx.createGain();
         const formantTwoGain = ctx.createGain();
         const formantThreeGain = ctx.createGain();
@@ -3589,6 +3590,29 @@ vocalHarmonicFilter.Q.setValueAtTime(
     0.55,
     now
 );
+
+
+// ========================================
+// Shared vocal tract shaping
+// ========================================
+
+vocalTractShape.type = "peaking";
+
+vocalTractShape.frequency.setValueAtTime(
+    900,
+    now
+);
+
+vocalTractShape.Q.setValueAtTime(
+    0.55,
+    now
+);
+
+vocalTractShape.gain.setValueAtTime(
+    3.5,
+    now
+);
+
         
         // ========================================
         // True "Ah" vowel resonances
@@ -3655,9 +3679,11 @@ formantThree.frequency.setValueAtTime(
 );
     
 
-        singerInput.connect(formantOne);
-        singerInput.connect(formantTwo);
-        singerInput.connect(formantThree);
+        singerInput.connect(vocalTractShape);
+
+vocalTractShape.connect(formantOne);
+vocalTractShape.connect(formantTwo);
+vocalTractShape.connect(formantThree);
 
         formantOne.connect(formantOneGain);
         formantTwo.connect(formantTwoGain);
@@ -3906,6 +3932,7 @@ singerOutput.gain.linearRampToValueAtTime(
             vocalBodyGain,
             vocalHarmonicGain,
             vocalHarmonicFilter,
+            vocalTractShape,
             formantOne,
             formantTwo,
             formantThree,
