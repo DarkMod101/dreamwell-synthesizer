@@ -3576,7 +3576,7 @@ formantOne.frequency.setValueAtTime(
 );
 
         formantOne.Q.setValueAtTime(
-    2.8,
+    1.8,
     now
 );
 
