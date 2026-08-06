@@ -3667,7 +3667,7 @@ vocalTractShape.gain.setValueAtTime(
         formantOne.type = "bandpass";
 
         const singerFormantOne =
-    730 + ((Math.random() * 40) - 20);
+    800 + ((Math.random() * 40) - 20);
         
 formantOne.frequency.setValueAtTime(
     singerFormantOne * singerFormantScale,
