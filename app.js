@@ -3431,7 +3431,8 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         const formantOneGain = ctx.createGain();
         const formantTwoGain = ctx.createGain();
         const formantThreeGain = ctx.createGain();
-
+        const formantTwoSupportGain = ctx.createGain();
+        
         const throatResonance = ctx.createBiquadFilter();
         const throatGain = ctx.createGain();
         
@@ -3723,7 +3724,15 @@ formantThree.frequency.setValueAtTime(
     now
 );
     
+// ========================================
+// Formant 2 direct vowel support
+// ========================================
 
+formantTwoSupportGain.gain.setValueAtTime(
+    0.35,
+    now
+);
+        
         singerInput.connect(vocalSpectralTilt);
 vocalSpectralTilt.connect(vocalTractShape);
         
@@ -3732,6 +3741,9 @@ vocalTractShape.connect(formantOne);
 formantOne.connect(formantTwo);
 formantTwo.connect(formantThree);
 
+vocalTractShape.connect(formantTwoSupportGain);
+formantTwoSupportGain.connect(formantTwo);
+        
         formantOne.connect(formantOneGain);
         formantTwo.connect(formantTwoGain);
         formantThree.connect(formantThreeGain);
@@ -3987,6 +3999,7 @@ singerOutput.gain.linearRampToValueAtTime(
             formantOne,
             formantTwo,
             formantThree,
+            formantTwoSupportGain,
             formantOneGain,
             formantTwoGain,
             formantThreeGain,
