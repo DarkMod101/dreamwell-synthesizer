@@ -3484,7 +3484,7 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         );
 
         vocalOscillatorGain.gain.setValueAtTime(
-    0.10 * configuration.vocalLevel,
+    0.05 * configuration.vocalLevel,
     now
 );
 
@@ -3503,7 +3503,7 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         );
 
         vocalBodyGain.gain.setValueAtTime(
-    0.06 * configuration.bodyLevel,
+    0.03 * configuration.bodyLevel,
     now
 );
 
@@ -3579,7 +3579,7 @@ vocalHarmonicOscillator.detune.setValueAtTime(
 );
 
 vocalHarmonicGain.gain.setValueAtTime(
-    0.12 * configuration.harmonicLevel,
+    0.20 * configuration.harmonicLevel,
     now
 );
 
