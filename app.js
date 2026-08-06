@@ -3425,6 +3425,8 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         const formantThree = ctx.createBiquadFilter();
         const vocalTractShape = ctx.createBiquadFilter();
         const vocalSpectralTilt = ctx.createBiquadFilter();
+        const glottalLifeOscillator = ctx.createOscillator();
+        const glottalLifeDepth = ctx.createGain();
         
         const formantOneGain = ctx.createGain();
         const formantTwoGain = ctx.createGain();
@@ -3607,6 +3609,31 @@ vocalSpectralTilt.frequency.setValueAtTime(
 vocalSpectralTilt.Q.setValueAtTime(
     0.45,
     now
+);
+
+
+// ========================================
+// Living glottal motion
+// ========================================
+
+glottalLifeOscillator.type = "sine";
+
+glottalLifeOscillator.frequency.setValueAtTime(
+    0.045 + Math.random() * 0.03,
+    now
+);
+
+glottalLifeDepth.gain.setValueAtTime(
+    140,
+    now
+);
+
+glottalLifeOscillator.connect(
+    glottalLifeDepth
+);
+
+glottalLifeDepth.connect(
+    vocalSpectralTilt.frequency
 );
 
         
@@ -3929,6 +3956,7 @@ singerOutput.gain.linearRampToValueAtTime(
         vibratoOscillator.start(now);
         vocalDriftOscillator.start(now);
         vocalPulseOscillator.start(now);
+        glottalLifeOscillator.start(now);
         formantBreathOscillator.start(now);
         breathSource.start(now);
 
@@ -3939,6 +3967,7 @@ singerOutput.gain.linearRampToValueAtTime(
         vibratoOscillator,
         vocalDriftOscillator,
         vocalPulseOscillator,
+        glottalLifeOscillator,
         formantBreathOscillator,
         breathSource
         );
@@ -3953,6 +3982,7 @@ singerOutput.gain.linearRampToValueAtTime(
             vocalHarmonicFilter,
             vocalSpectralTilt,
             vocalTractShape,
+            glottalLifeDepth,
             formantOne,
             formantTwo,
             formantThree,
