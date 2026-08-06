@@ -3924,15 +3924,14 @@ breathGain.gain.setValueAtTime(
 );
 
 breathGain.gain.linearRampToValueAtTime(
-    0.030,
+    0.005,
     now + Math.min(0.4, choirAttack)
 );
 
 breathGain.gain.linearRampToValueAtTime(
-    0.012,
+    0.002,
     now + choirAttack + 0.65
 );
-
 // Route aspiration through the same vocal tract
 // as the pitched excitation so both components
 // share one unified vowel character.
