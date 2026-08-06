@@ -3729,7 +3729,7 @@ formantThree.frequency.setValueAtTime(
 // ========================================
 
 formantTwoSupportGain.gain.setValueAtTime(
-    0.35,
+    0,
     now
 );
         
@@ -3737,12 +3737,8 @@ formantTwoSupportGain.gain.setValueAtTime(
 vocalSpectralTilt.connect(vocalTractShape);
         
 vocalTractShape.connect(formantOne);
-
-formantOne.connect(formantTwo);
-formantTwo.connect(formantThree);
-
-vocalTractShape.connect(formantTwoSupportGain);
-formantTwoSupportGain.connect(formantTwo);
+vocalTractShape.connect(formantTwo);
+vocalTractShape.connect(formantThree);
         
         formantOne.connect(formantOneGain);
         formantTwo.connect(formantTwoGain);
