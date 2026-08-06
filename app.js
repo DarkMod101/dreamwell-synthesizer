@@ -3728,9 +3728,9 @@ formantThree.frequency.setValueAtTime(
 vocalSpectralTilt.connect(vocalTractShape);
         
 vocalTractShape.connect(formantOne);
-vocalTractShape.connect(formantThree);
 
 formantOne.connect(formantTwo);
+formantTwo.connect(formantThree);
 
         formantOne.connect(formantOneGain);
         formantTwo.connect(formantTwoGain);
