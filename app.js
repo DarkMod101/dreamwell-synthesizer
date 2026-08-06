@@ -3484,7 +3484,7 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         );
 
         vocalOscillatorGain.gain.setValueAtTime(
-    0.05 * configuration.vocalLevel,
+    0,
     now
 );
 
@@ -3503,7 +3503,7 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         );
 
         vocalBodyGain.gain.setValueAtTime(
-    0.03 * configuration.bodyLevel,
+    0,
     now
 );
 
@@ -3579,7 +3579,7 @@ vocalHarmonicOscillator.detune.setValueAtTime(
 );
 
 vocalHarmonicGain.gain.setValueAtTime(
-    0.20 * configuration.harmonicLevel,
+    0.12 * configuration.harmonicLevel,
     now
 );
 
@@ -3729,7 +3729,7 @@ formantThree.frequency.setValueAtTime(
 // ========================================
 
 formantTwoSupportGain.gain.setValueAtTime(
-    0,
+    0.35,
     now
 );
         
@@ -3737,8 +3737,12 @@ formantTwoSupportGain.gain.setValueAtTime(
 vocalSpectralTilt.connect(vocalTractShape);
         
 vocalTractShape.connect(formantOne);
-vocalTractShape.connect(formantTwo);
-vocalTractShape.connect(formantThree);
+
+formantOne.connect(formantTwo);
+formantTwo.connect(formantThree);
+
+vocalTractShape.connect(formantTwoSupportGain);
+formantTwoSupportGain.connect(formantTwo);
         
         formantOne.connect(formantOneGain);
         formantTwo.connect(formantTwoGain);
@@ -4010,10 +4014,14 @@ singerOutput.gain.linearRampToValueAtTime(
         );
     }
 
-    createVirtualSinger(
-    singerConfigurations[1],
-    1
-);
+    singerConfigurations.forEach(
+        (configuration, singerIndex) => {
+            createVirtualSinger(
+                configuration,
+                singerIndex
+            );
+        }
+    );
 
     choirProcessingNodes.push(
         choirVoiceOut
