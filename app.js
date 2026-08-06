@@ -3687,7 +3687,7 @@ formantOne.frequency.setValueAtTime(
         formantTwo.type = "bandpass";
 
         const singerFormantTwo =
-    1090 + ((Math.random() * 50) - 25);
+    1220 + ((Math.random() * 50) - 25);
 
 formantTwo.frequency.setValueAtTime(
     singerFormantTwo * singerFormantScale,
