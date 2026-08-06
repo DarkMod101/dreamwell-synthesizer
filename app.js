@@ -3924,12 +3924,12 @@ breathGain.gain.setValueAtTime(
 );
 
 breathGain.gain.linearRampToValueAtTime(
-    0.005,
+    0.030,
     now + Math.min(0.4, choirAttack)
 );
 
 breathGain.gain.linearRampToValueAtTime(
-    0.002,
+    0.012,
     now + choirAttack + 0.65
 );
 
