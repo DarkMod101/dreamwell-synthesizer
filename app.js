@@ -4010,14 +4010,10 @@ singerOutput.gain.linearRampToValueAtTime(
         );
     }
 
-    singerConfigurations.forEach(
-        (configuration, singerIndex) => {
-            createVirtualSinger(
-                configuration,
-                singerIndex
-            );
-        }
-    );
+    createVirtualSinger(
+    singerConfigurations[1],
+    1
+);
 
     choirProcessingNodes.push(
         choirVoiceOut
