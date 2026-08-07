@@ -3293,7 +3293,7 @@ function createChoirNote(frequency) {
         )
     );
 
-    const choirPeak = 1.0;
+    const choirPeak = 1.5;
 
     choirVoiceOut.gain.setValueAtTime(
         0.0001,
