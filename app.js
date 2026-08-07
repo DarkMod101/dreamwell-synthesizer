@@ -3739,7 +3739,7 @@ formantThree.frequency.setValueAtTime(
         );
 
         formantThreeGain.gain.setValueAtTime(
-    0.30,
+    0,
     now
 );
     
