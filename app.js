@@ -3242,7 +3242,7 @@ choir: {
             delayTime: 0.42,
             delayFeedback: 0.18,
 
-            masterVolume: 0.20,
+            masterVolume: 0.80,
         },
     },
 },
