@@ -3432,6 +3432,12 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
         const formantTwoGain = ctx.createGain();
         const formantThreeGain = ctx.createGain();
         const formantTwoSupportGain = ctx.createGain();
+
+        const ahFormantOne = ctx.createBiquadFilter();
+        const ahFormantTwo = ctx.createBiquadFilter();
+
+        const ahFormantOneGain = ctx.createGain();
+        const ahFormantTwoGain = ctx.createGain();
         
         const throatResonance = ctx.createBiquadFilter();
         const throatGain = ctx.createGain();
@@ -3467,6 +3473,47 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
             configuration.formantScale *
             randomFormantScale;
 
+
+// ========================================
+// Dedicated Ah articulation
+// ========================================
+
+ahFormantOne.type = "bandpass";
+
+ahFormantOne.frequency.setValueAtTime(
+    800 * singerFormantScale,
+    now
+);
+
+ahFormantOne.Q.setValueAtTime(
+    2.0,
+    now
+);
+
+ahFormantOneGain.gain.setValueAtTime(
+    3.0,
+    now
+);
+
+ahFormantTwo.type = "bandpass";
+
+ahFormantTwo.frequency.setValueAtTime(
+    1200 * singerFormantScale,
+    now
+);
+
+ahFormantTwo.Q.setValueAtTime(
+    2.5,
+    now
+);
+
+ahFormantTwoGain.gain.setValueAtTime(
+    2.5,
+    now
+);
+
+
+        
         // ========================================
         // Vocal-cord excitation
         // ========================================
@@ -3678,6 +3725,15 @@ vocalTractShape.gain.setValueAtTime(
     now
 );
 
+
+vocalTractShape.connect(ahFormantOne);
+vocalTractShape.connect(ahFormantTwo);
+
+ahFormantOne.connect(ahFormantOneGain);
+ahFormantTwo.connect(ahFormantTwoGain);
+
+ahFormantOneGain.connect(singerOutput);
+ahFormantTwoGain.connect(singerOutput);
         
         // ========================================
         // True "Ah" vowel resonances
@@ -4017,10 +4073,14 @@ singerOutput.gain.linearRampToValueAtTime(
             formantOne,
             formantTwo,
             formantThree,
+            ahFormantOne,
+            ahFormantTwo,
             formantTwoSupportGain,
             formantOneGain,
             formantTwoGain,
             formantThreeGain,
+            ahFormantOneGain,
+            ahFormantTwoGain
             throatResonance,
             throatGain,
             vibratoDepth,
