@@ -3486,7 +3486,7 @@ ahFormantOne.frequency.setValueAtTime(
 );
 
 ahFormantOne.Q.setValueAtTime(
-    2.0,
+    0.9,
     now
 );
 
@@ -3503,7 +3503,7 @@ ahFormantTwo.frequency.setValueAtTime(
 );
 
 ahFormantTwo.Q.setValueAtTime(
-    2.5,
+    1.2,
     now
 );
 
