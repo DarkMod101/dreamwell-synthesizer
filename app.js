@@ -4080,7 +4080,7 @@ singerOutput.gain.linearRampToValueAtTime(
             formantTwoGain,
             formantThreeGain,
             ahFormantOneGain,
-            ahFormantTwoGain
+            ahFormantTwoGain,
             throatResonance,
             throatGain,
             vibratoDepth,
