@@ -3491,7 +3491,7 @@ ahFormantOne.Q.setValueAtTime(
 );
 
 ahFormantOneGain.gain.setValueAtTime(
-    3.0,
+    1.6,
     now
 );
 
@@ -3508,7 +3508,7 @@ ahFormantTwo.Q.setValueAtTime(
 );
 
 ahFormantTwoGain.gain.setValueAtTime(
-    2.5,
+    1.1,
     now
 );
 
