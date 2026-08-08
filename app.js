@@ -3438,6 +3438,10 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
 
         const ahFormantOneGain = ctx.createGain();
         const ahFormantTwoGain = ctx.createGain();
+
+const vowelResonatorOne = ctx.createBiquadFilter();
+const vowelResonatorTwo = ctx.createBiquadFilter();
+const vowelResonatorThree = ctx.createBiquadFilter();
         
         const throatResonance = ctx.createBiquadFilter();
         const throatGain = ctx.createGain();
@@ -3475,6 +3479,68 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
 
 
 // ========================================
+// Advanced Ah vocal resonator
+// ========================================
+
+// Open-mouth body
+vowelResonatorOne.type = "peaking";
+
+vowelResonatorOne.frequency.setValueAtTime(
+    800 * singerFormantScale,
+    now
+);
+
+vowelResonatorOne.Q.setValueAtTime(
+    5.0,
+    now
+);
+
+vowelResonatorOne.gain.setValueAtTime(
+    12,
+    now
+);
+
+
+// Ah vowel identity
+vowelResonatorTwo.type = "peaking";
+
+vowelResonatorTwo.frequency.setValueAtTime(
+    1150 * singerFormantScale,
+    now
+);
+
+vowelResonatorTwo.Q.setValueAtTime(
+    7.0,
+    now
+);
+
+vowelResonatorTwo.gain.setValueAtTime(
+    10,
+    now
+);
+
+
+// Upper vocal presence
+vowelResonatorThree.type = "peaking";
+
+vowelResonatorThree.frequency.setValueAtTime(
+    2500 * singerFormantScale,
+    now
+);
+
+vowelResonatorThree.Q.setValueAtTime(
+    9.0,
+    now
+);
+
+vowelResonatorThree.gain.setValueAtTime(
+    5,
+    now
+);
+
+
+        
+// ========================================
 // Dedicated Ah articulation
 // ========================================
 
@@ -3491,7 +3557,7 @@ ahFormantOne.Q.setValueAtTime(
 );
 
 ahFormantOneGain.gain.setValueAtTime(
-    1.8,
+    0,
     now
 );
 
@@ -3508,7 +3574,7 @@ ahFormantTwo.Q.setValueAtTime(
 );
 
 ahFormantTwoGain.gain.setValueAtTime(
-    1.2,
+    0,
     now
 );
 
@@ -3810,7 +3876,15 @@ formantTwoSupportGain.gain.setValueAtTime(
         
         singerInput.connect(vocalSpectralTilt);
 vocalSpectralTilt.connect(vocalTractShape);
-        
+
+vocalTractShape.connect(vowelResonatorOne);
+
+vowelResonatorOne.connect(vowelResonatorTwo);
+vowelResonatorTwo.connect(vowelResonatorThree);
+
+vowelResonatorThree.connect(singerOutput);
+
+    
 vocalTractShape.connect(formantOne);
 
 formantOne.connect(formantTwo);
@@ -4069,6 +4143,9 @@ singerOutput.gain.linearRampToValueAtTime(
             vocalHarmonicFilter,
             vocalSpectralTilt,
             vocalTractShape,
+            vowelResonatorOne,
+            vowelResonatorTwo,
+            vowelResonatorThree,
             glottalLifeDepth,
             formantOne,
             formantTwo,
