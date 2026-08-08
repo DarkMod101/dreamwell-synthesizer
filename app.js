@@ -3491,24 +3491,24 @@ ahFormantOne.Q.setValueAtTime(
 );
 
 ahFormantOneGain.gain.setValueAtTime(
-    1.6,
+    1.8,
     now
 );
 
 ahFormantTwo.type = "bandpass";
 
 ahFormantTwo.frequency.setValueAtTime(
-    1550 * singerFormantScale,
+    1200 * singerFormantScale,
     now
 );
 
 ahFormantTwo.Q.setValueAtTime(
-    2.2,
+    3.0,
     now
 );
 
 ahFormantTwoGain.gain.setValueAtTime(
-    1.1,
+    1.2,
     now
 );
 
@@ -3755,7 +3755,7 @@ formantOne.frequency.setValueAtTime(
 );
 
         formantOneGain.gain.setValueAtTime(
-    2.20,
+    0,
     now
 );
 
@@ -3775,7 +3775,7 @@ formantTwo.frequency.setValueAtTime(
 );
 
         formantTwoGain.gain.setValueAtTime(
-    1.60,
+    0,
     now
 );
 
@@ -3804,7 +3804,7 @@ formantThree.frequency.setValueAtTime(
 // ========================================
 
 formantTwoSupportGain.gain.setValueAtTime(
-    0.35,
+    0,
     now
 );
         
