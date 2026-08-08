@@ -3481,12 +3481,12 @@ const vocalHarmonicFilter = ctx.createBiquadFilter();
 ahFormantOne.type = "bandpass";
 
 ahFormantOne.frequency.setValueAtTime(
-    800 * singerFormantScale,
+    750 * singerFormantScale,
     now
 );
 
 ahFormantOne.Q.setValueAtTime(
-    0.9,
+    1.6,
     now
 );
 
@@ -3498,12 +3498,12 @@ ahFormantOneGain.gain.setValueAtTime(
 ahFormantTwo.type = "bandpass";
 
 ahFormantTwo.frequency.setValueAtTime(
-    1200 * singerFormantScale,
+    1350 * singerFormantScale,
     now
 );
 
 ahFormantTwo.Q.setValueAtTime(
-    1.2,
+    2.0,
     now
 );
 
