@@ -3356,23 +3356,20 @@ choirSampleSource.loopEnd = 8.80;
 
     choirSampleSource.connect(choirSampleGain);
 
-    choirSampleGain.connect(dryGain);
-    choirSampleGain.connect(reverbNode);
-    choirSampleGain.connect(delayDryGain);
-    choirSampleGain.connect(delayNode);
-
-    choirSampleSource.start(
-    now,
-    0.55
-);
-
-choirSources.push(
-    choirSampleSource
-);
+choirSampleGain.connect(dryGain);
+choirSampleGain.connect(reverbNode);
+choirSampleGain.connect(delayDryGain);
+choirSampleGain.connect(delayNode);
 
 choirProcessingNodes.push(
     choirSampleGain
 );
+
+choirSampleSource.start(
+    now,
+    0.55
+);
+
         
     console.log(
         "Human Ah sample playing at:",
