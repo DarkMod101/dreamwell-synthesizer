@@ -3340,7 +3340,7 @@ choirSampleGain = ctx.createGain();
 
     choirSampleSource.buffer = choirAhC3Buffer;
 
-    choirSampleSource.loop = false;
+    choirSampleSource.loop = true;
 
     choirSampleSource.loopStart = 3.18;
 choirSampleSource.loopEnd = 7.70;
