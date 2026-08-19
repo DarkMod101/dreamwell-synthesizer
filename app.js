@@ -20,6 +20,7 @@ let pianoPresetSoundboardBloom = 1.0;
 
 // Choir Engine state
 let activeChoirNodes = [];
+let choirAhC3Buffer = null;
 const MAX_CHOIR_VOICES = 12;
 
 const pianoVoicing = {
