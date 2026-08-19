@@ -3373,6 +3373,9 @@ choirSampleSource.start(
     0.55
 );
 
+choirSources.push(
+    choirSampleSource
+);
         
     console.log(
         "Human Ah sample playing at:",
