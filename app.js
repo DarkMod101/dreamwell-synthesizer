@@ -3342,8 +3342,8 @@ choirSampleGain = ctx.createGain();
 
     choirSampleSource.loop = true;
 
-    choirSampleSource.loopStart = 3.00;
-choirSampleSource.loopEnd = 8.80;
+    choirSampleSource.loopStart = 3.18;
+choirSampleSource.loopEnd = 7.70;
     
     const c3Frequency = 130.8128;
 
