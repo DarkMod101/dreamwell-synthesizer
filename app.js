@@ -4315,15 +4315,18 @@ singerOutput.gain.linearRampToValueAtTime(
     }
 
     function stopChoirSources(stopTime) {
-        choirSources.forEach((sourceNode) => {
-            try {
-                sourceNode.stop(stopTime);
-            } catch (error) {
-                // Source may already have a stop time.
-            }
-        });
-    }
+    choirSources.forEach((sourceNode) => {
+        if (sourceNode === choirSampleSource) {
+            return;
+        }
 
+        try {
+            sourceNode.stop(stopTime);
+        } catch (error) {
+            // Source may already have a stop time.
+        }
+    });
+}
     function cleanupChoirVoice() {
         if (choirVoiceCleaned) return;
 
