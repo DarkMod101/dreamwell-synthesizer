@@ -3328,37 +3328,40 @@ function createChoirNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
-if (choirAhC3Buffer) {
-    const sampleSource = ctx.createBufferSource();
-    const sampleGain = ctx.createGain();
+    let choirSampleSource = null;
+    let choirSampleGain = null;
 
-    sampleSource.buffer = choirAhC3Buffer;
+    if (choirAhC3Buffer) {
+    choirSampleSource = ctx.createBufferSource();
+choirSampleGain = ctx.createGain();
 
-    sampleSource.loop = true;
+    choirSampleSource.buffer = choirAhC3Buffer;
 
-    sampleSource.loopStart = 2.03;
-    sampleSource.loopEnd = 7.10;
+    choirSampleSource.loop = true;
+
+    choirSampleSource.loopStart = 3.00;
+choirSampleSource.loopEnd = 8.80;
     
     const c3Frequency = 130.8128;
 
-    sampleSource.playbackRate.setValueAtTime(
+    choirSampleSource.playbackRate.setValueAtTime(
         frequency / c3Frequency,
         now
     );
 
-    sampleGain.gain.setValueAtTime(
+    choirSampleGain.gain.setValueAtTime(
         0.65,
         now
     );
 
-    sampleSource.connect(sampleGain);
+    choirSampleSource.connect(choirSampleGain);
 
-    sampleGain.connect(dryGain);
-    sampleGain.connect(reverbNode);
-    sampleGain.connect(delayDryGain);
-    sampleGain.connect(delayNode);
+    choirSampleGain.connect(dryGain);
+    choirSampleGain.connect(reverbNode);
+    choirSampleGain.connect(delayDryGain);
+    choirSampleGain.connect(delayNode);
 
-    sampleSource.start(
+    choirSampleSource.start(
     now,
     0.55
 );
@@ -4415,6 +4418,33 @@ singerOutput.gain.linearRampToValueAtTime(
             stealNow + fadeDuration
         );
 
+if (choirSampleSource && choirSampleGain) {
+    choirSampleGain.gain.cancelScheduledValues(
+        releaseNow
+    );
+
+    choirSampleGain.gain.setValueAtTime(
+        Math.max(
+            0.0001,
+            choirSampleGain.gain.value
+        ),
+        releaseNow
+    );
+
+    choirSampleGain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        releaseNow + 0.25
+    );
+
+    try {
+        choirSampleSource.stop(
+            releaseNow + 0.30
+        );
+    } catch (error) {
+        // Sample may already be stopped.
+    }
+}
+        
         stopChoirSources(
             stealNow + fadeDuration + 0.04
         );
