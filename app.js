@@ -3366,6 +3366,14 @@ choirSampleSource.loopEnd = 8.80;
     0.55
 );
 
+choirSources.push(
+    choirSampleSource
+);
+
+choirProcessingNodes.push(
+    choirSampleGain
+);
+        
     console.log(
         "Human Ah sample playing at:",
         frequency
@@ -4383,6 +4391,35 @@ singerOutput.gain.linearRampToValueAtTime(
             releaseNow + releaseDuration
         );
 
+if (choirSampleSource && choirSampleGain) {
+    const sampleReleaseTime = 0.08;
+
+    choirSampleGain.gain.cancelScheduledValues(
+        releaseNow
+    );
+
+    choirSampleGain.gain.setValueAtTime(
+        Math.max(
+            0.0001,
+            choirSampleGain.gain.value
+        ),
+        releaseNow
+    );
+
+    choirSampleGain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        releaseNow + sampleReleaseTime
+    );
+
+    try {
+        choirSampleSource.stop(
+            releaseNow + sampleReleaseTime + 0.02
+        );
+    } catch (error) {
+        // Sample may already be stopping.
+    }
+}
+        
         stopChoirSources(
             releaseNow + releaseDuration + 0.08
         );
