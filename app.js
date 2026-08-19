@@ -3328,6 +3328,9 @@ function createChoirNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
+    const choirSources = [];
+    const choirProcessingNodes = [];
+
     let choirSampleSource = null;
     let choirSampleGain = null;
 
@@ -3479,8 +3482,6 @@ choirSampleSource.start(
         harmonicLevel: 1.08
     }
 ];
-    const choirSources = [];
-    const choirProcessingNodes = [];
 
     // ========================================
     // Reusable white-noise buffer
