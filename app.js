@@ -3254,6 +3254,52 @@ textures: {},
 
 
 // ========================================
+// Choir Ah Sample Loader
+// ========================================
+
+async function loadChoirAhC3Sample() {
+    const ctx = getAudioContext();
+
+    if (choirAhC3Buffer) {
+        return choirAhC3Buffer;
+    }
+
+    try {
+        const response = await fetch(
+            "./samples/C3 Ah.m4a"
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to load C3 Ah sample: ${response.status}`
+            );
+        }
+
+        const arrayBuffer =
+            await response.arrayBuffer();
+
+        choirAhC3Buffer =
+            await ctx.decodeAudioData(arrayBuffer);
+
+        console.log(
+            "Choir C3 Ah sample loaded:",
+            choirAhC3Buffer.duration,
+            "seconds"
+        );
+
+        return choirAhC3Buffer;
+
+    } catch (error) {
+        console.error(
+            "Unable to load Choir C3 Ah sample:",
+            error
+        );
+
+        return null;
+    }
+}
+
+// ========================================
 // Choir Engine
 // ========================================
 
