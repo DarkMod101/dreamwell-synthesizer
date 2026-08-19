@@ -3317,6 +3317,39 @@ function createChoirNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
+if (choirAhC3Buffer) {
+    const sampleSource = ctx.createBufferSource();
+    const sampleGain = ctx.createGain();
+
+    sampleSource.buffer = choirAhC3Buffer;
+
+    const c3Frequency = 130.8128;
+
+    sampleSource.playbackRate.setValueAtTime(
+        frequency / c3Frequency,
+        now
+    );
+
+    sampleGain.gain.setValueAtTime(
+        0.65,
+        now
+    );
+
+    sampleSource.connect(sampleGain);
+
+    sampleGain.connect(dryGain);
+    sampleGain.connect(reverbNode);
+    sampleGain.connect(delayDryGain);
+    sampleGain.connect(delayNode);
+
+    sampleSource.start(now);
+
+    console.log(
+        "Human Ah sample playing at:",
+        frequency
+    );
+}
+    
     stealOldestChoirVoice();
     // ========================================
     // Main Choir voice output
