@@ -3353,9 +3353,14 @@ choirSampleSource.loopEnd = 8.80;
     );
 
     choirSampleGain.gain.setValueAtTime(
-        0.65,
-        now
-    );
+    0.0001,
+    now
+);
+
+choirSampleGain.gain.exponentialRampToValueAtTime(
+    0.65,
+    now + 0.015
+);
 
     choirSampleSource.connect(choirSampleGain);
 
