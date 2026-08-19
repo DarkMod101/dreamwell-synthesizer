@@ -3334,6 +3334,11 @@ if (choirAhC3Buffer) {
 
     sampleSource.buffer = choirAhC3Buffer;
 
+    sampleSource.loop = true;
+
+    sampleSource.loopStart = 2.03;
+    sampleSource.loopEnd = 7.10;
+    
     const c3Frequency = 130.8128;
 
     sampleSource.playbackRate.setValueAtTime(
