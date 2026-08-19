@@ -1247,6 +1247,17 @@ function playNote(frequency) {
   }
 
   if (currentResonanceSource === "choir") {
+     
+      if (!choirAhC3Buffer) {
+    loadChoirAhC3Sample().then((buffer) => {
+        if (buffer) {
+            playNote(frequency);
+        }
+    });
+
+    return;
+}
+      
     const noteId = String(frequency);
 
     const existingVoice =
