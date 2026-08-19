@@ -3355,7 +3355,7 @@ if (choirAhC3Buffer) {
 
     sampleSource.start(
     now,
-    0.45
+    0.55
 );
 
     console.log(
