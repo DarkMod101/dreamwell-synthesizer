@@ -4455,7 +4455,7 @@ if (choirSampleSource && choirSampleGain) {
 
 if (choirSampleSource && choirSampleGain) {
     choirSampleGain.gain.cancelScheduledValues(
-        releaseNow
+        stealNow
     );
 
     choirSampleGain.gain.setValueAtTime(
@@ -4463,17 +4463,17 @@ if (choirSampleSource && choirSampleGain) {
             0.0001,
             choirSampleGain.gain.value
         ),
-        releaseNow
+        stealNow
     );
 
     choirSampleGain.gain.exponentialRampToValueAtTime(
         0.0001,
-        releaseNow + 0.25
+        stealNow + 0.25
     );
 
     try {
         choirSampleSource.stop(
-            releaseNow + 0.30
+            stealNow + 0.30
         );
     } catch (error) {
         // Sample may already be stopped.
