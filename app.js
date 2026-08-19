@@ -4401,7 +4401,7 @@ singerOutput.gain.linearRampToValueAtTime(
         );
 
 if (choirSampleSource && choirSampleGain) {
-    const sampleReleaseTime = 0.08;
+    const sampleReleaseTime = 0.12;
 
     choirSampleGain.gain.cancelScheduledValues(
         releaseNow
