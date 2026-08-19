@@ -3353,7 +3353,10 @@ if (choirAhC3Buffer) {
     sampleGain.connect(delayDryGain);
     sampleGain.connect(delayNode);
 
-    sampleSource.start(now);
+    sampleSource.start(
+    now,
+    0.45
+);
 
     console.log(
         "Human Ah sample playing at:",
