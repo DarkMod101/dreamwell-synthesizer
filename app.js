@@ -3378,15 +3378,27 @@ choirSampleGainA.gain.exponentialRampToValueAtTime(
     now + 0.015
 );
 
-    choirSampleSource.connect(choirSampleGain);
+    choirSampleSourceA.connect(
+    choirSampleGainA
+);
 
-choirSampleGain.connect(dryGain);
-choirSampleGain.connect(reverbNode);
-choirSampleGain.connect(delayDryGain);
-choirSampleGain.connect(delayNode);
+choirSampleSourceB.connect(
+    choirSampleGainB
+);
+
+choirSampleGainA.connect(dryGain);
+choirSampleGainA.connect(reverbNode);
+choirSampleGainA.connect(delayDryGain);
+choirSampleGainA.connect(delayNode);
+
+choirSampleGainB.connect(dryGain);
+choirSampleGainB.connect(reverbNode);
+choirSampleGainB.connect(delayDryGain);
+choirSampleGainB.connect(delayNode);
 
 choirProcessingNodes.push(
-    choirSampleGain
+    choirSampleGainA,
+    choirSampleGainB
 );
 
 choirSampleSource.start(
