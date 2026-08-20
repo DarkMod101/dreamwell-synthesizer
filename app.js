@@ -3401,9 +3401,22 @@ choirProcessingNodes.push(
     choirSampleGainB
 );
 
-choirSampleSource.start(
+const sampleStartOffset = 3.18;
+const sampleEndOffset = 7.70;
+const sampleCrossfadeTime = 0.18;
+
+const sampleSegmentDuration =
+    (sampleEndOffset - sampleStartOffset) /
+    samplePlaybackRate;
+
+choirSampleSourceA.start(
     now,
-    0.55
+    sampleStartOffset
+);
+
+choirSampleSourceB.start(
+    now + sampleSegmentDuration - sampleCrossfadeTime,
+    sampleStartOffset
 );
 
 choirSources.push(
