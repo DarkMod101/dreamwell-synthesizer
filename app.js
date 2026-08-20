@@ -3331,19 +3331,22 @@ function createChoirNote(frequency) {
     const choirSources = [];
     const choirProcessingNodes = [];
 
-    let choirSampleSource = null;
-    let choirSampleGain = null;
+    let choirSampleSourceA = null;
+let choirSampleSourceB = null;
+
+let choirSampleGainA = null;
+let choirSampleGainB = null;
 
     if (choirAhC3Buffer) {
-    choirSampleSource = ctx.createBufferSource();
-choirSampleGain = ctx.createGain();
+    choirSampleSourceA = ctx.createBufferSource();
+choirSampleSourceB = ctx.createBufferSource();
 
-    choirSampleSource.buffer = choirAhC3Buffer;
+choirSampleGainA = ctx.createGain();
+choirSampleGainB = ctx.createGain();
 
-    choirSampleSource.loop = true;
+choirSampleSourceA.buffer = choirAhC3Buffer;
+choirSampleSourceB.buffer = choirAhC3Buffer;
 
-    choirSampleSource.loopStart = 3.18;
-choirSampleSource.loopEnd = 7.70;
     
     const c3Frequency = 130.8128;
 
