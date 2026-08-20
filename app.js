@@ -3350,10 +3350,18 @@ choirSampleSourceB.buffer = choirAhC3Buffer;
     
     const c3Frequency = 130.8128;
 
-    choirSampleSource.playbackRate.setValueAtTime(
-        frequency / c3Frequency,
-        now
-    );
+    const samplePlaybackRate =
+    frequency / c3Frequency;
+
+choirSampleSourceA.playbackRate.setValueAtTime(
+    samplePlaybackRate,
+    now
+);
+
+choirSampleSourceB.playbackRate.setValueAtTime(
+    samplePlaybackRate,
+    now
+);
 
     choirSampleGain.gain.setValueAtTime(
     0.0001,
