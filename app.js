@@ -3411,12 +3411,14 @@ const sampleSegmentDuration =
 
 choirSampleSourceA.start(
     now,
-    sampleStartOffset
+    sampleStartOffset,
+    sampleEndOffset - sampleStartOffset
 );
 
 choirSampleSourceB.start(
     now + sampleSegmentDuration - sampleCrossfadeTime,
-    sampleStartOffset
+    sampleStartOffset,
+    sampleEndOffset - sampleStartOffset
 );
 
 const sampleCrossfadeStart =
