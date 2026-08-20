@@ -3363,12 +3363,17 @@ choirSampleSourceB.playbackRate.setValueAtTime(
     now
 );
 
-    choirSampleGain.gain.setValueAtTime(
+    choirSampleGainA.gain.setValueAtTime(
     0.0001,
     now
 );
 
-choirSampleGain.gain.exponentialRampToValueAtTime(
+choirSampleGainB.gain.setValueAtTime(
+    0.0001,
+    now
+);
+
+choirSampleGainA.gain.exponentialRampToValueAtTime(
     0.65,
     now + 0.015
 );
