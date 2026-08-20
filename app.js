@@ -3419,6 +3419,51 @@ choirSampleSourceB.start(
     sampleStartOffset
 );
 
+const sampleCrossfadeStart =
+    now +
+    sampleSegmentDuration -
+    sampleCrossfadeTime;
+
+const sampleCrossfadeEnd =
+    now +
+    sampleSegmentDuration;
+
+choirSampleGainA.gain.cancelScheduledValues(
+    sampleCrossfadeStart
+);
+
+choirSampleGainA.gain.setValueAtTime(
+    0.65,
+    sampleCrossfadeStart
+);
+
+choirSampleGainA.gain.exponentialRampToValueAtTime(
+    0.0001,
+    sampleCrossfadeEnd
+);
+
+choirSampleGainB.gain.cancelScheduledValues(
+    sampleCrossfadeStart
+);
+
+choirSampleGainB.gain.setValueAtTime(
+    0.0001,
+    sampleCrossfadeStart
+);
+
+choirSampleGainB.gain.exponentialRampToValueAtTime(
+    0.65,
+    sampleCrossfadeEnd
+);
+
+try {
+    choirSampleSourceA.stop(
+        sampleCrossfadeEnd + 0.02
+    );
+} catch (error) {
+    // Source may already have a stop time.
+}
+        
 choirSources.push(
     choirSampleSource
 );
