@@ -3337,6 +3337,9 @@ let choirSampleSourceB = null;
 let choirSampleGainA = null;
 let choirSampleGainB = null;
 
+let choirSampleLoopActive = true;
+let choirSampleLoopTimer = null;
+    
     if (choirAhC3Buffer) {
     choirSampleSourceA = ctx.createBufferSource();
 choirSampleSourceB = ctx.createBufferSource();
@@ -3403,68 +3406,154 @@ choirProcessingNodes.push(
 
 const sampleStartOffset = 3.18;
 const sampleEndOffset = 7.70;
-const sampleCrossfadeTime = 0.18;
+const sampleCrossfadeTime = 0.22;
+
+const sampleRegionDuration =
+    sampleEndOffset - sampleStartOffset;
 
 const sampleSegmentDuration =
-    (sampleEndOffset - sampleStartOffset) /
-    samplePlaybackRate;
+    sampleRegionDuration / samplePlaybackRate;
 
-choirSampleSourceA.start(
-    now,
-    sampleStartOffset,
-    sampleEndOffset - sampleStartOffset
-);
 
-choirSampleSourceB.start(
-    now + sampleSegmentDuration - sampleCrossfadeTime,
-    sampleStartOffset,
-    sampleEndOffset - sampleStartOffset
-);
+// ========================================
+// Continuous Ah sample sustain
+// ========================================
 
-const sampleCrossfadeStart =
-    now +
-    sampleSegmentDuration -
-    sampleCrossfadeTime;
+function scheduleChoirSampleSegment(
+    segmentStartTime
+) {
+    if (!choirSampleLoopActive) {
+        return;
+    }
 
-const sampleCrossfadeEnd =
-    now +
-    sampleSegmentDuration;
+    const segmentSource =
+        ctx.createBufferSource();
 
-choirSampleGainA.gain.cancelScheduledValues(
-    sampleCrossfadeStart
-);
+    const segmentGain =
+        ctx.createGain();
 
-choirSampleGainA.gain.setValueAtTime(
-    0.65,
-    sampleCrossfadeStart
-);
+    segmentSource.buffer =
+        choirAhC3Buffer;
 
-choirSampleGainA.gain.exponentialRampToValueAtTime(
-    0.0001,
-    sampleCrossfadeEnd
-);
-
-choirSampleGainB.gain.cancelScheduledValues(
-    sampleCrossfadeStart
-);
-
-choirSampleGainB.gain.setValueAtTime(
-    0.0001,
-    sampleCrossfadeStart
-);
-
-choirSampleGainB.gain.exponentialRampToValueAtTime(
-    0.65,
-    sampleCrossfadeEnd
-);
-
-try {
-    choirSampleSourceA.stop(
-        sampleCrossfadeEnd + 0.02
+    segmentSource.playbackRate.setValueAtTime(
+        samplePlaybackRate,
+        segmentStartTime
     );
-} catch (error) {
-    // Source may already have a stop time.
+
+    segmentSource.connect(
+        segmentGain
+    );
+
+    segmentGain.connect(dryGain);
+    segmentGain.connect(reverbNode);
+    segmentGain.connect(delayDryGain);
+    segmentGain.connect(delayNode);
+
+
+    // ----------------------------
+    // Crossfade in
+    // ----------------------------
+
+    segmentGain.gain.setValueAtTime(
+        0.0001,
+        segmentStartTime
+    );
+
+    segmentGain.gain.exponentialRampToValueAtTime(
+        0.65,
+        segmentStartTime +
+        sampleCrossfadeTime
+    );
+
+
+    // ----------------------------
+    // Crossfade out
+    // ----------------------------
+
+    const segmentEndTime =
+        segmentStartTime +
+        sampleSegmentDuration;
+
+    const fadeOutStartTime =
+        segmentEndTime -
+        sampleCrossfadeTime;
+
+    segmentGain.gain.setValueAtTime(
+        0.65,
+        fadeOutStartTime
+    );
+
+    segmentGain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        segmentEndTime
+    );
+
+
+    // ----------------------------
+    // Play only clean Ah region
+    // ----------------------------
+
+    segmentSource.start(
+        segmentStartTime,
+        sampleStartOffset,
+        sampleRegionDuration
+    );
+
+    try {
+        segmentSource.stop(
+            segmentEndTime + 0.02
+        );
+    } catch (error) {
+        // Source may already have a stop time.
+    }
+
+
+    choirSources.push(
+        segmentSource
+    );
+
+    choirProcessingNodes.push(
+        segmentGain
+    );
+
+
+    // ----------------------------
+    // Schedule next overlapping Ah
+    // ----------------------------
+
+    const nextSegmentTime =
+        segmentEndTime -
+        sampleCrossfadeTime;
+
+    const schedulingLeadTime = 0.30;
+
+    const timerDelay =
+        Math.max(
+            0,
+            (
+                nextSegmentTime -
+                ctx.currentTime -
+                schedulingLeadTime
+            ) * 1000
+        );
+
+    choirSampleLoopTimer = setTimeout(
+        () => {
+            if (
+                choirSampleLoopActive
+            ) {
+                scheduleChoirSampleSegment(
+                    nextSegmentTime
+                );
+            }
+        },
+        timerDelay
+    );
 }
+
+
+// Begin sustained Ah
+scheduleChoirSampleSegment(now);
         
 choirSources.push(
     choirSampleSource
@@ -4461,6 +4550,16 @@ singerOutput.gain.linearRampToValueAtTime(
 
         choirVoiceReleased = true;
 
+choirSampleLoopActive = false;
+
+if (choirSampleLoopTimer !== null) {
+    clearTimeout(
+        choirSampleLoopTimer
+    );
+
+    choirSampleLoopTimer = null;
+}
+        
         const releaseNow = ctx.currentTime;
 
         const releaseDuration = Math.min(
@@ -4535,6 +4634,16 @@ if (choirSampleSource && choirSampleGain) {
 
         choirVoiceReleased = true;
 
+choirSampleLoopActive = false;
+
+if (choirSampleLoopTimer !== null) {
+    clearTimeout(
+        choirSampleLoopTimer
+    );
+
+    choirSampleLoopTimer = null;
+}
+        
         const stealNow = ctx.currentTime;
         const fadeDuration = 0.07;
 
