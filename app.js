@@ -3555,9 +3555,6 @@ function scheduleChoirSampleSegment(
 // Begin sustained Ah
 scheduleChoirSampleSegment(now);
         
-choirSources.push(
-    choirSampleSource
-);
         
     console.log(
         "Human Ah sample playing at:",
