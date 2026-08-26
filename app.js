@@ -3521,6 +3521,36 @@ function scheduleChoirSampleSegment(
     gain: segmentGain
 });
 
+segmentSource.addEventListener(
+    "ended",
+    () => {
+        const segmentIndex =
+            activeChoirSampleSegments.findIndex(
+                (segment) =>
+                    segment.source === segmentSource
+            );
+
+        if (segmentIndex !== -1) {
+            activeChoirSampleSegments.splice(
+                segmentIndex,
+                1
+            );
+        }
+
+        try {
+            segmentSource.disconnect();
+        } catch (error) {
+            // Source may already be disconnected.
+        }
+
+        try {
+            segmentGain.disconnect();
+        } catch (error) {
+            // Gain may already be disconnected.
+        }
+    }
+);
+    
     // ----------------------------
     // Schedule next overlapping Ah
     // ----------------------------
