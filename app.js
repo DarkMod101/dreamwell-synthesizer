@@ -3408,8 +3408,7 @@ choirProcessingNodes.push(
 
 const sampleStartOffset = 3.18;
 const sampleEndOffset = 7.70;
-const sampleCrossfadeTime = 0.22;
-
+const sampleCrossfadeTime = 0.32;
 const sampleRegionDuration =
     sampleEndOffset - sampleStartOffset;
 
