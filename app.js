@@ -3330,82 +3330,19 @@ function createChoirNote(frequency) {
 
     const choirSources = [];
     const choirProcessingNodes = [];
-
-    let choirSampleSourceA = null;
-let choirSampleSourceB = null;
-
-let choirSampleGainA = null;
-let choirSampleGainB = null;
-
+   
 let choirSampleLoopActive = true;
 let choirSampleLoopTimer = null;
 
 const activeChoirSampleSegments = [];
     
     if (choirAhC3Buffer) {
-    choirSampleSourceA = ctx.createBufferSource();
-choirSampleSourceB = ctx.createBufferSource();
-
-choirSampleGainA = ctx.createGain();
-choirSampleGainB = ctx.createGain();
-
-choirSampleSourceA.buffer = choirAhC3Buffer;
-choirSampleSourceB.buffer = choirAhC3Buffer;
-
-    
+ 
     const c3Frequency = 130.8128;
 
     const samplePlaybackRate =
     frequency / c3Frequency;
-
-choirSampleSourceA.playbackRate.setValueAtTime(
-    samplePlaybackRate,
-    now
-);
-
-choirSampleSourceB.playbackRate.setValueAtTime(
-    samplePlaybackRate,
-    now
-);
-
-    choirSampleGainA.gain.setValueAtTime(
-    0.0001,
-    now
-);
-
-choirSampleGainB.gain.setValueAtTime(
-    0.0001,
-    now
-);
-
-choirSampleGainA.gain.exponentialRampToValueAtTime(
-    0.65,
-    now + 0.015
-);
-
-    choirSampleSourceA.connect(
-    choirSampleGainA
-);
-
-choirSampleSourceB.connect(
-    choirSampleGainB
-);
-
-choirSampleGainA.connect(dryGain);
-choirSampleGainA.connect(reverbNode);
-choirSampleGainA.connect(delayDryGain);
-choirSampleGainA.connect(delayNode);
-
-choirSampleGainB.connect(dryGain);
-choirSampleGainB.connect(reverbNode);
-choirSampleGainB.connect(delayDryGain);
-choirSampleGainB.connect(delayNode);
-
-choirProcessingNodes.push(
-    choirSampleGainA,
-    choirSampleGainB
-);
-
+   
 const sampleStartOffset = 3.18;
 const sampleEndOffset = 7.70;
 const sampleCrossfadeTime = 0.38;
