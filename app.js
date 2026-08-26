@@ -21,6 +21,7 @@ let pianoPresetSoundboardBloom = 1.0;
 // Choir Engine state
 let activeChoirNodes = [];
 let choirAhC3Buffer = null;
+let choirNoiseBuffer = null;
 const MAX_CHOIR_VOICES = 4;
 
 const pianoVoicing = {
@@ -3637,15 +3638,16 @@ scheduleChoirSampleSegment(now);
 ];
 
     // ========================================
-    // Reusable white-noise buffer
-    // ========================================
+// Shared white-noise buffer
+// ========================================
 
+if (!choirNoiseBuffer) {
     const noiseBufferLength = Math.max(
         1,
         Math.floor(ctx.sampleRate * 0.5)
     );
 
-    const choirNoiseBuffer = ctx.createBuffer(
+    choirNoiseBuffer = ctx.createBuffer(
         1,
         noiseBufferLength,
         ctx.sampleRate
@@ -3662,6 +3664,7 @@ scheduleChoirSampleSegment(now);
         noiseData[sampleIndex] =
             Math.random() * 2 - 1;
     }
+}
 
     // ========================================
     // Build one virtual singer
