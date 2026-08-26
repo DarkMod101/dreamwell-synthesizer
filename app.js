@@ -22,6 +22,7 @@ let pianoPresetSoundboardBloom = 1.0;
 let activeChoirNodes = [];
 let choirAhC3Buffer = null;
 let choirNoiseBuffer = null;
+let choirGlottalWave = null;
 const MAX_CHOIR_VOICES = 4;
 
 const pianoVoicing = {
