@@ -4010,7 +4010,7 @@ const glottalWave = ctx.createPeriodicWave(
 );
 
 vocalHarmonicOscillator.setPeriodicWave(
-    glottalWave
+    choirGlottalWave
 );
 
 vocalHarmonicOscillator.frequency.setValueAtTime(
