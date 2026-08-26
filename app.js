@@ -3339,6 +3339,8 @@ let choirSampleGainB = null;
 
 let choirSampleLoopActive = true;
 let choirSampleLoopTimer = null;
+
+const activeChoirSampleSegments = [];
     
     if (choirAhC3Buffer) {
     choirSampleSourceA = ctx.createBufferSource();
@@ -3515,6 +3517,10 @@ function scheduleChoirSampleSegment(
         segmentGain
     );
 
+    activeChoirSampleSegments.push({
+    source: segmentSource,
+    gain: segmentGain
+});
 
     // ----------------------------
     // Schedule next overlapping Ah
@@ -4579,37 +4585,41 @@ if (choirSampleLoopTimer !== null) {
             releaseNow + releaseDuration
         );
 
-if (choirSampleSource && choirSampleGain) {
-    const sampleReleaseTime = Math.min(
+const sampleReleaseTime = Math.min(
     1.2,
     releaseDuration * 0.35
 );
 
-    choirSampleGain.gain.cancelScheduledValues(
-        releaseNow
-    );
+activeChoirSampleSegments.forEach(
+    (segment) => {
+        try {
+            segment.gain.gain.cancelScheduledValues(
+                releaseNow
+            );
 
-    choirSampleGain.gain.setValueAtTime(
-        Math.max(
-            0.0001,
-            choirSampleGain.gain.value
-        ),
-        releaseNow
-    );
+            segment.gain.gain.setValueAtTime(
+                Math.max(
+                    0.0001,
+                    segment.gain.gain.value
+                ),
+                releaseNow
+            );
 
-    choirSampleGain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        releaseNow + sampleReleaseTime
-    );
+            segment.gain.gain.exponentialRampToValueAtTime(
+                0.0001,
+                releaseNow + sampleReleaseTime
+            );
 
-    try {
-        choirSampleSource.stop(
-            releaseNow + sampleReleaseTime + 0.02
-        );
-    } catch (error) {
-        // Sample may already be stopping.
+            segment.source.stop(
+                releaseNow +
+                sampleReleaseTime +
+                0.02
+            );
+        } catch (error) {
+            // Segment may already be finished.
+        }
     }
-}
+);
         
         stopChoirSources(
             releaseNow + releaseDuration + 0.08
@@ -4656,32 +4666,34 @@ if (choirSampleLoopTimer !== null) {
             stealNow + fadeDuration
         );
 
-if (choirSampleSource && choirSampleGain) {
-    choirSampleGain.gain.cancelScheduledValues(
-        stealNow
-    );
+activeChoirSampleSegments.forEach(
+    (segment) => {
+        try {
+            segment.gain.gain.cancelScheduledValues(
+                stealNow
+            );
 
-    choirSampleGain.gain.setValueAtTime(
-        Math.max(
-            0.0001,
-            choirSampleGain.gain.value
-        ),
-        stealNow
-    );
+            segment.gain.gain.setValueAtTime(
+                Math.max(
+                    0.0001,
+                    segment.gain.gain.value
+                ),
+                stealNow
+            );
 
-    choirSampleGain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        stealNow + 0.25
-    );
+            segment.gain.gain.exponentialRampToValueAtTime(
+                0.0001,
+                stealNow + 0.07
+            );
 
-    try {
-        choirSampleSource.stop(
-            stealNow + 0.30
-        );
-    } catch (error) {
-        // Sample may already be stopped.
+            segment.source.stop(
+                stealNow + 0.09
+            );
+        } catch (error) {
+            // Segment may already be finished.
+        }
     }
-}
+);
         
         stopChoirSources(
             stealNow + fadeDuration + 0.04
