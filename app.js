@@ -3459,11 +3459,11 @@ function scheduleChoirSampleSegment(
         segmentStartTime
     );
 
-    segmentGain.gain.exponentialRampToValueAtTime(
-        0.65,
-        segmentStartTime +
-        sampleCrossfadeTime
-    );
+    segmentGain.gain.linearRampToValueAtTime(
+    0.65,
+    segmentStartTime +
+    sampleCrossfadeTime
+);
 
 
     // ----------------------------
@@ -3483,11 +3483,10 @@ function scheduleChoirSampleSegment(
         fadeOutStartTime
     );
 
-    segmentGain.gain.exponentialRampToValueAtTime(
-        0.0001,
-        segmentEndTime
-    );
-
+    segmentGain.gain.linearRampToValueAtTime(
+    0.0001,
+    segmentEndTime
+);
 
     // ----------------------------
     // Play only clean Ah region
@@ -4495,10 +4494,6 @@ singerOutput.gain.linearRampToValueAtTime(
 
     function stopChoirSources(stopTime) {
     choirSources.forEach((sourceNode) => {
-        if (sourceNode === choirSampleSource) {
-            return;
-        }
-
         try {
             sourceNode.stop(stopTime);
         } catch (error) {
