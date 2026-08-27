@@ -4226,13 +4226,6 @@ vocalDriftDepth.gain.setValueAtTime(
 
 vocalDriftOscillator.connect(vocalDriftDepth);
 
-vocalDriftDepth.connect(
-    vocalOscillator.detune
-);
-
-vocalDriftDepth.connect(
-    vocalBodyOscillator.detune
-);
 
 vocalDriftDepth.connect(
     vocalHarmonicOscillator.detune
@@ -4356,8 +4349,8 @@ singerOutput.gain.linearRampToValueAtTime(
         singerOutput.connect(singerPan);
         singerPan.connect(choirVoiceOut);
 
-        vocalOscillator.start(now);
-        vocalBodyOscillator.start(now);
+        
+        
         vocalHarmonicOscillator.start(now);
         vibratoOscillator.start(now);
         vocalDriftOscillator.start(now);
@@ -4367,8 +4360,8 @@ singerOutput.gain.linearRampToValueAtTime(
         breathSource.start(now);
 
         choirSources.push(
-        vocalOscillator,
-        vocalBodyOscillator,
+        
+        
         vocalHarmonicOscillator,
         vibratoOscillator,
         vocalDriftOscillator,
@@ -4382,8 +4375,8 @@ singerOutput.gain.linearRampToValueAtTime(
             singerInput,
             singerOutput,
             singerPan,
-            vocalOscillatorGain,
-            vocalBodyGain,
+            
+            
             vocalHarmonicGain,
             vocalHarmonicFilter,
             vocalSpectralTilt,
