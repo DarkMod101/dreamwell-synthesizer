@@ -3894,65 +3894,7 @@ ahFormantTwoGain.gain.setValueAtTime(
         // Vocal-cord excitation
         // ========================================
 
-        vocalOscillator.type = "triangle";
-
-        vocalOscillator.frequency.setValueAtTime(
-            frequency,
-            now
-        );
-
-        vocalOscillator.detune.setValueAtTime(
-            configuration.detune + randomDetune,
-            now
-        );
-
-        vocalOscillatorGain.gain.setValueAtTime(
-    0,
-    now
-);
-
-        applyWaveform(vocalBodyOscillator,"trapezoid",ctx
-);
-
-        vocalBodyOscillator.frequency.setValueAtTime(
-            frequency,
-            now
-        );
-
-        vocalBodyOscillator.detune.setValueAtTime(
-            configuration.detune -
-            randomDetune * 0.5,
-            now
-        );
-
-        vocalBodyGain.gain.setValueAtTime(
-    0,
-    now
-);
-
-        vocalOscillator.connect(
-    vocalOscillatorGain
-);
-
-vocalBodyOscillator.connect(
-    vocalBodyGain
-);
-
-vocalHarmonicOscillator.connect(
-    vocalHarmonicFilter
-);
-
-vocalHarmonicFilter.connect(
-    vocalHarmonicGain
-);
-
-vocalOscillatorGain.connect(
-    singerInput
-);
-
-vocalBodyGain.connect(
-    singerInput
-);
+     
 
 vocalHarmonicGain.connect(
     singerInput
@@ -4260,13 +4202,6 @@ throatGain.gain.setValueAtTime(
 
         vibratoOscillator.connect(vibratoDepth);
 
-        vibratoDepth.connect(
-            vocalOscillator.detune
-        );
-
-        vibratoDepth.connect(
-            vocalBodyOscillator.detune
-        );
 
         vibratoDepth.connect(
     vocalHarmonicOscillator.detune
