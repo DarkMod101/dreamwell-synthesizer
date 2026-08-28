@@ -3922,51 +3922,6 @@ vocalHarmonicGain.connect(
 );
 
 // Subtle harmonic excitation
-const glottalReal = new Float32Array([
-    0,
-    1.00,
-    0.72,
-    0.58,
-    0.48,
-    0.40,
-    0.34,
-    0.29,
-    0.25,
-    0.22,
-    0.19,
-    0.17,
-    0.15,
-    0.135,
-    0.12,
-    0.108,
-    0.097,
-    0.087,
-    0.078,
-    0.070,
-    0.063,
-    0.057,
-    0.051,
-    0.046,
-    0.041,
-    0.037,
-    0.033,
-    0.030,
-    0.027,
-    0.024,
-    0.022,
-    0.020
-]);
-const glottalImag = new Float32Array(
-    glottalReal.length
-);
-
-const glottalWave = ctx.createPeriodicWave(
-    glottalReal,
-    glottalImag,
-    {
-        disableNormalization: false
-    }
-);
 
 vocalHarmonicOscillator.setPeriodicWave(
     choirGlottalWave
