@@ -3767,11 +3767,6 @@ const vowelResonatorThree = ctx.createBiquadFilter();
         const vocalPulseOscillator = ctx.createOscillator();
         const vocalPulseDepth = ctx.createGain();
         
-        const formantBreathOscillator =
-            ctx.createOscillator();
-
-        const formantBreathDepth = ctx.createGain();
-
         const breathSource = ctx.createBufferSource();
         const breathFilter = ctx.createBiquadFilter();
         const breathGain = ctx.createGain();
@@ -4294,29 +4289,7 @@ vocalPulseDepth.connect(
         // Slow vowel movement
         // ========================================
 
-        formantBreathOscillator.type = "sine";
-
-        formantBreathOscillator.frequency.setValueAtTime(
-            0.09 + singerIndex * 0.013,
-            now
-        );
-
-        formantBreathDepth.gain.setValueAtTime(
-            5 + singerIndex,
-            now
-        );
-
-        formantBreathOscillator.connect(
-            formantBreathDepth
-        );
-
-        formantBreathDepth.connect(
-            formantOne.frequency
-        );
-
-        formantBreathDepth.connect(
-            formantTwo.frequency
-        );
+        
 
         // ========================================
         // Breath and aspiration
@@ -4388,7 +4361,6 @@ singerOutput.gain.linearRampToValueAtTime(
         vocalDriftOscillator.start(now);
         vocalPulseOscillator.start(now);
         glottalLifeOscillator.start(now);
-        formantBreathOscillator.start(now);
         breathSource.start(now);
 
         choirSources.push(
@@ -4399,7 +4371,6 @@ singerOutput.gain.linearRampToValueAtTime(
         vocalDriftOscillator,
         vocalPulseOscillator,
         glottalLifeOscillator,
-        formantBreathOscillator,
         breathSource
         );
 
@@ -4433,7 +4404,6 @@ singerOutput.gain.linearRampToValueAtTime(
             vibratoDepth,
             vocalDriftDepth,
             vocalPulseDepth,
-            formantBreathDepth,
             breathFilter,
             breathGain
         );
