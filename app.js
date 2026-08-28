@@ -4228,12 +4228,15 @@ throatGain.gain.setValueAtTime(
 
         vibratoOscillator.connect(vibratoDepth);
 
+vibratoDepth.connect(
+    vocalOscillator.detune
+);
 
         vibratoDepth.connect(
     vocalHarmonicOscillator.detune
 );
 
-
+        
 // ========================================
 // Micro vocal drift
 // ========================================
@@ -4252,7 +4255,10 @@ vocalDriftDepth.gain.setValueAtTime(
 
 vocalDriftOscillator.connect(vocalDriftDepth);
 
-
+vocalDriftDepth.connect(
+    vocalOscillator.detune
+);
+        
 vocalDriftDepth.connect(
     vocalHarmonicOscillator.detune
 );
