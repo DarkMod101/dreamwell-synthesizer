@@ -3896,6 +3896,30 @@ ahFormantTwoGain.gain.setValueAtTime(
         // Vocal-cord excitation
         // ========================================
 
+vocalOscillator.type = "triangle";
+
+vocalOscillator.frequency.setValueAtTime(
+    frequency,
+    now
+);
+
+vocalOscillator.detune.setValueAtTime(
+    configuration.detune + randomDetune,
+    now
+);
+
+vocalOscillatorGain.gain.setValueAtTime(
+    0.12 * configuration.vocalLevel,
+    now
+);
+
+vocalOscillator.connect(
+    vocalOscillatorGain
+);
+
+vocalOscillatorGain.connect(
+    singerInput
+);
      
 
 vocalHarmonicGain.connect(
