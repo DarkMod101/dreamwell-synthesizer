@@ -3725,8 +3725,10 @@ if (!choirNoiseBuffer) {
         const singerOutput = ctx.createGain();
         const singerPan = ctx.createStereoPanner();
 
+        const vocalOscillator = ctx.createOscillator();
         const vocalHarmonicOscillator = ctx.createOscillator();
 
+        const vocalOscillatorGain = ctx.createGain();
 const vocalHarmonicGain = ctx.createGain();
 const vocalHarmonicFilter = ctx.createBiquadFilter();
 
