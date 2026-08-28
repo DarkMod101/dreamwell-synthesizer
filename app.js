@@ -4382,7 +4382,7 @@ singerOutput.gain.linearRampToValueAtTime(
         singerPan.connect(choirVoiceOut);
 
         
-        
+        vocalOscillator.start(now);
         vocalHarmonicOscillator.start(now);
         vibratoOscillator.start(now);
         vocalDriftOscillator.start(now);
@@ -4393,7 +4393,7 @@ singerOutput.gain.linearRampToValueAtTime(
 
         choirSources.push(
         
-        
+        vocalOscillator,
         vocalHarmonicOscillator,
         vibratoOscillator,
         vocalDriftOscillator,
@@ -4408,7 +4408,7 @@ singerOutput.gain.linearRampToValueAtTime(
             singerOutput,
             singerPan,
             
-            
+            vocalOscillatorGain,
             vocalHarmonicGain,
             vocalHarmonicFilter,
             vocalSpectralTilt,
