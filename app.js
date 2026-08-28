@@ -3732,31 +3732,16 @@ if (!choirNoiseBuffer) {
 const vocalHarmonicGain = ctx.createGain();
 const vocalHarmonicFilter = ctx.createBiquadFilter();
 
-        const formantOne = ctx.createBiquadFilter();
-        const formantTwo = ctx.createBiquadFilter();
-        const formantThree = ctx.createBiquadFilter();
         const vocalTractShape = ctx.createBiquadFilter();
         const vocalSpectralTilt = ctx.createBiquadFilter();
         const glottalLifeOscillator = ctx.createOscillator();
         const glottalLifeDepth = ctx.createGain();
-        
-        const formantOneGain = ctx.createGain();
-        const formantTwoGain = ctx.createGain();
-        const formantThreeGain = ctx.createGain();
-        const formantTwoSupportGain = ctx.createGain();
 
-        const ahFormantOne = ctx.createBiquadFilter();
-        const ahFormantTwo = ctx.createBiquadFilter();
-
-        const ahFormantOneGain = ctx.createGain();
-        const ahFormantTwoGain = ctx.createGain();
 
 const vowelResonatorOne = ctx.createBiquadFilter();
 const vowelResonatorTwo = ctx.createBiquadFilter();
 const vowelResonatorThree = ctx.createBiquadFilter();
         
-        const throatResonance = ctx.createBiquadFilter();
-        const throatGain = ctx.createGain();
         
         const vibratoOscillator = ctx.createOscillator();
         const vibratoDepth = ctx.createGain();
@@ -3845,48 +3830,7 @@ vowelResonatorThree.gain.setValueAtTime(
     now
 );
 
-
-        
-// ========================================
-// Dedicated Ah articulation
-// ========================================
-
-ahFormantOne.type = "bandpass";
-
-ahFormantOne.frequency.setValueAtTime(
-    650 * singerFormantScale,
-    now
-);
-
-ahFormantOne.Q.setValueAtTime(
-    1.8,
-    now
-);
-
-ahFormantOneGain.gain.setValueAtTime(
-    0,
-    now
-);
-
-ahFormantTwo.type = "bandpass";
-
-ahFormantTwo.frequency.setValueAtTime(
-    1200 * singerFormantScale,
-    now
-);
-
-ahFormantTwo.Q.setValueAtTime(
-    3.0,
-    now
-);
-
-ahFormantTwoGain.gain.setValueAtTime(
-    0,
-    now
-);
-
-
-        
+    
         // ========================================
         // Vocal-cord excitation
         // ========================================
@@ -4019,88 +3963,12 @@ vocalTractShape.gain.setValueAtTime(
     now
 );
 
-
-vocalTractShape.connect(ahFormantOne);
-vocalTractShape.connect(ahFormantTwo);
-
-ahFormantOne.connect(ahFormantOneGain);
-ahFormantTwo.connect(ahFormantTwoGain);
-
-ahFormantOneGain.connect(singerOutput);
-ahFormantTwoGain.connect(singerOutput);
         
         // ========================================
         // True "Ah" vowel resonances
         // ========================================
 
-        formantOne.type = "bandpass";
-
-        const singerFormantOne =
-    800 + ((Math.random() * 40) - 20);
-        
-formantOne.frequency.setValueAtTime(
-    singerFormantOne * singerFormantScale,
-    now
-);
-
-        formantOne.Q.setValueAtTime(
-    1.8,
-    now
-);
-
-        formantOneGain.gain.setValueAtTime(
-    0,
-    now
-);
-
-        formantTwo.type = "bandpass";
-
-        const singerFormantTwo =
-    1090 + ((Math.random() * 50) - 25);
-
-formantTwo.frequency.setValueAtTime(
-    singerFormantTwo * singerFormantScale,
-    now
-);
-
-        formantTwo.Q.setValueAtTime(
-    3.5,
-    now
-);
-
-        formantTwoGain.gain.setValueAtTime(
-    0,
-    now
-);
-
-        formantThree.type = "bandpass";
-
-        const singerFormantThree =
-    2440 + ((Math.random() * 90) - 45);
-
-formantThree.frequency.setValueAtTime(
-    singerFormantThree * singerFormantScale,
-    now
-);
-
-        formantThree.Q.setValueAtTime(
-            7.2,
-            now
-        );
-
-        formantThreeGain.gain.setValueAtTime(
-    0,
-    now
-);
     
-// ========================================
-// Formant 2 direct vowel support
-// ========================================
-
-formantTwoSupportGain.gain.setValueAtTime(
-    0,
-    now
-);
         
         singerInput.connect(vocalSpectralTilt);
 vocalSpectralTilt.connect(vocalTractShape);
@@ -4113,46 +3981,11 @@ vowelResonatorTwo.connect(vowelResonatorThree);
 vowelResonatorThree.connect(singerOutput);
 
     
-vocalTractShape.connect(formantOne);
 
-formantOne.connect(formantTwo);
-formantTwo.connect(formantThree);
-
-vocalTractShape.connect(formantTwoSupportGain);
-formantTwoSupportGain.connect(formantTwo);
-        
-        formantOne.connect(formantOneGain);
-        formantTwo.connect(formantTwoGain);
-        formantThree.connect(formantThreeGain);
-
-        formantOneGain.connect(singerOutput);
-        formantTwoGain.connect(singerOutput);
-        formantThreeGain.connect(singerOutput);
-        singerInput.connect(throatResonance);
-        throatResonance.connect(throatGain);
-        throatGain.connect(singerOutput);
 
         
 // ========================================
-// Open throat resonance
-// ========================================
 
-throatResonance.type = "bandpass";
-
-throatResonance.frequency.setValueAtTime(
-    300,
-    now
-);
-
-throatResonance.Q.setValueAtTime(
-    0.8,
-    now
-);
-
-throatGain.gain.setValueAtTime(
-    0,
-    now
-);
         
         // ========================================
         // Natural singer vibrato
@@ -4346,16 +4179,10 @@ singerOutput.gain.linearRampToValueAtTime(
             formantOne,
             formantTwo,
             formantThree,
-            ahFormantOne,
-            ahFormantTwo,
             formantTwoSupportGain,
             formantOneGain,
             formantTwoGain,
             formantThreeGain,
-            ahFormantOneGain,
-            ahFormantTwoGain,
-            throatResonance,
-            throatGain,
             vibratoDepth,
             vocalDriftDepth,
             vocalPulseDepth,
