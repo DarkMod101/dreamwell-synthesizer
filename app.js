@@ -4101,7 +4101,7 @@ breathSource.loop = true;
 breathFilter.type = "bandpass";
 
 breathFilter.frequency.setValueAtTime(
-    1400 + singerIndex * 60,
+    1500 + singerIndex * 60,
     now
 );
 
