@@ -4018,7 +4018,7 @@ vowelResonatorThree.connect(singerOutput);
 
         vibratoDepth.gain.linearRampToValueAtTime(
             configuration.vibratoDepth,
-            now + choirAttack + 0.75
+            now + choirAttack + 0.95
         );
 
         vibratoOscillator.connect(vibratoDepth);
