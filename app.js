@@ -3895,7 +3895,7 @@ vocalHarmonicOscillator.detune.setValueAtTime(
 );
 
 vocalHarmonicGain.gain.setValueAtTime(
-    0.12 * configuration.harmonicLevel,
+    0.10 * configuration.harmonicLevel,
     now
 );
 
