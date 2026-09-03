@@ -3820,7 +3820,7 @@ vowelResonatorTwo.gain.setValueAtTime(
 vowelResonatorThree.type = "peaking";
 
 vowelResonatorThree.frequency.setValueAtTime(
-    2500 * singerFormantScale,
+    2350 * singerFormantScale,
     now
 );
 
