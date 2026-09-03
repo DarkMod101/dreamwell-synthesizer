@@ -3782,7 +3782,7 @@ const vowelResonatorThree = ctx.createBiquadFilter();
 vowelResonatorOne.type = "peaking";
 
 vowelResonatorOne.frequency.setValueAtTime(
-    800 * singerFormantScale,
+    760 * singerFormantScale,
     now
 );
 
