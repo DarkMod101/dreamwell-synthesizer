@@ -3865,6 +3865,14 @@ vocalOscillatorGain.connect(
 );
      
 
+vocalHarmonicOscillator.connect(
+    vocalHarmonicFilter
+);
+
+vocalHarmonicFilter.connect(
+    vocalHarmonicGain
+);
+
 vocalHarmonicGain.connect(
     singerInput
 );
