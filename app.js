@@ -3331,14 +3331,18 @@ function createChoirNote(frequency) {
     const now = ctx.currentTime;
 
     const choirSources = [];
-    const choirProcessingNodes = [];
-   
+const choirProcessingNodes = [];
+
 let choirSampleLoopActive = true;
 let choirSampleLoopTimer = null;
 
 const activeChoirSampleSegments = [];
-    
-    if (choirAhC3Buffer) {
+
+// Free an old choir voice before constructing
+// or scheduling the new one.
+stealOldestChoirVoice();
+
+if (choirAhC3Buffer) {
  
     const c3Frequency = 130.8128;
 
@@ -3535,7 +3539,7 @@ scheduleChoirSampleSegment(now);
     );
 }
     
-    stealOldestChoirVoice();
+    
     // ========================================
     // Main Choir voice output
     // ========================================
