@@ -3787,7 +3787,7 @@ vowelResonatorOne.frequency.setValueAtTime(
 );
 
 vowelResonatorOne.Q.setValueAtTime(
-    5.0,
+    4.5,
     now
 );
 
