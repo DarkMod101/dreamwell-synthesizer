@@ -3404,7 +3404,7 @@ function scheduleChoirSampleSegment(
     );
 
     segmentGain.gain.linearRampToValueAtTime(
-    0.65,
+    0.60,
     segmentStartTime +
     sampleCrossfadeTime
 );
@@ -3423,7 +3423,7 @@ function scheduleChoirSampleSegment(
         sampleCrossfadeTime;
 
     segmentGain.gain.setValueAtTime(
-        0.65,
+        0.60,
         fadeOutStartTime
     );
 
