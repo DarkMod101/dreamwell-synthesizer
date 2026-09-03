@@ -3919,7 +3919,7 @@ vocalHarmonicFilter.Q.setValueAtTime(
 vocalSpectralTilt.type = "lowpass";
 
 vocalSpectralTilt.frequency.setValueAtTime(
-    2600,
+    2500,
     now
 );
 
