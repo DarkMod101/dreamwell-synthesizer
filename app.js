@@ -3825,7 +3825,7 @@ vowelResonatorThree.frequency.setValueAtTime(
 );
 
 vowelResonatorThree.Q.setValueAtTime(
-    9.0,
+    7.5,
     now
 );
 
