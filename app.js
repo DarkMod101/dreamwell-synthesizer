@@ -4072,7 +4072,7 @@ vocalPulseOscillator.frequency.setValueAtTime(
 );
 
 vocalPulseDepth.gain.setValueAtTime(
-    0.012,
+    0.008 + Math.random() * 0.008,
     now
 );
 
