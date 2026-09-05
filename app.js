@@ -4579,7 +4579,7 @@ const pianoRelease =
     Math.min(5.0, Math.max(1.2, getValue(releaseSlider, 2.8)));
 
 const pianoPeak =
-    0.48 + (presence * 0.12);
+    0.36 + (presence * 0.09);
 const pianoTailEnd =
     now + pianoAttack + pianoDecay + pianoRelease;
 
