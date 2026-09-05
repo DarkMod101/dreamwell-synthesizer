@@ -4872,7 +4872,7 @@ sympatheticFilter.frequency.setValueAtTime(
 sympatheticFilter.Q.setValueAtTime(1.2, now);
 
 sympatheticGain.gain.setValueAtTime(
-    0.012 * pianoVoicing.sympatheticAmount,
+    0.004 * pianoVoicing.sympatheticAmount,
     now
 );
 
