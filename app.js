@@ -4915,7 +4915,7 @@ stringB.detune.setValueAtTime(
     0.68 - (notePosition * 0.12);
 
 const stringHarmonic =
-    0.12 + (notePosition * 0.12);
+    0.09 + (notePosition * 0.08);
 
 stringAGain.gain.setValueAtTime(
     stringFundamental,
