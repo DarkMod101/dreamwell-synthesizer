@@ -4883,7 +4883,7 @@ sympatheticGain.gain.exponentialRampToValueAtTime(
     
 hammerGain.gain.setValueAtTime(0.0001, now);
 hammerGain.gain.linearRampToValueAtTime(
-    0.018 * hammerVariation,
+    0.012 * hammerVariation,
     now + 0.006
 );
 hammerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
