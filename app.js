@@ -4457,11 +4457,13 @@ activeChoirSampleSegments.forEach(
     }
 
     choirVoice = {
-        frequency,
-        release: releaseChoirVoice,
-        steal: stealChoirVoice,
-        cleanup: cleanupChoirVoice
-    };
+    frequency,
+    released: false,
+
+    release: releaseChoirVoice,
+    steal: stealChoirVoice,
+    cleanup: cleanupChoirVoice
+};
 
     activeChoirNodes.push(choirVoice);
 
