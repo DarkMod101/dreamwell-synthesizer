@@ -3412,7 +3412,9 @@ function scheduleChoirSampleSegment(
         segmentGain
     );
 
-    segmentGain.connect(dryGain)
+segmentGain.connect(
+    choirVoiceOut
+);
 
 
     // ----------------------------
