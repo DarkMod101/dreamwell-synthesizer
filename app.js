@@ -3338,6 +3338,25 @@ let choirSampleLoopTimer = null;
 
 const activeChoirSampleSegments = [];
 
+// ========================================
+// Clean repeated-note retrigger
+// ========================================
+
+const repeatedChoirVoice =
+    [...activeChoirNodes]
+        .reverse()
+        .find(
+            (voice) =>
+                Math.abs(
+                    voice.frequency - frequency
+                ) < 0.01 &&
+                !voice.released
+        );
+
+if (repeatedChoirVoice?.steal) {
+    repeatedChoirVoice.steal();
+}
+
 // Free an old choir voice before constructing
 // or scheduling the new one.
 stealOldestChoirVoice();
