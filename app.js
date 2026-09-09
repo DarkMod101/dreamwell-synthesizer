@@ -3565,7 +3565,6 @@ scheduleChoirSampleSegment(now);
     // Main Choir voice output
     // ========================================
 
-    const choirVoiceOut = ctx.createGain();
 
     const choirAttack = Math.min(
         4.0,
