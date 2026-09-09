@@ -4299,6 +4299,10 @@ singerOutput.gain.linearRampToValueAtTime(
 
         choirVoiceReleased = true;
 
+if (choirVoice) {
+    choirVoice.released = true;
+}
+        
 choirSampleLoopActive = false;
 
 if (choirSampleLoopTimer !== null) {
@@ -4387,6 +4391,10 @@ activeChoirSampleSegments.forEach(
 
         choirVoiceReleased = true;
 
+if (choirVoice) {
+    choirVoice.released = true;
+}
+        
 choirSampleLoopActive = false;
 
 if (choirSampleLoopTimer !== null) {
