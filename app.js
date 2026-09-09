@@ -3330,14 +3330,19 @@ function createChoirNote(frequency) {
     const ctx = getAudioContext();
     const now = ctx.currentTime;
 
+    // ========================================
+    // Main Choir voice output
+    // ========================================
+
+    const choirVoiceOut = ctx.createGain();
+
     const choirSources = [];
-const choirProcessingNodes = [];
+    const choirProcessingNodes = [];
 
-let choirSampleLoopActive = true;
-let choirSampleLoopTimer = null;
+    let choirSampleLoopActive = true;
+    let choirSampleLoopTimer = null;
 
-const activeChoirSampleSegments = [];
-
+    const activeChoirSampleSegments = [];
 // ========================================
 // Clean repeated-note retrigger
 // ========================================
@@ -3407,10 +3412,7 @@ function scheduleChoirSampleSegment(
         segmentGain
     );
 
-    segmentGain.connect(dryGain);
-    segmentGain.connect(reverbNode);
-    segmentGain.connect(delayDryGain);
-    segmentGain.connect(delayNode);
+    segmentGain.connect(dryGain)
 
 
     // ----------------------------
