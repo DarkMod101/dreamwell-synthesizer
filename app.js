@@ -4373,8 +4373,16 @@ activeChoirSampleSegments.forEach(
         stealNow
     );
 } else {
+    if (
+    typeof segment.gain.gain.cancelAndHoldAtTime ===
+    "function"
+) {
+    segment.gain.gain.cancelAndHoldAtTime(
+        releaseNow
+    );
+} else {
     segment.gain.gain.cancelScheduledValues(
-        stealNow
+        releaseNow
     );
 
     segment.gain.gain.setValueAtTime(
@@ -4382,13 +4390,13 @@ activeChoirSampleSegments.forEach(
             0.0001,
             segment.gain.gain.value
         ),
-        stealNow
+        releaseNow
     );
 }
 
 segment.gain.gain.exponentialRampToValueAtTime(
     0.0001,
-    stealNow + 0.07
+    releaseNow + sampleReleaseTime
 );
 
             segment.source.stop(
