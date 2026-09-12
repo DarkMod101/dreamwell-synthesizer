@@ -4326,22 +4326,28 @@ if (choirSampleLoopTimer !== null) {
             )
         );
 
-        choirVoiceOut.gain.cancelScheduledValues(
-            releaseNow
-        );
+        if (typeof choirVoiceOut.gain.cancelAndHoldAtTime === "function") {
+    choirVoiceOut.gain.cancelAndHoldAtTime(
+        stealNow
+    );
+} else {
+    choirVoiceOut.gain.cancelScheduledValues(
+        stealNow
+    );
 
-        choirVoiceOut.gain.setValueAtTime(
-            Math.max(
-                0.0001,
-                choirVoiceOut.gain.value
-            ),
-            releaseNow
-        );
-
-        choirVoiceOut.gain.exponentialRampToValueAtTime(
+    choirVoiceOut.gain.setValueAtTime(
+        Math.max(
             0.0001,
-            releaseNow + releaseDuration
-        );
+            choirVoiceOut.gain.value
+        ),
+        stealNow
+    );
+}
+
+choirVoiceOut.gain.exponentialRampToValueAtTime(
+    0.0001,
+    stealNow + fadeDuration
+);
 
 const sampleReleaseTime = Math.min(
     1.2,
