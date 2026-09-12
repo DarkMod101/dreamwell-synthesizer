@@ -4331,8 +4331,16 @@ if (choirSampleLoopTimer !== null) {
         stealNow
     );
 } else {
+    if (
+    typeof choirVoiceOut.gain.cancelAndHoldAtTime ===
+    "function"
+) {
+    choirVoiceOut.gain.cancelAndHoldAtTime(
+        releaseNow
+    );
+} else {
     choirVoiceOut.gain.cancelScheduledValues(
-        stealNow
+        releaseNow
     );
 
     choirVoiceOut.gain.setValueAtTime(
@@ -4340,13 +4348,13 @@ if (choirSampleLoopTimer !== null) {
             0.0001,
             choirVoiceOut.gain.value
         ),
-        stealNow
+        releaseNow
     );
 }
 
 choirVoiceOut.gain.exponentialRampToValueAtTime(
     0.0001,
-    stealNow + fadeDuration
+    releaseNow + releaseDuration
 );
 
 const sampleReleaseTime = Math.min(
