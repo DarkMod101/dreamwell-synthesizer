@@ -4357,22 +4357,31 @@ const sampleReleaseTime = Math.min(
 activeChoirSampleSegments.forEach(
     (segment) => {
         try {
-            segment.gain.gain.cancelScheduledValues(
-                releaseNow
-            );
+            if (
+    typeof segment.gain.gain.cancelAndHoldAtTime ===
+    "function"
+) {
+    segment.gain.gain.cancelAndHoldAtTime(
+        stealNow
+    );
+} else {
+    segment.gain.gain.cancelScheduledValues(
+        stealNow
+    );
 
-            segment.gain.gain.setValueAtTime(
-                Math.max(
-                    0.0001,
-                    segment.gain.gain.value
-                ),
-                releaseNow
-            );
+    segment.gain.gain.setValueAtTime(
+        Math.max(
+            0.0001,
+            segment.gain.gain.value
+        ),
+        stealNow
+    );
+}
 
-            segment.gain.gain.exponentialRampToValueAtTime(
-                0.0001,
-                releaseNow + sampleReleaseTime
-            );
+segment.gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    stealNow + 0.07
+);
 
             segment.source.stop(
                 releaseNow +
