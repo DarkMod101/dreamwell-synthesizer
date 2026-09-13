@@ -4318,20 +4318,15 @@ if (choirSampleLoopTimer !== null) {
         
         const releaseNow = ctx.currentTime;
 
-        const releaseDuration = Math.min(
-            8.0,
-            Math.max(
-                0.8,
-                getValue(releaseSlider, 3.8)
-            )
-        );
+const releaseDuration = Math.min(
+    8.0,
+    Math.max(
+        0.8,
+        getValue(releaseSlider, 3.8)
+    )
+);
 
-        if (typeof choirVoiceOut.gain.cancelAndHoldAtTime === "function") {
-    choirVoiceOut.gain.cancelAndHoldAtTime(
-        stealNow
-    );
-} else {
-    if (
+if (
     typeof choirVoiceOut.gain.cancelAndHoldAtTime ===
     "function"
 ) {
