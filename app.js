@@ -4366,38 +4366,30 @@ activeChoirSampleSegments.forEach(
     (segment) => {
         try {
             if (
-    typeof segment.gain.gain.cancelAndHoldAtTime ===
-    "function"
-) {
-    segment.gain.gain.cancelAndHoldAtTime(
-        stealNow
-    );
-} else {
-    if (
-    typeof segment.gain.gain.cancelAndHoldAtTime ===
-    "function"
-) {
-    segment.gain.gain.cancelAndHoldAtTime(
-        releaseNow
-    );
-} else {
-    segment.gain.gain.cancelScheduledValues(
-        releaseNow
-    );
+                typeof segment.gain.gain.cancelAndHoldAtTime ===
+                "function"
+            ) {
+                segment.gain.gain.cancelAndHoldAtTime(
+                    releaseNow
+                );
+            } else {
+                segment.gain.gain.cancelScheduledValues(
+                    releaseNow
+                );
 
-    segment.gain.gain.setValueAtTime(
-        Math.max(
-            0.0001,
-            segment.gain.gain.value
-        ),
-        releaseNow
-    );
-}
+                segment.gain.gain.setValueAtTime(
+                    Math.max(
+                        0.0001,
+                        segment.gain.gain.value
+                    ),
+                    releaseNow
+                );
+            }
 
-segment.gain.gain.exponentialRampToValueAtTime(
-    0.0001,
-    releaseNow + sampleReleaseTime
-);
+            segment.gain.gain.exponentialRampToValueAtTime(
+                0.0001,
+                releaseNow + sampleReleaseTime
+            );
 
             segment.source.stop(
                 releaseNow +
