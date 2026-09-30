@@ -4357,7 +4357,7 @@ if (
     );
 }
 
-choirVoiceOut.gain.exponentialRampToValueAtTime(
+choirVoiceOut.gain.linearRampToValueAtTime(
     0.0001,
     releaseNow + releaseDuration
 );
