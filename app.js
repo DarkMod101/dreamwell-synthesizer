@@ -4293,6 +4293,13 @@ singerOutput.gain.linearRampToValueAtTime(
     }
 
     function releaseChoirVoice() {
+        
+        console.log(
+    "CHOIR RELEASE:",
+    frequency,
+    ctx.currentTime
+);
+        
         if (
             choirVoiceCleaned ||
             choirVoiceReleased
@@ -4418,6 +4425,13 @@ activeChoirSampleSegments.forEach(
     }
 
     function stealChoirVoice() {
+
+console.log(
+    "CHOIR STEAL:",
+    frequency,
+    ctx.currentTime
+);
+        
         if (choirVoiceCleaned) return;
 
         choirVoiceReleased = true;
