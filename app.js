@@ -4306,15 +4306,7 @@ if (choirVoice) {
     choirVoice.released = true;
 }
         
-choirSampleLoopActive = false;
 
-if (choirSampleLoopTimer !== null) {
-    clearTimeout(
-        choirSampleLoopTimer
-    );
-
-    choirSampleLoopTimer = null;
-}
         
         const releaseNow = ctx.currentTime;
 
@@ -4326,6 +4318,24 @@ const releaseDuration = Math.min(
     )
 );
 
+setTimeout(
+    () => {
+        choirSampleLoopActive = false;
+
+        if (choirSampleLoopTimer !== null) {
+            clearTimeout(
+                choirSampleLoopTimer
+            );
+
+            choirSampleLoopTimer = null;
+        }
+    },
+    Math.max(
+        0,
+        (releaseDuration - 0.15) * 1000
+    )
+);
+        
 if (
     typeof choirVoiceOut.gain.cancelAndHoldAtTime ===
     "function"
