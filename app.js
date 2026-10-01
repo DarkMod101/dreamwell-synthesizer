@@ -3604,6 +3604,14 @@ scheduleChoirSampleSegment(now);
         now + choirAttack + 1.4
     );
 
+const choirPresenceGain =
+    ctx.createGain();
+
+choirPresenceGain.gain.setValueAtTime(
+    1.0,
+    now
+);
+    
 const choirOrbitPanner =
     ctx.createStereoPanner();
 
@@ -3642,7 +3650,8 @@ choirOrbitGain.gain.setValueAtTime(
     choirOrbitLFO.start(now);
 }
 
-choirVoiceOut.connect(choirOrbitPanner);
+choirVoiceOut.connect(choirPresenceGain);
+choirPresenceGain.connect(choirOrbitPanner);
 
 choirOrbitPanner.connect(dryGain);
 choirOrbitPanner.connect(reverbNode);
