@@ -3636,12 +3636,12 @@ if (deepDreamOrbitCheckbox?.checked) {
     choirOrbitLFO.type = "sine";
 
     choirOrbitLFO.frequency.setValueAtTime(
-    0.12,
+    0.08,
     now
 );
 
 choirOrbitGain.gain.setValueAtTime(
-    0.75,
+    0.65,
     now
 );
 
