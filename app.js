@@ -3604,10 +3604,20 @@ scheduleChoirSampleSegment(now);
         now + choirAttack + 1.4
     );
 
-    choirVoiceOut.connect(dryGain);
-    choirVoiceOut.connect(reverbNode);
-    choirVoiceOut.connect(delayDryGain);
-    choirVoiceOut.connect(delayNode);
+const choirOrbitPanner =
+    ctx.createStereoPanner();
+
+choirOrbitPanner.pan.setValueAtTime(
+    0,
+    now
+);
+    
+choirVoiceOut.connect(choirOrbitPanner);
+
+choirOrbitPanner.connect(dryGain);
+choirOrbitPanner.connect(reverbNode);
+choirOrbitPanner.connect(delayDryGain);
+choirOrbitPanner.connect(delayNode);
 
     // ========================================
     // Virtual singer configuration
