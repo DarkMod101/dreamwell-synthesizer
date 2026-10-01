@@ -3641,7 +3641,7 @@ if (deepDreamOrbitCheckbox?.checked) {
 );
 
 choirOrbitGain.gain.setValueAtTime(
-    0.65,
+    0.40,
     now
 );
 
