@@ -4277,8 +4277,10 @@ singerOutput.gain.linearRampToValueAtTime(
     );
 
     choirProcessingNodes.push(
-        choirVoiceOut
-    );
+    choirVoiceOut,
+    choirPresenceGain,
+    choirOrbitPanner
+);
 
     // ========================================
     // Choir lifecycle
