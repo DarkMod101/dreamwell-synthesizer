@@ -3617,6 +3617,21 @@ choirPresenceGain.gain.setValueAtTime(
     choirPresenceLevel,
     now
 );
+
+const choirPresenceFilter =
+    ctx.createBiquadFilter();
+
+choirPresenceFilter.type = "highshelf";
+
+choirPresenceFilter.frequency.setValueAtTime(
+    3000,
+    now
+);
+
+choirPresenceFilter.gain.setValueAtTime(
+    0,
+    now
+);
     
 const choirOrbitPanner =
     ctx.createStereoPanner();
@@ -3665,7 +3680,8 @@ choirProcessingNodes.push(
 }
 
 choirVoiceOut.connect(choirPresenceGain);
-choirPresenceGain.connect(choirOrbitPanner);
+choirPresenceGain.connect(choirPresenceFilter);
+choirPresenceFilter.connect(choirOrbitPanner);
 
 choirOrbitPanner.connect(dryGain);
 choirOrbitPanner.connect(reverbNode);
@@ -4293,6 +4309,7 @@ singerOutput.gain.linearRampToValueAtTime(
     choirProcessingNodes.push(
     choirVoiceOut,
     choirPresenceGain,
+    choirPresenceFilter,
     choirOrbitPanner
 );
 
