@@ -3654,6 +3654,14 @@ choirOrbitGain.gain.setValueAtTime(
     );
 
     choirOrbitLFO.start(now);
+
+choirSources.push(
+    choirOrbitLFO
+);
+
+choirProcessingNodes.push(
+    choirOrbitGain
+);
 }
 
 choirVoiceOut.connect(choirPresenceGain);
