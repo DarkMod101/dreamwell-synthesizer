@@ -3611,7 +3611,37 @@ choirOrbitPanner.pan.setValueAtTime(
     0,
     now
 );
-    
+
+let choirOrbitLFO = null;
+let choirOrbitGain = null;
+
+if (deepDreamOrbitCheckbox?.checked) {
+    choirOrbitLFO = ctx.createOscillator();
+    choirOrbitGain = ctx.createGain();
+
+    choirOrbitLFO.type = "sine";
+
+    choirOrbitLFO.frequency.setValueAtTime(
+        0.035,
+        now
+    );
+
+    choirOrbitGain.gain.setValueAtTime(
+        0.11,
+        now
+    );
+
+    choirOrbitLFO.connect(
+        choirOrbitGain
+    );
+
+    choirOrbitGain.connect(
+        choirOrbitPanner.pan
+    );
+
+    choirOrbitLFO.start(now);
+}
+
 choirVoiceOut.connect(choirOrbitPanner);
 
 choirOrbitPanner.connect(dryGain);
