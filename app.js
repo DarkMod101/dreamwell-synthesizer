@@ -3607,8 +3607,14 @@ scheduleChoirSampleSegment(now);
 const choirPresenceGain =
     ctx.createGain();
 
+const choirPresenceAmount =
+    getValue(presenceSlider, 0) / 100;
+
+const choirPresenceLevel =
+    1.0 + (choirPresenceAmount * 0.35);
+
 choirPresenceGain.gain.setValueAtTime(
-    1.0,
+    choirPresenceLevel,
     now
 );
     
