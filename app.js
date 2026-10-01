@@ -4369,50 +4369,7 @@ choirVoiceOut.gain.linearRampToValueAtTime(
     releaseNow + releaseDuration
 );
 
-const sampleReleaseTime = Math.min(
-    1.2,
-    releaseDuration * 0.35
-);
 
-activeChoirSampleSegments.forEach(
-    (segment) => {
-        try {
-            if (
-                typeof segment.gain.gain.cancelAndHoldAtTime ===
-                "function"
-            ) {
-                segment.gain.gain.cancelAndHoldAtTime(
-                    releaseNow
-                );
-            } else {
-                segment.gain.gain.cancelScheduledValues(
-                    releaseNow
-                );
-
-                segment.gain.gain.setValueAtTime(
-                    Math.max(
-                        0.0001,
-                        segment.gain.gain.value
-                    ),
-                    releaseNow
-                );
-            }
-
-            segment.gain.gain.exponentialRampToValueAtTime(
-                0.0001,
-                releaseNow + sampleReleaseTime
-            );
-
-            segment.source.stop(
-                releaseNow +
-                sampleReleaseTime +
-                0.02
-            );
-        } catch (error) {
-            // Segment may already be finished.
-        }
-    }
-);
         
         stopChoirSources(
             releaseNow + releaseDuration + 0.08
