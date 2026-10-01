@@ -4294,12 +4294,6 @@ singerOutput.gain.linearRampToValueAtTime(
 
     function releaseChoirVoice() {
         
-        console.log(
-    "CHOIR RELEASE:",
-    frequency,
-    ctx.currentTime
-);
-        
         if (
             choirVoiceCleaned ||
             choirVoiceReleased
@@ -4382,12 +4376,6 @@ choirVoiceOut.gain.linearRampToValueAtTime(
     }
 
     function stealChoirVoice() {
-
-console.log(
-    "CHOIR STEAL:",
-    frequency,
-    ctx.currentTime
-);
         
         if (choirVoiceCleaned) return;
 
