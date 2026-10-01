@@ -3427,7 +3427,7 @@ segmentGain.connect(
     );
 
     segmentGain.gain.linearRampToValueAtTime(
-    0.60,
+    0.68,
     segmentStartTime +
     sampleCrossfadeTime
 );
@@ -3446,7 +3446,7 @@ segmentGain.connect(
         sampleCrossfadeTime;
 
     segmentGain.gain.setValueAtTime(
-        0.60,
+        0.68,
         fadeOutStartTime
     );
 
