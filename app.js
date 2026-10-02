@@ -4328,6 +4328,7 @@ singerOutput.gain.linearRampToValueAtTime(
 
     choirProcessingNodes.push(
     choirVoiceOut,
+    choirHumanAhFusionGain,
     choirPresenceGain,
     choirPresenceFilter,
     choirOrbitPanner
