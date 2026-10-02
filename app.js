@@ -4626,8 +4626,9 @@ activeChoirSampleSegments.forEach(
 
     activeChoirNodes.push(choirVoice);
 
-    return choirVoice;
-}
+startChoirWaveFusionModulation();
+
+return choirVoice;
 
 
 // ========================================
