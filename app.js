@@ -3339,6 +3339,18 @@ function createChoirNote(frequency) {
     const choirSources = [];
     const choirProcessingNodes = [];
 
+const choirWaveFusionAmount =
+    getValue(waveFusionSlider, 50) / 100;
+
+const choirWaveFusionCurve =
+    waveFusionCurveSelect?.value || "linear";
+
+const choirWaveFusionShaped =
+    shapeWaveFusion(
+        choirWaveFusionAmount,
+        choirWaveFusionCurve
+    );
+    
     let choirSampleLoopActive = true;
     let choirSampleLoopTimer = null;
 
