@@ -3629,7 +3629,7 @@ choirPresenceFilter.frequency.setValueAtTime(
 );
 
 choirPresenceFilter.gain.setValueAtTime(
-    0,
+    choirPresenceAmount * 3.0,
     now
 );
     
