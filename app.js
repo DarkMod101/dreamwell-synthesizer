@@ -4562,7 +4562,7 @@ activeChoirSampleSegments.forEach(
     choirVoice = {
     frequency,
     released: false,
-
+    humanAhFusionGain: choirHumanAhFusionGain,
     release: releaseChoirVoice,
     steal: stealChoirVoice,
     cleanup: cleanupChoirVoice
