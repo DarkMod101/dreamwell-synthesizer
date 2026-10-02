@@ -3350,6 +3350,14 @@ const choirWaveFusionShaped =
         choirWaveFusionAmount,
         choirWaveFusionCurve
     );
+
+const choirHumanAhFusionGain =
+    ctx.createGain();
+
+choirHumanAhFusionGain.gain.setValueAtTime(
+    1.0,
+    now
+);
     
     let choirSampleLoopActive = true;
     let choirSampleLoopTimer = null;
