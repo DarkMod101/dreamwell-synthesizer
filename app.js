@@ -3432,10 +3432,7 @@ function scheduleChoirSampleSegment(
         segmentGain
     );
 
-segmentGain.connect(
-    choirVoiceOut
-);
-
+segmentGain.connect(choirHumanAhFusionGain);
 
     // ----------------------------
     // Crossfade in
