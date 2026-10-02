@@ -43,6 +43,7 @@ const activeTouchKeys = new Map();
 let lastPlayedFrequency = null;
 let waveFusionModulationTimer = null;
 let pianoWaveFusionModulationTimer = null;
+let choirWaveFusionModulationTimer = null;
 let lastTouchTime = 0;
 let trapezoidWave = null;
 
