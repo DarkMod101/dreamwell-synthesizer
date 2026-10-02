@@ -3358,6 +3358,8 @@ choirHumanAhFusionGain.gain.setValueAtTime(
     1.0,
     now
 );
+
+choirHumanAhFusionGain.connect(choirVoiceOut);
     
     let choirSampleLoopActive = true;
     let choirSampleLoopTimer = null;
