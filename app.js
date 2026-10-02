@@ -996,6 +996,61 @@ function startPianoWaveFusionModulation() {
     }, 80);
 }
 
+function startChoirWaveFusionModulation() {
+    if (choirWaveFusionModulationTimer !== null) {
+        return;
+    }
+
+    choirWaveFusionModulationTimer = setInterval(
+        () => {
+            if (!audioContext) {
+                return;
+            }
+
+            const ctx = audioContext;
+
+            const rawWaveFusion =
+                getValue(waveFusionSlider, 50) / 100;
+
+            const fusionCurve =
+                waveFusionCurveSelect?.value || "linear";
+
+            const shapedWaveFusion =
+                shapeWaveFusion(
+                    rawWaveFusion,
+                    fusionCurve
+                );
+
+            const humanAhFusionLevel =
+                1.50 - (shapedWaveFusion * 1.00);
+
+            activeChoirNodes.forEach(
+                (voice) => {
+                    if (
+                        voice.humanAhFusionGain &&
+                        !voice.released
+                    ) {
+                        voice.humanAhFusionGain.gain.setTargetAtTime(
+                            humanAhFusionLevel,
+                            ctx.currentTime,
+                            0.05
+                        );
+                    }
+                }
+            );
+
+            if (activeChoirNodes.length === 0) {
+                clearInterval(
+                    choirWaveFusionModulationTimer
+                );
+
+                choirWaveFusionModulationTimer = null;
+            }
+        },
+        80
+    );
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
