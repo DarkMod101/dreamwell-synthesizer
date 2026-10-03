@@ -1587,65 +1587,127 @@ function clearKeyHighlights() {
 }
 
 function beginInputNote(frequency) {
-  if (dreamArpEnabled) {
     const noteId = String(frequency);
 
-    if (arpLatchEnabled && arpHeldNotes.has(noteId)) {
-      arpHeldNotes.delete(noteId);
+    // ========================================
+    // Arpeggiator mode
+    // ========================================
 
-arpPlayedOrder =
-    arpPlayedOrder.filter(
-        (note) => note !== Number(frequency)
-    );
-      
-  refreshLatchedKeyHighlights();
+    if (dreamArpEnabled) {
+        if (
+            arpLatchEnabled &&
+            arpHeldNotes.has(noteId)
+        ) {
+            arpHeldNotes.delete(noteId);
 
-      if (arpHeldNotes.size === 0) {
-        stopDreamArp();
-      }
+            arpPlayedOrder =
+                arpPlayedOrder.filter(
+                    (note) =>
+                        note !== Number(frequency)
+                );
 
-      return;
+            refreshLatchedKeyHighlights();
+
+            if (arpHeldNotes.size === 0) {
+                stopDreamArp();
+            }
+
+            return;
+        }
+
+        arpHeldNotes.add(noteId);
+
+        if (
+            !arpPlayedOrder.includes(
+                Number(frequency)
+            )
+        ) {
+            arpPlayedOrder.push(
+                Number(frequency)
+            );
+        }
+
+        setKeyLatched(frequency, true);
+        startDreamArp();
+        return;
     }
 
-    arpHeldNotes.add(noteId);
+    // ========================================
+    // Independent performance latch
+    // ========================================
 
-if (!arpPlayedOrder.includes(Number(frequency))) {
-  arpPlayedOrder.push(Number(frequency));
-}
-    
-    setKeyLatched(frequency, true);
-    startDreamArp();
-    return;
-  }
+    if (arpLatchEnabled) {
+        if (arpHeldNotes.has(noteId)) {
+            arpHeldNotes.delete(noteId);
 
-  setKeyActive(frequency, true); 
-  playNote(frequency);
-  refreshLatchedKeyHighlights();
+            stopNote(frequency);
+
+            setKeyLatched(
+                frequency,
+                false
+            );
+
+            return;
+        }
+
+        arpHeldNotes.add(noteId);
+
+        setKeyActive(frequency, true);
+        setKeyLatched(frequency, true);
+
+        playNote(frequency);
+
+        return;
+    }
+
+    // ========================================
+    // Normal keyboard behavior
+    // ========================================
+
+    setKeyActive(frequency, true);
+    playNote(frequency);
+    refreshLatchedKeyHighlights();
 }
+
 
 function endInputNote(frequency) {
-  setKeyActive(frequency, false);
-  
-  if (dreamArpEnabled) {
+    setKeyActive(frequency, false);
+
+    // Arpeggiator latch keeps its notes.
+    if (dreamArpEnabled) {
+        if (arpLatchEnabled) {
+            return;
+        }
+
+        arpHeldNotes.delete(
+            String(frequency)
+        );
+
+        setKeyLatched(
+            frequency,
+            false
+        );
+
+        if (arpHeldNotes.size === 0) {
+            stopDreamArp();
+        }
+
+        return;
+    }
+
+    // Independent latch keeps the actual
+    // sustained note/chord alive.
     if (arpLatchEnabled) {
-      return;
+        return;
     }
 
-    arpHeldNotes.delete(String(frequency));
-setKeyLatched(frequency, false);
-    
-    if (arpHeldNotes.size === 0) {
-      stopDreamArp();
+    if (
+        currentResonanceSource !== "piano"
+    ) {
+        stopNote(frequency);
     }
 
-    return;
-  }
-
-  if (currentResonanceSource !== "piano") {
-  stopNote(frequency);
-}
-
-setKeyActive(frequency, false);
+    setKeyActive(frequency, false);
 }
 
 function updateKeyboardOctave() {
