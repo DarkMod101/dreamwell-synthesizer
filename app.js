@@ -1024,6 +1024,15 @@ function startChoirWaveFusionModulation() {
             const humanAhFusionLevel =
     1.60 - (shapedWaveFusion * 1.20);
 
+const liveChoirPresenceAmount =
+    getValue(presenceSlider, 0) / 100;
+
+const liveChoirPresenceLevel =
+    1.0 + (liveChoirPresenceAmount * 0.35);
+
+const liveChoirPresenceHighShelf =
+    liveChoirPresenceAmount * 3.0;
+            
             activeChoirNodes.forEach(
                 (voice) => {
                     if (
@@ -4684,6 +4693,8 @@ activeChoirSampleSegments.forEach(
     frequency,
     released: false,
     humanAhFusionGain: choirHumanAhFusionGain,
+    presenceGain: choirPresenceGain,
+    presenceFilter: choirPresenceFilter,
     release: releaseChoirVoice,
     steal: stealChoirVoice,
     cleanup: cleanupChoirVoice
