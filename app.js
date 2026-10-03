@@ -1022,7 +1022,7 @@ function startChoirWaveFusionModulation() {
                 );
 
             const humanAhFusionLevel =
-                1.50 - (shapedWaveFusion * 1.00);
+    1.60 - (shapedWaveFusion * 1.20);
 
             activeChoirNodes.forEach(
                 (voice) => {
