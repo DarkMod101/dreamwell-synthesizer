@@ -1721,12 +1721,15 @@ function updateKeyboardOctave() {
   });
 
   if (octaveDisplay) {
-    octaveDisplay.textContent =
-      `Shift: ${octaveShift > 0 ? "+" : ""}${octaveShift}`;
-  }
+  octaveDisplay.textContent =
+    `Shift: ${octaveShift > 0 ? "+" : ""}${octaveShift}`;
+}
 
-    stopAllNotes();
-  refreshLatchedKeyHighlights();
+if (!arpLatchEnabled) {
+  stopAllNotes();
+}
+
+refreshLatchedKeyHighlights();
 }
 
 function getKeyFrequency(key) {
