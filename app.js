@@ -3476,7 +3476,7 @@ const choirHumanAhFusionGain =
     ctx.createGain();
 
 const choirHumanAhFusionLevel =
-    1.50 - (choirWaveFusionShaped * 1.00);
+    1.60 - (choirWaveFusionShaped * 1.20);
 
 choirHumanAhFusionGain.gain.setValueAtTime(
     choirHumanAhFusionLevel,
