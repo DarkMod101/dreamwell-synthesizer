@@ -5993,9 +5993,19 @@ arpLatchCheckbox.addEventListener("change", () => {
   arpLatchEnabled = arpLatchCheckbox.checked;
 
   if (!arpLatchEnabled) {
+    const latchedNotes =
+      Array.from(arpHeldNotes);
+
     arpHeldNotes.clear();
-    stopDreamArp();
-    stopAllNotes();
+
+    if (dreamArpEnabled) {
+      stopDreamArp();
+    } else {
+      latchedNotes.forEach((noteId) => {
+        stopNote(Number(noteId));
+      });
+    }
+
     clearKeyHighlights();
   }
 });
