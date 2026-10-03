@@ -6002,8 +6002,8 @@ arpLatchCheckbox.addEventListener("change", () => {
       stopDreamArp();
     } else {
       latchedNotes.forEach((noteId) => {
-        stopNote(Number(noteId));
-      });
+    endInputNote(Number(noteId));
+});
     }
 
     clearKeyHighlights();
