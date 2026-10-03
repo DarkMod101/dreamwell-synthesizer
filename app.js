@@ -1045,6 +1045,25 @@ const liveChoirPresenceHighShelf =
                             0.05
                         );
                     }
+
+if (
+    voice.presenceGain &&
+    voice.presenceFilter &&
+    !voice.released
+) {
+    voice.presenceGain.gain.setTargetAtTime(
+        liveChoirPresenceLevel,
+        ctx.currentTime,
+        0.05
+    );
+
+    voice.presenceFilter.gain.setTargetAtTime(
+        liveChoirPresenceHighShelf,
+        ctx.currentTime,
+        0.05
+    );
+}
+                    
                 }
             );
 
