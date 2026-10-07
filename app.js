@@ -1048,6 +1048,11 @@ const liveChoirPresenceLevel =
 
 const liveChoirPresenceHighShelf =
     liveChoirPresenceAmount * 3.0;
+
+const liveChoirOrbitDepth =
+    deepDreamOrbitCheckbox?.checked
+        ? 0.40
+        : 0;
             
             activeChoirNodes.forEach(
                 (voice) => {
@@ -1075,6 +1080,17 @@ if (
 
     voice.presenceFilter.gain.setTargetAtTime(
         liveChoirPresenceHighShelf,
+        ctx.currentTime,
+        0.05
+    );
+}
+
+if (
+    voice.orbitGain &&
+    !voice.released
+) {
+    voice.orbitGain.gain.setTargetAtTime(
+        liveChoirOrbitDepth,
         ctx.currentTime,
         0.05
     );
@@ -4730,6 +4746,7 @@ activeChoirSampleSegments.forEach(
     humanAhFusionGain: choirHumanAhFusionGain,
     presenceGain: choirPresenceGain,
     presenceFilter: choirPresenceFilter,
+    orbitGain: choirOrbitGain,
     release: releaseChoirVoice,
     steal: stealChoirVoice,
     cleanup: cleanupChoirVoice
