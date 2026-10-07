@@ -1010,17 +1010,33 @@ function startChoirWaveFusionModulation() {
             const ctx = audioContext;
 
             const rawWaveFusion =
-                getValue(waveFusionSlider, 50) / 100;
+    getValue(waveFusionSlider, 50) / 100;
 
-            const fusionCurve =
-                waveFusionCurveSelect?.value || "linear";
+const morphMotion =
+    dreamMorphMotionCheckbox?.checked;
 
-            const shapedWaveFusion =
-                shapeWaveFusion(
-                    rawWaveFusion,
-                    fusionCurve
-                );
+const morphDrift =
+    morphMotion
+        ? Math.sin(ctx.currentTime * 0.12) * 0.08
+        : 0;
 
+const adjustedWaveFusion =
+    Math.min(
+        1,
+        Math.max(
+            0,
+            rawWaveFusion + morphDrift
+        )
+    );
+
+const fusionCurve =
+    waveFusionCurveSelect?.value || "linear";
+
+const shapedWaveFusion =
+    shapeWaveFusion(
+        adjustedWaveFusion,
+        fusionCurve
+    );
             const humanAhFusionLevel =
     1.60 - (shapedWaveFusion * 1.20);
 
