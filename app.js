@@ -1014,11 +1014,11 @@ function startChoirWaveFusionModulation() {
 
 const morphMotion =
     dreamMorphMotionCheckbox?.checked;
-
-const morphDrift =
+            
+        const morphDrift =
     morphMotion
-        ? Math.sin(ctx.currentTime * 0.12) * 0.30
-: 0;
+        ? Math.sin(ctx.currentTime * 0.60) * 0.30
+        : 0;
 
 const adjustedWaveFusion =
     Math.min(
