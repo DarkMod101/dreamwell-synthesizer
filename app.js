@@ -1017,8 +1017,8 @@ const morphMotion =
 
 const morphDrift =
     morphMotion
-        ? Math.sin(ctx.currentTime * 0.12) * 0.08
-        : 0;
+        ? Math.sin(ctx.currentTime * 0.12) * 0.30
+: 0;
 
 const adjustedWaveFusion =
     Math.min(
