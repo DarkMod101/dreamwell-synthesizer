@@ -3891,6 +3891,85 @@ choirOrbitPanner.connect(reverbNode);
 choirOrbitPanner.connect(delayDryGain);
 choirOrbitPanner.connect(delayNode);
 
+// ========================================
+// Choir Living Texture Layer
+// ========================================
+
+const choirTextureSource =
+    ctx.createBufferSource();
+
+const choirTextureFilter =
+    ctx.createBiquadFilter();
+
+const choirTextureGain =
+    ctx.createGain();
+
+const choirTextureType =
+    noiseTypeSelect?.value || "white";
+
+const choirTextureAmount =
+    getValue(noiseAmountSlider, 0) / 100;
+
+// Generate atmospheric texture
+
+choirTextureSource.buffer =
+    createNoiseBuffer(
+        ctx,
+        choirTextureType
+    );
+
+choirTextureSource.loop = true;
+
+// Gentle atmospheric filtering
+
+choirTextureFilter.type = "lowpass";
+
+choirTextureFilter.frequency.setValueAtTime(
+    4500,
+    now
+);
+
+choirTextureFilter.Q.setValueAtTime(
+    0.6,
+    now
+);
+
+// Independent texture volume
+
+choirTextureGain.gain.setValueAtTime(
+    choirTextureAmount * 0.035,
+    now
+);
+
+// Texture signal routing
+
+choirTextureSource.connect(
+    choirTextureFilter
+);
+
+choirTextureFilter.connect(
+    choirTextureGain
+);
+
+choirTextureGain.connect(
+    choirVoiceOut
+);
+
+// Begin texture playback
+
+choirTextureSource.start(now);
+
+// Register source for lifecycle cleanup
+
+choirSources.push(
+    choirTextureSource
+);
+
+choirProcessingNodes.push(
+    choirTextureFilter,
+    choirTextureGain
+);
+    
     // ========================================
     // Virtual singer configuration
     // ========================================
