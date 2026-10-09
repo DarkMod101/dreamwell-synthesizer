@@ -1053,6 +1053,20 @@ const liveChoirOrbitDepth =
     deepDreamOrbitCheckbox?.checked
         ? 0.40
         : 0;
+
+// Live Choir Living Texture intensity
+
+const liveChoirTextureAmount =
+    getValue(noiseAmountSlider, 0) / 100;
+
+const liveChoirTextureLevels = {
+    white: 0.035,
+    air: 0.10,
+    dust: 0.14,
+    cosmic: 0.12,
+    machine: 0.12,
+    dark: 0.16
+};
             
             activeChoirNodes.forEach(
                 (voice) => {
@@ -1091,6 +1105,25 @@ if (
 ) {
     voice.orbitGain.gain.setTargetAtTime(
         liveChoirOrbitDepth,
+        ctx.currentTime,
+        0.05
+    );
+}
+
+// Live Choir Living Texture control
+
+if (
+    voice.textureGain &&
+    !voice.released
+) {
+    const textureType =
+        voice.textureType || "white";
+
+    const textureLevel =
+        liveChoirTextureLevels[textureType] ?? 0.035;
+
+    voice.textureGain.gain.setTargetAtTime(
+        liveChoirTextureAmount * textureLevel,
         ctx.currentTime,
         0.05
     );
