@@ -3935,9 +3935,22 @@ choirTextureFilter.Q.setValueAtTime(
 );
 
 // Independent texture volume
+// Balance atmospheric texture loudness
+
+const choirTextureLevels = {
+    white: 0.035,
+    air: 0.10,
+    dust: 0.14,
+    cosmic: 0.12,
+    machine: 0.12,
+    dark: 0.16
+};
+
+const choirTextureLevel =
+    choirTextureLevels[choirTextureType] ?? 0.035;
 
 choirTextureGain.gain.setValueAtTime(
-    choirTextureAmount * 0.035,
+    choirTextureAmount * choirTextureLevel,
     now
 );
 
