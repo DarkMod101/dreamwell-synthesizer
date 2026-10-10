@@ -3937,6 +3937,14 @@ const choirTextureFilter =
 const choirTextureGain =
     ctx.createGain();
 
+// Smooth switching between Choir Living Textures
+const choirTextureCrossfadeGain = ctx.createGain();
+
+choirTextureCrossfadeGain.gain.setValueAtTime(
+    1.0,
+    now
+);
+    
 const choirTextureType =
     noiseTypeSelect?.value || "white";
 
