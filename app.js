@@ -4876,6 +4876,9 @@ activeChoirSampleSegments.forEach(
     orbitGain: choirOrbitGain,
     textureGain: choirTextureGain,
     textureType: choirTextureType,
+    textureCrossfadeGain: choirTextureCrossfadeGain,
+    textureSource: choirTextureSource,
+    textureFilter: choirTextureFilter,
     release: releaseChoirVoice,
     steal: stealChoirVoice,
     cleanup: cleanupChoirVoice
