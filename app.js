@@ -1122,6 +1122,66 @@ const selectedTextureType =
 
 const textureTypeChanged =
     selectedTextureType !== voice.textureType;
+// Prepare a smooth transition when the texture changes
+if (
+    textureTypeChanged &&
+    voice.textureSource &&
+    voice.textureCrossfadeGain &&
+    voice.textureFilter
+) {
+    const oldTextureSource = voice.textureSource;
+    const oldCrossfadeGain = voice.textureCrossfadeGain;
+
+    const newTextureSource = ctx.createBufferSource();
+    const newCrossfadeGain = ctx.createGain();
+
+    newTextureSource.buffer = createNoiseBuffer(
+        ctx,
+        selectedTextureType
+    );
+
+    newTextureSource.loop = true;
+
+    newCrossfadeGain.gain.setValueAtTime(
+        0,
+        ctx.currentTime
+    );
+
+    newTextureSource.connect(newCrossfadeGain);
+    newCrossfadeGain.connect(voice.textureFilter);
+
+    newTextureSource.start();
+
+    // Crossfade over 150 milliseconds
+    oldCrossfadeGain.gain.cancelScheduledValues(
+        ctx.currentTime
+    );
+
+    oldCrossfadeGain.gain.setTargetAtTime(
+        0,
+        ctx.currentTime,
+        0.05
+    );
+
+    newCrossfadeGain.gain.setTargetAtTime(
+        1,
+        ctx.currentTime,
+        0.05
+    );
+
+    // Update the active texture references
+    voice.textureSource = newTextureSource;
+    voice.textureCrossfadeGain = newCrossfadeGain;
+    voice.textureType = selectedTextureType;
+
+    // Retire the previous texture after the transition
+    oldTextureSource.stop(ctx.currentTime + 0.25);
+
+    oldTextureSource.onended = () => {
+        oldTextureSource.disconnect();
+        oldCrossfadeGain.disconnect();
+    };
+}
     
     const textureType =
         voice.textureType || "white";
