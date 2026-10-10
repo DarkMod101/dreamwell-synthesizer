@@ -3928,7 +3928,7 @@ choirOrbitPanner.connect(delayNode);
 // Choir Living Texture Layer
 // ========================================
 
-const choirTextureSource =
+let choirTextureSource =
     ctx.createBufferSource();
 
 const choirTextureFilter =
