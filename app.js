@@ -3997,17 +3997,10 @@ choirTextureGain.gain.setValueAtTime(
 
 // Texture signal routing
 
-choirTextureSource.connect(
-    choirTextureFilter
-);
-
-choirTextureFilter.connect(
-    choirTextureGain
-);
-
-choirTextureGain.connect(
-    choirVoiceOut
-);
+choirTextureSource.connect(choirTextureCrossfadeGain);
+choirTextureCrossfadeGain.connect(choirTextureFilter);
+choirTextureFilter.connect(choirTextureGain);
+choirTextureGain.connect(choirVoiceOut);
 
 // Begin texture playback
 
@@ -4020,6 +4013,7 @@ choirSources.push(
 );
 
 choirProcessingNodes.push(
+    choirTextureCrossfadeGain,
     choirTextureFilter,
     choirTextureGain
 );
