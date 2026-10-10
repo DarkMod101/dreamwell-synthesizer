@@ -1152,6 +1152,12 @@ if (
 
     newTextureSource.start();
 
+// Register replacement nodes for Choir cleanup
+if (voice.textureSources && voice.textureProcessingNodes) {
+    voice.textureSources.push(newTextureSource);
+    voice.textureProcessingNodes.push(newCrossfadeGain);
+}
+    
     // Crossfade over 150 milliseconds
     oldCrossfadeGain.gain.cancelScheduledValues(
         ctx.currentTime
