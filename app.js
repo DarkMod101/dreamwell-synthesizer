@@ -1115,7 +1115,14 @@ if (
 if (
     voice.textureGain &&
     !voice.released
-) {
+) { 
+// Detect a new Living Texture selection
+const selectedTextureType =
+    noiseTypeSelect?.value || "white";
+
+const textureTypeChanged =
+    selectedTextureType !== voice.textureType;
+    
     const textureType =
         voice.textureType || "white";
 
