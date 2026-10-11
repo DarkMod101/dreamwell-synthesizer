@@ -1235,7 +1235,18 @@ const oscBGain = ctx.createGain();
 const filter = ctx.createBiquadFilter();
 const noteGain = ctx.createGain();
 const stereoPanner = ctx.createStereoPanner();
-  
+
+// ========================================
+// Synth Resonant Field
+// Coherence / Decoherence Foundation
+// ========================================
+
+const resonantFieldInput = ctx.createGain();
+const resonantFieldOutput = ctx.createGain();
+
+resonantFieldInput.gain.value = 1.0;
+resonantFieldOutput.gain.value = 1.0;
+    
   const noiseSource = ctx.createBufferSource();
 const noiseGain = ctx.createGain();
 stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 0) / 100);
@@ -1401,9 +1412,17 @@ const livingTextureNodes =
     stereoPanner
   );
   
-filter.connect(noteGain);
-noteGain.connect(stereoPanner);
+// ========================================
+// Synth Resonant Field — Neutral Routing
+// ========================================
 
+filter.connect(resonantFieldInput);
+
+resonantFieldInput.connect(resonantFieldOutput);
+
+resonantFieldOutput.connect(noteGain);
+
+noteGain.connect(stereoPanner);
 
 stereoPanner.connect(dryGain);
 stereoPanner.connect(reverbNode);
