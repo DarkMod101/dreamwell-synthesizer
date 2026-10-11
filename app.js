@@ -1965,6 +1965,66 @@ function bindSlider(slider, callback) {
   });
 }
 
+// ========================================
+// Synth Live Filter Modulation
+// ========================================
+
+function updateActiveSynthFilters() {
+    if (!audioContext) return;
+
+    const ctx = audioContext;
+
+    const presenceAmount =
+        getValue(presenceSlider, 0) / 100;
+
+    const originSettings = getOriginSettings(
+        originSelect ? originSelect.value : "pure"
+    );
+
+    const baseCutoff =
+        getValue(cutoffSlider, 4000) +
+        originSettings.filterShift;
+
+    const cutoff =
+        Math.max(0, baseCutoff) +
+        (presenceAmount * 400);
+
+    const resonance =
+        getValue(resonanceSlider, 1) +
+        originSettings.resonanceBoost;
+
+    activeNotes.forEach((note) => {
+        if (!note.filter) return;
+
+        note.filter.frequency.setTargetAtTime(
+            cutoff,
+            ctx.currentTime,
+            0.05
+        );
+
+        note.filter.Q.setTargetAtTime(
+            resonance,
+            ctx.currentTime,
+            0.05
+        );
+    });
+}
+
+// Live filter slider controls
+if (cutoffSlider) {
+    cutoffSlider.addEventListener(
+        "input",
+        updateActiveSynthFilters
+    );
+}
+
+if (resonanceSlider) {
+    resonanceSlider.addEventListener(
+        "input",
+        updateActiveSynthFilters
+    );
+}
+
 bindSlider(masterVolume, () => {
   const ctx = getAudioContext();
   masterGain.gain.setTargetAtTime(Number(masterVolume.value), ctx.currentTime, 0.01);
