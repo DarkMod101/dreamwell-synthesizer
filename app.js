@@ -1438,6 +1438,8 @@ stereoPanner.connect(delayNode);
   oscillatorB,
   oscAGain,
   oscBGain,
+  filter,
+  stereoPanner,
   noteGain,
   lfoNodes,
   noiseSource,
