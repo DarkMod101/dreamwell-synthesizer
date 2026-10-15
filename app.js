@@ -2080,6 +2080,121 @@ if (noiseAmountSlider) {
     );
 }
 
+// ========================================
+// Synth Live Living Texture Switching
+// ========================================
+
+function updateActiveSynthTexture() {
+    if (!audioContext || !noiseTypeSelect) return;
+
+    const ctx = audioContext;
+    const now = ctx.currentTime;
+    const selectedTextureType = noiseTypeSelect.value;
+
+    activeNotes.forEach((note) => {
+
+        // Synth voices only
+        if (
+            !note.oscillatorA ||
+            !note.noiseSource ||
+            !note.textureCrossfadeGain ||
+            !note.noiseGain
+        ) return;
+
+        // Do nothing if texture hasn't changed
+        if (note.textureType === selectedTextureType) return;
+
+        const oldSource = note.noiseSource;
+        const oldCrossfadeGain = note.textureCrossfadeGain;
+
+        // Create replacement texture
+        const newSource = ctx.createBufferSource();
+        const newCrossfadeGain = ctx.createGain();
+
+        newSource.buffer = createNoiseBuffer(
+            ctx,
+            selectedTextureType
+        );
+
+        newSource.loop = true;
+
+        newCrossfadeGain.gain.setValueAtTime(
+            0,
+            now
+        );
+
+        newSource.connect(newCrossfadeGain);
+        newCrossfadeGain.connect(note.noiseGain);
+
+        newSource.start();
+
+        // Smooth crossfade
+        oldCrossfadeGain.gain.cancelScheduledValues(now);
+
+        oldCrossfadeGain.gain.setTargetAtTime(
+            0,
+            now,
+            0.05
+        );
+
+        newCrossfadeGain.gain.setTargetAtTime(
+            1,
+            now,
+            0.05
+        );
+
+        // Retire previous Living Texture motion
+        if (note.livingTextureNodes) {
+            for (
+                let i = 0;
+                i < note.livingTextureNodes.length;
+                i += 2
+            ) {
+                const oldLFO = note.livingTextureNodes[i];
+                const oldLFOGain = note.livingTextureNodes[i + 1];
+
+                oldLFO.stop(now + 0.25);
+
+                oldLFO.addEventListener("ended", () => {
+                    oldLFO.disconnect();
+                    oldLFOGain.disconnect();
+                }, { once: true });
+            }
+        }
+
+        // Activate new texture motion
+        note.livingTextureNodes = createLivingTextureMotion(
+            ctx,
+            selectedTextureType,
+            note.noiseGain,
+            note.filter,
+            note.stereoPanner
+        );
+
+        // Update the active Synth voice
+        note.noiseSource = newSource;
+        note.textureCrossfadeGain = newCrossfadeGain;
+        note.textureType = selectedTextureType;
+
+        // Stop and disconnect the previous texture
+        oldSource.stop(now + 0.25);
+
+        oldSource.addEventListener("ended", () => {
+            oldSource.disconnect();
+            oldCrossfadeGain.disconnect();
+        }, { once: true });
+
+    });
+}
+
+// Live Texture Type dropdown
+if (noiseTypeSelect) {
+    noiseTypeSelect.addEventListener(
+        "change",
+        updateActiveSynthTexture
+    );
+}
+
 bindSlider(masterVolume, () => {
   const ctx = getAudioContext();
   masterGain.gain.setTargetAtTime(Number(masterVolume.value), ctx.currentTime, 0.01);
