@@ -1996,6 +1996,11 @@ function updateActiveSynthFilters() {
     activeNotes.forEach((note) => {
         if (!note.filter) return;
 
+// Live Synth Filter Type
+if (filterTypeSelect) {
+    note.filter.type = filterTypeSelect.value;
+}
+        
         note.filter.frequency.setTargetAtTime(
             cutoff,
             ctx.currentTime,
@@ -2021,6 +2026,14 @@ if (cutoffSlider) {
 if (resonanceSlider) {
     resonanceSlider.addEventListener(
         "input",
+        updateActiveSynthFilters
+    );
+}
+
+// Live Filter Type Selection
+if (filterTypeSelect) {
+    filterTypeSelect.addEventListener(
+        "change",
         updateActiveSynthFilters
     );
 }
