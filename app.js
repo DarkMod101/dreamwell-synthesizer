@@ -2038,6 +2038,44 @@ if (filterTypeSelect) {
     );
 }
 
+// ========================================
+// Synth Live Noise Amount Modulation
+// ========================================
+
+function updateActiveSynthNoise() {
+    if (!audioContext) return;
+
+    const ctx = audioContext;
+
+    const presenceAmount =
+        getValue(presenceSlider, 0) / 100;
+
+    const noiseAmount =
+        getValue(noiseAmountSlider, 0) +
+        presenceAmount * 0.05;
+
+    const targetNoiseGain =
+        (noiseAmount / 100) * 0.08;
+
+    activeNotes.forEach((note) => {
+        if (!note.noiseGain || !note.oscillatorA) return;
+
+        note.noiseGain.gain.setTargetAtTime(
+            targetNoiseGain,
+            ctx.currentTime,
+            0.05
+        );
+    });
+}
+
+// Live Noise Amount slider control
+if (noiseAmountSlider) {
+    noiseAmountSlider.addEventListener(
+        "input",
+        updateActiveSynthNoise
+    );
+}
+
 bindSlider(masterVolume, () => {
   const ctx = getAudioContext();
   masterGain.gain.setTargetAtTime(Number(masterVolume.value), ctx.currentTime, 0.01);
