@@ -437,8 +437,10 @@ function createNoiseBuffer(ctx, type = "white") {
         break;
     }
 
-    data[i] = sample;
-  }
+    data[i] =
+    (type === "cosmic" || type === "machine")
+        ? sample * 1.75
+        : sample;
 
   return buffer;
 }
