@@ -1444,6 +1444,7 @@ stereoPanner.connect(delayNode);
   lfoNodes,
   noiseSource,
   noiseGain,
+  textureType,
   subOscillator,
   subGain,
   livingTextureNodes,
