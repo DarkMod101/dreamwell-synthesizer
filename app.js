@@ -1248,8 +1248,9 @@ resonantFieldInput.gain.value = 1.0;
 resonantFieldOutput.gain.value = 1.0;
     
   const noiseSource = ctx.createBufferSource();
-const noiseGain = ctx.createGain();
-stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 0) / 100);
+  const noiseGain = ctx.createGain();
+  const textureCrossfadeGain = ctx.createGain();
+    stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 0) / 100);
   
 const presenceAmount =
   getValue(presenceSlider, 0) / 100;
@@ -1396,7 +1397,8 @@ addUnisonOscillator(
   oscBGain.connect(filter);
   subGain.connect(filter);
   
-  noiseSource.connect(noiseGain);
+  noiseSource.connect(textureCrossfadeGain);
+textureCrossfadeGain.connect(noiseGain);
 noiseGain.connect(filter);
 
 // Living Texture Engine - Stardust Motion
@@ -1444,6 +1446,7 @@ stereoPanner.connect(delayNode);
   lfoNodes,
   noiseSource,
   noiseGain,
+  textureCrossfadeGain,
   textureType,
   subOscillator,
   subGain,
