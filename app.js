@@ -399,6 +399,27 @@ function updateActiveSynthSubWaveform() {
     });
 }
 
+// ========================================
+// Live Synth Sub Level Control
+// ========================================
+
+function updateActiveSynthSubLevel() {
+    if (!audioContext) return;
+
+    const subLevel =
+        getValue(subLevelSlider, 0) / 100 * 0.35;
+
+    activeNotes.forEach((note) => {
+        if (!note.subGain || !note.subOscillator) return;
+
+        note.subGain.gain.setTargetAtTime(
+            subLevel,
+            audioContext.currentTime,
+            0.05
+        );
+    });
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -6718,6 +6739,12 @@ waveformBSelect?.addEventListener(
 subWaveformSelect?.addEventListener(
     "change",
     updateActiveSynthSubWaveform
+);
+
+// Live Synth Sub Level Control
+subLevelSlider?.addEventListener(
+    "input",
+    updateActiveSynthSubLevel
 );
 
 renderPresetBank("signature");
