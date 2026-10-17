@@ -444,6 +444,58 @@ function updateActiveSynthOscBDetune() {
     });
 }
 
+// ========================================
+// Live Synth Voice Spread Control
+// ========================================
+
+function updateActiveSynthVoiceSpread() {
+    if (!audioContext) return;
+
+    const presenceAmount =
+        getValue(presenceSlider, 0) / 100;
+
+    const voiceSpread =
+        getValue(voiceSpreadSlider, 0) +
+        presenceAmount * 70;
+
+    const spreadCents = voiceSpread * 0.35;
+
+    const unisonLevel =
+        (voiceSpread / 100) * 0.08;
+
+    activeNotes.forEach((note) => {
+        if (!note.unisonOscillators ||
+            note.unisonOscillators.length !== 4) return;
+
+        const driftCents =
+            note.oscillatorA.detune.value;
+
+        const oscBDetune =
+            getValue(oscBDetuneSlider, 7);
+
+        const detunes = [
+            driftCents - spreadCents,
+            driftCents + spreadCents,
+            oscBDetune - driftCents - spreadCents,
+            oscBDetune - driftCents + spreadCents
+        ];
+
+        note.unisonOscillators.forEach(({ osc, gain }, index) => {
+            osc.detune.setTargetAtTime(
+                detunes[index],
+                audioContext.currentTime,
+                0.05
+            );
+
+            gain.gain.setTargetAtTime(
+                unisonLevel,
+                audioContext.currentTime,
+                0.05
+            );
+        });
+    });
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -6777,6 +6829,12 @@ subLevelSlider?.addEventListener(
 oscBDetuneSlider?.addEventListener(
     "input",
     updateActiveSynthOscBDetune
+);
+
+// Live Synth Voice Spread
+voiceSpreadSlider?.addEventListener(
+    "input",
+    updateActiveSynthVoiceSpread
 );
 
 renderPresetBank("signature");
