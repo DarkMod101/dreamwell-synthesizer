@@ -6667,6 +6667,16 @@ if (octaveUpButton) {
     updateKeyboardOctave();
   });
 }
+// Live Synth Waveform Switching
+waveformSelect?.addEventListener(
+    "change",
+    updateActiveSynthWaveforms
+);
+
+waveformBSelect?.addEventListener(
+    "change",
+    updateActiveSynthWaveforms
+);
 
 renderPresetBank("signature");
 updateKeyboardOctave();
