@@ -430,7 +430,10 @@ sample = last * 0.45 + rumble + ticks + mechanicalHum;
         const distantSpark =
           Math.random() > 0.9975 ? white * 0.12 : 0;
 
-        sample = last * 0.55 + deepDrift + distantSpark;
+        const cosmicResonance =
+    Math.sin(2 * Math.PI * 165 * i / ctx.sampleRate) * 0.50;
+
+sample = last * 0.55 + deepDrift + distantSpark + cosmicResonance;
         break;
       }
 
