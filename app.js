@@ -414,7 +414,7 @@ function createNoiseBuffer(ctx, type = "white") {
             : 0;
 
         const mechanicalHum =
-    Math.sin(2 * Math.PI * 110 * i / ctx.sampleRate) * 0.30;
+    Math.sin(2 * Math.PI * 110 * i / ctx.sampleRate) * 0.50;
 
 sample = last * 0.45 + rumble + ticks + mechanicalHum;
         break;
