@@ -413,7 +413,10 @@ function createNoiseBuffer(ctx, type = "white") {
             ? (Math.random() * 2 - 1) * 0.18
             : 0;
 
-        sample = last * 0.45 + rumble + ticks;
+        const mechanicalHum =
+    Math.sin(2 * Math.PI * 110 * i / ctx.sampleRate) * 0.12;
+
+sample = last * 0.45 + rumble + ticks + mechanicalHum;
         break;
       }
 
