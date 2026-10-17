@@ -381,6 +381,24 @@ function updateActiveSynthWaveforms() {
     });
 }
 
+// ========================================
+// Live Synth Sub Waveform Switching
+// ========================================
+
+function updateActiveSynthSubWaveform() {
+    if (!audioContext) return;
+
+    activeNotes.forEach((note) => {
+        if (!note.subOscillator) return;
+
+        applyWaveform(
+            note.subOscillator,
+            subWaveformSelect.value,
+            audioContext
+        );
+    });
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -6694,6 +6712,12 @@ waveformSelect?.addEventListener(
 waveformBSelect?.addEventListener(
     "change",
     updateActiveSynthWaveforms
+);
+
+// Live Synth Sub Waveform Selection
+subWaveformSelect?.addEventListener(
+    "change",
+    updateActiveSynthSubWaveform
 );
 
 renderPresetBank("signature");
