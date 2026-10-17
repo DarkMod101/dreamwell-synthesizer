@@ -349,17 +349,35 @@ function updateActiveSynthWaveforms() {
     activeNotes.forEach((note) => {
         if (!note.oscillatorA || !note.oscillatorB) return;
 
+        // Live Oscillator A Switching
         applyWaveform(
             note.oscillatorA,
             waveformSelect.value,
             audioContext
         );
 
+        // Live Oscillator B Switching
         applyWaveform(
             note.oscillatorB,
             waveformBSelect.value,
             audioContext
         );
+
+        // Live Unison Waveform Switching
+        if (note.unisonOscillators) {
+            note.unisonOscillators.forEach(({ osc }, index) => {
+                const waveform =
+                    index < 2
+                        ? waveformSelect.value
+                        : waveformBSelect.value;
+
+                applyWaveform(
+                    osc,
+                    waveform,
+                    audioContext
+                );
+            });
+        }
     });
 }
 
