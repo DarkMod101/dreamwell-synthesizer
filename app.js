@@ -420,6 +420,30 @@ function updateActiveSynthSubLevel() {
     });
 }
 
+// ========================================
+// Live Synth OSC B Detune Control
+// ========================================
+
+function updateActiveSynthOscBDetune() {
+    if (!audioContext) return;
+
+    const detune =
+        getValue(oscBDetuneSlider, 7);
+
+    activeNotes.forEach((note) => {
+        if (!note.oscillatorB) return;
+
+        const driftOffset =
+            note.oscillatorB.userDriftOffset || 0;
+
+        note.oscillatorB.detune.setTargetAtTime(
+            detune - driftOffset,
+            audioContext.currentTime,
+            0.05
+        );
+    });
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -1391,6 +1415,8 @@ oscillatorA.detune.value = driftCents;
 oscillatorB.detune.value =
   getValue(oscBDetuneSlider, 7) - driftCents;
 
+oscillatorB.userDriftOffset = driftCents;
+    
 subOscillator.type =
     subWaveformSelect
         ? subWaveformSelect.value
@@ -6745,6 +6771,12 @@ subWaveformSelect?.addEventListener(
 subLevelSlider?.addEventListener(
     "input",
     updateActiveSynthSubLevel
+);
+
+// Live Synth OSC B Detune
+oscBDetuneSlider?.addEventListener(
+    "input",
+    updateActiveSynthOscBDetune
 );
 
 renderPresetBank("signature");
