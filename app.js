@@ -1511,7 +1511,6 @@ noiseSource.loop = true;
 noiseGain.gain.value =
   (noiseAmount / 100) * 0.08;
   
-if (voiceSpread > 0) {
   const unisonLevel = (voiceSpread / 100) * 0.08;
 
   function addUnisonOscillator(type, detune) {
@@ -1542,7 +1541,6 @@ addUnisonOscillator(
   waveformB,
   getValue(oscBDetuneSlider, 7) - driftCents + spreadCents
 );
-}
   
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
   noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + attack);
