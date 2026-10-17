@@ -316,7 +316,8 @@ function getValue(element, fallback) {
 }
 
 function applyWaveform(oscillator, waveform, ctx) {
-  if (waveform === "trapezoid") {
+  
+    if (waveform === "trapezoid") {
     if (!trapezoidWave) {
       const real = new Float32Array([
         0,
@@ -340,6 +341,26 @@ function applyWaveform(oscillator, waveform, ctx) {
   }
 
   oscillator.type = waveform;
+}
+
+function updateActiveSynthWaveforms() {
+    if (!audioContext) return;
+
+    activeNotes.forEach((note) => {
+        if (!note.oscillatorA || !note.oscillatorB) return;
+
+        applyWaveform(
+            note.oscillatorA,
+            waveformSelect.value,
+            audioContext
+        );
+
+        applyWaveform(
+            note.oscillatorB,
+            waveformBSelect.value,
+            audioContext
+        );
+    });
 }
 
 function percent(value) {
