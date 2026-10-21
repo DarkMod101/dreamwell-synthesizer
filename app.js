@@ -852,7 +852,15 @@ function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   lfo.connect(lfoGain);
   lfo.start();
 
-  return { lfo, lfoGain };
+  return {
+    lfo,
+    lfoGain,
+    oscillatorA,
+    oscillatorB,
+    filter,
+    noteGain,
+    destination: lfoDestinationSelect.value
+};
 }
 
 function getOriginSettings(origin) {
