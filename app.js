@@ -544,6 +544,34 @@ function updateActiveSynthLFORate() {
     });
 }
 
+// ========================================
+// Live Synth LFO Amount Control
+// ========================================
+
+function updateActiveSynthLFOAmount() {
+    if (!audioContext) return;
+
+    const amount = getValue(lfoAmountSlider, 0);
+
+    const destination =
+        lfoDestinationSelect?.value;
+
+    const modulationDepth =
+        destination === "volume"
+            ? amount / 2000
+            : amount;
+
+    activeNotes.forEach((note) => {
+        if (!note.lfoNodes?.lfoGain) return;
+
+        note.lfoNodes.lfoGain.gain.setTargetAtTime(
+            modulationDepth,
+            audioContext.currentTime,
+            0.05
+        );
+    });
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -6887,6 +6915,12 @@ voiceSpreadSlider?.addEventListener(
 lfoRateSlider?.addEventListener(
     "input",
     updateActiveSynthLFORate
+);
+
+// Live Synth LFO Amount
+lfoAmountSlider?.addEventListener(
+    "input",
+    updateActiveSynthLFOAmount
 );
 
 renderPresetBank("signature");
