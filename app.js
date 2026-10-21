@@ -798,7 +798,7 @@ masterLimiter.connect(audioContext.destination);
 function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   const lfoAmount = getValue(lfoAmountSlider, 0);
 
-  if (lfoAmount <= 0 || !lfoRateSlider || !lfoDestinationSelect) return null;
+  if (!lfoRateSlider || !lfoDestinationSelect) return null;
 
   const lfo = ctx.createOscillator();
   const lfoGain = ctx.createGain();
