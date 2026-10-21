@@ -441,6 +441,34 @@ function updateActiveSynthOscBDetune() {
             audioContext.currentTime,
             0.05
         );
+
+// Synchronize OSC B unison voices
+if (
+    note.unisonOscillators &&
+    note.unisonOscillators.length === 4
+) {
+    const presenceAmount =
+        getValue(presenceSlider, 0) / 100;
+
+    const voiceSpread =
+        getValue(voiceSpreadSlider, 0) +
+        presenceAmount * 70;
+
+    const spreadCents = voiceSpread * 0.35;
+
+    note.unisonOscillators[2].osc.detune.setTargetAtTime(
+        detune - driftOffset - spreadCents,
+        audioContext.currentTime,
+        0.05
+    );
+
+    note.unisonOscillators[3].osc.detune.setTargetAtTime(
+        detune - driftOffset + spreadCents,
+        audioContext.currentTime,
+        0.05
+    );
+}
+        
     });
 }
 
