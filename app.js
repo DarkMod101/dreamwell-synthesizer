@@ -524,6 +524,26 @@ function updateActiveSynthVoiceSpread() {
     });
 }
 
+// ========================================
+// Live Synth LFO Rate Control
+// ========================================
+
+function updateActiveSynthLFORate() {
+    if (!audioContext) return;
+
+    const rate = getValue(lfoRateSlider, 2);
+
+    activeNotes.forEach((note) => {
+        if (!note.lfoNodes?.lfo) return;
+
+        note.lfoNodes.lfo.frequency.setTargetAtTime(
+            rate,
+            audioContext.currentTime,
+            0.05
+        );
+    });
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -6861,6 +6881,12 @@ oscBDetuneSlider?.addEventListener(
 voiceSpreadSlider?.addEventListener(
     "input",
     updateActiveSynthVoiceSpread
+);
+
+// Live Synth LFO Rate
+lfoRateSlider?.addEventListener(
+    "input",
+    updateActiveSynthLFORate
 );
 
 renderPresetBank("signature");
