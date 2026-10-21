@@ -572,6 +572,71 @@ function updateActiveSynthLFOAmount() {
     });
 }
 
+// ========================================
+// Live Synth LFO Destination Control
+// ========================================
+
+function updateActiveSynthLFODestination() {
+    if (!audioContext || !lfoDestinationSelect) return;
+
+    const destination = lfoDestinationSelect.value;
+    const amount = getValue(lfoAmountSlider, 0);
+
+    activeNotes.forEach((note) => {
+        const nodes = note.lfoNodes;
+
+        if (!nodes?.lfoGain) return;
+
+        if (nodes.destination === destination) return;
+
+        const {
+            lfoGain,
+            oscillatorA,
+            oscillatorB,
+            filter,
+            noteGain
+        } = nodes;
+
+        // Silence modulation before rerouting
+        lfoGain.gain.setValueAtTime(
+            0,
+            audioContext.currentTime
+        );
+
+        // Disconnect previous modulation destination
+        lfoGain.disconnect();
+
+        // Connect the newly selected destination
+        if (destination === "filter") {
+            lfoGain.connect(filter.frequency);
+        }
+
+        if (destination === "pitch") {
+            lfoGain.connect(oscillatorA.frequency);
+            lfoGain.connect(oscillatorB.frequency);
+        }
+
+        if (destination === "volume") {
+            lfoGain.connect(noteGain.gain);
+        }
+
+        // Restore modulation with correct scaling
+        const modulationDepth =
+            destination === "volume"
+                ? amount / 2000
+                : amount;
+
+        lfoGain.gain.setTargetAtTime(
+            modulationDepth,
+            audioContext.currentTime,
+            0.05
+        );
+
+        // Remember the new destination
+        nodes.destination = destination;
+    });
+}
+
 function percent(value) {
   return `${Math.round(value * 100)}%`;
 }
@@ -6929,6 +6994,15 @@ lfoRateSlider?.addEventListener(
 lfoAmountSlider?.addEventListener(
     "input",
     updateActiveSynthLFOAmount
+);
+
+// ========================================
+// Live Synth LFO Destination Listener
+// ========================================
+
+lfoDestinationSelect?.addEventListener(
+    "change",
+    updateActiveSynthLFODestination
 );
 
 renderPresetBank("signature");
