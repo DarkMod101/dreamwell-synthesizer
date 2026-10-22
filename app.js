@@ -3135,8 +3135,8 @@ forgottenIvory: {
         glideEnabled: false,
         glideTime: 0.12,
 
-        reverbMix: 0.16,
-        reverbDecay: 2.4,
+        reverbMix: 0.24,
+        reverbDecay: 3.2,
 
         delayMix: 0,
         delayTime: 0.3,
