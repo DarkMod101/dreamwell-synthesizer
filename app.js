@@ -3145,6 +3145,63 @@ forgottenIvory: {
         masterVolume: 0.18,
     },
 },
+
+etherealGlass: {
+    name: "Ethereal Glass",
+    collection: "Celestial Dreams",
+    engine: "synth",
+
+    settings: {
+        waveform: "sine",
+        waveformB: "triangle",
+
+        oscBLevel: 0.52,
+        oscBDetune: 7,
+
+        subWaveform: "sine",
+        subLevel: 0,
+
+        waveFusion: 64,
+        waveFusionCurve: "bright",
+        dreamMorphMotion: true,
+
+        origin: "glass",
+        presence: 20,
+        voiceSpread: 18,
+
+        attack: 0.018,
+        decay: 1.1,
+        sustain: 0.52,
+        release: 2.6,
+
+        filterType: "lowpass",
+        cutoff: 7800,
+        resonance: 1.8,
+
+        lfoRate: 0.28,
+        lfoAmount: 22,
+        lfoDestination: "filter",
+
+        noiseType: "air",
+        noiseAmount: 0,
+
+        drift: 0.8,
+        stereoWidth: 36,
+        deepDreamOrbit: false,
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        reverbMix: 0.32,
+        reverbDecay: 3.8,
+
+        delayMix: 0.08,
+        delayTime: 0.36,
+        delayFeedback: 0.12,
+
+        masterVolume: 0.17,
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
