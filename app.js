@@ -3202,6 +3202,63 @@ etherealGlass: {
         masterVolume: 0.17,
     },
 },
+
+liquidMemory: {
+    name: "Liquid Memory",
+    collection: "Dream Memories",
+    engine: "synth",
+
+    settings: {
+        waveform: "sine",
+        waveformB: "triangle",
+
+        oscBLevel: 0.32,
+        oscBDetune: -5,
+
+        subWaveform: "sine",
+        subLevel: 0,
+
+        waveFusion: 42,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: true,
+
+        origin: "hollow",
+        presence: 12,
+        voiceSpread: 8,
+
+        attack: 0.012,
+        decay: 0.95,
+        sustain: 0.16,
+        release: 1.6,
+
+        filterType: "lowpass",
+        cutoff: 4200,
+        resonance: 1.6,
+
+        lfoRate: 0.45,
+        lfoAmount: 24,
+        lfoDestination: "filter",
+
+        noiseType: "air",
+        noiseAmount: 0,
+
+        drift: 0.6,
+        stereoWidth: 42,
+        deepDreamOrbit: true,
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        reverbMix: 0.38,
+        reverbDecay: 4.8,
+
+        delayMix: 0.26,
+        delayTime: 0.38,
+        delayFeedback: 0.34,
+
+        masterVolume: 0.16,
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
