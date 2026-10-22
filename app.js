@@ -2860,7 +2860,7 @@ const presetBanks = {
   },
 
   keys: {
-
+     
   crystalMemory: {
     name: "Crystal Memory",
     collection: "Dream Memories",
@@ -2917,6 +2917,63 @@ const presetBanks = {
       masterVolume: 0.17,
     },
   },
+
+astralKeys: {
+    name: "Astral Keys",
+    collection: "Celestial Dreams",
+    engine: "synth",
+
+    settings: {
+        waveform: "sine",
+        waveformB: "triangle",
+
+        oscBLevel: 0.42,
+        oscBDetune: 9,
+
+        subWaveform: "sine",
+        subLevel: 0,
+
+        waveFusion: 58,
+        waveFusionCurve: "bright",
+        dreamMorphMotion: true,
+
+        origin: "glass",
+        presence: 12,
+        voiceSpread: 24,
+
+        attack: 0.045,
+        decay: 1.4,
+        sustain: 0.28,
+        release: 3.6,
+
+        filterType: "lowpass",
+        cutoff: 9200,
+        resonance: 1.4,
+
+        lfoRate: 0.18,
+        lfoAmount: 65,
+        lfoDestination: "filter",
+
+        noiseType: "air",
+        noiseAmount: 1,
+
+        drift: 1.5,
+        stereoWidth: 48,
+        deepDreamOrbit: true,
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        reverbMix: 0.48,
+        reverbDecay: 5.2,
+
+        delayMix: 0.14,
+        delayTime: 0.42,
+        delayFeedback: 0.20,
+
+        masterVolume: 0.18,
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
