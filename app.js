@@ -3031,6 +3031,63 @@ astralKeys: {
         masterVolume: 0.19,
     },
 },     
+
+neonPulse: {
+    name: "Neon Pulse",
+    collection: "Neon Realms",
+    engine: "synth",
+
+    settings: {
+        waveform: "sawtooth",
+        waveformB: "square",
+
+        oscBLevel: 0.34,
+        oscBDetune: 5,
+
+        subWaveform: "sine",
+        subLevel: 12,
+
+        waveFusion: 46,
+        waveFusionCurve: "bright",
+        dreamMorphMotion: false,
+
+        origin: "metal",
+        presence: 24,
+        voiceSpread: 10,
+
+        attack: 0.006,
+        decay: 0.24,
+        sustain: 0.48,
+        release: 0.32,
+
+        filterType: "lowpass",
+        cutoff: 4800,
+        resonance: 2.2,
+
+        lfoRate: 4.2,
+        lfoAmount: 28,
+        lfoDestination: "filter",
+
+        noiseType: "machine",
+        noiseAmount: 1,
+
+        drift: 0,
+        stereoWidth: 28,
+        deepDreamOrbit: false,
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        reverbMix: 0.16,
+        reverbDecay: 2.2,
+
+        delayMix: 0.18,
+        delayTime: 0.25,
+        delayFeedback: 0.24,
+
+        masterVolume: 0.15,
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
