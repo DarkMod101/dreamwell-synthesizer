@@ -3096,7 +3096,7 @@ forgottenIvory: {
 
     settings: {
         waveform: "triangle",
-        waveformB: "sawtooth",
+        waveformB: "sine",
 
         oscBLevel: 0.16,
         oscBDetune: 2,
