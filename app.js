@@ -2861,6 +2861,63 @@ const presetBanks = {
 
   keys: {
 
+  crystalMemory: {
+    name: "Crystal Memory",
+    collection: "Dream Memories",
+    engine: "synth",
+
+    settings: {
+      waveform: "sine",
+      waveformB: "trapezoid",
+
+      oscBLevel: 0.38,
+      oscBDetune: 0,
+
+      subWaveform: "sine",
+      subLevel: 0,
+
+      waveFusion: 72,
+      waveFusionCurve: "bright",
+      dreamMorphMotion: false,
+
+      origin: "glass",
+      presence: 5,
+      voiceSpread: 8,
+
+      attack: 0.008,
+      decay: 0.85,
+      sustain: 0.12,
+      release: 1.8,
+
+      filterType: "lowpass",
+      cutoff: 6500,
+      resonance: 1.2,
+
+      lfoRate: 0.35,
+      lfoAmount: 18,
+      lfoDestination: "filter",
+
+      noiseType: "air",
+      noiseAmount: 0,
+
+      drift: 0,
+      stereoWidth: 20,
+      deepDreamOrbit: false,
+
+      glideEnabled: false,
+      glideTime: 0.12,
+
+      reverbMix: 0.34,
+      reverbDecay: 3.7,
+
+      delayMix: 0.12,
+      delayTime: 0.32,
+      delayFeedback: 0.16,
+
+      masterVolume: 0.17,
+    },
+  },
+      
 grandPiano: {
     name: "Grand Piano",
     engine: "piano",
