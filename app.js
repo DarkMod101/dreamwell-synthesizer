@@ -2974,6 +2974,63 @@ astralKeys: {
         masterVolume: 0.18,
     },
 },
+
+ midnightKeys: {
+    name: "Midnight Keys",
+    collection: "Dream Memories",
+    engine: "synth",
+
+    settings: {
+        waveform: "triangle",
+        waveformB: "sine",
+
+        oscBLevel: 0.46,
+        oscBDetune: 3,
+
+        subWaveform: "sine",
+        subLevel: 8,
+
+        waveFusion: 38,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: false,
+
+        origin: "hollow",
+        presence: 18,
+        voiceSpread: 12,
+
+        attack: 0.035,
+        decay: 0.48,
+        sustain: 0.62,
+        release: 0.85,
+
+        filterType: "lowpass",
+        cutoff: 3100,
+        resonance: 0.8,
+
+        lfoRate: 0.24,
+        lfoAmount: 8,
+        lfoDestination: "filter",
+
+        noiseType: "dark",
+        noiseAmount: 1,
+
+        drift: 1.2,
+        stereoWidth: 22,
+        deepDreamOrbit: false,
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        reverbMix: 0.22,
+        reverbDecay: 2.8,
+
+        delayMix: 0.06,
+        delayTime: 0.28,
+        delayFeedback: 0.12,
+
+        masterVolume: 0.19,
+    },
+},     
       
 grandPiano: {
     name: "Grand Piano",
