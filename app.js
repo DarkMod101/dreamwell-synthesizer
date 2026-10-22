@@ -3088,6 +3088,63 @@ neonPulse: {
         masterVolume: 0.15,
     },
 },
+
+forgottenIvory: {
+    name: "Forgotten Ivory",
+    collection: "Forgotten Realms",
+    engine: "synth",
+
+    settings: {
+        waveform: "triangle",
+        waveformB: "sawtooth",
+
+        oscBLevel: 0.16,
+        oscBDetune: 2,
+
+        subWaveform: "sine",
+        subLevel: 0,
+
+        waveFusion: 24,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: false,
+
+        origin: "wood",
+        presence: 14,
+        voiceSpread: 4,
+
+        attack: 0.005,
+        decay: 0.72,
+        sustain: 0.08,
+        release: 0.38,
+
+        filterType: "lowpass",
+        cutoff: 3900,
+        resonance: 1.1,
+
+        lfoRate: 0.2,
+        lfoAmount: 0,
+        lfoDestination: "filter",
+
+        noiseType: "dust",
+        noiseAmount: 0,
+
+        drift: 0,
+        stereoWidth: 14,
+        deepDreamOrbit: false,
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        reverbMix: 0.16,
+        reverbDecay: 2.4,
+
+        delayMix: 0,
+        delayTime: 0.3,
+        delayFeedback: 0,
+
+        masterVolume: 0.18,
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
