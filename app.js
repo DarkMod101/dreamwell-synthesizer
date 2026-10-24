@@ -3288,9 +3288,9 @@ musicBoxToyPiano: {
         sustain: 0.04,
         release: 0.24,
 
-        filterType: "lowpass",
-        cutoff: 6800,
-        resonance: 1.5,
+        filterType: "highpass",
+        cutoff: 9500,
+        resonance: 15.0,
 
         lfoRate: 0.2,
         lfoAmount: 0,
