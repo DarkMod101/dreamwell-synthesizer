@@ -1803,6 +1803,67 @@ function stopActiveChoirNodes() {
     });
 }
 
+// ========================================
+// Music Box Toy Piano — Key-Down Click
+// ========================================
+
+function playToyPianoKeyDownClick() {
+    const ctx = getAudioContext();
+
+    const duration = 0.035;
+    const length = Math.ceil(ctx.sampleRate * duration);
+
+    const buffer = ctx.createBuffer(
+        1,
+        length,
+        ctx.sampleRate
+    );
+
+    const data = buffer.getChannelData(0);
+
+    let softenedNoise = 0;
+
+    for (let i = 0; i < length; i++) {
+        const time = i / ctx.sampleRate;
+
+        const noise = Math.random() * 2 - 1;
+
+        softenedNoise =
+            softenedNoise * 0.72 +
+            noise * 0.28;
+
+        const envelope = Math.exp(-time * 170);
+
+        data[i] = softenedNoise * envelope;
+    }
+
+    const source = ctx.createBufferSource();
+    const filter = ctx.createBiquadFilter();
+    const clickGain = ctx.createGain();
+
+    source.buffer = buffer;
+
+    filter.type = "bandpass";
+    filter.frequency.value = 1250;
+    filter.Q.value = 0.8;
+
+    clickGain.gain.value = 0.24;
+
+    source.connect(filter);
+    filter.connect(clickGain);
+
+    // Dry mechanical action, independent of reverb.
+    clickGain.connect(masterGain);
+
+    source.start();
+
+    source.onended = () => {
+        source.disconnect();
+        filter.disconnect();
+        clickGain.disconnect();
+    };
+}
+
 function playNote(frequency) {
     
   if (currentResonanceSource === "piano") {
@@ -1860,7 +1921,12 @@ function playNote(frequency) {
     stopNote(Number(oldestNoteId));
   }
 
-  const note = createNote(frequency);
+    const note = createNote(frequency);
+
+  if (toyPianoKeyClickEnabled) {
+      playToyPianoKeyDownClick();
+  }
+
   activeNotes.set(noteId, note);
   lastPlayedFrequency = frequency;
   startWaveFusionModulation();  
