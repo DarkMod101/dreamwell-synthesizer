@@ -6782,6 +6782,9 @@ startPianoWaveFusionModulation();
 function applyPresetSettings(preset) {
     if (!preset) return;
 
+    toyPianoKeyClickEnabled =
+        preset.mechanicalKeyClick === true;
+    
     currentResonanceSource =
         preset.engine || "synth";
 
