@@ -11,6 +11,10 @@ let delayDryGain;
 let livingTexturesEnabled = true;
 let currentResonanceSource = "synth";
 let currentEngine = currentResonanceSource; // temporary compatibility bridge
+
+// Music Box Toy Piano — Mechanical Key Action
+let toyPianoKeyClickEnabled = false;
+
 // Piano Engine state
 let pianoSustainPedalActive = false;
 let pianoAuditionMode = true;
@@ -3266,9 +3270,11 @@ musicBoxToyPiano: {
     engine: "synth",
 
     settings: {
-        waveform: "triangle",
-        waveformB: "square",
+    mechanicalKeyClick: true,
 
+    waveform: "triangle",
+    waveformB: "square",
+        
         oscBLevel: 0.12,
         oscBDetune: 4,
 
