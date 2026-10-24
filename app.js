@@ -3279,7 +3279,7 @@ musicBoxToyPiano: {
         waveFusionCurve: "bright",
         dreamMorphMotion: false,
 
-        origin: "wood",
+        origin: "metal",
         presence: 10,
         voiceSpread: 3,
 
