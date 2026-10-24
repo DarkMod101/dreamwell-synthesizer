@@ -3280,7 +3280,7 @@ musicBoxToyPiano: {
         dreamMorphMotion: false,
 
         origin: "metal",
-        presence: 10,
+        presence: 50,
         voiceSpread: 3,
 
         attack: 0.005,
