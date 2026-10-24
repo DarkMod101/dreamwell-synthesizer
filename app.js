@@ -3259,6 +3259,63 @@ liquidMemory: {
         masterVolume: 0.16,
     },
 },
+
+musicBoxToyPiano: {
+    name: "Music Box Toy Piano",
+    collection: "Forgotten Realms",
+    engine: "synth",
+
+    settings: {
+        waveform: "triangle",
+        waveformB: "square",
+
+        oscBLevel: 0.12,
+        oscBDetune: 4,
+
+        subWaveform: "sine",
+        subLevel: 0,
+
+        waveFusion: 18,
+        waveFusionCurve: "bright",
+        dreamMorphMotion: false,
+
+        origin: "wood",
+        presence: 10,
+        voiceSpread: 3,
+
+        attack: 0.005,
+        decay: 0.42,
+        sustain: 0.04,
+        release: 0.24,
+
+        filterType: "lowpass",
+        cutoff: 6800,
+        resonance: 1.5,
+
+        lfoRate: 0.2,
+        lfoAmount: 0,
+        lfoDestination: "filter",
+
+        noiseType: "dust",
+        noiseAmount: 0,
+
+        drift: 0,
+        stereoWidth: 12,
+        deepDreamOrbit: false,
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        reverbMix: 0.10,
+        reverbDecay: 1.8,
+
+        delayMix: 0,
+        delayTime: 0.3,
+        delayFeedback: 0,
+
+        masterVolume: 0.16,
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
