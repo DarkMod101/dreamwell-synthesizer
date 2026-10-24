@@ -3285,12 +3285,12 @@ musicBoxToyPiano: {
 
         attack: 0.005,
         decay: 0.42,
-        sustain: 0.04,
+        sustain: 0.10,
         release: 0.24,
 
         filterType: "highpass",
-        cutoff: 9500,
-        resonance: 15.0,
+        cutoff: 1400,
+        resonance: 7.0,
 
         lfoRate: 0.2,
         lfoAmount: 0,
