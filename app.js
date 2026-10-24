@@ -3306,8 +3306,8 @@ musicBoxToyPiano: {
         glideEnabled: false,
         glideTime: 0.12,
 
-        reverbMix: 0.10,
-        reverbDecay: 1.8,
+        reverbMix: 0.30,
+        reverbDecay: 3.0,
 
         delayMix: 0,
         delayTime: 0.3,
