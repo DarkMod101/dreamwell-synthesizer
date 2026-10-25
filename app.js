@@ -2225,6 +2225,16 @@ function clearKeyHighlights() {
 function beginInputNote(frequency) {
     const noteId = String(frequency);
 
+        // Track physical key movement independently
+    // from musical note sustain and Key Latch.
+    if (
+        toyPianoKeyClickEnabled &&
+        currentResonanceSource === "synth" &&
+        !dreamArpEnabled
+    ) {
+        physicallyPressedToyKeys.add(noteId);
+    }
+
     // ========================================
     // Arpeggiator mode
     // ========================================
@@ -2307,8 +2317,27 @@ function beginInputNote(frequency) {
 
 
 function endInputNote(frequency) {
-    setKeyActive(frequency, false);
 
+    const noteId = String(frequency);
+
+    // ========================================
+    // Music Box Toy Piano — Physical Key Return
+    // ========================================
+
+    if (physicallyPressedToyKeys.has(noteId)) {
+
+        physicallyPressedToyKeys.delete(noteId);
+
+        if (
+            toyPianoKeyClickEnabled &&
+            currentResonanceSource === "synth" &&
+            !dreamArpEnabled
+        ) {
+            playToyPianoKeyReleaseClick();
+        }
+    }
+
+    setKeyActive(frequency, false);
     // Arpeggiator latch keeps its notes.
     if (dreamArpEnabled) {
         if (arpLatchEnabled) {
