@@ -3492,6 +3492,8 @@ antiqueWoodenToyPiano: {
     collection: "Forgotten Realms",
     engine: "synth",
 
+    mechanicalKeyClick: true,
+
     settings: {
 
         // ========================================
