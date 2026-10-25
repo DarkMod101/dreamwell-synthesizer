@@ -3481,6 +3481,123 @@ musicBoxToyPiano: {
         masterVolume: 0.16,
     },
 },
+
+// ========================================
+// Antique Wooden Toy Piano
+// Forgotten Realms — Experimental
+// ========================================
+
+antiqueWoodenToyPiano: {
+    name: "Antique Wooden Toy Piano",
+    collection: "Forgotten Realms",
+    engine: "synth",
+
+    settings: {
+
+        // ========================================
+        // Primary Oscillators
+        // ========================================
+
+        waveform: "triangle",
+        waveformB: "square",
+
+        oscBLevel: 0.10,
+        oscBDetune: 2,
+
+        // ========================================
+        // Sub Oscillator
+        // ========================================
+
+        subWaveform: "sine",
+        subLevel: 0,
+
+        // ========================================
+        // Wave Fusion
+        // ========================================
+
+        waveFusion: 14,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: false,
+
+        // ========================================
+        // Origin / Presence / Voice Spread
+        // ========================================
+
+        origin: "vintage",
+        presence: 18,
+        voiceSpread: 2,
+
+        // ========================================
+        // Amplitude Envelope
+        // ========================================
+
+        attack: 0.005,
+        decay: 1.15,
+        sustain: 0.08,
+        release: 1.65,
+
+        // ========================================
+        // Filter
+        // ========================================
+
+        filterType: "lowpass",
+        cutoff: 3300,
+        resonance: 0.8,
+
+        // ========================================
+        // LFO
+        // ========================================
+
+        lfoRate: 0.2,
+        lfoAmount: 0,
+        lfoDestination: "filter",
+
+        // ========================================
+        // Noise / Drift
+        // ========================================
+
+        noiseType: "dust",
+        noiseAmount: 0,
+
+        drift: 0,
+
+        // ========================================
+        // Stereo / Motion
+        // ========================================
+
+        stereoWidth: 10,
+        deepDreamOrbit: false,
+
+        // ========================================
+        // Glide
+        // ========================================
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        // ========================================
+        // Reverb
+        // ========================================
+
+        reverbMix: 0.14,
+        reverbDecay: 1.9,
+
+        // ========================================
+        // Delay
+        // ========================================
+
+        delayMix: 0,
+        delayTime: 0.3,
+        delayFeedback: 0,
+
+        // ========================================
+        // Master Output
+        // ========================================
+
+        masterVolume: 0.16,
+
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
