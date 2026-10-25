@@ -43,6 +43,10 @@ const pianoVoicing = {
 
 
 const activeNotes = new Map();
+
+// Music Box Toy Piano — Physical Key Tracking
+const physicallyPressedToyKeys = new Set();
+
 const activeTouchKeys = new Map();
 let lastPlayedFrequency = null;
 let waveFusionModulationTimer = null;
@@ -1853,6 +1857,66 @@ function playToyPianoKeyDownClick() {
     filter.connect(clickGain);
 
     // Dry mechanical action, independent of reverb.
+    clickGain.connect(masterGain);
+
+    source.start();
+
+    source.onended = () => {
+        source.disconnect();
+        filter.disconnect();
+        clickGain.disconnect();
+    };
+}
+
+// ========================================
+// Music Box Toy Piano — Key-Release Click
+// ========================================
+
+function playToyPianoKeyReleaseClick() {
+    const ctx = getAudioContext();
+
+    const duration = 0.028;
+    const length = Math.ceil(ctx.sampleRate * duration);
+
+    const buffer = ctx.createBuffer(
+        1,
+        length,
+        ctx.sampleRate
+    );
+
+    const data = buffer.getChannelData(0);
+
+    let softenedNoise = 0;
+
+    for (let i = 0; i < length; i++) {
+        const time = i / ctx.sampleRate;
+        const noise = Math.random() * 2 - 1;
+
+        softenedNoise =
+            softenedNoise * 0.78 +
+            noise * 0.22;
+
+        const envelope = Math.exp(-time * 190);
+
+        data[i] = softenedNoise * envelope;
+    }
+
+    const source = ctx.createBufferSource();
+    const filter = ctx.createBiquadFilter();
+    const clickGain = ctx.createGain();
+
+    source.buffer = buffer;
+
+    filter.type = "bandpass";
+    filter.frequency.value = 720;
+    filter.Q.value = 0.8;
+
+    clickGain.gain.value = 0.18;
+
+    source.connect(filter);
+    filter.connect(clickGain);
+
+    // Keep the mechanical return dry.
     clickGain.connect(masterGain);
 
     source.start();
