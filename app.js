@@ -3356,10 +3356,10 @@ musicBoxToyPiano: {
         voiceSpread: 3,
 
         attack: 0.005,
-        decay: 0.42,
+        decay: 1.00,
         sustain: 0.10,
-        release: 0.24,
-
+        release: 2.00,
+        
         filterType: "highpass",
         cutoff: 1400,
         resonance: 7.0,
