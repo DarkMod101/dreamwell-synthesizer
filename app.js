@@ -1851,7 +1851,7 @@ function playToyPianoKeyDownClick() {
     filter.frequency.value = 950;
     filter.Q.value = 0.8;
 
-    clickGain.gain.value = 0.30;
+    clickGain.gain.value = 0.35;
 
     source.connect(filter);
     filter.connect(clickGain);
@@ -1911,8 +1911,8 @@ function playToyPianoKeyReleaseClick() {
     filter.frequency.value = 720;
     filter.Q.value = 0.8;
 
-    clickGain.gain.value = 0.18;
-
+    clickGain.gain.value = 0.22;
+    
     source.connect(filter);
     filter.connect(clickGain);
 
