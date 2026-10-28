@@ -3492,12 +3492,11 @@ antiqueWoodenToyPiano: {
     collection: "Forgotten Realms",
     engine: "synth",
 
-    mechanicalKeyClick: true,
+            settings: {
 
-mechanicalKeyDownGain: 0.50,
-mechanicalKeyReleaseGain: 0.35,
-    
-    settings: {
+            mechanicalKeyClick: true,
+            mechanicalKeyDownGain: 0.50,
+            mechanicalKeyReleaseGain: 0.35,
 
         // ========================================
         // Primary Oscillators
