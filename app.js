@@ -3240,6 +3240,129 @@ astralKeys: {
     },
 },     
 
+// ========================================
+// After Hours
+// Neon Realms — Warm Electric Piano
+// ========================================
+
+afterHours: {
+    name: "After Hours",
+    collection: "Neon Realms",
+    engine: "synth",
+
+    settings: {
+
+        // ========================================
+        // Mechanical Action
+        // ========================================
+
+        mechanicalKeyClick: false,
+
+        // ========================================
+        // Primary Oscillators
+        // ========================================
+
+        waveform: "sine",
+        waveformB: "triangle",
+
+        oscBLevel: 0.46,
+        oscBDetune: 4,
+
+        // ========================================
+        // Sub Oscillator
+        // ========================================
+
+        subWaveform: "sine",
+        subLevel: 3,
+
+        // ========================================
+        // Wave Fusion
+        // ========================================
+
+        waveFusion: 38,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: false,
+
+        // ========================================
+        // Origin / Presence / Voice Spread
+        // ========================================
+
+        origin: "vintage",
+        presence: 12,
+        voiceSpread: 8,
+
+        // ========================================
+        // Amplitude Envelope
+        // ========================================
+
+        attack: 0.012,
+        decay: 1.25,
+        sustain: 0.22,
+        release: 1.45,
+
+        // ========================================
+        // Filter
+        // ========================================
+
+        filterType: "lowpass",
+        cutoff: 3900,
+        resonance: 0.8,
+
+        // ========================================
+        // LFO
+        // ========================================
+
+        lfoRate: 0.28,
+        lfoAmount: 0,
+        lfoDestination: "filter",
+
+        // ========================================
+        // Noise / Drift
+        // ========================================
+
+        noiseType: "air",
+        noiseAmount: 0,
+
+        drift: 0.6,
+
+        // ========================================
+        // Stereo / Motion
+        // ========================================
+
+        stereoWidth: 24,
+        deepDreamOrbit: false,
+
+        // ========================================
+        // Glide
+        // ========================================
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        // ========================================
+        // Reverb
+        // ========================================
+
+        reverbMix: 0.23,
+        reverbDecay: 2.9,
+
+        // ========================================
+        // Delay
+        // ========================================
+
+        delayMix: 0,
+        delayTime: 0.32,
+        delayFeedback: 0,
+
+        // ========================================
+        // Master Output
+        // ========================================
+
+        masterVolume: 0.19,
+
+    },
+},
+      
 neonPulse: {
     name: "Neon Pulse",
     collection: "Neon Realms",
