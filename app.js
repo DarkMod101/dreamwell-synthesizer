@@ -1838,7 +1838,10 @@ function playToyPianoKeyDownClick() {
             softenedNoise * 0.72 +
             noise * 0.28;
 
-        const envelope = Math.exp(-time * 170);
+        const envelope =
+    toyPianoKeyDownFrequency === 650
+        ? Math.exp(-time * 85)
+        : Math.exp(-time * 170);
 
         data[i] = softenedNoise * envelope;
     }
