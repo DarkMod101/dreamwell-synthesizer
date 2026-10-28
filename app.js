@@ -1850,10 +1850,10 @@ function playToyPianoKeyDownClick() {
     source.buffer = buffer;
 
     filter.type = "bandpass";
-    filter.frequency.value = 950;
+    filter.frequency.value = toyPianoKeyDownFrequency;
     filter.Q.value = 0.8;
 
-    clickGain.gain.value = 0.35;
+    clickGain.gain.value = toyPianoKeyDownGain;
 
     source.connect(filter);
     filter.connect(clickGain);
