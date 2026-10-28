@@ -14,6 +14,8 @@ let currentEngine = currentResonanceSource; // temporary compatibility bridge
 
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
+let toyPianoKeyDownGain = 0.35;
+let toyPianoKeyDownFrequency = 950;
 
 // Piano Engine state
 let pianoSustainPedalActive = false;
