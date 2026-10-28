@@ -2117,6 +2117,23 @@ if (note.release) {
   note.oscillatorA.stop(ctx.currentTime + release + 0.05);
   note.oscillatorB.stop(ctx.currentTime + release + 0.05);
 
+// ========================================
+// FM Resonance — Note Release
+// ========================================
+
+if (note.fmModulator) {
+
+    const fmStopTime =
+        ctx.currentTime + release + 0.05;
+
+    note.fmModulator.stop(fmStopTime);
+
+    note.fmModulator.onended = () => {
+        note.fmModulator.disconnect();
+        note.fmDepth?.disconnect();
+    };
+}
+    
 if (note.subOscillator) {
   note.subOscillator.stop(ctx.currentTime + release + 0.05);
   note.subOscillator.disconnect();
