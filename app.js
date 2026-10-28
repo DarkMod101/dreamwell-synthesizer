@@ -3494,10 +3494,11 @@ antiqueWoodenToyPiano: {
 
             settings: {
 
-            mechanicalKeyClick: true,
-            mechanicalKeyDownGain: 0.50,
-            mechanicalKeyReleaseGain: 0.35,
-
+           mechanicalKeyClick: true,
+           mechanicalKeyDownGain: 0.75,
+           mechanicalKeyDownFrequency: 650,
+           mechanicalKeyReleaseGain: 0.35,
+                
         // ========================================
         // Primary Oscillators
         // ========================================
