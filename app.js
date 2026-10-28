@@ -1818,8 +1818,12 @@ stereoPanner.connect(delayNode);
   textureType,
   subOscillator,
   subGain,
-  livingTextureNodes,
+    livingTextureNodes,
   unisonOscillators,
+
+  // FM Resonance
+  fmModulator,
+  fmDepth,
 };
 }
 
