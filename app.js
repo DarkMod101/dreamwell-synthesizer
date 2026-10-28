@@ -3497,7 +3497,7 @@ antiqueWoodenToyPiano: {
             settings: {
 
            mechanicalKeyClick: true,
-           mechanicalKeyDownGain: 0.75,
+           mechanicalKeyDownGain: 1.00,
            mechanicalKeyDownFrequency: 650,
            mechanicalKeyReleaseGain: 0.35,
                 
