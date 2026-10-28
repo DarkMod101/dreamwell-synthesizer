@@ -1880,7 +1880,7 @@ if (toyPianoKeyDownFrequency === 650) {
     woodGain.gain.setValueAtTime(0.0001, now);
 
     woodGain.gain.exponentialRampToValueAtTime(
-    0.30,
+    0.60,
     now + 0.004
 );
 
