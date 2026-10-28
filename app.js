@@ -3362,6 +3362,129 @@ afterHours: {
 
     },
 },
+
+// ========================================
+// Late Night Cabaret
+// Neon Realms — Theatrical Electric Piano
+// ========================================
+
+lateNightCabaret: {
+    name: "Late Night Cabaret",
+    collection: "Neon Realms",
+    engine: "synth",
+
+    settings: {
+
+        // ========================================
+        // Mechanical Action
+        // ========================================
+
+        mechanicalKeyClick: false,
+
+        // ========================================
+        // Oscillator Character
+        // ========================================
+
+        waveform: "triangle",
+        waveformB: "sine",
+
+        oscBLevel: 0.52,
+        oscBDetune: 7,
+
+        // ========================================
+        // Sub Oscillator
+        // ========================================
+
+        subWaveform: "sine",
+        subLevel: 5,
+
+        // ========================================
+        // Wave Fusion
+        // ========================================
+
+        waveFusion: 42,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: false,
+
+        // ========================================
+        // Origin / Presence
+        // ========================================
+
+        origin: "vintage",
+        presence: 19,
+        voiceSpread: 14,
+
+        // ========================================
+        // Amplitude Envelope
+        // ========================================
+
+        attack: 0.008,
+        decay: 1.65,
+        sustain: 0.26,
+        release: 1.85,
+
+        // ========================================
+        // Filter
+        // ========================================
+
+        filterType: "lowpass",
+        cutoff: 4500,
+        resonance: 1.15,
+
+        // ========================================
+        // LFO
+        // ========================================
+
+        lfoRate: 0.38,
+        lfoAmount: 4,
+        lfoDestination: "filter",
+
+        // ========================================
+        // Noise / Drift
+        // ========================================
+
+        noiseType: "air",
+        noiseAmount: 0,
+
+        drift: 1.1,
+
+        // ========================================
+        // Stereo / Motion
+        // ========================================
+
+        stereoWidth: 36,
+        deepDreamOrbit: false,
+
+        // ========================================
+        // Glide
+        // ========================================
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        // ========================================
+        // Reverb
+        // ========================================
+
+        reverbMix: 0.29,
+        reverbDecay: 3.5,
+
+        // ========================================
+        // Delay
+        // ========================================
+
+        delayMix: 0,
+        delayTime: 0.34,
+        delayFeedback: 0,
+
+        // ========================================
+        // Master Output
+        // ========================================
+
+        masterVolume: 0.18,
+
+    },
+},
       
 neonPulse: {
     name: "Neon Pulse",
