@@ -3648,6 +3648,131 @@ antiqueWoodenToyPiano: {
 
     },
 },
+
+// ========================================
+// Weeping Lullaby
+// Forgotten Realms — Ghostly Toy Piano
+// ========================================
+
+weepingLullaby: {
+    name: "Weeping Lullaby",
+    collection: "Forgotten Realms",
+    engine: "synth",
+
+    settings: {
+
+        // ========================================
+        // Mechanical Toy Piano Character
+        // ========================================
+
+        mechanicalKeyClick: true,
+        mechanicalKeyDownGain: 0.22,
+        mechanicalKeyDownFrequency: 950,
+
+        // ========================================
+        // Primary Oscillators
+        // ========================================
+
+        waveform: "triangle",
+        waveformB: "square",
+
+        oscBLevel: 0.10,
+        oscBDetune: 5,
+
+        // ========================================
+        // Sub Oscillator
+        // ========================================
+
+        subWaveform: "sine",
+        subLevel: 0,
+
+        // ========================================
+        // Wave Fusion
+        // ========================================
+
+        waveFusion: 18,
+        waveFusionCurve: "smooth",
+        dreamMorphMotion: false,
+
+        // ========================================
+        // Origin / Presence / Voice Spread
+        // ========================================
+
+        origin: "vintage",
+        presence: 12,
+        voiceSpread: 65,
+
+        // ========================================
+        // Amplitude Envelope
+        // ========================================
+
+        attack: 0.005,
+        decay: 1.35,
+        sustain: 0.08,
+        release: 2.40,
+
+        // ========================================
+        // Filter
+        // ========================================
+
+        filterType: "lowpass",
+        cutoff: 3300,
+        resonance: 0.8,
+
+        // ========================================
+        // LFO
+        // ========================================
+
+        lfoRate: 0.2,
+        lfoAmount: 0,
+        lfoDestination: "filter",
+
+        // ========================================
+        // Noise / Drift
+        // ========================================
+
+        noiseType: "air",
+        noiseAmount: 0,
+
+        drift: 7,
+
+        // ========================================
+        // Stereo / Motion
+        // ========================================
+
+        stereoWidth: 75,
+        deepDreamOrbit: true,
+
+        // ========================================
+        // Glide
+        // ========================================
+
+        glideEnabled: false,
+        glideTime: 0.12,
+
+        // ========================================
+        // Reverb
+        // ========================================
+
+        reverbMix: 0.35,
+        reverbDecay: 4.5,
+
+        // ========================================
+        // Delay
+        // ========================================
+
+        delayMix: 0,
+        delayTime: 0.3,
+        delayFeedback: 0,
+
+        // ========================================
+        // Master Output
+        // ========================================
+
+        masterVolume: 0.16,
+
+    },
+},
       
 grandPiano: {
     name: "Grand Piano",
