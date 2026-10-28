@@ -1621,6 +1621,53 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
   ctx.currentTime + glideTime
 );
 
+// ========================================
+// DREAM BINDER — FM RESONANCE
+// Independent Frequency Modulation
+// Phase 1: Foundation
+// ========================================
+
+// FM disabled by default.
+// Future controls and presets will supply these values.
+const fmAmount = 0;
+const fmRatio = 3.5;
+
+let fmModulator = null;
+let fmDepth = null;
+
+if (fmAmount > 0) {
+
+    fmModulator = ctx.createOscillator();
+    fmDepth = ctx.createGain();
+
+    // Pure sine modulation source
+    fmModulator.type = "sine";
+
+    // Track the played note's frequency
+    fmModulator.frequency.setValueAtTime(
+        startFrequency * fmRatio,
+        ctx.currentTime
+    );
+
+    fmModulator.frequency.exponentialRampToValueAtTime(
+        frequency * fmRatio,
+        ctx.currentTime + glideTime
+    );
+
+    // Modulation depth measured in Hz.
+    // Approximately 0–3 modulation-index range
+    // at the destination pitch.
+    fmDepth.gain.value =
+        frequency * fmRatio * (fmAmount / 100) * 3;
+
+    // FM routing
+    fmModulator.connect(fmDepth);
+    fmDepth.connect(oscillatorA.frequency);
+
+    // Start independent FM oscillator
+    fmModulator.start();
+}
+    
 oscillatorA.detune.value = driftCents;
 
 oscillatorB.detune.value =
