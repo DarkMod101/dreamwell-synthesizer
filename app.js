@@ -1859,9 +1859,49 @@ function playToyPianoKeyDownClick() {
     filter.connect(clickGain);
 
     // Dry mechanical action, independent of reverb.
-    clickGain.connect(masterGain);
+    // Dry mechanical action, independent of reverb.
+clickGain.connect(masterGain);
 
-    source.start();
+// ========================================
+// Antique Wooden Toy Piano
+// Hollow Wooden Mechanical Resonance
+// ========================================
+
+if (toyPianoKeyDownFrequency === 650) {
+
+    const woodOsc = ctx.createOscillator();
+    const woodGain = ctx.createGain();
+
+    woodOsc.type = "sine";
+    woodOsc.frequency.value = 380;
+
+    const now = ctx.currentTime;
+
+    woodGain.gain.setValueAtTime(0.0001, now);
+
+    woodGain.gain.exponentialRampToValueAtTime(
+        0.12,
+        now + 0.004
+    );
+
+    woodGain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        now + 0.075
+    );
+
+    woodOsc.connect(woodGain);
+    woodGain.connect(masterGain);
+
+    woodOsc.start(now);
+    woodOsc.stop(now + 0.08);
+
+    woodOsc.onended = () => {
+        woodOsc.disconnect();
+        woodGain.disconnect();
+    };
+}
+
+source.start();
 
     source.onended = () => {
         source.disconnect();
