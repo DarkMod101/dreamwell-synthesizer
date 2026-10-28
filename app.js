@@ -7067,6 +7067,13 @@ function applyPresetSettings(preset) {
 
     toyPianoKeyClickEnabled =
         preset.mechanicalKeyClick === true;
+
+    // Preset-specific mechanical key-down character
+    toyPianoKeyDownGain =
+        preset.mechanicalKeyDownGain ?? 0.35;
+
+    toyPianoKeyDownFrequency =
+        preset.mechanicalKeyDownFrequency ?? 950;
     
     currentResonanceSource =
         preset.engine || "synth";
