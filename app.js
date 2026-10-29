@@ -1631,7 +1631,7 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
 
 // FM disabled by default.
 // Future controls and presets will supply these values.
-const fmAmount = 0;
+const fmAmount = currentFmAmount;
 const fmRatio = 3.5;
 
 // FM Resonance — Independent Envelope
