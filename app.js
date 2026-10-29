@@ -1663,8 +1663,23 @@ if (fmAmount > 0) {
     // Modulation depth measured in Hz.
     // Approximately 0–3 modulation-index range
     // at the destination pitch.
-    fmDepth.gain.value =
-        frequency * fmRatio * (fmAmount / 100) * 3;
+    // FM Resonance — Independent ADSR Envelope
+const fmPeakDepth =
+    frequency * fmRatio * (fmAmount / 100) * 3;
+
+const fmNow = ctx.currentTime;
+
+fmDepth.gain.setValueAtTime(0, fmNow);
+
+fmDepth.gain.linearRampToValueAtTime(
+    fmPeakDepth,
+    fmNow + Math.max(0.001, fmAttack)
+);
+
+fmDepth.gain.linearRampToValueAtTime(
+    fmPeakDepth * fmSustain,
+    fmNow + Math.max(0.001, fmAttack) + Math.max(0.001, fmDecay)
+);
 
     // FM routing
     fmModulator.connect(fmDepth);
