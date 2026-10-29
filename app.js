@@ -7581,6 +7581,9 @@ startPianoWaveFusionModulation();
 function applyPresetSettings(preset) {
     if (!preset) return;
 
+// Dream Binder — Preset FM Resonance
+currentFmAmount = Number(preset.fmAmount ?? 0);
+    
     toyPianoKeyClickEnabled =
         preset.mechanicalKeyClick === true;
 
