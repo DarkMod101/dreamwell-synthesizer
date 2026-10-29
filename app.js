@@ -7587,6 +7587,9 @@ function applyPresetSettings(preset) {
 
 // Dream Binder — Preset FM Resonance
 currentFmAmount = Number(preset.fmAmount ?? 0);
+
+// Dream Binder — Preset FM Ratio
+currentFmRatio = Number(preset.fmRatio ?? 3.5);
     
     toyPianoKeyClickEnabled =
         preset.mechanicalKeyClick === true;
