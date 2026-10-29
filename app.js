@@ -1632,6 +1632,12 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
 const fmAmount = 0;
 const fmRatio = 3.5;
 
+// FM Resonance — Independent Envelope
+const fmAttack = 0.01;
+const fmDecay = 0.8;
+const fmSustain = 0.0;
+const fmRelease = 0.3;
+    
 let fmModulator = null;
 let fmDepth = null;
 
