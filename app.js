@@ -2148,7 +2148,7 @@ if (note.fmModulator) {
 // FM Resonance — Independent Release
 const fmReleaseNow = ctx.currentTime;
 
-note.fmDepth.gain.cancelScheduledValues(fmReleaseNow);
+note.fmDepth.gain.cancelAndHoldAtTime(fmReleaseNow);
 note.fmDepth.gain.setTargetAtTime(
     0,
     fmReleaseNow,
