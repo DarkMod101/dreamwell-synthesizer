@@ -11,6 +11,8 @@ let delayDryGain;
 let livingTexturesEnabled = true;
 let currentResonanceSource = "synth";
 let currentEngine = currentResonanceSource; // temporary compatibility bridge
+// Dream Binder — FM Resonance State
+let currentFmAmount = 0;
 
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
