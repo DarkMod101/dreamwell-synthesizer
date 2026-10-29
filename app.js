@@ -1844,7 +1844,8 @@ stereoPanner.connect(delayNode);
 
   // FM Resonance
   fmModulator,
-  fmDepth,
+fmDepth,
+fmRelease
 };
 }
 
