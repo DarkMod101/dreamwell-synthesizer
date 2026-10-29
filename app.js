@@ -13,6 +13,8 @@ let currentResonanceSource = "synth";
 let currentEngine = currentResonanceSource; // temporary compatibility bridge
 // Dream Binder — FM Resonance State
 let currentFmAmount = 0;
+// Dream Binder — FM Ratio State
+let currentFmRatio = 3.5;
 
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
@@ -1632,7 +1634,7 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
 // FM disabled by default.
 // Future controls and presets will supply these values.
 const fmAmount = currentFmAmount;
-const fmRatio = 3.5;
+const fmRatio = currentFmRatio;
 
 // FM Resonance — Independent Envelope
 const fmAttack = 0.01;
