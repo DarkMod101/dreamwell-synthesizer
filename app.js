@@ -1629,7 +1629,7 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
 
 // FM disabled by default.
 // Future controls and presets will supply these values.
-const fmAmount = 0;
+const fmAmount = 30;
 const fmRatio = 3.5;
 
 let fmModulator = null;
