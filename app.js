@@ -3476,7 +3476,9 @@ lateNightCabaret: {
     engine: "synth",
 
     settings: {
-
+ // FM Resonance — Crystalline Electric Piano
+    fmAmount: 30,
+       
         // ========================================
         // Mechanical Action
         // ========================================
