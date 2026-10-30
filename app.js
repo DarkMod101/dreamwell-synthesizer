@@ -7975,6 +7975,14 @@ function renderPresetBank(bankName) {
 }
 function getCurrentPresetSettings() {
   return {
+    // Dream Binder — FM Resonance Preset Memory
+    fmAmount: currentFmAmount,
+    fmRatio: currentFmRatio,
+    fmAttack: currentFmAttack,
+    fmDecay: currentFmDecay,
+    fmSustain: currentFmSustain,
+    fmRelease: currentFmRelease,
+    
     waveform: waveformSelect.value,
     waveformB: waveformBSelect.value,
     oscBLevel: oscBLevelSlider.value,
