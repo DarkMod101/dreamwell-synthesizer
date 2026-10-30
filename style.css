@@ -512,3 +512,57 @@ input[type="range"] {
 
   animation: activePresetPulse 8s ease-in-out infinite;
 }
+
+/* ========================================
+   DREAM BINDER — FM RESONANCE PANEL
+   Collapsible Glass Interface
+   ======================================== */
+
+.fm-resonance-panel {
+    background: linear-gradient(
+        145deg,
+        rgba(28, 18, 42, 0.88),
+        rgba(5, 4, 12, 0.94)
+    );
+
+    border: 1px solid rgba(190, 165, 225, 0.45);
+    border-radius: 18px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 22px rgba(125, 65, 210, 0.15);
+
+    backdrop-filter: blur(12px);
+}
+
+.fm-resonance-panel summary {
+    color: #d6a84f;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 2px;
+
+    cursor: pointer;
+    user-select: none;
+
+    padding: 2px 0;
+}
+
+.fm-resonance-panel summary:hover {
+    color: #f0d38a;
+}
+
+.fm-resonance-panel[open] summary {
+    margin-bottom: 16px;
+}
+
+.fm-resonance-content {
+    padding-top: 10px;
+    border-top: 1px solid rgba(190, 165, 225, 0.18);
+}
+
+.fm-resonance-content p {
+    color: rgba(225, 210, 245, 0.7);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
