@@ -7607,6 +7607,9 @@ currentFmDecay = Number(preset.fmDecay ?? 0.8);
 
 // Dream Binder — Preset FM Sustain
 currentFmSustain = Number(preset.fmSustain ?? 0.0);
+
+// Dream Binder — Preset FM Release
+currentFmRelease = Number(preset.fmRelease ?? 0.3);
     
     toyPianoKeyClickEnabled =
         preset.mechanicalKeyClick === true;
