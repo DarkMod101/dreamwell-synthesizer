@@ -17,7 +17,8 @@ let currentFmAmount = 0;
 let currentFmRatio = 3.5;
 // Dream Binder — FM Attack State
 let currentFmAttack = 0.01;
-
+// Dream Binder — FM Decay State
+let currentFmDecay = 0.8;
 
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
@@ -1641,7 +1642,7 @@ const fmRatio = currentFmRatio;
 
 // FM Resonance — Independent Envelope
 const fmAttack = currentFmAttack;
-const fmDecay = 0.8;
+const fmDecay = currentFmDecay;
 const fmSustain = 0.0;
 const fmRelease = 0.3;
     
