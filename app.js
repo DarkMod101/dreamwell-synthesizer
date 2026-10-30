@@ -7593,6 +7593,9 @@ currentFmAmount = Number(preset.fmAmount ?? 0);
 
 // Dream Binder — Preset FM Ratio
 currentFmRatio = Number(preset.fmRatio ?? 3.5);
+
+// Dream Binder — Preset FM Attack
+currentFmAttack = Number(preset.fmAttack ?? 0.01);
     
     toyPianoKeyClickEnabled =
         preset.mechanicalKeyClick === true;
