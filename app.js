@@ -40,6 +40,22 @@ document.getElementById("fmAmount")?.addEventListener("input", (event) => {
 
 });
 
+// ========================================
+// DREAM BINDER — FM RATIO LIVE CONTROL
+// ========================================
+
+document.getElementById("fmRatio")?.addEventListener("input", (event) => {
+
+    currentFmRatio = Number(event.target.value);
+
+    const fmRatioDisplay = document.getElementById("fmRatioValue");
+
+    if (fmRatioDisplay) {
+        fmRatioDisplay.textContent = currentFmRatio.toFixed(1);
+    }
+
+});
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
