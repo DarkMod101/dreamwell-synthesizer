@@ -7596,6 +7596,18 @@ function applyPresetSettings(preset) {
 // Dream Binder — Preset FM Resonance
 currentFmAmount = Number(preset.fmAmount ?? 0);
 
+// Dream Binder — FM Amount Interface Synchronization
+const fmAmountSlider = document.getElementById("fmAmount");
+const fmAmountDisplay = document.getElementById("fmAmountValue");
+
+if (fmAmountSlider) {
+    fmAmountSlider.value = currentFmAmount;
+}
+
+if (fmAmountDisplay) {
+    fmAmountDisplay.textContent = `${currentFmAmount}%`;
+}
+    
 // Dream Binder — Preset FM Ratio
 currentFmRatio = Number(preset.fmRatio ?? 3.5);
 
