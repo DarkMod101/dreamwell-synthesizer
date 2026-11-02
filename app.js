@@ -7627,6 +7627,21 @@ if (fmAmountDisplay) {
 // Dream Binder — Preset FM Ratio
 currentFmRatio = Number(preset.fmRatio ?? 3.5);
 
+// ========================================
+// DREAM BINDER — FM RATIO PRESET SYNC
+// ========================================
+
+const fmRatioSlider = document.getElementById("fmRatio");
+const fmRatioDisplay = document.getElementById("fmRatioValue");
+
+if (fmRatioSlider) {
+    fmRatioSlider.value = currentFmRatio;
+}
+
+if (fmRatioDisplay) {
+    fmRatioDisplay.textContent = currentFmRatio.toFixed(1);
+}
+    
 // Dream Binder — Preset FM Attack
 currentFmAttack = Number(preset.fmAttack ?? 0.01);
 
