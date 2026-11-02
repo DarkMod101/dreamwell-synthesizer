@@ -24,6 +24,22 @@ let currentFmSustain = 0.0;
 // Dream Binder — FM Release State
 let currentFmRelease = 0.3;
 
+// ========================================
+// DREAM BINDER — FM AMOUNT LIVE CONTROL
+// ========================================
+
+document.getElementById("fmAmount")?.addEventListener("input", (event) => {
+
+    currentFmAmount = Number(event.target.value);
+
+    const fmAmountDisplay = document.getElementById("fmAmountValue");
+
+    if (fmAmountDisplay) {
+        fmAmountDisplay.textContent = `${currentFmAmount}%`;
+    }
+
+});
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
