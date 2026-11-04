@@ -72,6 +72,22 @@ document.getElementById("fmAttack")?.addEventListener("input", (event) => {
 
 });
 
+// ========================================
+// DREAM BINDER — FM DECAY LIVE CONTROL
+// ========================================
+
+document.getElementById("fmDecay")?.addEventListener("input", (event) => {
+
+    currentFmDecay = Number(event.target.value);
+
+    const fmDecayDisplay = document.getElementById("fmDecayValue");
+
+    if (fmDecayDisplay) {
+        fmDecayDisplay.textContent = `${currentFmDecay.toFixed(2)} s`;
+    }
+
+});
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
