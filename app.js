@@ -88,6 +88,22 @@ document.getElementById("fmDecay")?.addEventListener("input", (event) => {
 
 });
 
+// ========================================
+// DREAM BINDER — FM SUSTAIN LIVE CONTROL
+// ========================================
+
+document.getElementById("fmSustain")?.addEventListener("input", (event) => {
+
+    currentFmSustain = Number(event.target.value);
+
+    const fmSustainDisplay = document.getElementById("fmSustainValue");
+
+    if (fmSustainDisplay) {
+        fmSustainDisplay.textContent = `${Math.round(currentFmSustain * 100)}%`;
+    }
+
+});
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
