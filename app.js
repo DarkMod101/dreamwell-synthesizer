@@ -38,6 +38,7 @@ document.getElementById("fmAmount")?.addEventListener("input", (event) => {
         fmAmountDisplay.textContent = `${currentFmAmount}%`;
     }
 
+    updateActiveSynthFM("amount");
 });
 
 // ========================================
@@ -54,6 +55,7 @@ document.getElementById("fmRatio")?.addEventListener("input", (event) => {
         fmRatioDisplay.textContent = currentFmRatio.toFixed(1);
     }
 
+    updateActiveSynthFM("ratio");
 });
 
 // ========================================
@@ -70,6 +72,7 @@ document.getElementById("fmAttack")?.addEventListener("input", (event) => {
         fmAttackDisplay.textContent = `${currentFmAttack.toFixed(2)} s`;
     }
 
+    updateActiveSynthFM("attack");
 });
 
 // ========================================
@@ -86,6 +89,7 @@ document.getElementById("fmDecay")?.addEventListener("input", (event) => {
         fmDecayDisplay.textContent = `${currentFmDecay.toFixed(2)} s`;
     }
 
+    updateActiveSynthFM("decay");
 });
 
 // ========================================
@@ -102,6 +106,7 @@ document.getElementById("fmSustain")?.addEventListener("input", (event) => {
         fmSustainDisplay.textContent = `${Math.round(currentFmSustain * 100)}%`;
     }
 
+    updateActiveSynthFM("sustain");
 });
 
 // ========================================
@@ -118,6 +123,7 @@ document.getElementById("fmRelease")?.addEventListener("input", (event) => {
         fmReleaseDisplay.textContent = `${currentFmRelease.toFixed(2)} s`;
     }
 
+    updateActiveSynthFM("release");
 });
 
 // Music Box Toy Piano — Mechanical Key Action
@@ -153,6 +159,71 @@ const pianoVoicing = {
 
 
 const activeNotes = new Map();
+
+// ========================================
+// DREAM BINDER — LIVE FM RESONANCE FOR HELD / LATCHED NOTES
+// Works with both performance Latch and the arpeggiator's active synth voices.
+// ========================================
+function updateActiveSynthFM(parameter) {
+    if (!audioContext) return;
+
+    const now = audioContext.currentTime;
+
+    activeNotes.forEach((note) => {
+        // Ignore Piano / Choir voices; only Synth FM voices have these nodes.
+        if (!note.fmModulator || !note.fmEnvelope ||
+            !note.fmDepth || !note.oscillatorA) return;
+
+        if (parameter === "amount" || parameter === "ratio") {
+            // Smoothly retune the existing modulator; don't retrigger the note.
+            if (parameter === "ratio") {
+                note.fmModulator.frequency.cancelAndHoldAtTime(now);
+                note.fmModulator.frequency.setTargetAtTime(
+                    note.fmFrequency * currentFmRatio,
+                    now,
+                    0.025
+                );
+            }
+
+            // Depth is separate from the ADSR shape, so Amount / Ratio
+            // can move continuously without wiping out the envelope.
+            const targetDepth =
+                note.fmFrequency * currentFmRatio *
+                (currentFmAmount / 100) * 3;
+
+            note.fmDepth.gain.cancelAndHoldAtTime(now);
+            note.fmDepth.gain.setTargetAtTime(targetDepth, now, 0.025);
+        }
+
+        if (parameter === "attack" || parameter === "decay") {
+            // Attack / Decay are time-based stages. When adjusted during a
+            // held note, smoothly retrigger only the FM envelope as a swell.
+            // The main note and its amplitude envelope keep playing.
+            const envelope = note.fmEnvelope.gain;
+            const attackTime = Math.max(0.001, currentFmAttack);
+            const decayTime = Math.max(0.001, currentFmDecay);
+
+            envelope.cancelAndHoldAtTime(now);
+            envelope.linearRampToValueAtTime(1, now + attackTime);
+            envelope.linearRampToValueAtTime(
+                currentFmSustain,
+                now + attackTime + decayTime
+            );
+        }
+
+        if (parameter === "sustain") {
+            // Smoothly reshape the existing note's sustained FM character.
+            const envelope = note.fmEnvelope.gain;
+            envelope.cancelAndHoldAtTime(now);
+            envelope.setTargetAtTime(currentFmSustain, now, 0.04);
+        }
+
+        if (parameter === "release") {
+            // Release takes effect when the held / latched key is let go.
+            note.fmRelease = currentFmRelease;
+        }
+    });
+}
 
 // Music Box Toy Piano — Physical Key Tracking
 const physicallyPressedToyKeys = new Set();
@@ -1731,71 +1802,53 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
 
 // ========================================
 // DREAM BINDER — FM RESONANCE
-// Independent Frequency Modulation
-// Phase 1: Foundation
+// Independent Frequency Modulation + Live Latch Controls
 // ========================================
 
-// FM disabled by default.
-// Future controls and presets will supply these values.
 const fmAmount = currentFmAmount;
 const fmRatio = currentFmRatio;
-
-// FM Resonance — Independent Envelope
 const fmAttack = currentFmAttack;
 const fmDecay = currentFmDecay;
 const fmSustain = currentFmSustain;
 const fmRelease = currentFmRelease;
-    
-let fmModulator = null;
-let fmDepth = null;
 
-if (fmAmount > 0) {
+// Keep a silent FM path even at Amount = 0. A latched note can then
+// be brought into FM Resonance without restarting its oscillator.
+const fmModulator = ctx.createOscillator();
+const fmEnvelope = ctx.createGain();
+const fmDepth = ctx.createGain();
 
-    fmModulator = ctx.createOscillator();
-    fmDepth = ctx.createGain();
-
-    // Pure sine modulation source
-    fmModulator.type = "sine";
-
-    // Track the played note's frequency
-    fmModulator.frequency.setValueAtTime(
-        startFrequency * fmRatio,
-        ctx.currentTime
-    );
-
-    fmModulator.frequency.exponentialRampToValueAtTime(
-        frequency * fmRatio,
-        ctx.currentTime + glideTime
-    );
-
-    // Modulation depth measured in Hz.
-    // Approximately 0–3 modulation-index range
-    // at the destination pitch.
-    // FM Resonance — Independent ADSR Envelope
-const fmPeakDepth =
-    frequency * fmRatio * (fmAmount / 100) * 3;
-
-const fmNow = ctx.currentTime;
-
-fmDepth.gain.setValueAtTime(0, fmNow);
-
-fmDepth.gain.linearRampToValueAtTime(
-    fmPeakDepth,
-    fmNow + Math.max(0.001, fmAttack)
+fmModulator.type = "sine";
+fmModulator.frequency.setValueAtTime(
+    startFrequency * fmRatio,
+    ctx.currentTime
+);
+fmModulator.frequency.exponentialRampToValueAtTime(
+    frequency * fmRatio,
+    ctx.currentTime + glideTime
 );
 
-fmDepth.gain.linearRampToValueAtTime(
-    fmPeakDepth * fmSustain,
+// The normalized FM envelope multiplied by the modulation depth
+// matches the original FM amplitude and preserves preset voicing.
+const fmPeakDepth = frequency * fmRatio * (fmAmount / 100) * 3;
+const fmNow = ctx.currentTime;
+
+fmDepth.gain.setValueAtTime(fmPeakDepth, fmNow);
+fmEnvelope.gain.setValueAtTime(0, fmNow);
+fmEnvelope.gain.linearRampToValueAtTime(
+    1,
+    fmNow + Math.max(0.001, fmAttack)
+);
+fmEnvelope.gain.linearRampToValueAtTime(
+    fmSustain,
     fmNow + Math.max(0.001, fmAttack) + Math.max(0.001, fmDecay)
 );
 
-    // FM routing
-    fmModulator.connect(fmDepth);
-    fmDepth.connect(oscillatorA.frequency);
-
-    // Start independent FM oscillator
-    fmModulator.start();
-}
+// Pure sine FM -> independent envelope -> depth -> Oscillator A pitch.
+fmModulator.connect(fmEnvelope);
+fmEnvelope.connect(fmDepth);
+fmDepth.connect(oscillatorA.frequency);
+fmModulator.start();
     
 oscillatorA.detune.value = driftCents;
 
@@ -1950,10 +2003,12 @@ stereoPanner.connect(delayNode);
     livingTextureNodes,
   unisonOscillators,
 
-  // FM Resonance
+  // FM Resonance — live controls for held / latched synth notes
   fmModulator,
-fmDepth,
-fmRelease
+  fmEnvelope,
+  fmDepth,
+  fmFrequency: frequency,
+  fmRelease
 };
 }
 
@@ -2256,8 +2311,8 @@ if (note.fmModulator) {
 // FM Resonance — Independent Release
 const fmReleaseNow = ctx.currentTime;
 
-note.fmDepth.gain.cancelAndHoldAtTime(fmReleaseNow);
-note.fmDepth.gain.setTargetAtTime(
+note.fmEnvelope.gain.cancelAndHoldAtTime(fmReleaseNow);
+note.fmEnvelope.gain.setTargetAtTime(
     0,
     fmReleaseNow,
     Math.max(0.001, note.fmRelease) / 5
@@ -2270,6 +2325,7 @@ note.fmDepth.gain.setTargetAtTime(
 
     note.fmModulator.onended = () => {
         note.fmModulator.disconnect();
+        note.fmEnvelope?.disconnect();
         note.fmDepth?.disconnect();
     };
 }
