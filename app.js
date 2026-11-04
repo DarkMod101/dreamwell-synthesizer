@@ -7762,6 +7762,21 @@ if (fmSustainDisplay) {
     
 // Dream Binder — Preset FM Release
 currentFmRelease = Number(preset.fmRelease ?? 0.3);
+
+// ========================================
+// DREAM BINDER — FM RELEASE PRESET SYNC
+// ========================================
+
+const fmReleaseSlider = document.getElementById("fmRelease");
+const fmReleaseDisplay = document.getElementById("fmReleaseValue");
+
+if (fmReleaseSlider) {
+    fmReleaseSlider.value = currentFmRelease;
+}
+
+if (fmReleaseDisplay) {
+    fmReleaseDisplay.textContent = `${currentFmRelease.toFixed(2)} s`;
+}
     
     toyPianoKeyClickEnabled =
         preset.mechanicalKeyClick === true;
