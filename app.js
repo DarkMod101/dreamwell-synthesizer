@@ -56,6 +56,22 @@ document.getElementById("fmRatio")?.addEventListener("input", (event) => {
 
 });
 
+// ========================================
+// DREAM BINDER — FM ATTACK LIVE CONTROL
+// ========================================
+
+document.getElementById("fmAttack")?.addEventListener("input", (event) => {
+
+    currentFmAttack = Number(event.target.value);
+
+    const fmAttackDisplay = document.getElementById("fmAttackValue");
+
+    if (fmAttackDisplay) {
+        fmAttackDisplay.textContent = `${currentFmAttack.toFixed(2)} s`;
+    }
+
+});
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
