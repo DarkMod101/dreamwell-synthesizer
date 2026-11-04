@@ -104,6 +104,22 @@ document.getElementById("fmSustain")?.addEventListener("input", (event) => {
 
 });
 
+// ========================================
+// DREAM BINDER — FM RELEASE LIVE CONTROL
+// ========================================
+
+document.getElementById("fmRelease")?.addEventListener("input", (event) => {
+
+    currentFmRelease = Number(event.target.value);
+
+    const fmReleaseDisplay = document.getElementById("fmReleaseValue");
+
+    if (fmReleaseDisplay) {
+        fmReleaseDisplay.textContent = `${currentFmRelease.toFixed(2)} s`;
+    }
+
+});
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
