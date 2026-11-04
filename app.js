@@ -7661,6 +7661,21 @@ if (fmRatioDisplay) {
 // Dream Binder — Preset FM Attack
 currentFmAttack = Number(preset.fmAttack ?? 0.01);
 
+// ========================================
+// DREAM BINDER — FM ATTACK PRESET SYNC
+// ========================================
+
+const fmAttackSlider = document.getElementById("fmAttack");
+const fmAttackDisplay = document.getElementById("fmAttackValue");
+
+if (fmAttackSlider) {
+    fmAttackSlider.value = currentFmAttack;
+}
+
+if (fmAttackDisplay) {
+    fmAttackDisplay.textContent = `${currentFmAttack.toFixed(2)} s`;
+}
+    
 // Dream Binder — Preset FM Decay
 currentFmDecay = Number(preset.fmDecay ?? 0.8);
 
