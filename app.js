@@ -7695,6 +7695,21 @@ if (fmAttackDisplay) {
 // Dream Binder — Preset FM Decay
 currentFmDecay = Number(preset.fmDecay ?? 0.8);
 
+// ========================================
+// DREAM BINDER — FM DECAY PRESET SYNC
+// ========================================
+
+const fmDecaySlider = document.getElementById("fmDecay");
+const fmDecayDisplay = document.getElementById("fmDecayValue");
+
+if (fmDecaySlider) {
+    fmDecaySlider.value = currentFmDecay;
+}
+
+if (fmDecayDisplay) {
+    fmDecayDisplay.textContent = `${currentFmDecay.toFixed(2)} s`;
+}
+    
 // Dream Binder — Preset FM Sustain
 currentFmSustain = Number(preset.fmSustain ?? 0.0);
 
