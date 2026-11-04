@@ -7729,6 +7729,21 @@ if (fmDecayDisplay) {
 // Dream Binder — Preset FM Sustain
 currentFmSustain = Number(preset.fmSustain ?? 0.0);
 
+// ========================================
+// DREAM BINDER — FM SUSTAIN PRESET SYNC
+// ========================================
+
+const fmSustainSlider = document.getElementById("fmSustain");
+const fmSustainDisplay = document.getElementById("fmSustainValue");
+
+if (fmSustainSlider) {
+    fmSustainSlider.value = currentFmSustain;
+}
+
+if (fmSustainDisplay) {
+    fmSustainDisplay.textContent = `${Math.round(currentFmSustain * 100)}%`;
+}
+    
 // Dream Binder — Preset FM Release
 currentFmRelease = Number(preset.fmRelease ?? 0.3);
     
