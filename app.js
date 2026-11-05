@@ -127,21 +127,239 @@ document.getElementById("fmRelease")?.addEventListener("input", (event) => {
 });
 
 // ========================================
-// DREAM BINDER — STEP 36: COHERENCE CONTROL FOUNDATION
-// State and interface only. No audible processing is introduced yet.
-// The Resonant Field remains at unity gain for every Synth voice.
+// DREAM BINDER — RESONANT FIELD (COHERENCE + DECOHERENCE)
+// Independent live controls. 0 / 0 is a strict dry bypass.
+// The current implementation affects Synth voices only; locked Piano and
+// Choir voices and their own processing chains remain untouched.
 // ========================================
 let currentCoherence = 0;
+let currentDecoherence = 0;
 const coherenceSlider = document.getElementById("coherence");
 const coherenceValue = document.getElementById("coherenceValue");
+const decoherenceSlider = document.getElementById("decoherence");
+const decoherenceValue = document.getElementById("decoherenceValue");
+
+function clampResonantValue(value) {
+    return Math.max(0, Math.min(100, Number(value) || 0));
+}
+
+function updateResonantFieldDisplay() {
+    if (coherenceValue) coherenceValue.textContent = `${currentCoherence}%`;
+    if (decoherenceValue) decoherenceValue.textContent = `${currentDecoherence}%`;
+}
 
 if (coherenceSlider) {
-    currentCoherence = Number(coherenceSlider.value) || 0;
-    coherenceSlider.addEventListener("input", (event) => {
-        currentCoherence = Math.max(0, Math.min(100, Number(event.target.value) || 0));
-        if (coherenceValue) coherenceValue.textContent = `${currentCoherence}%`;
-        // Future: update coherence processing on active Synth voices.
-        // Intentionally no DSP change in Step 36.
+    currentCoherence = clampResonantValue(coherenceSlider.value);
+    coherenceSlider.addEventListener("input", () => {
+        currentCoherence = clampResonantValue(coherenceSlider.value);
+        updateResonantFieldDisplay();
+        updateActiveResonantFields();
+    });
+}
+
+if (decoherenceSlider) {
+    currentDecoherence = clampResonantValue(decoherenceSlider.value);
+    decoherenceSlider.addEventListener("input", () => {
+        currentDecoherence = clampResonantValue(decoherenceSlider.value);
+        updateResonantFieldDisplay();
+        updateActiveResonantFields();
+    });
+}
+updateResonantFieldDisplay();
+
+// ========================================
+// DREAM BINDER — SHARED RESONANCE CLOCK
+// One low-frequency reference oscillator is shared across all Synth notes.
+// Harmonic, modulation and spatial systems use its same phase. No polling,
+// requestAnimationFrame, JavaScript timers or separate coherence clocks.
+// ========================================
+const coherenceClock = {
+    originSeconds: null,
+    cyclesPerSecond: 0.1, // 10-second coherent cycle.
+    oscillator: null,
+    getSnapshot(ctx = audioContext) {
+        if (!ctx || this.originSeconds === null) return null;
+        const elapsedSeconds = Math.max(0, ctx.currentTime - this.originSeconds);
+        const cycles = elapsedSeconds * this.cyclesPerSecond;
+        return {
+            elapsedSeconds,
+            phase: (cycles % 1) * Math.PI * 2,
+            cyclePosition: cycles % 1,
+            coherence: currentCoherence / 100,
+            decoherence: currentDecoherence / 100
+        };
+    }
+};
+
+function initializeCoherenceClock(ctx) {
+    if (coherenceClock.oscillator) return;
+    coherenceClock.originSeconds = ctx.currentTime;
+    const oscillator = ctx.createOscillator();
+    oscillator.type = "sine";
+    oscillator.frequency.value = coherenceClock.cyclesPerSecond;
+    oscillator.start(coherenceClock.originSeconds);
+    coherenceClock.oscillator = oscillator;
+}
+
+// ========================================
+// DREAM BINDER — THREE-DIMENSION RESONANT FIELD
+// Two gentle, pitch-tracked peaking bands act as Resonance Rings I and II.
+// Their evolving gains make harmonic motion audible without replacing the
+// existing timbre engine, waveform blend, FM or Presence processing.
+// The same coherence source also coordinates motion and stereo movement.
+// Decoherence adds its own per-voice, non-phase-locked movements; both
+// sliders can be high simultaneously without cancelling each other.
+// ========================================
+function createSynthResonantField(ctx, frequency, input, output, stereoPanner, filter) {
+    const dry = ctx.createGain();
+    const wet = ctx.createGain();
+    const ringOne = ctx.createBiquadFilter();
+    const ringTwo = ctx.createBiquadFilter();
+    const fieldMotion = ctx.createGain();
+
+    ringOne.type = "peaking";
+    ringTwo.type = "peaking";
+    ringOne.frequency.value = Math.min(8000, frequency * 2.04);
+    ringTwo.frequency.value = Math.min(10000, frequency * 4.08);
+    ringOne.Q.value = 3.5;
+    ringTwo.Q.value = 4.0;
+    ringOne.gain.value = 0;
+    ringTwo.gain.value = 0;
+    fieldMotion.gain.value = 1;
+    // Start both paths at the requested mix to avoid a note-on wet spike.
+    const initialMix = 0.6 * Math.max(currentCoherence, currentDecoherence) / 100;
+    dry.gain.value = 1 - initialMix;
+    wet.gain.value = initialMix;
+
+    // Dry output is byte-path equivalent to the prior unity-gain field.
+    // At the neutral 0/0 defaults, the wet route is muted completely.
+    input.connect(dry);
+    dry.connect(output);
+    input.connect(ringOne);
+    ringOne.connect(ringTwo);
+    ringTwo.connect(fieldMotion);
+    fieldMotion.connect(wet);
+    wet.connect(output);
+
+    // Coherence: a single oscillator provides phase-locked movement to
+    // harmonic bands, field motion and stereo pan across every Synth note.
+    const sharedHarmonicOne = ctx.createGain();
+    const sharedHarmonicTwo = ctx.createGain();
+    const sharedMotion = ctx.createGain();
+    const sharedPan = ctx.createGain();
+    const sharedFilter = ctx.createGain();
+    const clock = coherenceClock.oscillator;
+    for (const modulatorGain of [
+        sharedHarmonicOne, sharedHarmonicTwo, sharedMotion,
+        sharedPan, sharedFilter
+    ]) modulatorGain.gain.value = 0;
+    clock.connect(sharedHarmonicOne);
+    clock.connect(sharedHarmonicTwo);
+    clock.connect(sharedMotion);
+    clock.connect(sharedPan);
+    clock.connect(sharedFilter);
+    sharedHarmonicOne.connect(ringOne.gain);
+    sharedHarmonicTwo.connect(ringTwo.gain);
+    sharedMotion.connect(fieldMotion.gain);
+    sharedPan.connect(stereoPanner.pan);
+    sharedFilter.connect(filter.frequency);
+
+    // Decoherence: two independent, low-frequency oscillators per voice.
+    // Separate rate relationships create divergence, NOT white noise or
+    // a mirror image of Coherence. Their outputs remain silent at 0%.
+    const wanderOne = ctx.createOscillator();
+    const wanderTwo = ctx.createOscillator();
+    wanderOne.type = "sine";
+    wanderTwo.type = "triangle";
+    wanderOne.frequency.value = 0.14 + Math.random() * 0.22;
+    wanderTwo.frequency.value = 0.23 + Math.random() * 0.33;
+    const independentRingOne = ctx.createGain();
+    const independentRingTwo = ctx.createGain();
+    const independentMotion = ctx.createGain();
+    const independentPan = ctx.createGain();
+    const independentFilter = ctx.createGain();
+    const independentRingFrequency = ctx.createGain();
+    for (const modulatorGain of [
+        independentRingOne, independentRingTwo, independentMotion,
+        independentPan, independentFilter, independentRingFrequency
+    ]) modulatorGain.gain.value = 0;
+    wanderOne.connect(independentRingOne);
+    wanderOne.connect(independentMotion);
+    wanderOne.connect(independentFilter);
+    wanderTwo.connect(independentRingTwo);
+    wanderTwo.connect(independentPan);
+    wanderTwo.connect(independentRingFrequency);
+    independentRingOne.connect(ringOne.gain);
+    independentRingTwo.connect(ringTwo.gain);
+    independentMotion.connect(fieldMotion.gain);
+    independentPan.connect(stereoPanner.pan);
+    independentFilter.connect(filter.frequency);
+    independentRingFrequency.connect(ringTwo.frequency);
+    wanderOne.start();
+    wanderTwo.start();
+
+    const modulationGains = [
+        sharedHarmonicOne, sharedHarmonicTwo, sharedMotion,
+        sharedPan, sharedFilter, independentRingOne, independentRingTwo,
+        independentMotion, independentPan, independentFilter,
+        independentRingFrequency
+    ];
+    let stopped = false;
+    const voice = {
+        update() {
+            const coherence = currentCoherence / 100;
+            const decoherence = currentDecoherence / 100;
+            const now = ctx.currentTime;
+            const stereoWidth = getValue(stereoWidthSlider, 0) / 100;
+            // Equal-valued dry/wet crossfade maintains baseline level; the
+            // two independent field amounts determine the wet participation.
+            const mix = 0.6 * Math.max(coherence, decoherence);
+            dry.gain.setTargetAtTime(1 - mix, now, 0.035);
+            wet.gain.setTargetAtTime(mix, now, 0.035);
+            // Coherence organizes; it does not adjust Presence or detune.
+            ringOne.gain.setTargetAtTime(2.4 * coherence, now, 0.035);
+            ringTwo.gain.setTargetAtTime(-1.3 * coherence, now, 0.035);
+            sharedHarmonicOne.gain.setTargetAtTime(4.5 * coherence, now, 0.035);
+            sharedHarmonicTwo.gain.setTargetAtTime(-3.1 * coherence, now, 0.035);
+            sharedMotion.gain.setTargetAtTime(0.075 * coherence, now, 0.035);
+            sharedPan.gain.setTargetAtTime(0.22 * coherence * stereoWidth, now, 0.035);
+            sharedFilter.gain.setTargetAtTime(65 * coherence, now, 0.035);
+            // Independent harmonic instability, movement and spatial drift.
+            independentRingOne.gain.setTargetAtTime(6.5 * decoherence, now, 0.035);
+            independentRingTwo.gain.setTargetAtTime(5.0 * decoherence, now, 0.035);
+            independentMotion.gain.setTargetAtTime(0.14 * decoherence, now, 0.035);
+            independentPan.gain.setTargetAtTime(0.24 * decoherence * stereoWidth, now, 0.035);
+            independentFilter.gain.setTargetAtTime(110 * decoherence, now, 0.035);
+            independentRingFrequency.gain.setTargetAtTime(75 * decoherence, now, 0.035);
+        },
+        stop(delaySeconds) {
+            if (stopped) return;
+            stopped = true;
+            const releaseAt = ctx.currentTime + Math.max(0, delaySeconds);
+            for (const oscillator of [wanderOne, wanderTwo]) {
+                try { oscillator.stop(releaseAt); } catch (error) { /* already stopped */ }
+            }
+            // Disconnect shared-clock taps after note release so inactive
+            // voices cannot remain connected to the long-lived clock.
+            setTimeout(() => {
+                for (const node of modulationGains) {
+                    try { node.disconnect(); } catch (error) { /* safe cleanup */ }
+                    try { clock.disconnect(node); } catch (error) { /* safe cleanup */ }
+                }
+                for (const node of [wanderOne, wanderTwo, dry, wet, ringOne, ringTwo, fieldMotion]) {
+                    try { node.disconnect(); } catch (error) { /* safe cleanup */ }
+                }
+            }, Math.ceil((Math.max(0, delaySeconds) + 0.15) * 1000));
+        }
+    };
+    voice.update();
+    return voice;
+}
+
+function updateActiveResonantFields() {
+    if (!audioContext) return;
+    activeNotes.forEach((note) => {
+        if (note.resonantField) note.resonantField.update();
     });
 }
 
@@ -1071,6 +1289,8 @@ function getAudioContext() {
   if (!audioContext) {
     audioContext = new AudioContext();
 
+    initializeCoherenceClock(audioContext);
+
     masterGain = audioContext.createGain();
     masterGain.gain.value = getValue(masterVolume, 0.25);
     // DreamWell Audio Protection
@@ -1984,12 +2204,15 @@ const livingTextureNodes =
   );
   
 // ========================================
-// Synth Resonant Field — Neutral Routing
+// Synth Resonant Field — Harmonic / Modulation / Spatial Rings
 // ========================================
 
 filter.connect(resonantFieldInput);
 
-resonantFieldInput.connect(resonantFieldOutput);
+const resonantField = createSynthResonantField(
+    ctx, frequency, resonantFieldInput, resonantFieldOutput,
+    stereoPanner, filter
+);
 
 resonantFieldOutput.connect(noteGain);
 
@@ -2012,6 +2235,7 @@ stereoPanner.connect(delayNode);
   filter,
   stereoPanner,
   noteGain,
+  resonantField,
   lfoNodes,
   noiseSource,
   noiseGain,
@@ -2320,6 +2544,10 @@ if (note.release) {
 
   note.oscillatorA.stop(ctx.currentTime + release + 0.05);
   note.oscillatorB.stop(ctx.currentTime + release + 0.05);
+
+  if (note.resonantField) {
+    note.resonantField.stop(release + 0.05);
+  }
 
 // ========================================
 // FM Resonance — Note Release
@@ -3058,6 +3286,10 @@ bindSlider(delayFeedbackSlider, () => {
 
 if (voiceSpreadSlider) {
   voiceSpreadSlider.addEventListener("input", updateValueDisplays);
+}
+
+if (stereoWidthSlider) {
+  stereoWidthSlider.addEventListener("input", updateActiveResonantFields);
 }
 
 if (waveFusionCurveSelect) {
@@ -7764,6 +7996,15 @@ startPianoWaveFusionModulation();
 function applyPresetSettings(preset) {
     if (!preset) return;
 
+    // Legacy factory/user presets are neutral by default. Explicit new
+    // resonant-field values are remembered in newly saved user presets.
+    currentCoherence = clampResonantValue(preset.coherence ?? 0);
+    currentDecoherence = clampResonantValue(preset.decoherence ?? 0);
+    if (coherenceSlider) coherenceSlider.value = currentCoherence;
+    if (decoherenceSlider) decoherenceSlider.value = currentDecoherence;
+    updateResonantFieldDisplay();
+    updateActiveResonantFields();
+
 // Dream Binder — Preset FM Resonance
 currentFmAmount = Number(preset.fmAmount ?? 0);
 
@@ -8233,6 +8474,9 @@ function renderPresetBank(bankName) {
 }
 function getCurrentPresetSettings() {
   return {
+    // Resonant Field: independent expressive controls.
+    coherence: currentCoherence,
+    decoherence: currentDecoherence,
     // Dream Binder — FM Resonance Preset Memory
     fmAmount: currentFmAmount,
     fmRatio: currentFmRatio,
