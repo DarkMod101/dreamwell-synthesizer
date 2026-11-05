@@ -126,6 +126,25 @@ document.getElementById("fmRelease")?.addEventListener("input", (event) => {
     updateActiveSynthFM("release");
 });
 
+// ========================================
+// DREAM BINDER — STEP 36: COHERENCE CONTROL FOUNDATION
+// State and interface only. No audible processing is introduced yet.
+// The Resonant Field remains at unity gain for every Synth voice.
+// ========================================
+let currentCoherence = 0;
+const coherenceSlider = document.getElementById("coherence");
+const coherenceValue = document.getElementById("coherenceValue");
+
+if (coherenceSlider) {
+    currentCoherence = Number(coherenceSlider.value) || 0;
+    coherenceSlider.addEventListener("input", (event) => {
+        currentCoherence = Math.max(0, Math.min(100, Number(event.target.value) || 0));
+        if (coherenceValue) coherenceValue.textContent = `${currentCoherence}%`;
+        // Future: update coherence processing on active Synth voices.
+        // Intentionally no DSP change in Step 36.
+    });
+}
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
