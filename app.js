@@ -175,7 +175,7 @@ updateResonantFieldDisplay();
 // ========================================
 const coherenceClock = {
     originSeconds: null,
-    cyclesPerSecond: 0.1, // 10-second coherent cycle.
+    cyclesPerSecond: 0.42, // Audible shared movement, ~2.4-second cycle.
     oscillator: null,
     getSnapshot(ctx = audioContext) {
         if (!ctx || this.originSeconds === null) return null;
@@ -221,13 +221,13 @@ function createSynthResonantField(ctx, frequency, input, output, stereoPanner, f
     ringTwo.type = "peaking";
     ringOne.frequency.value = Math.min(8000, frequency * 2.04);
     ringTwo.frequency.value = Math.min(10000, frequency * 4.08);
-    ringOne.Q.value = 3.5;
-    ringTwo.Q.value = 4.0;
+    ringOne.Q.value = 5.5;
+    ringTwo.Q.value = 6.0;
     ringOne.gain.value = 0;
     ringTwo.gain.value = 0;
     fieldMotion.gain.value = 1;
     // Start both paths at the requested mix to avoid a note-on wet spike.
-    const initialMix = 0.6 * Math.max(currentCoherence, currentDecoherence) / 100;
+    const initialMix = 0.88 * Math.max(currentCoherence, currentDecoherence) / 100;
     dry.gain.value = 1 - initialMix;
     wet.gain.value = initialMix;
 
@@ -271,8 +271,8 @@ function createSynthResonantField(ctx, frequency, input, output, stereoPanner, f
     const wanderTwo = ctx.createOscillator();
     wanderOne.type = "sine";
     wanderTwo.type = "triangle";
-    wanderOne.frequency.value = 0.14 + Math.random() * 0.22;
-    wanderTwo.frequency.value = 0.23 + Math.random() * 0.33;
+    wanderOne.frequency.value = 0.55 + Math.random() * 0.35;
+    wanderTwo.frequency.value = 0.85 + Math.random() * 0.55;
     const independentRingOne = ctx.createGain();
     const independentRingTwo = ctx.createGain();
     const independentMotion = ctx.createGain();
@@ -307,30 +307,31 @@ function createSynthResonantField(ctx, frequency, input, output, stereoPanner, f
     let stopped = false;
     const voice = {
         update() {
+            if (stopped) return;
             const coherence = currentCoherence / 100;
             const decoherence = currentDecoherence / 100;
             const now = ctx.currentTime;
             const stereoWidth = getValue(stereoWidthSlider, 0) / 100;
             // Equal-valued dry/wet crossfade maintains baseline level; the
             // two independent field amounts determine the wet participation.
-            const mix = 0.6 * Math.max(coherence, decoherence);
+            const mix = 0.88 * Math.max(coherence, decoherence);
             dry.gain.setTargetAtTime(1 - mix, now, 0.035);
             wet.gain.setTargetAtTime(mix, now, 0.035);
             // Coherence organizes; it does not adjust Presence or detune.
-            ringOne.gain.setTargetAtTime(2.4 * coherence, now, 0.035);
-            ringTwo.gain.setTargetAtTime(-1.3 * coherence, now, 0.035);
-            sharedHarmonicOne.gain.setTargetAtTime(4.5 * coherence, now, 0.035);
-            sharedHarmonicTwo.gain.setTargetAtTime(-3.1 * coherence, now, 0.035);
-            sharedMotion.gain.setTargetAtTime(0.075 * coherence, now, 0.035);
-            sharedPan.gain.setTargetAtTime(0.22 * coherence * stereoWidth, now, 0.035);
-            sharedFilter.gain.setTargetAtTime(65 * coherence, now, 0.035);
+            ringOne.gain.setTargetAtTime(11.0 * coherence, now, 0.025);
+            ringTwo.gain.setTargetAtTime(-8.0 * coherence, now, 0.025);
+            sharedHarmonicOne.gain.setTargetAtTime(7.0 * coherence, now, 0.025);
+            sharedHarmonicTwo.gain.setTargetAtTime(-6.0 * coherence, now, 0.025);
+            sharedMotion.gain.setTargetAtTime(0.13 * coherence, now, 0.025);
+            sharedPan.gain.setTargetAtTime(0.32 * coherence * (0.45 + 0.55 * stereoWidth), now, 0.025);
+            sharedFilter.gain.setTargetAtTime(150 * coherence, now, 0.025);
             // Independent harmonic instability, movement and spatial drift.
-            independentRingOne.gain.setTargetAtTime(6.5 * decoherence, now, 0.035);
-            independentRingTwo.gain.setTargetAtTime(5.0 * decoherence, now, 0.035);
-            independentMotion.gain.setTargetAtTime(0.14 * decoherence, now, 0.035);
-            independentPan.gain.setTargetAtTime(0.24 * decoherence * stereoWidth, now, 0.035);
-            independentFilter.gain.setTargetAtTime(110 * decoherence, now, 0.035);
-            independentRingFrequency.gain.setTargetAtTime(75 * decoherence, now, 0.035);
+            independentRingOne.gain.setTargetAtTime(15.0 * decoherence, now, 0.025);
+            independentRingTwo.gain.setTargetAtTime(13.0 * decoherence, now, 0.025);
+            independentMotion.gain.setTargetAtTime(0.19 * decoherence, now, 0.025);
+            independentPan.gain.setTargetAtTime(0.38 * decoherence * (0.45 + 0.55 * stereoWidth), now, 0.025);
+            independentFilter.gain.setTargetAtTime(240 * decoherence, now, 0.025);
+            independentRingFrequency.gain.setTargetAtTime(Math.min(480, frequency * 0.9) * decoherence, now, 0.025);
         },
         stop(delaySeconds) {
             if (stopped) return;
