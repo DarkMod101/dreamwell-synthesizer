@@ -123,6 +123,34 @@
           <input id="oscBDetune" type="range" min="-50" max="50" step="1" value="7">
         </label>
 
+        <!-- Dream Binder — Oscillator Beat Tracking (Synth only) -->
+        <label>
+          <span>Oscillator Beat Tracking</span>
+          <select id="beatTrackingMode">
+            <option value="natural" selected>Natural (Pitch-Tracked)</option>
+            <option value="fixed">Fixed Rate</option>
+            <option value="tempo">Tempo Sync</option>
+          </select>
+        </label>
+        <label id="beatRateRow" hidden>
+          <span>Beat Rate <strong id="beatRateValue">0.50 Hz</strong></span>
+          <input id="beatRate" type="range" min="0.05" max="8" step="0.05" value="0.5">
+        </label>
+        <label id="beatTempoRow" hidden>
+          <span>Tempo <strong id="beatTempoValue">120 BPM</strong></span>
+          <input id="beatTempo" type="range" min="40" max="240" step="1" value="120">
+        </label>
+        <label id="beatDivisionRow" hidden>
+          <span>Beat Division</span>
+          <select id="beatDivision">
+            <option value="4">1/1 (Whole)</option>
+            <option value="2">1/2 (Half)</option>
+            <option value="1" selected>1/4 (Quarter)</option>
+            <option value="0.5">1/8 (Eighth)</option>
+            <option value="0.25">1/16 (Sixteenth)</option>
+          </select>
+        </label>
+
 <label>
   <span>Voice Spread <strong id="voiceSpreadValue">0%</strong></span>
   <input id="voiceSpread" type="range" min="0" max="100" step="1" value="0">
