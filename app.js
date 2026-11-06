@@ -480,6 +480,45 @@ const originSelect = document.getElementById("origin");
 const subWaveformSelect = document.getElementById("subWaveform");
 const oscBLevelSlider = document.getElementById("oscBLevel");
 const oscBDetuneSlider = document.getElementById("oscBDetune");
+// Oscillator B beat tracking: only B-to-A detuning is controlled.
+const beatTrackingMode = document.getElementById("beatTrackingMode");
+const beatRateSlider = document.getElementById("beatRate");
+const beatTempoSlider = document.getElementById("beatTempo");
+const beatDivisionSelect = document.getElementById("beatDivision");
+function beatTargetHz() {
+  if (beatTrackingMode?.value === "fixed") return Number(beatRateSlider.value);
+  if (beatTrackingMode?.value === "tempo")
+    return (Number(beatTempoSlider.value) / 60) / Number(beatDivisionSelect.value);
+  return null;
+}
+function oscillatorBDetuneCents(noteFrequency, originalCents) {
+  const target = beatTargetHz();
+  if (target === null || !Number.isFinite(noteFrequency) || noteFrequency <= 0) return originalCents;
+  // Fixed absolute difference in Hz, unlike cents-based natural beating.
+  // Preserve the user's detune direction; zero detune means no beating.
+  const sign = Math.sign(Number(oscBDetuneSlider?.value ?? 7));
+  if (!sign) return 0;
+  return 1200 * Math.log2(1 + sign * Math.min(target, noteFrequency * 0.8) / noteFrequency);
+}
+function refreshBeatTrackingUI() {
+  const mode = beatTrackingMode?.value || "natural";
+  document.getElementById("beatRateRow").hidden = mode !== "fixed";
+  document.getElementById("beatTempoRow").hidden = mode !== "tempo";
+  document.getElementById("beatDivisionRow").hidden = mode !== "tempo";
+  document.getElementById("beatRateValue").textContent = `${Number(beatRateSlider.value).toFixed(2)} Hz`;
+  document.getElementById("beatTempoValue").textContent = `${beatTempoSlider.value} BPM`;
+}
+function updateLiveBeatTracking() {
+  refreshBeatTrackingUI();
+  updateActiveSynthOscBDetune();
+  updateActiveSynthVoiceSpread();
+}
+[beatTrackingMode, beatRateSlider, beatTempoSlider, beatDivisionSelect].forEach(control => {
+  control?.addEventListener("input", updateLiveBeatTracking);
+  control?.addEventListener("change", updateLiveBeatTracking);
+});
+refreshBeatTrackingUI();
+
 const subLevelSlider = document.getElementById("subLevel");
 const masterVolume = document.getElementById("masterVolume");
 const presenceSlider = document.getElementById("presence");
@@ -864,7 +903,7 @@ function updateActiveSynthOscBDetune() {
             note.oscillatorB.userDriftOffset || 0;
 
         note.oscillatorB.detune.setTargetAtTime(
-            detune - driftOffset,
+            oscillatorBDetuneCents(note.fmFrequency, detune) - driftOffset,
             audioContext.currentTime,
             0.05
         );
@@ -884,13 +923,13 @@ if (
     const spreadCents = voiceSpread * 0.35;
 
     note.unisonOscillators[2].osc.detune.setTargetAtTime(
-        detune - driftOffset - spreadCents,
+        oscillatorBDetuneCents(note.fmFrequency, detune) - driftOffset - spreadCents,
         audioContext.currentTime,
         0.05
     );
 
     note.unisonOscillators[3].osc.detune.setTargetAtTime(
-        detune - driftOffset + spreadCents,
+        oscillatorBDetuneCents(note.fmFrequency, detune) - driftOffset + spreadCents,
         audioContext.currentTime,
         0.05
     );
@@ -931,8 +970,8 @@ function updateActiveSynthVoiceSpread() {
         const detunes = [
             driftCents - spreadCents,
             driftCents + spreadCents,
-            oscBDetune - driftCents - spreadCents,
-            oscBDetune - driftCents + spreadCents
+            oscillatorBDetuneCents(note.fmFrequency, oscBDetune) - driftCents - spreadCents,
+            oscillatorBDetuneCents(note.fmFrequency, oscBDetune) - driftCents + spreadCents
         ];
 
         note.unisonOscillators.forEach(({ osc, gain }, index) => {
@@ -2093,7 +2132,7 @@ fmModulator.start();
 oscillatorA.detune.value = driftCents;
 
 oscillatorB.detune.value =
-  getValue(oscBDetuneSlider, 7) - driftCents;
+  oscillatorBDetuneCents(frequency, getValue(oscBDetuneSlider, 7)) - driftCents;
 
 oscillatorB.userDriftOffset = driftCents;
     
@@ -2162,12 +2201,12 @@ addUnisonOscillator(waveformA, driftCents + spreadCents);
 
 addUnisonOscillator(
   waveformB,
-  getValue(oscBDetuneSlider, 7) - driftCents - spreadCents
+  oscillatorBDetuneCents(frequency, getValue(oscBDetuneSlider, 7)) - driftCents - spreadCents
 );
 
 addUnisonOscillator(
   waveformB,
-  getValue(oscBDetuneSlider, 7) - driftCents + spreadCents
+  oscillatorBDetuneCents(frequency, getValue(oscBDetuneSlider, 7)) - driftCents + spreadCents
 );
   
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
@@ -7999,6 +8038,13 @@ function applyPresetSettings(preset) {
 
     // Legacy factory/user presets are neutral by default. Explicit new
     // resonant-field values are remembered in newly saved user presets.
+    if (beatTrackingMode) beatTrackingMode.value = preset.beatTrackingMode ?? "natural";
+    if (beatRateSlider) beatRateSlider.value = preset.beatRate ?? 0.5;
+    if (beatTempoSlider) beatTempoSlider.value = preset.beatTempo ?? 120;
+    if (beatDivisionSelect) beatDivisionSelect.value = preset.beatDivision ?? 1;
+    refreshBeatTrackingUI();
+    updateActiveSynthOscBDetune();
+    updateActiveSynthVoiceSpread();
     currentCoherence = clampResonantValue(preset.coherence ?? 0);
     currentDecoherence = clampResonantValue(preset.decoherence ?? 0);
     if (coherenceSlider) coherenceSlider.value = currentCoherence;
@@ -8476,6 +8522,10 @@ function renderPresetBank(bankName) {
 function getCurrentPresetSettings() {
   return {
     // Resonant Field: independent expressive controls.
+    beatTrackingMode: beatTrackingMode?.value ?? "natural",
+    beatRate: beatRateSlider?.value ?? "0.5",
+    beatTempo: beatTempoSlider?.value ?? "120",
+    beatDivision: beatDivisionSelect?.value ?? "1",
     coherence: currentCoherence,
     decoherence: currentDecoherence,
     // Dream Binder — FM Resonance Preset Memory
