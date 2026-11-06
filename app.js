@@ -554,6 +554,7 @@ const presetBrowserList =
 function openPresetBrowser() {
   if (!presetBrowserOverlay) return;
   presetBrowserOverlay.classList.remove("hidden");
+  selectPresetBank(activePresetBank);
 }
 
 function closePresetBrowser() {
@@ -561,52 +562,86 @@ function closePresetBrowser() {
   presetBrowserOverlay.classList.add("hidden");
 }
 
+// Dream Binder: factory banks + personal patches share the existing browser.
+// Personal patches live in localStorage on this browser/device only.
+let activePresetBank = "signature";
+let selectedUserPresetName = null;
+
+function selectPresetBank(bankName) {
+  activePresetBank = bankName;
+  presetBrowserTabs.forEach((tab) => {
+    tab.classList.toggle("active-bank", tab.dataset.bank === bankName);
+  });
+  renderPresetBrowser(bankName);
+}
+
+function showPresetMessage(message) {
+  if (presetMessage) presetMessage.textContent = message;
+  const messageInBrowser = document.getElementById("presetManagerMessage");
+  if (messageInBrowser) messageInBrowser.textContent = message;
+}
+
 function renderPresetBrowser(bankName) {
   if (!presetBrowserList) return;
+  activePresetBank = bankName;
+  presetBrowserList.replaceChildren();
 
-  presetBrowserList.innerHTML = "";
+  const saved = bankName === "user" ? getSavedPresets() : null;
+  const presets = bankName === "user"
+    ? Object.entries(saved).map(([name, settings]) => ({
+        name,
+        collection: "My Presets — Saved on this device",
+        settings,
+        engine: settings.engine || "synth",
+        isUserPreset: true
+      }))
+    : Object.values(presetBanks[bankName] || {});
 
-  const presets = Object.values(presetBanks[bankName] || {});
-  const groupedPresets = {};
+  if (!presets.length) {
+    const empty = document.createElement("p");
+    empty.className = "preset-message";
+    empty.textContent = bankName === "user"
+      ? "No saved sounds yet. Enter a name above, then tap Save Current Sound."
+      : "No presets in this bank yet.";
+    presetBrowserList.appendChild(empty);
+    return;
+  }
 
-  presets.forEach((preset) => {
+  const grouped = {};
+  for (const preset of presets) {
     const collection = preset.collection || "Other";
+    (grouped[collection] ||= []).push(preset);
+  }
 
-    if (!groupedPresets[collection]) {
-      groupedPresets[collection] = [];
-    }
-
-    groupedPresets[collection].push(preset);
-  });
-
-  Object.entries(groupedPresets).forEach(([collection, collectionPresets]) => {
+  Object.entries(grouped).forEach(([collection, items]) => {
     const heading = document.createElement("h3");
-    heading.textContent = collection;
     heading.className = "preset-collection-heading";
+    heading.textContent = collection;
     presetBrowserList.appendChild(heading);
 
-    collectionPresets.forEach((preset) => {
+    for (const preset of items) {
       const button = document.createElement("button");
-      button.textContent = preset.name || preset.label || "Unnamed Preset";
+      button.type = "button";
       button.className = "preset-browser-preset";
-
+      button.textContent = preset.name || "Unnamed Preset";
       button.addEventListener("click", () => {
         applyPresetSettings({
-  ...(preset.settings || {}),
-  engine: preset.engine
-});
-
-        presetBrowserList
-          .querySelectorAll(".preset-browser-preset")
-          .forEach((presetButton) => {
-            presetButton.classList.remove("active-preset");
-          });
-
+          ...(preset.settings || {}),
+          engine: preset.engine || preset.settings?.engine || "synth"
+        });
+        selectedUserPresetName = preset.isUserPreset ? preset.name : null;
+        if (presetNameInput) presetNameInput.value = preset.name || "";
+        presetBrowserList.querySelectorAll(".preset-browser-preset").forEach((entry) => {
+          entry.classList.remove("active-preset");
+        });
         button.classList.add("active-preset");
+        showPresetMessage(`Loaded "${preset.name}".`);
       });
-
+      if (preset.isUserPreset && preset.name === selectedUserPresetName) {
+        button.classList.add("active-preset");
+      }
       presetBrowserList.appendChild(button);
-    });
+    }
   });
 }
 
@@ -619,15 +654,13 @@ if (closePresetBrowserButton) {
 }
 
 presetBrowserTabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    presetBrowserTabs.forEach((button) => {
-      button.classList.remove("active-bank");
-    });
+  tab.addEventListener("click", () => selectPresetBank(tab.dataset.bank));
+});
 
-    tab.classList.add("active-bank");
-
-    renderPresetBrowser(tab.dataset.bank);
-  });
+document.getElementById("quickSavePreset")?.addEventListener("click", () => {
+  openPresetBrowser();
+  selectPresetBank("user");
+  presetNameInput?.focus();
 });
 
 if (presetBrowserOverlay) {
@@ -5787,7 +5820,62 @@ forgottenEmpire: {
 },    
 
     
-  leads: {},
+  leads: {
+    blackVeilReference: {
+      name: "Black Veil — Reference",
+      collection: "Shadow Encounters",
+      engine: "synth",
+      // Values reconstructed from the screenshots. Master gain reduced from
+      // screenshot's 97% to 55% for safer audition and less limiter pumping.
+      settings: {
+    waveform: "trapezoid", waveformB: "sawtooth",
+    origin: "glass", waveFusion: 41, waveFusionCurve: "smooth",
+    dreamMorphMotion: true, subWaveform: "sine", subLevel: 43,
+    oscBLevel: 0.32, oscBDetune: 6, voiceSpread: 49,
+    beatTrackingMode: "natural", beatRate: 0.5, beatTempo: 120, beatDivision: 1,
+    noiseType: "air", noiseAmount: 0, drift: 37, stereoWidth: 67,
+    deepDreamOrbit: true, coherence: 0, decoherence: 0,
+    fmAmount: 3, fmRatio: 3.2, fmAttack: 0.43,
+    fmDecay: 0.65, fmSustain: 0.33, fmRelease: 3.39,
+    attack: 0.20, decay: 1.76, sustain: 0.86, release: 4.45,
+    filterType: "lowpass", cutoff: 5073, resonance: 5.2,
+    lfoRate: 0.2, lfoAmount: 130, lfoDestination: "filter",
+    reverbMix: 0.48, reverbDecay: 3.6,
+    delayMix: 0.30, delayTime: 0.20, delayFeedback: 0.18,
+    masterVolume: 0.55, presence: 94,
+    glideEnabled: false, glideTime: 0.12
+      }
+    },
+    blackVeilFocused: {
+      name: "Black Veil — Focused",
+      collection: "Shadow Encounters",
+      engine: "synth",
+      // A conservative alternate patch: deeper humming center, less midrange
+      // edge and less diffuse masking. This requires auditioning by ear.
+      settings: {
+    waveform: "trapezoid", waveformB: "sawtooth",
+    origin: "glass", waveFusion: 41, waveFusionCurve: "smooth",
+    dreamMorphMotion: true, subWaveform: "sine", subLevel: 43,
+    oscBLevel: 0.32, oscBDetune: 6, voiceSpread: 49,
+    beatTrackingMode: "natural", beatRate: 0.5, beatTempo: 120, beatDivision: 1,
+    noiseType: "air", noiseAmount: 0, drift: 37, stereoWidth: 67,
+    deepDreamOrbit: true, coherence: 0, decoherence: 0,
+    fmAmount: 3, fmRatio: 3.2, fmAttack: 0.43,
+    fmDecay: 0.65, fmSustain: 0.33, fmRelease: 3.39,
+    attack: 0.20, decay: 1.76, sustain: 0.86, release: 4.45,
+    filterType: "lowpass", cutoff: 5073, resonance: 5.2,
+    lfoRate: 0.2, lfoAmount: 130, lfoDestination: "filter",
+    reverbMix: 0.48, reverbDecay: 3.6,
+    delayMix: 0.30, delayTime: 0.20, delayFeedback: 0.18,
+    masterVolume: 0.55, presence: 94,
+    glideEnabled: false, glideTime: 0.12,
+        subLevel: 48, voiceSpread: 44, drift: 29,
+        cutoff: 3400, resonance: 3.6, lfoAmount: 100,
+        reverbMix: 0.43, delayMix: 0.24,
+        stereoWidth: 62, presence: 90
+      }
+    }
+  },
 bass: {},
 
 choir: {
@@ -8520,164 +8608,199 @@ function renderPresetBank(bankName) {
   });
 }
 function getCurrentPresetSettings() {
+  // Snapshot the sound rather than only the legacy envelope/filter parameters.
+  // Numeric values are serializable to JSON; checked boxes retain booleans.
+  const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
   return {
-    // Resonant Field: independent expressive controls.
+    engine: currentResonanceSource,
+    mechanicalKeyClick: toyPianoKeyClickEnabled,
+    mechanicalKeyDownGain: toyPianoKeyDownGain,
+    mechanicalKeyDownFrequency: toyPianoKeyDownFrequency,
+    soundboardBloom: pianoPresetSoundboardBloom,
+    waveform: waveformSelect?.value ?? "sine",
+    waveformB: waveformBSelect?.value ?? "sawtooth",
+    origin: originSelect?.value ?? "pure",
+    waveFusion: get(waveFusionSlider, 50),
+    waveFusionCurve: waveFusionCurveSelect?.value ?? "smooth",
+    dreamMorphMotion: Boolean(dreamMorphMotionCheckbox?.checked),
+    subWaveform: subWaveformSelect?.value ?? "sine",
+    subLevel: get(subLevelSlider),
+    oscBLevel: get(oscBLevelSlider, 0.35),
+    oscBDetune: get(oscBDetuneSlider, 7),
+    voiceSpread: get(voiceSpreadSlider),
     beatTrackingMode: beatTrackingMode?.value ?? "natural",
-    beatRate: beatRateSlider?.value ?? "0.5",
-    beatTempo: beatTempoSlider?.value ?? "120",
-    beatDivision: beatDivisionSelect?.value ?? "1",
-    coherence: currentCoherence,
-    decoherence: currentDecoherence,
-    // Dream Binder — FM Resonance Preset Memory
+    beatRate: get(beatRateSlider, 0.5),
+    beatTempo: get(beatTempoSlider, 120),
+    beatDivision: get(beatDivisionSelect, 1),
     fmAmount: currentFmAmount,
     fmRatio: currentFmRatio,
     fmAttack: currentFmAttack,
     fmDecay: currentFmDecay,
     fmSustain: currentFmSustain,
     fmRelease: currentFmRelease,
-    
-    waveform: waveformSelect.value,
-    waveformB: waveformBSelect.value,
-    oscBLevel: oscBLevelSlider.value,
-    oscBDetune: oscBDetuneSlider.value,
-    attack: attackSlider.value,
-    decay: decaySlider.value,
-    sustain: sustainSlider.value,
-    release: releaseSlider.value,
-    filterType: filterTypeSelect.value,
-    cutoff: cutoffSlider.value,
-    resonance: resonanceSlider.value,
-    lfoRate: lfoRateSlider.value,
-    lfoAmount: lfoAmountSlider.value,
-    lfoDestination: lfoDestinationSelect.value,
-    voiceSpread: voiceSpreadSlider.value,
-noiseType: noiseTypeSelect.value,
-noiseAmount: noiseAmountSlider.value,
-drift: driftSlider.value,
-stereoWidth: stereoWidthSlider.value,
-    reverbMix: reverbMixSlider.value,
-    reverbDecay: reverbDecaySlider.value,
-    delayMix: delayMixSlider.value,
-    delayTime: delayTimeSlider.value,
-    delayFeedback: delayFeedbackSlider.value,
-    masterVolume: masterVolume.value,
+    coherence: currentCoherence,
+    decoherence: currentDecoherence,
+    attack: get(attackSlider, 0.05),
+    decay: get(decaySlider, 0.2),
+    sustain: get(sustainSlider, 0.7),
+    release: get(releaseSlider, 0.5),
+    filterType: filterTypeSelect?.value ?? "lowpass",
+    cutoff: get(cutoffSlider, 4000),
+    resonance: get(resonanceSlider, 1),
+    lfoRate: get(lfoRateSlider, 2),
+    lfoAmount: get(lfoAmountSlider),
+    lfoDestination: lfoDestinationSelect?.value ?? "filter",
+    noiseType: noiseTypeSelect?.value ?? "white",
+    noiseAmount: get(noiseAmountSlider),
+    drift: get(driftSlider),
+    stereoWidth: get(stereoWidthSlider),
+    deepDreamOrbit: Boolean(deepDreamOrbitCheckbox?.checked),
+    glideEnabled: Boolean(glideEnabledCheckbox?.checked),
+    glideTime: get(glideTimeSlider, 0.12),
+    reverbMix: get(reverbMixSlider, 0.25),
+    reverbDecay: get(reverbDecaySlider, 3),
+    delayMix: get(delayMixSlider, 0.55),
+    delayTime: get(delayTimeSlider, 0.55),
+    delayFeedback: get(delayFeedbackSlider, 0.55),
+    masterVolume: get(masterVolume, 0.25),
+    presence: get(presenceSlider),
+    // Performance state (latched keys / held notes) is intentionally not saved.
   };
 }
 
-const USER_PRESETS_KEY = "dreamwellNamedPresets";
+const USER_PRESETS_KEY = "dreamwellNamedPresets"; // Existing key retained: no lost saves.
 
 function getSavedPresets() {
-  return JSON.parse(localStorage.getItem(USER_PRESETS_KEY)) || {};
+  try {
+    const stored = JSON.parse(localStorage.getItem(USER_PRESETS_KEY) || "{}");
+    if (!stored || typeof stored !== "object" || Array.isArray(stored)) return {};
+    const result = Object.create(null);
+    for (const [name, settings] of Object.entries(stored)) {
+      if (name && settings && typeof settings === "object" && !Array.isArray(settings)) {
+        result[name] = settings;
+      }
+    }
+    return result;
+  } catch (err) {
+    showPresetMessage("Saved presets could not be read from this browser.");
+    return {};
+  }
 }
 
 function saveSavedPresets(presets) {
-  localStorage.setItem(USER_PRESETS_KEY, JSON.stringify(presets));
-}
-
-function refreshSavedPresetList() {
-  if (!savedPresetSelect) return;
-  const presets = getSavedPresets();
-  const names = Object.keys(presets);
-
-  savedPresetSelect.innerHTML = "";
-
-  if (names.length === 0) {
-    savedPresetSelect.innerHTML = `<option value="">No Saved Presets</option>`;
-    return;
+  try {
+    localStorage.setItem(USER_PRESETS_KEY, JSON.stringify(presets));
+    return true;
+  } catch (err) {
+    showPresetMessage("Unable to save here. Check browser storage or export your sounds.");
+    return false;
   }
-
-  names.forEach((name) => {
-    const option = document.createElement("option");
-    option.value = name;
-    option.textContent = name;
-    savedPresetSelect.appendChild(option);
-  });
 }
 
-if (saveNamedPresetButton) {
-  saveNamedPresetButton.addEventListener("click", () => {
-    const name = presetNameInput.value.trim();
-    const confirmed = confirm(`Save preset "${name}"?`);
+function validatePresetName(name) {
+  const trimmed = String(name ?? "").trim();
+  return trimmed.length > 0 && trimmed.length <= 75 &&
+    !["__proto__", "constructor", "prototype"].includes(trimmed) ? trimmed : null;
+}
 
-if (!confirmed) return;
+saveNamedPresetButton?.addEventListener("click", () => {
+  const name = validatePresetName(presetNameInput?.value);
+  if (!name) return showPresetMessage("Enter a preset name (up to 75 characters).");
+  const presets = getSavedPresets();
+  if (Object.hasOwn(presets, name) && !confirm(`Overwrite your saved preset "${name}"?`)) return;
+  presets[name] = getCurrentPresetSettings();
+  if (!saveSavedPresets(presets)) return;
+  selectedUserPresetName = name;
+  selectPresetBank("user");
+  showPresetMessage(`Saved "${name}" on this device. Export a backup if it's important.`);
+});
 
-    if (!name) {
-      if (presetMessage) presetMessage.textContent = "Enter a preset name.";
-      return;
+// User presets can always be loaded from the My Presets tab.
+// Keep legacy buttons functional if an older HTML revision contains them.
+loadNamedPresetButton?.addEventListener("click", () => {
+  const name = savedPresetSelect?.value || selectedUserPresetName;
+  const preset = getSavedPresets()[name];
+  if (!preset) return showPresetMessage("Choose a saved sound first.");
+  applyPresetSettings(preset);
+  if (presetNameInput) presetNameInput.value = name;
+  showPresetMessage(`Loaded "${name}".`);
+});
+
+document.getElementById("renameNamedPreset")?.addEventListener("click", () => {
+  if (!selectedUserPresetName) return showPresetMessage("Choose a sound in My Presets to rename.");
+  const newName = validatePresetName(presetNameInput?.value);
+  if (!newName) return showPresetMessage("Enter a new name (up to 75 characters).");
+  if (newName === selectedUserPresetName) return showPresetMessage("Name has not changed.");
+  const presets = getSavedPresets();
+  if (!Object.hasOwn(presets, selectedUserPresetName)) return showPresetMessage("Saved sound not found.");
+  if (Object.hasOwn(presets, newName) && !confirm(`Overwrite the saved sound named "${newName}"?`)) return;
+  presets[newName] = presets[selectedUserPresetName];
+  delete presets[selectedUserPresetName];
+  if (!saveSavedPresets(presets)) return;
+  selectedUserPresetName = newName;
+  selectPresetBank("user");
+  showPresetMessage(`Renamed to "${newName}".`);
+});
+
+deleteNamedPresetButton?.addEventListener("click", () => {
+  if (!selectedUserPresetName) return showPresetMessage("Choose a sound in My Presets to delete.");
+  const name = selectedUserPresetName;
+  if (!confirm(`Delete saved sound "${name}"? This cannot be undone.`)) return;
+  const presets = getSavedPresets();
+  if (!Object.hasOwn(presets, name)) return showPresetMessage("Saved sound not found.");
+  delete presets[name];
+  if (!saveSavedPresets(presets)) return;
+  selectedUserPresetName = null;
+  if (presetNameInput) presetNameInput.value = "";
+  selectPresetBank("user");
+  showPresetMessage(`Deleted "${name}".`);
+});
+
+document.getElementById("exportNamedPresets")?.addEventListener("click", () => {
+  const data = {format: "dream-binder-user-presets", version: 1, presets: getSavedPresets()};
+  const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], {type: "application/json"}));
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "Dream_Binder_My_Presets.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+  showPresetMessage("Backup download requested. Keep the JSON file somewhere safe.");
+});
+
+document.getElementById("importNamedPresets")?.addEventListener("change", async (event) => {
+  const input = event.target;
+  const file = input.files?.[0];
+  if (!file) return;
+  try {
+    if (file.size > 1024 * 1024) throw new Error("File exceeds 1 MB.");
+    const contents = JSON.parse(await file.text());
+    if (contents?.format !== "dream-binder-user-presets" ||
+        contents.version !== 1 || !contents.presets ||
+        typeof contents.presets !== "object" || Array.isArray(contents.presets)) {
+      throw new Error("Not a Dream Binder preset backup.");
     }
-
-    const presets = getSavedPresets();
-    presets[name] = getCurrentPresetSettings();
-    saveSavedPresets(presets);
-    refreshSavedPresetList();
-
-    savedPresetSelect.value = name;
-
-    if (presetMessage) presetMessage.textContent = `"${name}" saved.`;
-  });
-}
-
-if (loadNamedPresetButton) {
-  loadNamedPresetButton.addEventListener("click", () => {
-    const name = savedPresetSelect.value;
-    const presets = getSavedPresets();
-
-    if (!name || !presets[name]) {
-      if (presetMessage) presetMessage.textContent = "No preset selected.";
-      return;
+    const imported = Object.entries(contents.presets);
+    if (imported.length > 500) throw new Error("Too many presets in this file.");
+    const merged = getSavedPresets();
+    let count = 0;
+    for (const [rawName, settings] of imported) {
+      const name = validatePresetName(rawName);
+      if (!name || !settings || typeof settings !== "object" || Array.isArray(settings)) continue;
+      if (Object.hasOwn(merged, name)) continue; // Keep locally saved sounds intact.
+      merged[name] = settings;
+      count++;
     }
-
-    applyPresetSettings(presets[name]);
-    presetNameInput.value = name;
-
-    if (presetMessage) presetMessage.textContent = `"${name}" loaded.`;
-  });
-}
-
-if (deleteNamedPresetButton) {
-  deleteNamedPresetButton.addEventListener("click", () => {
-    const name = savedPresetSelect.value;
-    const confirmed = confirm(`Delete preset "${name}"? This cannot be undone.`);
-
-if (!confirmed) return;
-    const presets = getSavedPresets();
-
-    if (!name || !presets[name]) {
-      if (presetMessage) presetMessage.textContent = "No preset selected.";
-      return;
-    }
-
-    delete presets[name];
-    saveSavedPresets(presets);
-    refreshSavedPresetList();
-
-    if (presetMessage) presetMessage.textContent = `"${name}" deleted.`;
-  });
-}
-
-if (prevPresetButton) {
-  prevPresetButton.addEventListener("click", () => {
-    const options = Array.from(savedPresetSelect.options);
-
-    if (options.length <= 1 && !savedPresetSelect.value) return;
-
-    savedPresetSelect.selectedIndex =
-      (savedPresetSelect.selectedIndex - 1 + options.length) % options.length;
-  });
-}
-
-if (nextPresetButton) {
-  nextPresetButton.addEventListener("click", () => {
-    const options = Array.from(savedPresetSelect.options);
-
-    if (options.length <= 1 && !savedPresetSelect.value) return;
-
-    savedPresetSelect.selectedIndex =
-      (savedPresetSelect.selectedIndex + 1) % options.length;
-  });
-}
-
-refreshSavedPresetList();    
+    if (!saveSavedPresets(merged)) return;
+    selectPresetBank("user");
+    showPresetMessage(`Imported ${count} new sound${count === 1 ? "" : "s"}. Existing names were kept.`);
+  } catch (err) {
+    showPresetMessage(`Import failed: ${err.message}`);
+  } finally {
+    input.value = "";
+  }
+});
 
 dreamArpEnabledCheckbox.addEventListener("change", () => {
   dreamArpEnabled = dreamArpEnabledCheckbox.checked;
