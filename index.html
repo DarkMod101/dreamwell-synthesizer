@@ -5,6 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dreamwell Synthesizer</title>
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* Scoped controls: works with the existing style.css without replacing it. */
+    .preset-browser { overflow-y: auto; }
+    .preset-manager { padding: 12px; border: 1px solid rgba(214,168,79,.38);
+      border-radius: 14px; background: rgba(16,5,28,.76); margin-bottom: 12px; }
+    .preset-manager-name { display: block; color: #d6a84f; margin-bottom: 6px; font-size: 13px; }
+    .preset-manager-input { display: block; box-sizing: border-box; width: 100%;
+      padding: 11px 12px; color: #f2e7ff; background: #130b20;
+      border: 1px solid #78519c; border-radius: 9px; font: inherit; }
+    .preset-manager-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .preset-manager-actions button, .preset-import-btn { display: inline-flex; align-items: center;
+      justify-content: center; padding: 9px 11px; border-radius: 9px;
+      border: 1px solid rgba(214,168,79,.55); background: #241231; color: #eadcff;
+      font: inherit; font-size: 13px; cursor: pointer; }
+    .preset-manager-actions button:first-child { background: #452363; color: white; }
+    .preset-browser-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+    .preset-browser-tab { cursor: pointer; }
+    .preset-manager .preset-message { margin: 8px 0 0; line-height: 1.4; }
+  </style>
 </head>
 
 <body>
@@ -17,9 +37,8 @@
 
 <section class="presets">
   
-  <button id="openPresetBrowser" class="preset-browser-btn">
-  Presets
-</button>
+  <button id="openPresetBrowser" class="preset-browser-btn" type="button">Presets</button>
+  <button id="quickSavePreset" class="preset-browser-btn" type="button">Save Sound</button>
   <p id="presetMessage" class="preset-message"></p>
 </section>
     
@@ -568,6 +587,21 @@
       <button id="closePresetBrowser" class="preset-browser-close">×</button>
     </div>
 
+    <div class="preset-manager" aria-label="Save and manage personal patches">
+      <label class="preset-manager-name" for="presetNameInput">Sound name</label>
+      <input id="presetNameInput" class="preset-manager-input" type="text"
+        maxlength="75" autocomplete="off" placeholder="Name your sound..." />
+      <div class="preset-manager-actions">
+        <button id="saveNamedPreset" type="button">Save Current Sound</button>
+        <button id="renameNamedPreset" type="button">Rename Selected</button>
+        <button id="deleteNamedPreset" type="button">Delete Selected</button>
+        <button id="exportNamedPresets" type="button">Export Backup</button>
+        <label class="preset-import-btn" for="importNamedPresets">Import Backup</label>
+        <input id="importNamedPresets" type="file" accept=".json,application/json" hidden />
+      </div>
+      <p id="presetManagerMessage" class="preset-message" aria-live="polite">Saved sounds stay in this browser. Export a backup to keep them safe.</p>
+    </div>
+
     <div class="preset-browser-tabs">
     <button class="preset-browser-tab active-bank" data-bank="signature">Signature</button>
     <button class="preset-browser-tab" data-bank="keys">Keys</button>
@@ -576,6 +610,7 @@
     <button class="preset-browser-tab" data-bank="bass">Bass</button>
     <button class="preset-browser-tab" data-bank="choir">Choir</button>
     <button class="preset-browser-tab" data-bank="textures">Textures</button>
+    <button class="preset-browser-tab" data-bank="user">My Presets</button>
       </div>
     
     <div id="presetBrowserList" class="preset-browser-list"></div>
