@@ -1,730 +1,528 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dreamwell Synthesizer</title>
-  <link rel="stylesheet" href="style.css" />
-
-  <style>
-    /* Scoped controls: works with the existing style.css without replacing it. */
-    .preset-browser { overflow-y: auto; }
-    .preset-manager { padding: 12px; border: 1px solid rgba(214,168,79,.38);
-      border-radius: 14px; background: rgba(16,5,28,.76); margin-bottom: 12px; }
-    .preset-manager-name { display: block; color: #d6a84f; margin-bottom: 6px; font-size: 13px; }
-    .preset-manager-input { display: block; box-sizing: border-box; width: 100%;
-      padding: 11px 12px; color: #f2e7ff; background: #130b20;
-      border: 1px solid #78519c; border-radius: 9px; font: inherit; }
-    .preset-manager-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .preset-manager-actions button, .preset-import-btn { display: inline-flex; align-items: center;
-      justify-content: center; padding: 9px 11px; border-radius: 9px;
-      border: 1px solid rgba(214,168,79,.55); background: #241231; color: #eadcff;
-      font: inherit; font-size: 13px; cursor: pointer; }
-    .preset-manager-actions button:first-child { background: #452363; color: white; }
-    .preset-browser-tabs { display: flex; flex-wrap: wrap; gap: 6px; }
-    .preset-browser-tab { cursor: pointer; }
-    .preset-manager .preset-message { margin: 8px 0 0; line-height: 1.4; }
-    .dream-atlas-filters[hidden] { display: none !important; }
-    .dream-atlas-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px;
-      padding: 13px; margin: 12px 0; background: rgba(24, 12, 42, .93);
-      border: 1px solid rgba(204, 168, 255, .42); border-radius: 12px; }
-    .dream-atlas-filters label { display: flex; flex: 1 1 160px; flex-direction: column;
-      color: #e4d1ff; font-size: 13px; gap: 5px; }
-    .dream-atlas-filters select { width: 100%; padding: 9px; border-radius: 8px;
-      background: #1c1229; color: #f6ebff; border: 1px solid #7956a5; }
-    .dream-atlas-intro { flex: 1 1 100%; margin: 0; color: #e6c9ff; font-size: 14px; }
-    .dream-atlas-theme { flex: 1 1 100%; color: #dfc2f6; margin: 0; font-style: italic; font-size: 13px; }
-    .dream-atlas-tip { flex: 1 1 100%; margin: 0; font-size: 12px; opacity: .85; }
-    .preset-browser-tab[data-bank="atlas"] { border-color: rgba(214, 168, 79, .7);
-      color: #e7d3ff; background: rgba(58, 31, 89, .88); }
-    .preset-browser-tab[data-bank="atlas"].active-bank { background: #68409d; color: #fff; }
-    /* Polynomial Ring controls: scoped to the existing panel design. */
-    .polynomial-ring-panel { border-color: rgba(210, 168, 255, .40); }
-    .polynomial-ring-panel summary { color: #e8ceff; cursor: pointer; }
-    .polynomial-ring-content { display: grid; gap: 12px; padding-top: 12px; }
-    .polynomial-ring-content label:not(.checkbox-row) { display: flex; flex-direction: column; gap: 6px; }
-    .polynomial-ring-content label span { display: flex; justify-content: space-between; gap: 10px; }
-    .polynomial-ring-content label strong { color: #e3b6ff; }
-    .polynomial-ring-content select { width: 100%; box-sizing: border-box; padding: 9px; border-radius: 8px;
-        background: #1b1228; color: #f1e2ff; border: 1px solid rgba(200, 151, 243, .45); }
-    .polynomial-ring-content .checkbox-row { display: flex; align-items: center; gap: 8px; }
-    .polynomial-ring-intro, .polynomial-ring-note, .polynomial-ring-status {
-        margin: 0; line-height: 1.5; font-size: 13px; color: #cdb9da; }
-    .polynomial-ring-status { border-left: 2px solid #b67fef; padding: 6px 10px;
-        background: rgba(115, 60, 146, .12); color: #f3dcff; }
-  </style>
-</head>
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dream Binder · Resonant Doorways — Synth Studio</title>
+<meta content="#080717" name="theme-color"/><link href="style.css" rel="stylesheet"/></head>
 <body>
-  <main class="app">
-    <header class="logo">
-      <h1>DREAMWELL</h1>
-      <p>SYNTHESIZER</p>
-      <span>Resonant Doorways</span>
-    </header>
-
-<section class="presets">
-  
-  <button id="openPresetBrowser" class="preset-browser-btn" type="button">Presets</button>
-  <button id="quickSavePreset" class="preset-browser-btn" type="button">Save Sound</button>
-  <p id="presetMessage" class="preset-message"></p>
+<main class="app">
+<header class="db-masthead">
+<div class="db-brand"><span aria-hidden="true" class="db-sigil">✧</span>
+<div><h1>DREAM BINDER</h1><p>RESONANT DOORWAYS <span> / REALM WALKING THROUGH TIME</span></p></div>
+</div>
+<nav aria-label="Studio navigation" class="db-primary-nav">
+<button aria-current="page" class="db-nav active" data-db-nav="synth" type="button">⌁  SYNTH</button>
+<button class="db-nav" data-db-nav="piano" type="button">♬  PIANO</button>
+<button class="db-nav" data-db-nav="choir" type="button">◈  CHOIR</button>
+<button class="db-nav" data-db-nav="bindings" type="button">∞  BINDINGS</button>
+<button class="db-nav" data-db-nav="atlas" type="button">✦  DREAM ATLAS</button>
+</nav>
+<div class="db-head-actions"><span aria-hidden="true" class="db-live-dot"></span><span class="db-live-status">STUDIO / READY</span><button class="db-compact-btn" id="dbOpenMIDI" type="button">⌘ MIDI</button></div>
+</header>
+<section class="presets db-preset-strip"><span class="db-strip-label"><span class="db-strip-star">✦</span> SOUND LIBRARY <small>104 ATLAS SOUNDS</small></span>
+<button class="preset-browser-btn" id="openPresetBrowser" type="button">Presets</button>
+<button class="preset-browser-btn" id="quickSavePreset" type="button">Save Sound</button>
+<p class="preset-message" id="presetMessage"></p>
 </section>
-    
-    <section class="controls">
-      <div class="panel">
-        <h2>Oscillator A</h2>
-
-        <label>
-          Waveform A
-          <select id="waveform">
-            <option value="sine">Sine</option>
-            <option value="triangle">Triangle</option>
-            <option value="sawtooth">Saw</option>
-            <option value="square">Square</option>
-            <option value="trapezoid">Trapezoid</option>
-          </select>
-        </label>
-
-        <h2>Oscillator B</h2>
-
-        <label>
-          Waveform B
-          <select id="waveformB">
-            <option value="sine">Sine</option>
-            <option value="triangle">Triangle</option>
-            <option value="sawtooth" selected>Saw</option>
-            <option value="square">Square</option>
-            <option value="trapezoid">Trapezoid</option>
-          </select>
-        </label>
-
-<label>
-  <span>
-    Wave Fusion
-    <strong id="waveFusionValue">50%</strong>
-  </span>
-  <input
-    id="waveFusion"
-    type="range"
-    min="0"
-    max="100"
-    step="1"
-    value="50">
-</label>
-
-<label>
-  <span>Origin</span>
-  <select id="origin">
-    <option value="pure" selected>Pure</option>
-    <option value="vintage">Vintage</option>
-    <option value="dream">Dream</option>
-    <option value="glass">Glass</option>
-    <option value="hollow">Hollow</option>
-    <option value="ancient">Ancient</option>
-    <option value="cosmic">Cosmic</option>
-  </select>
-</label>
-        
-<label>
-  <span>Morph Curve</span>
-  <select id="waveFusionCurve">
-    <option value="linear">Linear</option>
-    <option value="smooth" selected>Smooth</option>
-    <option value="deep">Deep</option>
-    <option value="bright">Bright</option>
-  </select>
-</label>
-
-<label class="checkbox-row">
-  <input type="checkbox" id="dreamMorphMotion">
-  Dream Morph Motion
-</label>
-        
-<label>
-  <span>Sub Waveform</span>
-  <select id="subWaveform">
-    <option value="sine">Sine</option>
-    <option value="triangle">Triangle</option>
-    <option value="square">Square</option>
-  </select>
-</label>
-
-<label>
-  <span>Sub Level <strong id="subLevelValue">0%</strong></span>
-  <input
-    id="subLevel"
-    type="range"
-    min="0"
-    max="100"
-    step="1"
-    value="0">
-</label>
-        
-        <label>
-          <span>Osc B Level <strong id="oscBLevelValue">35%</strong></span>
-          <input id="oscBLevel" type="range" min="0" max="1" step="0.01" value="0.35">
-        </label>
-
-        <label>
-          <span>Osc B Detune <strong id="oscBDetuneValue">+7 cents</strong></span>
-          <input id="oscBDetune" type="range" min="-50" max="50" step="1" value="7">
-        </label>
-
-        <!-- Dream Binder — Oscillator Beat Tracking (Synth only) -->
-        <label>
-          <span>Oscillator Beat Tracking</span>
-          <select id="beatTrackingMode">
-            <option value="natural" selected>Natural (Pitch-Tracked)</option>
-            <option value="fixed">Fixed Rate</option>
-            <option value="tempo">Tempo Sync</option>
-          </select>
-        </label>
-        <label id="beatRateRow" hidden>
-          <span>Beat Rate <strong id="beatRateValue">0.50 Hz</strong></span>
-          <input id="beatRate" type="range" min="0.05" max="8" step="0.05" value="0.5">
-        </label>
-        <label id="beatTempoRow" hidden>
-          <span>Tempo <strong id="beatTempoValue">120 BPM</strong></span>
-          <input id="beatTempo" type="range" min="40" max="240" step="1" value="120">
-        </label>
-        <label id="beatDivisionRow" hidden>
-          <span>Beat Division</span>
-          <select id="beatDivision">
-            <option value="4">1/1 (Whole)</option>
-            <option value="2">1/2 (Half)</option>
-            <option value="1" selected>1/4 (Quarter)</option>
-            <option value="0.5">1/8 (Eighth)</option>
-            <option value="0.25">1/16 (Sixteenth)</option>
-          </select>
-        </label>
-
-<label>
-  <span>Voice Spread <strong id="voiceSpreadValue">0%</strong></span>
-  <input id="voiceSpread" type="range" min="0" max="100" step="1" value="0">
-</label>
-
-<label>
-  <span>Texture Type</span>
-  <select id="noiseType">
-    <option value="white">White</option>
-    <option value="dark">Dark Void</option>
-    <option value="air">Air</option>
-    <option value="dust">Stardust</option>
-    <option value="machine">Ancient Machine</option>
-    <option value="cosmic">Cosmic</option>
-  </select>
-</label>
-
-<label class="checkbox-row">
-  <input type="checkbox" id="deepDreamOrbit" checked>
-  Deep Dream Orbit
-</label>
-        
-<label>
-  <span>Noise Layer <strong id="noiseAmountValue">0%</strong></span>
-  <input
-    id="noiseAmount"
-    type="range"
-    min="0"
-    max="100"
-    step="1"
-    value="0">
-</label>
-        
-        
-<label>
- <span>Drift <strong id="driftValue">0</strong></span>
-<input id="drift" type="range" min="0" max="100" step="1" value="0">
-</label>
-
-<label>
-  <span>Stereo Width <strong id="stereoWidthValue">0%</strong></span>
-  <input id="stereoWidth" type="range" min="0" max="100" step="1" value="0">
-</label>
-        
-      </div>
+<section aria-label="Dream Binder instrument overview" class="db-hero">
+<div aria-label="Celestial gothic portal above cosmic mountains" class="db-hero-art" role="img">
+<div class="db-hero-caption"><span class="db-eyebrow">01 / RESONANCE SOURCE</span><h2>Enter the<br/><em>unheard.</em></h2><p>Every dream leaves a resonance.<br/>Every resonance remembers a time.</p>
+<button class="db-gold-button" id="dbAtlasHero" type="button">EXPLORE DREAM ATLAS <span aria-hidden="true">↗</span></button></div>
+<span class="db-art-label">✦   THE CELESTIAL GATE</span>
+</div>
+<div class="db-hero-studio">
+<div class="db-studio-top"><div><span class="db-eyebrow">02 / SOUND ARCHITECTURE</span><h2>Resonance Laboratory</h2></div><span class="db-status-chip">● LIVE SIGNAL PATH</span></div>
+<div class="db-spectrum-shell"><div class="db-spectrum-header"><span>HARMONIC SIGNATURE</span><span>OSC A / OSC B / SUB</span></div><canvas aria-label="Low-power frequency spectrum display" height="170" id="dbSpectrumCanvas" width="780"></canvas><div class="db-spectrum-axis"><span>20 Hz</span><span>220 Hz</span><span>2.2 kHz</span><span>20 kHz</span></div></div>
+<div class="db-algebra">
+<div aria-hidden="true" class="db-algebra-orbit"><span>Spec(R)</span><i></i><i></i><i></i><b>✧</b></div>
+<div class="db-algebra-copy"><span class="db-eyebrow">GEOMETRY OF HARMONICS</span><strong>R = ℝ[x₁, x₂, x₃]</strong><p>Prime ideal chain: (0) ⊂ (x₁) ⊂ (x₁,x₂) ⊂ (x₁,x₂,x₃)</p><small id="dbMathStatus">Polynomial field bypassed · dimension 1</small></div>
+</div>
+</div>
+</section>
+<section aria-label="Binding of Dreams and keyboard zoning" class="db-binding-studio" id="dbBindingStudio">
+<div class="db-section-title"><div><span class="db-eyebrow">03 / PERFORMANCE ARCHITECTURE</span><h2>Binding of Dreams <span>∞</span></h2><p>Two independent preset voices. One performance.</p></div><span class="db-badge">EXPERIMENTAL · V1</span></div>
+<div class="db-binding-grid">
+<div class="db-binding-layer"><div class="db-layer-head"><span class="db-layer-icon">A</span><span>RESONANCE SOURCE A</span></div><label for="dbLayerA">First sound<select aria-label="Binding source A preset" id="dbLayerA"></select></label><button class="db-micro-btn" id="dbCaptureA" type="button">Capture current sound → A</button></div>
+<div class="db-bind-middle"><span class="db-infinity">∞</span><label for="dbPerformanceMode">PERFORMANCE MODE<select id="dbPerformanceMode"><option value="off">Single · Original Instrument</option><option value="layer">Bind · Both sounds together</option><option value="split">Split · Left / Right Keys</option></select></label><label for="dbBlend">A ↔ B BALANCE <strong id="dbBlendValue">50 / 50</strong><input id="dbBlend" max="100" min="0" type="range" value="50"/></label><label class="db-split-row" for="dbSplitNote">SPLIT POINT <select id="dbSplitNote"></select></label></div>
+<div class="db-binding-layer"><div class="db-layer-head"><span class="db-layer-icon alt">B</span><span>RESONANCE SOURCE B</span></div><label for="dbLayerB">Second sound<select aria-label="Binding source B preset" id="dbLayerB"></select></label><button class="db-micro-btn" id="dbCaptureB" type="button">Capture current sound → B</button></div>
+</div><p class="db-bind-status" id="dbBindingStatus" role="status">Single mode: existing Synth, Piano and Choir behavior is unchanged.</p>
+</section>
+<div class="db-controls-heading" id="dbSoundArchitecture"><div><span class="db-eyebrow">04 / SOUND DESIGN</span><h2>Shape the impossible.</h2><p>Oscillators, enveloping motion, spectral geometry and atmosphere.</p></div><span class="db-optional-label">SELECT A MODULE TO EXPAND ▾</span></div>
+<section aria-label="Sound design modules" class="controls">
 
 <!-- DREAM BINDER — FM RESONANCE PANEL -->
-<details class="panel fm-resonance-panel">
-  <summary>FM Resonance</summary>
 
-  <div class="fm-resonance-content">
-
-  <p>Independent Frequency Modulation</p>
-
-  <!-- FM Resonance — Amount Control -->
-  <label>
-    <span>
-      FM Amount
-      <strong id="fmAmountValue">0%</strong>
-    </span>
-
-    <input
-      id="fmAmount"
-      type="range"
-      min="0"
-      max="100"
-      step="1"
-      value="0">
-  </label>
-
-<!-- FM Resonance — Ratio Control -->
-<label>
-  <span>
-    FM Ratio
-    <strong id="fmRatioValue">3.5</strong>
-  </span>
-
-  <input
-    id="fmRatio"
-    type="range"
-    min="0.5"
-    max="12"
-    step="0.1"
-    value="3.5">
-</label>
-
-<!-- FM Resonance — Attack Control -->
-<label>
-  <span>
-    FM Attack
-    <strong id="fmAttackValue">0.01 s</strong>
-  </span>
-
-  <input
-    id="fmAttack"
-    type="range"
-    min="0.01"
-    max="4"
-    step="0.01"
-    value="0.01">
-</label>
-
-<!-- FM Resonance — Decay Control -->
-<label>
-  <span>
-    FM Decay
-    <strong id="fmDecayValue">0.80 s</strong>
-  </span>
-
-  <input
-    id="fmDecay"
-    type="range"
-    min="0.01"
-    max="5"
-    step="0.01"
-    value="0.80">
-</label>
-
-<!-- FM Resonance — Sustain Control -->
-<label>
-  <span>
-    FM Sustain
-    <strong id="fmSustainValue">0%</strong>
-  </span>
-
-  <input
-    id="fmSustain"
-    type="range"
-    min="0"
-    max="1"
-    step="0.01"
-    value="0">
-</label>
-
-<!-- FM Resonance — Release Control -->
-<label>
-  <span>
-    FM Release
-    <strong id="fmReleaseValue">0.30 s</strong>
-  </span>
-
-  <input
-    id="fmRelease"
-    type="range"
-    min="0.01"
-    max="5"
-    step="0.01"
-    value="0.30">
-</label>
-    
-</div>
-</details>
-      
 <!-- DREAM BINDER — RESONANT FIELD: COHERENCE + DECOHERENCE -->
-<details class="panel resonant-field-panel">
-  <summary>Resonant Field</summary>
-  <div class="resonant-field-content">
-    <p>Harmonic · Modulation · Spatial Resonance Rings</p>
-    <label>
-      <span>Coherence <strong id="coherenceValue">0%</strong></span>
-      <input id="coherence" type="range" min="0" max="100" step="1" value="0">
-    </label>
-    <label>
-      <span>Decoherence <strong id="decoherenceValue">0%</strong></span>
-      <input id="decoherence" type="range" min="0" max="100" step="1" value="0">
-    </label>
-    <p>Coherence aligns harmonic and spatial motion; Decoherence introduces independent evolution. Both controls can coexist. Currently active on Synth only.</p>
-  </div>
-</details>
-
 
 <!-- DREAM BINDER — POLYNOMIAL RINGS / KRULL DIMENSION: SYNTH ONLY -->
-<details class="panel polynomial-ring-panel" id="polynomialRingPanel">
-  <summary>Polynomial Rings · Krull Dimension</summary>
-  <div class="polynomial-ring-content">
-    <p class="polynomial-ring-intro">Sculpt the harmonics of a dream. Real polynomial waveshaping meets multivariate oscillator interactions.</p>
-    <label class="checkbox-row">
-      <input type="checkbox" id="polynomialRingEnabled">
-      Enable Polynomial Rings
-    </label>
-    <label>
-      <span>Ring Amount <strong id="polynomialRingAmountValue">35%</strong></span>
-      <input id="polynomialRingAmount" type="range" min="0" max="100" step="1" value="35">
-    </label>
-    <label>
-      <span>Polynomial Degree <strong id="polynomialRingDegreeValue">3</strong></span>
-      <input id="polynomialRingDegree" type="range" min="2" max="6" step="1" value="3">
-    </label>
-    <label>
-      <span>Harmonic Character</span>
-      <select id="polynomialRingCharacter">
-        <option value="hybrid" selected>Hybrid · even + odd</option>
-        <option value="even">Even · crystalline / octave</option>
-        <option value="odd">Odd · hollow / biting</option>
-      </select>
-    </label>
-    <label>
-      <span>Krull Dimension <strong id="krullDimensionValue">dim 1</strong></span>
-      <select id="krullDimension">
-        <option value="0">0 · ℝ (no signal transform)</option>
-        <option value="1" selected>1 · ℝ[x₁] · Osc A</option>
-        <option value="2">2 · ℝ[x₁,x₂] · A × B</option>
-        <option value="3">3 · ℝ[x₁,x₂,x₃] · A × B × Sub</option>
-      </select>
-    </label>
-    <p id="polynomialRingStatus" class="polynomial-ring-status" aria-live="polite">Bypassed — original Synth sound preserved.</p>
-    <p class="polynomial-ring-note">Synth only. Degree controls harmonic order; Dimension adds audio-rate polynomial variables. Try 30–45% with a held note, then move through dimensions 1→3. Higher dimensions are not automatically louder or better.</p>
-  </div>
-</details>
 
-      <div class="panel">
-        <h2>Envelope</h2>
 
-        <label>
-          <span>Attack <strong id="attackValue">0.05 s</strong></span>
-          <input id="attack" type="range" min="0.01" max="2" step="0.01" value="0.05">
-        </label>
 
-        <label>
-          <span>Decay <strong id="decayValue">0.20 s</strong></span>
-          <input id="decay" type="range" min="0.01" max="2" step="0.01" value="0.20">
-        </label>
 
-        <label>
-          <span>Sustain <strong id="sustainValue">70%</strong></span>
-          <input id="sustain" type="range" min="0" max="1" step="0.01" value="0.70">
-        </label>
 
-        <label>
-          <span>Release <strong id="releaseValue">0.50 s</strong></span>
-          <input id="release" type="range" min="0.01" max="5" step="0.01" value="0.50">
-        </label>
-      </div>
 
-      <div class="panel">
-        <h2>Filter</h2>
 
-        <label>
+<div class="db-control-column" data-column="1"><details class="panel db-module db-group-osc" open=""><summary>OSCILLATORS · A + B</summary><div class="db-module-content"><label>
+          Waveform A
+          <select id="waveform">
+<option value="sine">Sine</option>
+<option value="triangle">Triangle</option>
+<option value="sawtooth">Saw</option>
+<option value="square">Square</option>
+<option value="trapezoid">Trapezoid</option>
+</select>
+</label><label>
+          Waveform B
+          <select id="waveformB">
+<option value="sine">Sine</option>
+<option value="triangle">Triangle</option>
+<option selected="" value="sawtooth">Saw</option>
+<option value="square">Square</option>
+<option value="trapezoid">Trapezoid</option>
+</select>
+</label><label>
+<span>Osc B Level <strong id="oscBLevelValue">35%</strong></span>
+<input id="oscBLevel" max="1" min="0" step="0.01" type="range" value="0.35"/>
+</label><label>
+<span>Osc B Detune <strong id="oscBDetuneValue">+7 cents</strong></span>
+<input id="oscBDetune" max="50" min="-50" step="1" type="range" value="7"/>
+</label><label>
+<span>Oscillator Beat Tracking</span>
+<select id="beatTrackingMode">
+<option selected="" value="natural">Natural (Pitch-Tracked)</option>
+<option value="fixed">Fixed Rate</option>
+<option value="tempo">Tempo Sync</option>
+</select>
+</label><label hidden="" id="beatRateRow">
+<span>Beat Rate <strong id="beatRateValue">0.50 Hz</strong></span>
+<input id="beatRate" max="8" min="0.05" step="0.05" type="range" value="0.5"/>
+</label><label hidden="" id="beatTempoRow">
+<span>Tempo <strong id="beatTempoValue">120 BPM</strong></span>
+<input id="beatTempo" max="240" min="40" step="1" type="range" value="120"/>
+</label><label hidden="" id="beatDivisionRow">
+<span>Beat Division</span>
+<select id="beatDivision">
+<option value="4">1/1 (Whole)</option>
+<option value="2">1/2 (Half)</option>
+<option selected="" value="1">1/4 (Quarter)</option>
+<option value="0.5">1/8 (Eighth)</option>
+<option value="0.25">1/16 (Sixteenth)</option>
+</select>
+</label></div></details><details class="panel db-module db-module-envelope" open=""><summary>ENVELOPE</summary><div class="db-module-content">
+<label>
+<span>Attack <strong id="attackValue">0.05 s</strong></span>
+<input id="attack" max="2" min="0.01" step="0.01" type="range" value="0.05"/>
+</label>
+<label>
+<span>Decay <strong id="decayValue">0.20 s</strong></span>
+<input id="decay" max="2" min="0.01" step="0.01" type="range" value="0.20"/>
+</label>
+<label>
+<span>Sustain <strong id="sustainValue">70%</strong></span>
+<input id="sustain" max="1" min="0" step="0.01" type="range" value="0.70"/>
+</label>
+<label>
+<span>Release <strong id="releaseValue">0.50 s</strong></span>
+<input id="release" max="5" min="0.01" step="0.01" type="range" value="0.50"/>
+</label>
+</div></details><details class="panel resonant-field-panel db-module">
+<summary>Resonant Field</summary>
+<div class="resonant-field-content">
+<p>Harmonic · Modulation · Spatial Resonance Rings</p>
+<label>
+<span>Coherence <strong id="coherenceValue">0%</strong></span>
+<input id="coherence" max="100" min="0" step="1" type="range" value="0"/>
+</label>
+<label>
+<span>Decoherence <strong id="decoherenceValue">0%</strong></span>
+<input id="decoherence" max="100" min="0" step="1" type="range" value="0"/>
+</label>
+<p>Coherence aligns harmonic and spatial motion; Decoherence introduces independent evolution. Both controls can coexist. Currently active on Synth only.</p>
+</div>
+</details></div><div class="db-control-column" data-column="2"><details class="panel db-module db-group-motion" open=""><summary>WAVE FUSION · MOTION</summary><div class="db-module-content"><label>
+<span>
+    Wave Fusion
+    <strong id="waveFusionValue">50%</strong>
+</span>
+<input id="waveFusion" max="100" min="0" step="1" type="range" value="50"/>
+</label><label>
+<span>Origin</span>
+<select id="origin">
+<option selected="" value="pure">Pure</option>
+<option value="vintage">Vintage</option>
+<option value="dream">Dream</option>
+<option value="glass">Glass</option>
+<option value="hollow">Hollow</option>
+<option value="ancient">Ancient</option>
+<option value="cosmic">Cosmic</option>
+</select>
+</label><label>
+<span>Morph Curve</span>
+<select id="waveFusionCurve">
+<option value="linear">Linear</option>
+<option selected="" value="smooth">Smooth</option>
+<option value="deep">Deep</option>
+<option value="bright">Bright</option>
+</select>
+</label><label class="checkbox-row">
+<input id="dreamMorphMotion" type="checkbox"/>
+  Dream Morph Motion
+</label><label>
+<span>Voice Spread <strong id="voiceSpreadValue">0%</strong></span>
+<input id="voiceSpread" max="100" min="0" step="1" type="range" value="0"/>
+</label><label class="checkbox-row">
+<input checked="" id="deepDreamOrbit" type="checkbox"/>
+  Deep Dream Orbit
+</label><label>
+<span>Drift <strong id="driftValue">0</strong></span>
+<input id="drift" max="100" min="0" step="1" type="range" value="0"/>
+</label><label>
+<span>Stereo Width <strong id="stereoWidthValue">0%</strong></span>
+<input id="stereoWidth" max="100" min="0" step="1" type="range" value="0"/>
+</label></div></details><details class="panel fm-resonance-panel db-module" open="">
+<summary>FM Resonance</summary>
+<div class="fm-resonance-content">
+<p>Independent Frequency Modulation</p>
+<!-- FM Resonance — Amount Control -->
+<label>
+<span>
+      FM Amount
+      <strong id="fmAmountValue">0%</strong>
+</span>
+<input id="fmAmount" max="100" min="0" step="1" type="range" value="0"/>
+</label>
+<!-- FM Resonance — Ratio Control -->
+<label>
+<span>
+    FM Ratio
+    <strong id="fmRatioValue">3.5</strong>
+</span>
+<input id="fmRatio" max="12" min="0.5" step="0.1" type="range" value="3.5"/>
+</label>
+<!-- FM Resonance — Attack Control -->
+<label>
+<span>
+    FM Attack
+    <strong id="fmAttackValue">0.01 s</strong>
+</span>
+<input id="fmAttack" max="4" min="0.01" step="0.01" type="range" value="0.01"/>
+</label>
+<!-- FM Resonance — Decay Control -->
+<label>
+<span>
+    FM Decay
+    <strong id="fmDecayValue">0.80 s</strong>
+</span>
+<input id="fmDecay" max="5" min="0.01" step="0.01" type="range" value="0.80"/>
+</label>
+<!-- FM Resonance — Sustain Control -->
+<label>
+<span>
+    FM Sustain
+    <strong id="fmSustainValue">0%</strong>
+</span>
+<input id="fmSustain" max="1" min="0" step="0.01" type="range" value="0"/>
+</label>
+<!-- FM Resonance — Release Control -->
+<label>
+<span>
+    FM Release
+    <strong id="fmReleaseValue">0.30 s</strong>
+</span>
+<input id="fmRelease" max="5" min="0.01" step="0.01" type="range" value="0.30"/>
+</label>
+</div>
+</details><details class="panel db-module db-module-filter" open=""><summary>FILTER</summary><div class="db-module-content">
+<label>
           Filter Type
           <select id="filterType">
-            <option value="lowpass">Low Pass</option>
-            <option value="highpass">High Pass</option>
-          </select>
-        </label>
-
-        <label>
-          <span>Cutoff <strong id="cutoffValue">4000 Hz</strong></span>
-          <input id="cutoff" type="range" min="80" max="12000" step="1" value="4000">
-        </label>
-
-        <label>
-          <span>Resonance <strong id="resonanceValue">Q 1.0</strong></span>
-          <input id="resonance" type="range" min="0" max="20" step="0.1" value="1">
-        </label>
-      </div>
-
-      <div class="panel">
-        <h2>Dream Wave</h2>
-
-        <label>
-          <span>LFO Rate <strong id="lfoRateValue">2.0 Hz</strong></span>
-          <input id="lfoRate" type="range" min="0.1" max="12" step="0.1" value="2">
-        </label>
-
-        <label>
-          <span>LFO Amount <strong id="lfoAmountValue">0</strong></span>
-          <input id="lfoAmount" type="range" min="0" max="3000" step="1" value="0">
-        </label>
-
-        <label>
+<option value="lowpass">Low Pass</option>
+<option value="highpass">High Pass</option>
+</select>
+</label>
+<label>
+<span>Cutoff <strong id="cutoffValue">4000 Hz</strong></span>
+<input id="cutoff" max="12000" min="80" step="1" type="range" value="4000"/>
+</label>
+<label>
+<span>Resonance <strong id="resonanceValue">Q 1.0</strong></span>
+<input id="resonance" max="20" min="0" step="0.1" type="range" value="1"/>
+</label>
+</div></details></div><div class="db-control-column" data-column="3"><details class="panel polynomial-ring-panel db-module" id="polynomialRingPanel" open="">
+<summary>Polynomial Rings · Krull Dimension</summary>
+<div class="polynomial-ring-content">
+<p class="polynomial-ring-intro">Sculpt the harmonics of a dream. Real polynomial waveshaping meets multivariate oscillator interactions.</p>
+<label class="checkbox-row">
+<input id="polynomialRingEnabled" type="checkbox"/>
+      Enable Polynomial Rings
+    </label>
+<label>
+<span>Ring Amount <strong id="polynomialRingAmountValue">35%</strong></span>
+<input id="polynomialRingAmount" max="100" min="0" step="1" type="range" value="35"/>
+</label>
+<label>
+<span>Polynomial Degree <strong id="polynomialRingDegreeValue">3</strong></span>
+<input id="polynomialRingDegree" max="6" min="2" step="1" type="range" value="3"/>
+</label>
+<label>
+<span>Harmonic Character</span>
+<select id="polynomialRingCharacter">
+<option selected="" value="hybrid">Hybrid · even + odd</option>
+<option value="even">Even · crystalline / octave</option>
+<option value="odd">Odd · hollow / biting</option>
+</select>
+</label>
+<label>
+<span>Krull Dimension <strong id="krullDimensionValue">dim 1</strong></span>
+<select id="krullDimension">
+<option value="0">0 · ℝ (no signal transform)</option>
+<option selected="" value="1">1 · ℝ[x₁] · Osc A</option>
+<option value="2">2 · ℝ[x₁,x₂] · A × B</option>
+<option value="3">3 · ℝ[x₁,x₂,x₃] · A × B × Sub</option>
+</select>
+</label>
+<p aria-live="polite" class="polynomial-ring-status" id="polynomialRingStatus">Bypassed — original Synth sound preserved.</p>
+<p class="polynomial-ring-note">Synth only. Degree controls harmonic order; Dimension adds audio-rate polynomial variables. Try 30–45% with a held note, then move through dimensions 1→3. Higher dimensions are not automatically louder or better.</p>
+</div>
+</details><details class="panel db-module db-group-textures"><summary>SUB · LIVING TEXTURES</summary><div class="db-module-content"><label>
+<span>Sub Waveform</span>
+<select id="subWaveform">
+<option value="sine">Sine</option>
+<option value="triangle">Triangle</option>
+<option value="square">Square</option>
+</select>
+</label><label>
+<span>Sub Level <strong id="subLevelValue">0%</strong></span>
+<input id="subLevel" max="100" min="0" step="1" type="range" value="0"/>
+</label><label>
+<span>Texture Type</span>
+<select id="noiseType">
+<option value="white">White</option>
+<option value="dark">Dark Void</option>
+<option value="air">Air</option>
+<option value="dust">Stardust</option>
+<option value="machine">Ancient Machine</option>
+<option value="cosmic">Cosmic</option>
+</select>
+</label><label>
+<span>Noise Layer <strong id="noiseAmountValue">0%</strong></span>
+<input id="noiseAmount" max="100" min="0" step="1" type="range" value="0"/>
+</label></div></details><details class="panel db-module db-module-dream-wave"><summary>DREAM WAVE</summary><div class="db-module-content">
+<label>
+<span>LFO Rate <strong id="lfoRateValue">2.0 Hz</strong></span>
+<input id="lfoRate" max="12" min="0.1" step="0.1" type="range" value="2"/>
+</label>
+<label>
+<span>LFO Amount <strong id="lfoAmountValue">0</strong></span>
+<input id="lfoAmount" max="3000" min="0" step="1" type="range" value="0"/>
+</label>
+<label>
           LFO Destination
           <select id="lfoDestination">
-            <option value="filter">Filter Cutoff</option>
-            <option value="pitch">Pitch</option>
-            <option value="volume">Volume</option>
-          </select>
-        </label>
-
-      </div>
-
-      <div class="panel">
-        <h2>Space</h2>
-
-        <label>
-          <span>Reverb Mix <strong id="reverbMixValue">25%</strong></span>
-          <input id="reverbMix" type="range" min="0" max="1" step="0.01" value="0.25">
-        </label>
-
-        <label>
-          <span>Reverb Decay <strong id="reverbDecayValue">3.0 s</strong></span>
-          <input id="reverbDecay" type="range" min="0.5" max="8" step="0.1" value="3">
-        </label>
-
-        <label>
-          <span>Delay Mix <strong id="delayMixValue">55%</strong></span>
-          <input id="delayMix" type="range" min="0" max="1" step="0.01" value="0.55">
-        </label>
-
-        <label>
-          <span>Delay Time <strong id="delayTimeValue">550 ms</strong></span>
-          <input id="delayTime" type="range" min="0.05" max="1.5" step="0.01" value="0.55">
-        </label>
-
-        <label>
-          <span>Feedback <strong id="delayFeedbackValue">55%</strong></span>
-          <input id="delayFeedback" type="range" min="0" max="0.85" step="0.01" value="0.55">
-        </label>
-      </div>
-
-<div class="panel">
-  <h2>Dream Arpeggiator</h2>
-
-  <label class="checkbox-row">
-    <input type="checkbox" id="dreamArpEnabled">
+<option value="filter">Filter Cutoff</option>
+<option value="pitch">Pitch</option>
+<option value="volume">Volume</option>
+</select>
+</label>
+</div></details></div><div class="db-control-column" data-column="4"><details class="panel db-module db-module-space"><summary>SPACE</summary><div class="db-module-content">
+<label>
+<span>Reverb Mix <strong id="reverbMixValue">25%</strong></span>
+<input id="reverbMix" max="1" min="0" step="0.01" type="range" value="0.25"/>
+</label>
+<label>
+<span>Reverb Decay <strong id="reverbDecayValue">3.0 s</strong></span>
+<input id="reverbDecay" max="8" min="0.5" step="0.1" type="range" value="3"/>
+</label>
+<label>
+<span>Delay Mix <strong id="delayMixValue">55%</strong></span>
+<input id="delayMix" max="1" min="0" step="0.01" type="range" value="0.55"/>
+</label>
+<label>
+<span>Delay Time <strong id="delayTimeValue">550 ms</strong></span>
+<input id="delayTime" max="1.5" min="0.05" step="0.01" type="range" value="0.55"/>
+</label>
+<label>
+<span>Feedback <strong id="delayFeedbackValue">55%</strong></span>
+<input id="delayFeedback" max="0.85" min="0" step="0.01" type="range" value="0.55"/>
+</label>
+</div></details><details class="panel db-module db-module-dream-arpeggiator" open=""><summary>DREAM ARPEGGIATOR</summary><div class="db-module-content">
+<label class="checkbox-row">
+<input id="dreamArpEnabled" type="checkbox"/>
     Dream Arpeggiator
   </label>
-
 <label class="checkbox-row">
-  <input type="checkbox" id="arpLatch">
+<input id="arpLatch" type="checkbox"/>
   Latch
 </label>
-  
-  <label>
-    <span>Tempo <strong id="arpTempoValue">100 BPM</strong></span>
-    <input id="arpTempo" type="range" min="40" max="220" step="1" value="100">
-  </label>
-  <label>
-    <span>Rate <strong id="arpRateValue">1/8</strong></span>
-    <input
-      id="arpRate"
-      type="range"
-      min="1"
-      max="4"
-      step="1"
-      value="2">
-  </label>
-
 <label>
-  <span>Gate <strong id="arpGateValue">70%</strong></span>
-  <input
-    id="arpGate"
-    type="range"
-    min="10"
-    max="100"
-    step="1"
-    value="70">
+<span>Tempo <strong id="arpTempoValue">100 BPM</strong></span>
+<input id="arpTempo" max="220" min="40" step="1" type="range" value="100"/>
 </label>
-  
-  <label>
+<label>
+<span>Rate <strong id="arpRateValue">1/8</strong></span>
+<input id="arpRate" max="4" min="1" step="1" type="range" value="2"/>
+</label>
+<label>
+<span>Gate <strong id="arpGateValue">70%</strong></span>
+<input id="arpGate" max="100" min="10" step="1" type="range" value="70"/>
+</label>
+<label>
     Mode
     <select id="arpMode">
-  <option value="up" selected>Up</option>
-  <option value="down">Down</option>
-  <option value="updown">Up / Down</option>
-  <option value="random">Random</option>
-  <option value="asPlayed">As Played</option>
+<option selected="" value="up">Up</option>
+<option value="down">Down</option>
+<option value="updown">Up / Down</option>
+<option value="random">Random</option>
+<option value="asPlayed">As Played</option>
 </select>
-  </label>
-</div>
-      
-      <div class="panel">
-        <h2>Master</h2>
-
+</label>
+</div></details><details class="panel db-module db-module-master" open=""><summary>MASTER</summary><div class="db-module-content">
 <label class="checkbox-row">
-  <input type="checkbox" id="glideEnabled">
+<input id="glideEnabled" type="checkbox"/>
   Portamento / Glide
 </label>
-
 <label>
-  <span>Glide Time <strong id="glideTimeValue">0.12s</strong></span>
-  <input
-    id="glideTime"
-    type="range"
-    min="0.01"
-    max="1.5"
-    step="0.01"
-    value="0.12">
+<span>Glide Time <strong id="glideTimeValue">0.12s</strong></span>
+<input id="glideTime" max="1.5" min="0.01" step="0.01" type="range" value="0.12"/>
 </label>
-        
-        <label>
-          <span>Master Volume <strong id="masterVolumeValue">25%</strong></span>
-          <input id="masterVolume" type="range" min="0" max="1" step="0.01" value="0.25">
-        </label>
-
 <label>
-    <span>Presence <strong id="presenceValue">0%</strong></span>
-    <input
-        id="presence"
-        type="range"
-        min="0"
-        max="100"
-        step="1"
-        value="0">
+<span>Master Volume <strong id="masterVolumeValue">25%</strong></span>
+<input id="masterVolume" max="1" min="0" step="0.01" type="range" value="0.25"/>
 </label>
+<label>
+<span>Presence <strong id="presenceValue">0%</strong></span>
+<input id="presence" max="100" min="0" step="1" type="range" value="0"/>
+</label>
+</div></details></div></section>
+<section aria-label="External MIDI keyboard" class="midi-connect-panel" id="dbMidiPanel">
+<h3>🎹 MIDI Controller · MPK mini</h3>
+<div>
+<button id="midiEnable" type="button">Enable MIDI</button>
+<label>Input <select id="midiDevice"><option value="">Select MIDI input</option></select></label>
+<label>Channel <select id="midiChannel"><option value="all">All</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option></select></label>
+<button id="midiPanic" type="button">Release MIDI Notes</button>
 </div>
+<p id="midiStatus" role="status">MIDI disabled — connect a controller and select Enable MIDI.</p>
+<small>Keys and sustain pedal (CC64) supported. Pads sending MIDI notes also play notes. Browser support varies; USB MIDI on Android is not guaranteed.</small>
 </section>
-    
 <section class="octave-controls">
-  <button id="octaveDown" class="octave-btn">◀ OCT</button>
-
-  <span id="octaveDisplay">
+<button class="octave-btn" id="octaveDown">◀ OCT</button>
+<span id="octaveDisplay">
     Shift: 0
   </span>
-
-  <button id="octaveUp" class="octave-btn">OCT ▶</button>
+<button class="octave-btn" id="octaveUp">OCT ▶</button>
 </section>
-    
-    <section class="keyboard">
-
-  <!-- Octave 3 -->
-  <button class="key" data-note="130.81">C3</button>
-  <button class="key black-key" data-note="138.59">C#3</button>
-  <button class="key" data-note="146.83">D3</button>
-  <button class="key black-key" data-note="155.56">D#3</button>
-  <button class="key" data-note="164.81">E3</button>
-  <button class="key" data-note="174.61">F3</button>
-  <button class="key black-key" data-note="185.00">F#3</button>
-  <button class="key" data-note="196.00">G3</button>
-  <button class="key black-key" data-note="207.65">G#3</button>
-  <button class="key" data-note="220.00">A3</button>
-  <button class="key black-key" data-note="233.08">A#3</button>
-  <button class="key" data-note="246.94">B3</button>
-
-  <!-- Octave 4 -->
-  <button class="key" data-note="261.63">C4</button>
-  <button class="key black-key" data-note="277.18">C#4</button>
-  <button class="key" data-note="293.66">D4</button>
-  <button class="key black-key" data-note="311.13">D#4</button>
-  <button class="key" data-note="329.63">E4</button>
-  <button class="key" data-note="349.23">F4</button>
-  <button class="key black-key" data-note="369.99">F#4</button>
-  <button class="key" data-note="392.00">G4</button>
-  <button class="key black-key" data-note="415.30">G#4</button>
-  <button class="key" data-note="440.00">A4</button>
-  <button class="key black-key" data-note="466.16">A#4</button>
-  <button class="key" data-note="493.88">B4</button>
-
-  <!-- Octave 5 -->
-  <button class="key" data-note="523.25">C5</button>
-  <button class="key black-key" data-note="554.37">C#5</button>
-  <button class="key" data-note="587.33">D5</button>
-  <button class="key black-key" data-note="622.25">D#5</button>
-  <button class="key" data-note="659.25">E5</button>
-  <button class="key" data-note="698.46">F5</button>
-  <button class="key black-key" data-note="739.99">F#5</button>
-  <button class="key" data-note="783.99">G5</button>
-  <button class="key black-key" data-note="830.61">G#5</button>
-  <button class="key" data-note="880.00">A5</button>
-  <button class="key black-key" data-note="932.33">A#5</button>
-  <button class="key" data-note="987.77">B5</button>
-
+<div class="db-keyboard-title"><span class="db-eyebrow">05 / PERFORMANCE</span><h2>Play the resonance</h2><p>Touch the keys or connect your Akai MPK mini through USB-C OTG.</p></div><section aria-label="Three octave touch keyboard" class="keyboard">
+<!-- Octave 3 -->
+<button class="key" data-note="130.81">C3</button>
+<button class="key black-key" data-note="138.59">C#3</button>
+<button class="key" data-note="146.83">D3</button>
+<button class="key black-key" data-note="155.56">D#3</button>
+<button class="key" data-note="164.81">E3</button>
+<button class="key" data-note="174.61">F3</button>
+<button class="key black-key" data-note="185.00">F#3</button>
+<button class="key" data-note="196.00">G3</button>
+<button class="key black-key" data-note="207.65">G#3</button>
+<button class="key" data-note="220.00">A3</button>
+<button class="key black-key" data-note="233.08">A#3</button>
+<button class="key" data-note="246.94">B3</button>
+<!-- Octave 4 -->
+<button class="key" data-note="261.63">C4</button>
+<button class="key black-key" data-note="277.18">C#4</button>
+<button class="key" data-note="293.66">D4</button>
+<button class="key black-key" data-note="311.13">D#4</button>
+<button class="key" data-note="329.63">E4</button>
+<button class="key" data-note="349.23">F4</button>
+<button class="key black-key" data-note="369.99">F#4</button>
+<button class="key" data-note="392.00">G4</button>
+<button class="key black-key" data-note="415.30">G#4</button>
+<button class="key" data-note="440.00">A4</button>
+<button class="key black-key" data-note="466.16">A#4</button>
+<button class="key" data-note="493.88">B4</button>
+<!-- Octave 5 -->
+<button class="key" data-note="523.25">C5</button>
+<button class="key black-key" data-note="554.37">C#5</button>
+<button class="key" data-note="587.33">D5</button>
+<button class="key black-key" data-note="622.25">D#5</button>
+<button class="key" data-note="659.25">E5</button>
+<button class="key" data-note="698.46">F5</button>
+<button class="key black-key" data-note="739.99">F#5</button>
+<button class="key" data-note="783.99">G5</button>
+<button class="key black-key" data-note="830.61">G#5</button>
+<button class="key" data-note="880.00">A5</button>
+<button class="key black-key" data-note="932.33">A#5</button>
+<button class="key" data-note="987.77">B5</button>
 </section>
-  </main>
-
-<div id="presetBrowserOverlay" class="preset-browser-overlay hidden">
-  <div class="preset-browser">
-    <div class="preset-browser-header">
-      <h2>Presets</h2>
-      <button id="closePresetBrowser" class="preset-browser-close">×</button>
-    </div>
-
-    <div class="preset-manager" aria-label="Save and manage personal patches">
-      <label class="preset-manager-name" for="presetNameInput">Sound name</label>
-      <input id="presetNameInput" class="preset-manager-input" type="text"
-        maxlength="75" autocomplete="off" placeholder="Name your sound..." />
-      <div class="preset-manager-actions">
-        <button id="saveNamedPreset" type="button">Save Current Sound</button>
-        <button id="renameNamedPreset" type="button">Rename Selected</button>
-        <button id="deleteNamedPreset" type="button">Delete Selected</button>
-        <button id="exportNamedPresets" type="button">Export Backup</button>
-        <label class="preset-import-btn" for="importNamedPresets">Import Backup</label>
-        <input id="importNamedPresets" type="file" accept=".json,application/json" hidden />
-      </div>
-      <p id="presetManagerMessage" class="preset-message" aria-live="polite">Saved sounds stay in this browser. Export a backup to keep them safe.</p>
-    </div>
-
-    <div class="preset-browser-tabs">
-    <button class="preset-browser-tab active-bank" data-bank="signature">Signature</button>
-    <button class="preset-browser-tab" data-bank="keys">Keys</button>
-    <button class="preset-browser-tab" data-bank="pads">Pads</button>
-    <button class="preset-browser-tab" data-bank="leads">Leads</button>
-    <button class="preset-browser-tab" data-bank="bass">Bass</button>
-    <button class="preset-browser-tab" data-bank="choir">Choir</button>
-    <button class="preset-browser-tab" data-bank="textures">Textures</button>
-    <button class="preset-browser-tab" data-bank="arpeggiator">Arpeggiator</button>
-    <button class="preset-browser-tab" data-bank="atlas">✦ Dream Atlas</button>
-    <button class="preset-browser-tab" data-bank="user">My Presets</button>
-      </div>
-    
-    <div id="dreamAtlasFilters" class="dream-atlas-filters" hidden>
-      <p class="dream-atlas-intro">13 dream environments · 104 new sounds. Explore a realm or browse everything.</p>
-      <label for="dreamAtlasRealm">Dream environment
-        <select id="dreamAtlasRealm">
-          <option value="all">All 13 Realms</option>
-        <option value="lucidStates">Lucid States</option>
-        <option value="cityscapes">Cityscapes</option>
-        <option value="houseOfMemories">The House of Memories</option>
-        <option value="neverEndingFields">Never-Ending Fields</option>
-        <option value="castlesAndPonds">Castles and Ponds</option>
-        <option value="dreamMountainPeaks">Dream Mountain Peaks</option>
-        <option value="secretSparkleCaverns">Secret Sparkle Caverns</option>
-        <option value="mirrorWalking">Mirror Walking</option>
-        <option value="cozyDreams">Cozy Dreams</option>
-        <option value="infiniteCarRide">Infinite Car Ride</option>
-        <option value="fallingInReverse">Falling in Reverse</option>
-        <option value="timeSkip">Time Skip</option>
-        <option value="sensualExperience">Sensual Experience</option>
-        </select>
-      </label>
-      <label for="dreamAtlasInstrument">Instrument
-        <select id="dreamAtlasInstrument">
-          <option value="all">All Instruments</option>
-          <option value="pads">Pads</option>
-          <option value="keys">Keys</option>
-          <option value="leads">Leads</option>
-          <option value="bass">Bass</option>
-          <option value="textures">Textures</option>
-          <option value="arpeggiator">Arpeggiator</option>
-        </select>
-      </label>
-      <p id="dreamAtlasRealmTheme" class="dream-atlas-theme" aria-live="polite">Choose a realm to enter its atmosphere.</p>
-      <p class="dream-atlas-tip">Suggested octave shifts and sound descriptions appear after selecting a sound. For Arpeggiator presets, hold one or more keys to start; rates are 1/4, 1/8, 1/16, and 1/32.</p>
-    </div>
-    <div id="presetBrowserList" class="preset-browser-list"></div>
-  </div>
+<footer class="db-footer"><span>✧ DREAM BINDER</span><span>RESONANT DOORWAYS · CREATIVE SYNTHESIS</span><span>LOCAL-FIRST AUDIO / WEB MIDI</span></footer></main>
+<div class="preset-browser-overlay hidden" id="presetBrowserOverlay">
+<div class="preset-browser">
+<div class="preset-browser-header">
+<h2>Presets</h2>
+<button class="preset-browser-close" id="closePresetBrowser">×</button>
 </div>
-
-  <script src="app.js"></script>
-  </body>
+<div aria-label="Save and manage personal patches" class="preset-manager">
+<label class="preset-manager-name" for="presetNameInput">Sound name</label>
+<input autocomplete="off" class="preset-manager-input" id="presetNameInput" maxlength="75" placeholder="Name your sound..." type="text"/>
+<div class="preset-manager-actions">
+<button id="saveNamedPreset" type="button">Save Current Sound</button>
+<button id="renameNamedPreset" type="button">Rename Selected</button>
+<button id="deleteNamedPreset" type="button">Delete Selected</button>
+<button id="exportNamedPresets" type="button">Export Backup</button>
+<label class="preset-import-btn" for="importNamedPresets">Import Backup</label>
+<input accept=".json,application/json" hidden="" id="importNamedPresets" type="file"/>
+</div>
+<p aria-live="polite" class="preset-message" id="presetManagerMessage">Saved sounds stay in this browser. Export a backup to keep them safe.</p>
+</div>
+<div class="preset-browser-tabs">
+<button class="preset-browser-tab active-bank" data-bank="signature">Signature</button>
+<button class="preset-browser-tab" data-bank="keys">Keys</button>
+<button class="preset-browser-tab" data-bank="pads">Pads</button>
+<button class="preset-browser-tab" data-bank="leads">Leads</button>
+<button class="preset-browser-tab" data-bank="bass">Bass</button>
+<button class="preset-browser-tab" data-bank="choir">Choir</button>
+<button class="preset-browser-tab" data-bank="textures">Textures</button>
+<button class="preset-browser-tab" data-bank="arpeggiator">Arpeggiator</button>
+<button class="preset-browser-tab" data-bank="atlas">✦ Dream Atlas</button>
+<button class="preset-browser-tab" data-bank="user">My Presets</button>
+</div>
+<div class="dream-atlas-filters" hidden="" id="dreamAtlasFilters">
+<p class="dream-atlas-intro">13 dream environments · 104 new sounds. Explore a realm or browse everything.</p><div aria-label="Illustrated Dream Atlas realms" class="db-realm-gallery" id="dbRealmGallery"></div>
+<label for="dreamAtlasRealm">Dream environment
+        <select id="dreamAtlasRealm">
+<option value="all">All 13 Realms</option>
+<option value="lucidStates">Lucid States</option>
+<option value="cityscapes">Cityscapes</option>
+<option value="houseOfMemories">The House of Memories</option>
+<option value="neverEndingFields">Never-Ending Fields</option>
+<option value="castlesAndPonds">Castles and Ponds</option>
+<option value="dreamMountainPeaks">Dream Mountain Peaks</option>
+<option value="secretSparkleCaverns">Secret Sparkle Caverns</option>
+<option value="mirrorWalking">Mirror Walking</option>
+<option value="cozyDreams">Cozy Dreams</option>
+<option value="infiniteCarRide">Infinite Car Ride</option>
+<option value="fallingInReverse">Falling in Reverse</option>
+<option value="timeSkip">Time Skip</option>
+<option value="sensualExperience">Sensual Experience</option>
+</select>
+</label>
+<label for="dreamAtlasInstrument">Instrument
+        <select id="dreamAtlasInstrument">
+<option value="all">All Instruments</option>
+<option value="pads">Pads</option>
+<option value="keys">Keys</option>
+<option value="leads">Leads</option>
+<option value="bass">Bass</option>
+<option value="textures">Textures</option>
+<option value="arpeggiator">Arpeggiator</option>
+</select>
+</label>
+<p aria-live="polite" class="dream-atlas-theme" id="dreamAtlasRealmTheme">Choose a realm to enter its atmosphere.</p>
+<p class="dream-atlas-tip">Suggested octave shifts and sound descriptions appear after selecting a sound. For Arpeggiator presets, hold one or more keys to start; rates are 1/4, 1/8, 1/16, and 1/32.</p>
+</div>
+<div class="preset-browser-list" id="presetBrowserList"></div>
+</div>
+</div>
+<script src="app.js"></script>
+</body>
 </html>
