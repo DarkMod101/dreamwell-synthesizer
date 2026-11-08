@@ -364,6 +364,309 @@ function updateActiveResonantFields() {
     });
 }
 
+
+// ================================================================
+// DREAM BINDER — POLYNOMIAL RINGS + KRULL DIMENSION (SYNTH ONLY)
+// ================================================================
+// Mathematical model: A_d = R[x1, ..., xd] for d = 0..3, where
+// R is the real coefficient field, hence Krull dimension(A_d) = d.
+// Each indeterminate receives a real oscillator signal:
+//   x1 = oscillator A; x2 = oscillator B; x3 = sub oscillator.
+// Polynomial degree bounds the highest order audio product.
+// This is an artistic evaluation of a genuine multivariate polynomial,
+// not a real-time computation of prime ideals / Krull dimension.
+//
+// d=0 selects R (constant polynomials). That setting has no audio wet
+// path and is an intentional neutral bypass.
+// Existing presets lack these fields; they load with ringEnabled=false.
+// The new DSP graph is allocated ONLY when enabled, nonzero & d > 0.
+// Piano, Choir, existing oscillator dry paths and other DSP are unchanged.
+// ================================================================
+const polynomialRingUI = {
+    enabled: document.getElementById("polynomialRingEnabled"),
+    amount: document.getElementById("polynomialRingAmount"),
+    amountValue: document.getElementById("polynomialRingAmountValue"),
+    degree: document.getElementById("polynomialRingDegree"),
+    degreeValue: document.getElementById("polynomialRingDegreeValue"),
+    character: document.getElementById("polynomialRingCharacter"),
+    dimension: document.getElementById("krullDimension"),
+    dimensionValue: document.getElementById("krullDimensionValue"),
+    status: document.getElementById("polynomialRingStatus")
+};
+
+const polynomialRingState = {
+    enabled: false,
+    amount: 35,
+    degree: 3,
+    character: "hybrid",
+    dimension: 1
+};
+
+function boundPolynomialNumber(value, low, high, fallback) {
+    const n = Number(value);
+    return Number.isFinite(n) ? Math.max(low, Math.min(high, n)) : fallback;
+}
+
+function setPolynomialRingState(values = {}) {
+    polynomialRingState.enabled = values.enabled === true;
+    polynomialRingState.amount = boundPolynomialNumber(values.amount, 0, 100, 35);
+    polynomialRingState.degree = Math.round(boundPolynomialNumber(values.degree, 2, 6, 3));
+    polynomialRingState.dimension = Math.round(boundPolynomialNumber(values.dimension, 0, 3, 1));
+    polynomialRingState.character = ["even", "odd", "hybrid"].includes(values.character)
+        ? values.character : "hybrid";
+    // There is no non-linear odd polynomial of degree <= 2.
+    if (polynomialRingState.character === "odd" && polynomialRingState.degree < 3) {
+        polynomialRingState.degree = 3;
+    }
+    syncPolynomialRingUI();
+    updateActivePolynomialRings();
+}
+
+function polynomialRingIsActive() {
+    return polynomialRingState.enabled &&
+        polynomialRingState.amount > 0 &&
+        polynomialRingState.dimension > 0;
+}
+
+function syncPolynomialRingUI() {
+    const s = polynomialRingState;
+    if (polynomialRingUI.enabled) polynomialRingUI.enabled.checked = s.enabled;
+    if (polynomialRingUI.amount) polynomialRingUI.amount.value = s.amount;
+    if (polynomialRingUI.amountValue) polynomialRingUI.amountValue.textContent = `${Math.round(s.amount)}%`;
+    if (polynomialRingUI.degree) polynomialRingUI.degree.value = s.degree;
+    if (polynomialRingUI.degreeValue) polynomialRingUI.degreeValue.textContent = `${s.degree}`;
+    if (polynomialRingUI.character) polynomialRingUI.character.value = s.character;
+    if (polynomialRingUI.dimension) polynomialRingUI.dimension.value = s.dimension;
+    if (polynomialRingUI.dimensionValue) polynomialRingUI.dimensionValue.textContent = `dim ${s.dimension}`;
+    if (polynomialRingUI.status) polynomialRingUI.status.textContent =
+        s.enabled && s.dimension === 0 ? "Dimension 0 is the real coefficient field: no harmonic transformation." :
+        !s.enabled ? "Bypassed — original Synth sound preserved." :
+        s.amount === 0 ? "Amount is zero — original Synth sound preserved." :
+        `Active · degree ${s.degree} · dimension ${s.dimension} · ${s.character} harmonics`;
+}
+
+// Chebyshev polynomials T_n are ordinary real-coefficient polynomials.
+// A sine source makes T2, T3, ... produce strongly identifiable harmonics.
+// The curve is bounded; 4x oversampling reduces (but cannot eliminate)
+// non-linear aliasing for high-frequency and non-sine source waveforms.
+function buildPolynomialChebyshevCurve(degree, character) {
+    const curve = new Float32Array(2049);
+    const coefficients = {2: 1.0, 3: 0.82, 4: 0.60, 5: 0.42, 6: 0.30};
+    let weightSum = 0;
+    for (let n = 2; n <= degree; n++) {
+        if (character === "even" && n % 2 !== 0) continue;
+        if (character === "odd" && n % 2 === 0) continue;
+        weightSum += coefficients[n];
+    }
+    if (weightSum === 0) weightSum = 1;
+
+    for (let i = 0; i < curve.length; i++) {
+        const x = 2 * i / (curve.length - 1) - 1;
+        let t0 = 1;  // T0(x)
+        let t1 = x;  // T1(x)
+        let total = 0;
+        for (let n = 2; n <= degree; n++) {
+            const tn = 2 * x * t1 - t0;
+            if (character === "hybrid" ||
+                (character === "even" && n % 2 === 0) ||
+                (character === "odd" && n % 2 !== 0)) {
+                total += coefficients[n] * tn;
+            }
+            t0 = t1;
+            t1 = tn;
+        }
+        curve[i] = Math.max(-1, Math.min(1, total / weightSum));
+    }
+    return curve;
+}
+
+// A separate low-CPU audio graph adds polynomial terms to the pre-filter
+// oscillator mix. It NEVER reroutes the established dry oscillator output.
+function createPolynomialRingVoice(ctx, oscA, oscB, subOsc, destinationFilter) {
+    const s = polynomialRingState;
+    const shapers = [ctx.createWaveShaper(), ctx.createWaveShaper()];
+    const shapeGains = [ctx.createGain(), ctx.createGain()];
+    const unaryLevel = ctx.createGain();
+    const productAB = ctx.createGain();           // x1*x2, total degree 2
+    const productABLevel = ctx.createGain();
+    const productASub = ctx.createGain();         // x1*x3, total degree 2
+    const productASubLevel = ctx.createGain();
+    const productABSub = ctx.createGain();        // x1*x2*x3, degree 3
+    const productABSubLevel = ctx.createGain();
+    const sum = ctx.createGain();
+    const removeDC = ctx.createBiquadFilter();
+    const tameHighs = ctx.createBiquadFilter();
+    const wetLevel = ctx.createGain();
+
+    const curve = buildPolynomialChebyshevCurve(s.degree, s.character);
+    shapers.forEach((shaper) => {
+        shaper.curve = curve.slice();
+        shaper.oversample = "4x";
+    });
+    shapeGains[0].gain.value = 1;
+    shapeGains[1].gain.value = 0;
+    unaryLevel.gain.value = 0.80;
+    productAB.gain.value = 0;
+    productASub.gain.value = 0;
+    productABSub.gain.value = 0;
+    productABLevel.gain.value = 0;
+    productASubLevel.gain.value = 0;
+    productABSubLevel.gain.value = 0;
+    wetLevel.gain.value = 0; // click-free note-on, strictly neutral when bypassed
+
+    // Unary polynomial contribution of oscillator A.
+    for (let i = 0; i < 2; i++) {
+        oscA.connect(shapers[i]);
+        shapers[i].connect(shapeGains[i]);
+        shapeGains[i].connect(unaryLevel);
+    }
+    unaryLevel.connect(sum);
+
+    // Audio-rate GainNode modulation implements multivariate monomials.
+    // Oscillator B / sub are variables, NOT separate MIDI notes.
+    oscA.connect(productAB);
+    oscB.connect(productAB.gain);
+    productAB.connect(productABLevel);
+    productABLevel.connect(sum);
+
+    oscA.connect(productASub);
+    subOsc.connect(productASub.gain);
+    productASub.connect(productASubLevel);
+    productASubLevel.connect(sum);
+
+    productAB.connect(productABSub);
+    subOsc.connect(productABSub.gain);
+    productABSub.connect(productABSubLevel);
+    productABSubLevel.connect(sum);
+
+    removeDC.type = "highpass";
+    removeDC.frequency.value = 25;
+    removeDC.Q.value = 0.707;
+    tameHighs.type = "lowpass";
+    tameHighs.frequency.value = Math.min(11000, 0.44 * ctx.sampleRate);
+    tameHighs.Q.value = 0.707;
+    sum.connect(removeDC);
+    removeDC.connect(tameHighs);
+    tameHighs.connect(wetLevel);
+    wetLevel.connect(destinationFilter);
+
+    const ownedNodes = [
+        ...shapers, ...shapeGains, unaryLevel,
+        productAB, productABLevel, productASub, productASubLevel,
+        productABSub, productABSubLevel, sum, removeDC, tameHighs, wetLevel
+    ];
+    let activeShape = 0;
+    let currentShapeKey = `${s.degree}:${s.character}`;
+    let retirementTimer = null;
+    let disposed = false;
+    let stopping = false;
+
+    function dispose() {
+        if (disposed) return;
+        disposed = true;
+        if (retirementTimer) clearTimeout(retirementTimer);
+        // Disconnect only these outgoing taps, keeping ordinary Synth audio.
+        for (const [source, target] of [
+            [oscA, shapers[0]], [oscA, shapers[1]],
+            [oscA, productAB], [oscA, productASub],
+            [oscB, productAB.gain],
+            [subOsc, productASub.gain], [subOsc, productABSub.gain]
+        ]) {
+            try { source.disconnect(target); } catch (error) { /* already disconnected */ }
+        }
+        ownedNodes.forEach(node => {
+            try { node.disconnect(); } catch (error) { /* safe cleanup */ }
+        });
+    }
+
+    const voice = {
+        get disposed() { return disposed; },
+        update() {
+            if (stopping || disposed) return;
+            const now = ctx.currentTime;
+            const active = polynomialRingIsActive();
+            const d = polynomialRingState.dimension;
+            const degree = polynomialRingState.degree;
+            const shapeKey = `${degree}:${polynomialRingState.character}`;
+            if (shapeKey !== currentShapeKey && active) {
+                const nextShape = 1 - activeShape;
+                shapers[nextShape].curve = buildPolynomialChebyshevCurve(
+                    degree, polynomialRingState.character
+                );
+                shapeGains[nextShape].gain.cancelScheduledValues(now);
+                shapeGains[activeShape].gain.cancelScheduledValues(now);
+                shapeGains[nextShape].gain.setTargetAtTime(1, now, 0.014);
+                shapeGains[activeShape].gain.setTargetAtTime(0, now, 0.014);
+                activeShape = nextShape;
+                currentShapeKey = shapeKey;
+            }
+            // Each higher dimension introduces at least one new variable.
+            productABLevel.gain.setTargetAtTime(active && d >= 2 ? 0.58 : 0, now, 0.025);
+            productASubLevel.gain.setTargetAtTime(active && d >= 3 ? 0.40 : 0, now, 0.025);
+            productABSubLevel.gain.setTargetAtTime(active && d >= 3 && degree >= 3 ? 0.45 : 0, now, 0.025);
+            const amount = active ? polynomialRingState.amount / 100 : 0;
+            const level = amount * 0.38 / (1 + 0.14 * Math.max(0, d - 1));
+            wetLevel.gain.setTargetAtTime(level, now, 0.025);
+
+            if (active) {
+                if (retirementTimer) clearTimeout(retirementTimer);
+                retirementTimer = null;
+            } else if (!retirementTimer) {
+                // Free the oversampled shapers after a brief, smooth bypass.
+                retirementTimer = setTimeout(() => {
+                    retirementTimer = null;
+                    if (!polynomialRingIsActive()) dispose();
+                }, 280);
+            }
+        },
+        stop(delaySeconds) {
+            if (stopping || disposed) return;
+            stopping = true;
+            const delay = Math.max(0, Number(delaySeconds) || 0);
+            // The parent note envelope handles the release; retire taps after it.
+            if (retirementTimer) clearTimeout(retirementTimer);
+            retirementTimer = setTimeout(dispose, Math.ceil((delay + 0.12) * 1000));
+        },
+        dispose
+    };
+    voice.update();
+    return voice;
+}
+
+function updateActivePolynomialRings() {
+    if (!audioContext) return;
+    activeNotes.forEach(note => {
+        // Strictly Synth-only: piano and choir never expose these oscillators.
+        if (!note.oscillatorA || !note.oscillatorB || !note.subOscillator || !note.filter) return;
+        if (polynomialRingIsActive() && (!note.polynomialRing || note.polynomialRing.disposed)) {
+            note.polynomialRing = createPolynomialRingVoice(
+                audioContext, note.oscillatorA, note.oscillatorB,
+                note.subOscillator, note.filter
+            );
+        } else if (note.polynomialRing) {
+            note.polynomialRing.update();
+        }
+    });
+}
+
+// Controls are live on held notes, just like FM Resonance.
+polynomialRingUI.enabled?.addEventListener("change", () => setPolynomialRingState({
+    ...polynomialRingState, enabled: polynomialRingUI.enabled.checked
+}));
+polynomialRingUI.amount?.addEventListener("input", () => setPolynomialRingState({
+    ...polynomialRingState, amount: polynomialRingUI.amount.value
+}));
+polynomialRingUI.degree?.addEventListener("input", () => setPolynomialRingState({
+    ...polynomialRingState, degree: polynomialRingUI.degree.value
+}));
+polynomialRingUI.character?.addEventListener("change", () => setPolynomialRingState({
+    ...polynomialRingState, character: polynomialRingUI.character.value
+}));
+polynomialRingUI.dimension?.addEventListener("change", () => setPolynomialRingState({
+    ...polynomialRingState, dimension: polynomialRingUI.dimension.value
+}));
+syncPolynomialRingUI();
+
 // Music Box Toy Piano — Mechanical Key Action
 let toyPianoKeyClickEnabled = false;
 let toyPianoKeyDownGain = 0.35;
@@ -2330,6 +2633,12 @@ stereoPanner.connect(reverbNode);
 stereoPanner.connect(delayDryGain);
 stereoPanner.connect(delayNode);
 
+  // Optional Synth-only polynomial stage, evaluated in parallel with the
+  // original dry oscillators. Nothing is allocated for neutral presets.
+  const polynomialRing = polynomialRingIsActive()
+      ? createPolynomialRingVoice(ctx, oscillatorA, oscillatorB, subOscillator, filter)
+      : null;
+
   oscillatorA.start();
   oscillatorB.start();
   subOscillator.start();
@@ -2342,6 +2651,7 @@ stereoPanner.connect(delayNode);
   filter,
   stereoPanner,
   noteGain,
+  polynomialRing,
   resonantField,
   lfoNodes,
   noiseSource,
@@ -2651,6 +2961,9 @@ if (note.release) {
 
   note.oscillatorA.stop(ctx.currentTime + release + 0.05);
   note.oscillatorB.stop(ctx.currentTime + release + 0.05);
+
+  // Keep the polynomial harmonics inside the standard note release tail.
+  if (note.polynomialRing) note.polynomialRing.stop(release + 0.05);
 
   if (note.resonantField) {
     note.resonantField.stop(release + 0.05);
@@ -16520,6 +16833,16 @@ function applyPresetSettings(preset) {
     updateResonantFieldDisplay();
     updateActiveResonantFields();
 
+    // Polynomial Rings / Krull Dimension: legacy factory and user presets
+    // always reset to a strict bypass, protecting approved sound design.
+    setPolynomialRingState({
+        enabled: preset.polynomialRingEnabled === true,
+        amount: preset.polynomialRingAmount ?? 35,
+        degree: preset.polynomialRingDegree ?? 3,
+        character: preset.polynomialRingCharacter ?? "hybrid",
+        dimension: preset.krullDimension ?? 1
+    });
+
 // Dream Binder — Preset FM Resonance
 currentFmAmount = Number(preset.fmAmount ?? 0);
 
@@ -17019,7 +17342,12 @@ function getCurrentPresetSettings() {
     fmSustain: currentFmSustain,
     fmRelease: currentFmRelease,
     coherence: currentCoherence,
-    decoherence: currentDecoherence,
+    decoherence: currentDecoherence,    polynomialRingEnabled: polynomialRingState.enabled,
+    polynomialRingAmount: polynomialRingState.amount,
+    polynomialRingDegree: polynomialRingState.degree,
+    polynomialRingCharacter: polynomialRingState.character,
+    krullDimension: polynomialRingState.dimension,
+
     attack: get(attackSlider, 0.05),
     decay: get(decaySlider, 0.2),
     sustain: get(sustainSlider, 0.7),
