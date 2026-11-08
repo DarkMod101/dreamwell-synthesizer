@@ -38,6 +38,20 @@
     .preset-browser-tab[data-bank="atlas"] { border-color: rgba(214, 168, 79, .7);
       color: #e7d3ff; background: rgba(58, 31, 89, .88); }
     .preset-browser-tab[data-bank="atlas"].active-bank { background: #68409d; color: #fff; }
+    /* Polynomial Ring controls: scoped to the existing panel design. */
+    .polynomial-ring-panel { border-color: rgba(210, 168, 255, .40); }
+    .polynomial-ring-panel summary { color: #e8ceff; cursor: pointer; }
+    .polynomial-ring-content { display: grid; gap: 12px; padding-top: 12px; }
+    .polynomial-ring-content label:not(.checkbox-row) { display: flex; flex-direction: column; gap: 6px; }
+    .polynomial-ring-content label span { display: flex; justify-content: space-between; gap: 10px; }
+    .polynomial-ring-content label strong { color: #e3b6ff; }
+    .polynomial-ring-content select { width: 100%; box-sizing: border-box; padding: 9px; border-radius: 8px;
+        background: #1b1228; color: #f1e2ff; border: 1px solid rgba(200, 151, 243, .45); }
+    .polynomial-ring-content .checkbox-row { display: flex; align-items: center; gap: 8px; }
+    .polynomial-ring-intro, .polynomial-ring-note, .polynomial-ring-status {
+        margin: 0; line-height: 1.5; font-size: 13px; color: #cdb9da; }
+    .polynomial-ring-status { border-left: 2px solid #b67fef; padding: 6px 10px;
+        background: rgba(115, 60, 146, .12); color: #f3dcff; }
   </style>
 </head>
 
@@ -351,6 +365,46 @@
       <input id="decoherence" type="range" min="0" max="100" step="1" value="0">
     </label>
     <p>Coherence aligns harmonic and spatial motion; Decoherence introduces independent evolution. Both controls can coexist. Currently active on Synth only.</p>
+  </div>
+</details>
+
+
+<!-- DREAM BINDER — POLYNOMIAL RINGS / KRULL DIMENSION: SYNTH ONLY -->
+<details class="panel polynomial-ring-panel" id="polynomialRingPanel">
+  <summary>Polynomial Rings · Krull Dimension</summary>
+  <div class="polynomial-ring-content">
+    <p class="polynomial-ring-intro">Sculpt the harmonics of a dream. Real polynomial waveshaping meets multivariate oscillator interactions.</p>
+    <label class="checkbox-row">
+      <input type="checkbox" id="polynomialRingEnabled">
+      Enable Polynomial Rings
+    </label>
+    <label>
+      <span>Ring Amount <strong id="polynomialRingAmountValue">35%</strong></span>
+      <input id="polynomialRingAmount" type="range" min="0" max="100" step="1" value="35">
+    </label>
+    <label>
+      <span>Polynomial Degree <strong id="polynomialRingDegreeValue">3</strong></span>
+      <input id="polynomialRingDegree" type="range" min="2" max="6" step="1" value="3">
+    </label>
+    <label>
+      <span>Harmonic Character</span>
+      <select id="polynomialRingCharacter">
+        <option value="hybrid" selected>Hybrid · even + odd</option>
+        <option value="even">Even · crystalline / octave</option>
+        <option value="odd">Odd · hollow / biting</option>
+      </select>
+    </label>
+    <label>
+      <span>Krull Dimension <strong id="krullDimensionValue">dim 1</strong></span>
+      <select id="krullDimension">
+        <option value="0">0 · ℝ (no signal transform)</option>
+        <option value="1" selected>1 · ℝ[x₁] · Osc A</option>
+        <option value="2">2 · ℝ[x₁,x₂] · A × B</option>
+        <option value="3">3 · ℝ[x₁,x₂,x₃] · A × B × Sub</option>
+      </select>
+    </label>
+    <p id="polynomialRingStatus" class="polynomial-ring-status" aria-live="polite">Bypassed — original Synth sound preserved.</p>
+    <p class="polynomial-ring-note">Synth only. Degree controls harmonic order; Dimension adds audio-rate polynomial variables. Try 30–45% with a held note, then move through dimensions 1→3. Higher dimensions are not automatically louder or better.</p>
   </div>
 </details>
 
