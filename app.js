@@ -11,6 +11,8 @@ let delayDryGain;
 let livingTexturesEnabled = true;
 let currentResonanceSource = "synth";
 let currentEngine = currentResonanceSource; // temporary compatibility bridge
+// Prepared before keyboard initialization so the optional Binding hook is safe.
+var dbHeldLayers = new Map();
 // Dream Binder — FM Resonance State
 let currentFmAmount = 0;
 // Dream Binder — FM Ratio State
@@ -3193,6 +3195,7 @@ function clearKeyHighlights() {
 }
 
 function beginInputNote(frequency) {
+    if (dbBindingPress(frequency)) return;
     const noteId = String(frequency);
 
         // Track physical key movement independently
@@ -3287,6 +3290,7 @@ function beginInputNote(frequency) {
 
 
 function endInputNote(frequency) {
+    if (dbBindingRelease(frequency)) return;
 
     const noteId = String(frequency);
 
@@ -3346,6 +3350,7 @@ function endInputNote(frequency) {
 }
 
 function updateKeyboardOctave() {
+  dbReleaseAllBindings();
   keys.forEach((key) => {
     const baseFrequency = Number(key.dataset.note);
     const shiftedFrequency =
@@ -16794,6 +16799,7 @@ startPianoWaveFusionModulation();
 
 function applyPresetSettings(preset) {
     if (!preset) return;
+    dbReleaseAllBindings();
 
     // Preset changes must reset arpeggiator state, never carry over latched
     // notes or a running timer into another sound. Switching presets stays silent.
@@ -17725,3 +17731,606 @@ lfoDestinationSelect?.addEventListener(
 renderPresetBank("signature");
 updateKeyboardOctave();
 updateValueDisplays();
+
+
+// ========================================
+// DREAM BINDER — WEB MIDI / AKAI MPK MINI
+// Browser MIDI input is opt-in and affects the existing instrument voice
+// functions only. No Piano/Choir DSP, presets or effects are rewritten.
+// ========================================
+const midiState = {
+    access: null, input: null, pressed: new Map(), deferred: new Set(),
+    sustain: false, channel: 'all'
+};
+const midiDeviceSelect = document.getElementById('midiDevice');
+const midiChannelSelect = document.getElementById('midiChannel');
+const midiStatus = document.getElementById('midiStatus');
+function midiSetStatus(message) {
+    if (midiStatus) midiStatus.textContent = message;
+}
+function midiFrequency(noteNumber) {
+    return 440 * Math.pow(2, (noteNumber - 69) / 12);
+}
+function midiKey(channel, noteNumber) { return `${channel}:${noteNumber}`; }
+function midiRelease(key) {
+    const frequency = midiState.pressed.get(key);
+    if (frequency === undefined) return;
+    midiState.pressed.delete(key);
+    midiState.deferred.delete(key);
+    endInputNote(frequency);
+}
+function midiPanic() {
+    for (const key of [...midiState.pressed.keys()]) midiRelease(key);
+    midiState.deferred.clear();
+    midiState.sustain = false;
+    // Clear an active arpeggiator only when latch isn't intentionally on.
+    if (dreamArpEnabled && !arpLatchEnabled && arpHeldNotes.size === 0) stopDreamArp();
+    midiSetStatus(midiState.input ? `Connected: ${midiState.input.name}` : 'No MIDI device selected');
+}
+function midiMessage(event) {
+    const data = event.data;
+    if (!data || data.length < 2) return;
+    const status = data[0];
+    if (status < 0x80 || status >= 0xf0) return;
+    const channel = (status & 0x0f) + 1;
+    if (midiState.channel !== 'all' && Number(midiState.channel) !== channel) return;
+    const type = status & 0xf0;
+    const note = data[1];
+    const velocity = data[2] ?? 0;
+    const key = midiKey(channel, note);
+    if (type === 0x90 && velocity > 0) {
+        // Ignore duplicate Note On until Note Off; repeated notes remain playable.
+        if (midiState.deferred.has(key)) { midiRelease(key); }
+        else if (midiState.pressed.has(key)) return;
+        const frequency = midiFrequency(note);
+        midiState.pressed.set(key, frequency);
+        beginInputNote(frequency);
+    } else if (type === 0x80 || (type === 0x90 && velocity === 0)) {
+        if (midiState.sustain) midiState.deferred.add(key);
+        else midiRelease(key);
+    } else if (type === 0xb0) {
+        if (note === 64) {
+            const wasSustained = midiState.sustain;
+            midiState.sustain = velocity >= 64;
+            if (wasSustained && !midiState.sustain) {
+                for (const heldKey of [...midiState.deferred]) midiRelease(heldKey);
+            }
+        } else if (note === 120 || note === 123) {
+            midiPanic();
+        }
+    }
+}
+function midiSelectInput(id) {
+    if (midiState.input) midiState.input.onmidimessage = null;
+    midiPanic();
+    midiState.input = null;
+    if (!midiState.access || !id) { midiSetStatus('Select a MIDI input'); return; }
+    const input = midiState.access.inputs.get(id);
+    if (!input || input.state !== 'connected') {
+        midiSetStatus('MIDI input unavailable'); return;
+    }
+    midiState.input = input;
+    input.onmidimessage = midiMessage;
+    midiSetStatus(`Connected: ${input.name} — play the keys`);
+}
+function midiRefreshInputs() {
+    if (!midiDeviceSelect || !midiState.access) return;
+    const selected = midiState.input?.id || midiDeviceSelect.value;
+    midiDeviceSelect.replaceChildren(new Option('Select MIDI input', ''));
+    for (const input of midiState.access.inputs.values()) {
+        if (input.state === 'connected') midiDeviceSelect.add(new Option(input.name || 'MIDI input', input.id));
+    }
+    if ([...midiDeviceSelect.options].some(option => option.value === selected)) {
+        midiDeviceSelect.value = selected;
+        if (midiState.input?.id !== selected) midiSelectInput(selected);
+    } else {
+        midiDeviceSelect.value = '';
+        if (midiState.input) midiSelectInput('');
+    }
+}
+async function midiEnable() {
+    if (!navigator.requestMIDIAccess) {
+        midiSetStatus('Web MIDI unavailable. Use a supported desktop Chromium browser over HTTPS or localhost.');
+        return;
+    }
+    try {
+        if (!midiState.access) midiState.access = await navigator.requestMIDIAccess({sysex:false});
+        midiState.access.onstatechange = midiRefreshInputs;
+        midiRefreshInputs();
+        midiSetStatus('MIDI ready — select your MPK mini or other MIDI input');
+    } catch (error) {
+        midiSetStatus(`MIDI permission not granted: ${error?.message || 'access denied'}`);
+    }
+}
+document.getElementById('midiEnable')?.addEventListener('click', midiEnable);
+midiDeviceSelect?.addEventListener('change', () => midiSelectInput(midiDeviceSelect.value));
+midiChannelSelect?.addEventListener('change', () => {
+    midiPanic();
+    midiState.channel = midiChannelSelect.value;
+});
+document.getElementById('midiPanic')?.addEventListener('click', midiPanic);
+window.addEventListener('blur', () => { if (midiState.input) midiPanic(); });
+
+
+// ============================================================================
+// DREAM BINDER · PREMIUM STUDIO / BINDING OF DREAMS · V1
+// Keeps every existing synthesis core and factory preset in place.
+// All layers are created by existing createNote/createPianoNote/createChoirNote.
+// Split: two independent patches across note regions; Layer: sum A+B.
+// There is NO spectral morphing, per-note pitch bend, or fully independent
+// real-time patch editing in this first Binding implementation.
+// ============================================================================
+const dbUI = {
+    mode: document.getElementById('dbPerformanceMode'),
+    A: document.getElementById('dbLayerA'), B: document.getElementById('dbLayerB'),
+    balance: document.getElementById('dbBlend'), split: document.getElementById('dbSplitNote'),
+    status: document.getElementById('dbBindingStatus')
+};
+const DB_BINDING_STORAGE = 'dreamBinderBindingsV1';
+const dbCapture = { A: null, B: null };
+let dbAudioAnalyser = null;
+let dbSpectrumFrame = 0;
+let dbSpectrumLastAt = 0;
+let dbSelectedPresetTitle = 'Dream Pad';
+function dbGetMode() { return dbUI.mode?.value || 'off'; }
+function dbSetStatus(message) {
+    if (dbUI.status) { dbUI.status.textContent = message; dbUI.status.dataset.state = dbGetMode() !== 'off' ? 'active' : 'idle'; }
+}
+// Two optional starter concepts for demonstrating A/B zones on the MPK Mini.
+// These do not modify any original factory or Dream Atlas patches.
+const dbPerformanceTemplates = {
+    lowBassLead: {
+        name:'Low Bass Lead · Performance',engine:'synth',settings:{
+          waveform:'sawtooth',waveformB:'sine',origin:'hollow',waveFusion:26,
+          oscBLevel:.32,oscBDetune:2,subWaveform:'sine',subLevel:66,
+          attack:.025,decay:.48,sustain:.79,release:1.2,
+          filterType:'lowpass',cutoff:940,resonance:1.4,voiceSpread:17,
+          lfoRate:.13,lfoAmount:22,lfoDestination:'filter',
+          noiseType:'dark',noiseAmount:3,drift:3,stereoWidth:18,
+          deepDreamOrbit:false,fmAmount:11,fmRatio:1.5,fmAttack:.015,
+          fmDecay:.3,fmSustain:.3,fmRelease:.3,coherence:12,decoherence:4,
+          polynomialRingEnabled:false,masterVolume:.19,presence:20
+        }
+    },
+    echoDropsPiano: {
+        name:'Echo Drops Piano · Performance',engine:'piano',localEcho:true,settings:{
+          attack:.018,decay:2.2,sustain:.28,release:3.1,
+          origin:'dream',presence:24,waveFusion:10,waveFusionCurve:'smooth',
+          dreamMorphMotion:false,noiseType:'air',noiseAmount:0,drift:0,
+          stereoWidth:48,deepDreamOrbit:true,masterVolume:.55,
+          reverbMix:.36,reverbDecay:4.8,delayMix:.28,delayTime:.34,
+          delayFeedback:.34,soundboardBloom:1.4
+        }
+    }
+};
+function dbSettingsForLayer(selection) {
+    if (!selection) return null;
+    if (selection.startsWith('template:')) return dbPerformanceTemplates[selection.slice(9)] || null;
+    if (selection === 'capture:A') return dbCapture.A ? {name:'Captured sound A',engine:dbCapture.A.engine || 'synth',settings:dbCapture.A} : null;
+    if (selection === 'capture:B') return dbCapture.B ? {name:'Captured sound B',engine:dbCapture.B.engine || 'synth',settings:dbCapture.B} : null;
+    const separator = selection.indexOf(':');
+    if (separator < 0) return null;
+    const bank = selection.slice(0, separator), key = selection.slice(separator + 1);
+    if (bank === 'atlas') {
+        const patch = dreamAtlasPatches.find(p => p.key === key);
+        return patch ? {name: patch.name, engine: patch.engine || 'synth',settings:patch.settings} : null;
+    }
+    if (bank === 'user') {
+        const settings = getSavedPresets()[key];
+        return settings ? {name:key, engine:settings.engine || 'synth', settings} : null;
+    }
+    const patch = presetBanks[bank]?.[key];
+    return patch ? {name:patch.name,engine:patch.engine || patch.settings?.engine || 'synth',settings:patch.settings} : null;
+}
+function dbFillLayerSelectors() {
+    const previousA = dbUI.A?.value, previousB = dbUI.B?.value;
+    const groups = [
+      ['Signature', 'signature'],['Keys / Piano', 'keys'],['Pads', 'pads'],
+      ['Leads', 'leads'],['Bass', 'bass'],['Choir', 'choir'],
+      ['Textures','textures'],['Arpeggiator','arpeggiator']
+    ];
+    const applyOptions = select => {
+        if (!select) return;
+        select.replaceChildren();
+        const templates = document.createElement('optgroup'); templates.label = 'Performance Concepts';
+        templates.append(new Option('Low Bass Lead · Performance','template:lowBassLead'));
+        templates.append(new Option('Echo Drops Piano · Performance','template:echoDropsPiano'));
+        select.add(templates);
+        const captures = document.createElement('optgroup'); captures.label = 'Current Sound';
+        captures.append(new Option('Captured current sound', select === dbUI.A ? 'capture:A' : 'capture:B'));
+        select.add(captures);
+        for (const [title,key] of groups) {
+            const bank = presetBanks[key];
+            if (!bank || !Object.keys(bank).length) continue;
+            const group = document.createElement('optgroup'); group.label = title;
+            for (const [id,patch] of Object.entries(bank)) group.append(new Option(patch.name, `${key}:${id}`));
+            select.add(group);
+        }
+        const atlas = document.createElement('optgroup'); atlas.label = 'Dream Atlas · 104 Sounds';
+        for (const patch of dreamAtlasPatches) atlas.append(new Option(`${patch.collection} · ${patch.name}`, `atlas:${patch.key}`));
+        select.add(atlas);
+        const saved = getSavedPresets();
+        if (Object.keys(saved).length) {
+            const users = document.createElement('optgroup'); users.label = 'My Presets';
+            for (const key of Object.keys(saved)) users.append(new Option(key,`user:${key}`));
+            select.add(users);
+        }
+    };
+    applyOptions(dbUI.A); applyOptions(dbUI.B);
+    const piano = Object.entries(presetBanks.keys || {}).find(([,patch]) => patch.engine === 'piano');
+    if (dbUI.A) dbUI.A.value = previousA && [...dbUI.A.options].some(o=>o.value===previousA) ? previousA : 'template:lowBassLead';
+    if (dbUI.B) dbUI.B.value = previousB && [...dbUI.B.options].some(o=>o.value===previousB) ? previousB : 'template:echoDropsPiano';
+}
+function dbReadSavedBinding() {
+    try {
+        const data = JSON.parse(localStorage.getItem(DB_BINDING_STORAGE) || '{}');
+        for (const side of ['A','B']) if (data.captures?.[side]) dbCapture[side] = data.captures[side];
+        if (data.A && dbUI.A && [...dbUI.A.options].some(o=>o.value===data.A)) dbUI.A.value = data.A;
+        if (data.B && dbUI.B && [...dbUI.B.options].some(o=>o.value===data.B)) dbUI.B.value = data.B;
+        if (dbUI.mode && ['off','layer','split'].includes(data.mode)) dbUI.mode.value = data.mode;
+        if (dbUI.balance && Number.isFinite(Number(data.balance))) dbUI.balance.value = Math.max(0,Math.min(100,data.balance));
+        if (dbUI.split && Number.isFinite(Number(data.split))) dbUI.split.value = data.split;
+    } catch (_) { /* User browser storage may be restricted. */ }
+}
+function dbStoreBinding() {
+    try { localStorage.setItem(DB_BINDING_STORAGE,JSON.stringify({
+        A:dbUI.A?.value, B:dbUI.B?.value, mode:dbGetMode(),
+        balance:Number(dbUI.balance?.value || 50), split:Number(dbUI.split?.value || 60),captures:dbCapture
+    })); } catch (_) { /* Not essential to the instrument. */ }
+}
+// Snapshot a preset into the EXISTING voice factory without loading a global
+// preset (loading a global preset would stop all held notes and reset controls).
+// Audio parameters sampled at voice creation remain independent for the note.
+function dbApplySilently(settings, engine) {
+    const ids = [
+      'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
+      'subWaveform','subLevel','oscBLevel','oscBDetune','voiceSpread','beatTrackingMode',
+      'beatRate','beatTempo','beatDivision','attack','decay','sustain','release',
+      'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
+      'noiseType','noiseAmount','drift','stereoWidth','deepDreamOrbit','glideEnabled',
+      'glideTime','presence','reverbMix','reverbDecay','delayMix','delayTime','delayFeedback'
+    ];
+    for (const id of ids) {
+        const element = document.getElementById(id);
+        if (!element || settings[id] == null) continue;
+        if (element.type === 'checkbox') element.checked = !!settings[id];
+        else element.value = settings[id];
+    }
+    currentResonanceSource = engine;
+    currentEngine = engine;
+    // Preserve Piano voice character and optional toy-key mechanical behavior.
+    pianoPresetSoundboardBloom = Number(settings.soundboardBloom ?? 1);
+    toyPianoKeyClickEnabled = settings.mechanicalKeyClick === true;
+    toyPianoKeyDownGain = Number(settings.mechanicalKeyDownGain ?? .35);
+    toyPianoKeyDownFrequency = Number(settings.mechanicalKeyDownFrequency ?? 950);
+    currentFmAmount = Number(settings.fmAmount ?? 0);
+    currentFmRatio = Number(settings.fmRatio ?? 3.5);
+    currentFmAttack = Number(settings.fmAttack ?? .01);
+    currentFmDecay = Number(settings.fmDecay ?? .8);
+    currentFmSustain = Number(settings.fmSustain ?? 0);
+    currentFmRelease = Number(settings.fmRelease ?? .3);
+    currentCoherence = clampResonantValue(settings.coherence ?? 0);
+    currentDecoherence = clampResonantValue(settings.decoherence ?? 0);
+    polynomialRingState.enabled = settings.polynomialRingEnabled === true;
+    polynomialRingState.amount = Number(settings.polynomialRingAmount ?? 35);
+    polynomialRingState.degree = Number(settings.polynomialRingDegree ?? 3);
+    polynomialRingState.dimension = Number(settings.krullDimension ?? 1);
+    polynomialRingState.character = settings.polynomialRingCharacter ?? 'hybrid';
+}
+function dbWithPreset(patch, callback) {
+    const before = getCurrentPresetSettings();
+    const savedResonanceSource = currentResonanceSource;
+    const savedEngine = currentEngine;
+    try {
+        dbApplySilently(patch.settings || {}, patch.engine || 'synth');
+        return callback();
+    } finally {
+        dbApplySilently(before,savedResonanceSource);
+        currentEngine = savedEngine;
+    }
+}
+function dbLayerWeight(side) {
+    if (dbGetMode() === 'split') return .82;
+    const t = Math.max(0,Math.min(1,Number(dbUI.balance?.value ?? 50)/100));
+    // Equal-power mix, bounded to protect headroom when sounds correlate.
+    return .72 * (side === 'A' ? Math.cos(t * Math.PI / 2) : Math.sin(t * Math.PI / 2));
+}
+function dbInsertGain(ctx, outputNode, gainAmount, processingNodes) {
+    if (!outputNode) return null;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(gainAmount,ctx.currentTime);
+    outputNode.disconnect();
+    outputNode.connect(gain);
+    gain.connect(dryGain);
+    gain.connect(reverbNode);
+    gain.connect(delayDryGain);
+    gain.connect(delayNode);
+    if (processingNodes) processingNodes.push(gain);
+    return gain;
+}
+function dbAttachEcho(ctx, entry, patch) {
+    // A lightweight per-layer tap for the Echo Drops Piano concept. The
+    // original Piano engine and global reverb/delay processing are untouched.
+    if (!patch.localEcho || !entry?.gain || !masterGain) return;
+    const delay = ctx.createDelay(2);
+    const feedback = ctx.createGain();
+    const wet = ctx.createGain();
+    delay.delayTime.value = Math.max(.1,Math.min(1,Number(patch.settings?.delayTime || .34)));
+    feedback.gain.value = Math.min(.58,Number(patch.settings?.delayFeedback || .34));
+    wet.gain.value = .23;
+    entry.gain.connect(delay);
+    delay.connect(feedback);feedback.connect(delay);
+    delay.connect(wet);wet.connect(masterGain);
+    const cleanup = [delay,feedback,wet];
+    if (entry.voice?.nodes) entry.voice.nodes.push(...cleanup);
+    else if (entry.voice?.textureProcessingNodes) entry.voice.textureProcessingNodes.push(...cleanup);
+    else entry.extraCleanup = cleanup;
+}
+function dbCreateBindingVoice(frequency, patch, side) {
+    if (!patch) return null;
+    return dbWithPreset(patch, () => {
+        const ctx = getAudioContext();
+        if (patch.engine === 'piano') {
+            createPianoNote(frequency);
+            const voice = activePianoNodes[activePianoNodes.length-1];
+            const output = voice?.nodes?.find(node => node?.pan && typeof node.pan.setValueAtTime === 'function'); // pianoPan, preserves orbit
+            const gain = dbInsertGain(ctx, output, dbLayerWeight(side), voice?.nodes);
+            const entry={engine:'piano',voice,gain,side};
+            dbAttachEcho(ctx,entry,patch);
+            return entry;
+        }
+        if (patch.engine === 'choir') {
+            if (!choirAhC3Buffer) return {engine:'choir-pending',side};
+            const voice = createChoirNote(frequency);
+            const outputs = voice?.textureProcessingNodes;
+            const output = outputs?.[outputs.length - 1]; // choirOrbitPanner
+            const gain = dbInsertGain(ctx, output, dbLayerWeight(side), outputs);
+            const entry={engine:'choir',voice,gain,side};
+            dbAttachEcho(ctx,entry,patch);
+            return entry;
+        }
+        const voice = createNote(frequency);
+        const gain = dbInsertGain(ctx, voice.stereoPanner,dbLayerWeight(side));
+        const entry={engine:'synth',voice,gain,side};
+        dbAttachEcho(ctx,entry,patch);
+        return entry;
+    });
+}
+function dbStopBindingEntry(frequency, entry) {
+    if (!entry) return;
+    for (const layer of entry.layers) {
+        const voice = layer?.voice;
+        if (!voice) continue;
+        if (layer.engine === 'synth') {
+            // Reuse the exact existing Synth release/cleanup pathway, with no
+            // duplicate release DSP or changes to the approved voices.
+            const id = String(frequency);
+            const old = activeNotes.get(id);
+            activeNotes.set(id, voice);
+            stopNote(frequency);
+            if (old && old !== voice) activeNotes.set(id,old);
+        } else if (layer.engine === 'choir') voice.release?.();
+        // Piano intentionally uses its original natural tail, just like normal
+        // Piano playback. Do not turn the piano into a gated synth.
+    }
+}
+function dbReleaseAllBindings() {
+    for (const [key,entry] of [...dbHeldLayers.entries()]) {
+        dbHeldLayers.delete(key);
+        dbStopBindingEntry(Number(key),entry);
+    }
+}
+function dbCreateVoiceWithAsyncChoir(frequency, patch, side, entry) {
+    if (patch?.engine === 'choir' && !choirAhC3Buffer) {
+        loadChoirAhC3Sample().then(buffer => {
+            if (!buffer || dbHeldLayers.get(String(frequency)) !== entry) return;
+            const voice = dbCreateBindingVoice(frequency,patch,side);
+            if (voice && voice.engine !== 'choir-pending') entry.layers.push(voice);
+        }).catch(()=>dbSetStatus('Choir sample unavailable. Keep the audio asset in your project.'));
+        return;
+    }
+    const voice = dbCreateBindingVoice(frequency,patch,side);
+    if (voice && voice.engine !== 'choir-pending') entry.layers.push(voice);
+}
+function dbBindingPress(frequency) {
+    if (dbGetMode() === 'off') return false;
+    const key = String(frequency);
+    if (dbHeldLayers.has(key)) return true;
+    // Existing 3-voice Synth pool is unchanged in single mode. Binding mode
+    // has its own conservative polyphony limit for mobile performance.
+    const android = /Android/i.test(navigator.userAgent);
+    const voiceLimit = dbGetMode() === 'layer' ? (android ? 3 : 5) : (android ? 5 : 8);
+    if (dbHeldLayers.size >= voiceLimit) {
+        const [oldKey, oldEntry] = dbHeldLayers.entries().next().value;
+        dbHeldLayers.delete(oldKey); dbStopBindingEntry(Number(oldKey),oldEntry);
+    }
+    const entry = {layers:[]}; dbHeldLayers.set(key,entry);
+    const note = Math.round(69 + 12 * Math.log2(Math.max(.01,frequency) / 440));
+    const targets = dbGetMode() === 'layer' ? ['A','B'] :
+        [note < Number(dbUI.split?.value || 60) ? 'A' : 'B'];
+    try {
+        for (const side of targets) {
+            const patch = dbSettingsForLayer(dbUI[side]?.value);
+            dbCreateVoiceWithAsyncChoir(frequency,patch,side,entry);
+        }
+    } catch (error) {
+        console.error('Binding of Dreams voice error:',error);
+        dbSetStatus('Binding error: review preset selection or audio assets.');
+        dbHeldLayers.delete(key); dbStopBindingEntry(frequency,entry);
+    }
+    setKeyActive(frequency,true);
+    return true;
+}
+function dbBindingRelease(frequency) {
+    if (dbGetMode() === 'off') return false;
+    const key = String(frequency);
+    const entry = dbHeldLayers.get(key);
+    if (entry) { dbHeldLayers.delete(key); dbStopBindingEntry(frequency,entry); }
+    setKeyActive(frequency,false);
+    return true;
+}
+function dbSyncMode() {
+    dbReleaseAllBindings();
+    // A latched arpeggiator from Single mode must never keep playing behind
+    // a new split/layer performance. Stop the timer without rewriting arp DSP.
+    stopDreamArp();
+    arpHeldNotes.clear();
+    arpPlayedOrder = [];
+    refreshLatchedKeyHighlights();
+    stopAllNotes();
+    stopActivePianoNodes();
+    stopActiveChoirNodes();
+    const mode = dbGetMode();
+    const splitRow = document.querySelector('.db-split-row');
+    if (splitRow) splitRow.style.display = mode === 'split' ? 'grid' : 'none';
+    if (dbUI.balance) dbUI.balance.disabled = mode !== 'layer';
+    if (dbUI.split) dbUI.split.disabled = mode !== 'split';
+    const left = dbSettingsForLayer(dbUI.A?.value)?.name || 'Source A';
+    const right = dbSettingsForLayer(dbUI.B?.value)?.name || 'Source B';
+    dbSetStatus(mode === 'layer' ? `BINDING ACTIVE · ${left} + ${right}. Both patches sound on each key.` :
+      mode === 'split' ? `SPLIT ACTIVE · ${left} below ${dbUI.split?.selectedOptions[0]?.textContent || 'C4'} · ${right} from split note upwards.` :
+      'SINGLE MODE · Existing instrument engines and their original playback are unchanged.');
+    dbStoreBinding();
+}
+function dbUpdateBlend() {
+    const n = Number(dbUI.balance?.value ?? 50);
+    const label = document.getElementById('dbBlendValue');
+    if (label) label.textContent = `${100-n} / ${n}`;
+    for (const entry of dbHeldLayers.values()) {
+        for (const layer of entry.layers) {
+            if (layer?.gain && audioContext) layer.gain.gain.setTargetAtTime(dbLayerWeight(layer.side),audioContext.currentTime,.024);
+        }
+    }
+    dbStoreBinding();
+}
+function dbPopulateSplitNotes() {
+    if (!dbUI.split) return;
+    for (let n=36;n<=84;n++) {
+        const labels = ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+        const name = `${labels[n % 12]}${Math.floor(n / 12) - 1}`;
+        dbUI.split.add(new Option(`${name} · MIDI ${n}`,n));
+    }
+    dbUI.split.value='60';
+}
+function dbCaptureSound(side) {
+    dbReleaseAllBindings();
+    dbCapture[side] = getCurrentPresetSettings();
+    dbUI[side].value = `capture:${side}`;
+    dbSyncMode();
+    dbSetStatus(`CURRENT SOUND CAPTURED INTO SOURCE ${side}. ${dbGetMode()==='off' ? 'Select Bind or Split to audition.' : 'Play notes to audition.'}`);
+    dbStoreBinding();
+}
+function dbRenderGallery() {
+    const target=document.getElementById('dbRealmGallery');
+    if (!target) return;
+    target.replaceChildren();
+    const realmSelect=document.getElementById('dreamAtlasRealm');
+    for (const realm of dreamAtlasRealms) {
+        const button=document.createElement('button');
+        button.type='button';button.className='db-realm-card';button.dataset.realm=realm.id;
+        button.title=realm.theme;button.setAttribute('aria-label',`Explore ${realm.title}`);
+        const image=document.createElement('img');image.src=`assets/realms/${realm.id}.svg`;
+        image.loading='lazy';image.alt='';
+        const name=document.createElement('span');name.textContent=realm.title;
+        button.append(image,name);
+        button.addEventListener('click',() => {
+            if (realmSelect) realmSelect.value = realm.id;
+            renderPresetBrowser('atlas');
+            dbSyncGallery();
+        });
+        target.append(button);
+    }
+    dbSyncGallery();
+}
+function dbSyncGallery() {
+    const active=document.getElementById('dreamAtlasRealm')?.value;
+    document.querySelectorAll('.db-realm-card').forEach(button => {
+        button.classList.toggle('active',button.dataset.realm===active);
+        button.setAttribute('aria-pressed',String(button.dataset.realm===active));
+    });
+}
+function dbUpdateAlgebraStatus() {
+    const s=polynomialRingState;
+    const element=document.getElementById('dbMathStatus');
+    if (element) element.textContent=s.enabled && s.amount>0 && s.dimension>0 ?
+      `Polynomial ring active · degree ${s.degree} · dimension ${s.dimension}` :
+      `Polynomial field bypassed · dimension ${s.dimension}`;
+}
+function dbDrawSpectrum(time) {
+    // Only ~4 frames per second at rest, about 23 when voices are active.
+    const playing=Boolean(audioContext && audioContext.state==='running' &&
+        (activeNotes.size || activePianoNodes.length || activeChoirNodes.length || dbHeldLayers.size));
+    dbSpectrumFrame=setTimeout(() => requestAnimationFrame(dbDrawSpectrum),document.hidden?600:playing?43:250);
+    if (document.hidden) return;
+    dbSpectrumLastAt=time;
+    const canvas=document.getElementById('dbSpectrumCanvas');
+    const context=canvas?.getContext('2d');
+    if (!context) return;
+    const w=canvas.width,h=canvas.height;
+    context.clearRect(0,0,w,h);
+    if (audioContext && masterGain && !dbAudioAnalyser) {
+        dbAudioAnalyser=audioContext.createAnalyser();
+        dbAudioAnalyser.fftSize=1024;
+        dbAudioAnalyser.smoothingTimeConstant=.83;
+        masterGain.connect(dbAudioAnalyser); // analysis tap; no change to master output route
+    }
+    context.save();
+    const points=[];
+    if (dbAudioAnalyser && audioContext.state==='running') {
+        const data=new Uint8Array(dbAudioAnalyser.frequencyBinCount);
+        dbAudioAnalyser.getByteFrequencyData(data);
+        for(let i=0;i<135;i++){
+            const t=i/134, bin=Math.min(data.length-1,Math.round(Math.pow(t,1.55)*(data.length-1)));
+            const amp=(data[bin]/255);
+            points.push([t*w,h*.74-amp*h*.59]);
+        }
+    } else {
+        for(let i=0;i<135;i++){
+            const t=i/134;
+            const envelope=(.12+.1*Math.sin(t*21))*(1-t);
+            points.push([t*w,h*.74-Math.max(0,envelope+Math.sin(t*56)*.027)*h]);
+        }
+    }
+    const grad=context.createLinearGradient(0,0,w,0);
+    grad.addColorStop(0,'#61d5f4');grad.addColorStop(.5,'#ba83fd');grad.addColorStop(1,'#e7a0c9');
+    context.lineWidth=3.2;context.strokeStyle=grad;context.shadowBlur=14;context.shadowColor='#aa75ff';
+    context.beginPath();points.forEach(([x,y],i)=>i?context.lineTo(x,y):context.moveTo(x,y));context.stroke();
+    context.shadowBlur=0;context.lineTo(w,h);context.lineTo(0,h);context.closePath();
+    const fill=context.createLinearGradient(0,35,0,h);fill.addColorStop(0,'rgba(167,100,248,.26)');fill.addColorStop(1,'rgba(167,100,248,0)');
+    context.fillStyle=fill;context.fill();context.restore();
+}
+function dbSelectSource(source) {
+    if (source==='atlas') {openPresetBrowser();selectPresetBank('atlas');dbSyncGallery();return;}
+    if (source==='bindings') {document.getElementById('dbBindingStudio')?.scrollIntoView({behavior:'smooth',block:'start'});return;}
+    dbReleaseAllBindings();if (dbUI.mode) dbUI.mode.value='off';dbSyncMode();
+    currentResonanceSource=source;currentEngine=source;
+    document.querySelectorAll('[data-db-nav]').forEach(el => {
+        el.classList.toggle('active',el.dataset.dbNav===source);
+        if(el.dataset.dbNav===source) el.setAttribute('aria-current','page'); else el.removeAttribute('aria-current');
+    });
+    document.getElementById('dbSoundArchitecture')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+// Init at script end after all existing preset constants and note functions.
+dbPopulateSplitNotes();
+dbFillLayerSelectors();
+dbReadSavedBinding();
+dbRenderGallery();
+dbSyncMode();
+dbUpdateBlend();
+dbUpdateAlgebraStatus();
+dbSpectrumFrame=requestAnimationFrame(dbDrawSpectrum);
+for(const id of ['dbLayerA','dbLayerB','dbSplitNote']) document.getElementById(id)?.addEventListener('change',dbSyncMode);
+dbUI.mode?.addEventListener('change',dbSyncMode);
+dbUI.balance?.addEventListener('input',dbUpdateBlend);
+document.getElementById('dbCaptureA')?.addEventListener('click',()=>dbCaptureSound('A'));
+document.getElementById('dbCaptureB')?.addEventListener('click',()=>dbCaptureSound('B'));
+document.getElementById('dbAtlasHero')?.addEventListener('click',()=>dbSelectSource('atlas'));
+document.getElementById('dbOpenMIDI')?.addEventListener('click',()=>document.getElementById('dbMidiPanel')?.scrollIntoView({behavior:'smooth',block:'center'}));
+for(const button of document.querySelectorAll('[data-db-nav]')) button.addEventListener('click',()=>dbSelectSource(button.dataset.dbNav));
+document.getElementById('dreamAtlasRealm')?.addEventListener('change',dbSyncGallery);
+for(const id of ['polynomialRingEnabled','polynomialRingAmount','polynomialRingDegree','krullDimension','polynomialRingCharacter'])
+    document.getElementById(id)?.addEventListener('input',()=>setTimeout(dbUpdateAlgebraStatus,0));
+for(const button of document.querySelectorAll('.preset-browser-tab')) button.addEventListener('click',dbSyncGallery);
+// Saved user presets become selectable as Binding layers when the browser opens.
+document.getElementById('openPresetBrowser')?.addEventListener('click',dbFillLayerSelectors);
+window.addEventListener('pagehide', dbReleaseAllBindings);
