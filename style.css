@@ -276,3 +276,284 @@ body.db-library-open {overflow:hidden!important;}
   .db-primary-nav {justify-content:space-between;gap:0;}
   .db-nav {font-size:9px;padding:8px 6px;letter-spacing:.025em;}
 }
+
+
+/* ===== DREAM BINDER APP SHELL REVISION ===== */
+
+:root{
+  --db-dock-bottom:max(10px, env(safe-area-inset-bottom));
+  --db-dock-toolbar:104px;
+  --db-dock-keys:238px;
+  --db-dock-total:calc(var(--db-dock-toolbar) + var(--db-dock-keys) + 40px);
+  --db-metal:url("assets/interface/metallic-panel.webp");
+}
+body{
+  background:
+    radial-gradient(ellipse 140% 70% at 50% -20%, rgba(86,60,132,.36), transparent 56%),
+    radial-gradient(ellipse 60% 60% at 100% 0%, rgba(22,53,122,.18), transparent 52%),
+    linear-gradient(180deg,#040610 0%,#090818 50%,#05070f 100%);
+}
+.app{
+  max-width:none;
+  padding:12px clamp(12px,2.1vw,28px) calc(var(--db-dock-total) + 28px);
+}
+.db-footer{display:none}
+.db-masthead{
+  position:sticky;
+  top:0;
+  z-index:30;
+  margin-bottom:14px;
+  padding:16px 20px;
+  border-bottom:none;
+}
+.db-preset-strip{
+  padding:14px 18px;
+  margin-bottom:14px;
+}
+.db-controls-heading{margin:18px 0 14px;padding:18px 22px}
+.db-hero{margin-bottom:18px;align-items:stretch}
+.db-hero-art,.db-hero-studio{min-height:430px}
+.db-binding-studio{margin:0 0 18px;padding:24px}
+.controls{margin-bottom:20px}
+.db-module summary{position:relative;z-index:2}
+.db-module-content,.resonant-field-content,.fm-resonance-content,.polynomial-ring-content{position:relative;z-index:2}
+.midi-connect-panel{margin:10px 0 18px;padding:18px 20px}
+.db-section-title h2,.db-controls-heading h2,.db-studio-top h2,.db-keyboard-title h2{letter-spacing:-.02em}
+.db-hero-caption h2{font-size:clamp(36px,4.2vw,64px)}
+.db-hero-caption p{max-width:32ch}
+.db-hero-art{
+  background-image:
+    linear-gradient(180deg, rgba(5,7,18,.26), rgba(4,6,16,.78) 88%),
+    url("assets/backgrounds/studio-nexus.webp"),
+    var(--db-metal);
+  background-size:cover, cover, cover;
+  background-position:center, center, center;
+}
+.db-hero-art::after{
+  inset:0;
+  z-index:0;
+  background:radial-gradient(circle at 68% 28%, rgba(189,127,255,.20), transparent 32%);
+}
+.db-hero-caption,.db-art-label{z-index:2}
+.db-hero-studio,
+.db-binding-studio,
+.db-controls-heading,
+.db-module,
+.midi-connect-panel,
+.db-binding-layer,
+.db-bind-middle,
+.db-spectrum-shell,
+.db-algebra,
+.db-performance-toolbar,
+.db-keyboard-shell,
+.db-preset-strip,
+.db-masthead,
+.preset-browser,
+.preset-manager,
+.dream-atlas-filters,
+.preset-browser-list,
+.db-hero-art{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(215,173,255,.22);
+  background-color:#0d1021;
+  background-image:
+    linear-gradient(135deg, rgba(20,24,46,.94), rgba(8,10,25,.96) 72%),
+    var(--db-metal);
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat;
+  box-shadow:
+    0 16px 44px rgba(0,0,0,.34),
+    inset 0 1px 0 rgba(255,255,255,.04),
+    inset 0 0 0 1px rgba(56,46,88,.42);
+  backdrop-filter:none !important;
+}
+:where(
+  .db-masthead,.db-preset-strip,.db-hero-art,.db-hero-studio,.db-binding-studio,.db-controls-heading,
+  .db-module,.midi-connect-panel,.db-binding-layer,.db-bind-middle,.db-spectrum-shell,.db-algebra,
+  .db-performance-toolbar,.db-keyboard-shell,.preset-browser,.preset-manager,.dream-atlas-filters,
+  .preset-browser-list
+)::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.88;
+  background:
+    url("assets/interface/corner-top-left.webp") left top/124px auto no-repeat,
+    url("assets/interface/corner-top-right.webp") right top/124px auto no-repeat,
+    url("assets/interface/corner-bottom-left.webp") left bottom/124px auto no-repeat,
+    url("assets/interface/corner-bottom-right.webp") right bottom/124px auto no-repeat,
+    url("assets/interface/side-left.webp") left center/20px 100% no-repeat,
+    url("assets/interface/side-right.webp") right center/20px 100% no-repeat;
+  mix-blend-mode:screen;
+}
+:where(
+  .db-masthead,.db-preset-strip,.db-hero-art,.db-hero-studio,.db-binding-studio,.db-controls-heading,
+  .db-module,.midi-connect-panel,.db-binding-layer,.db-bind-middle,.db-spectrum-shell,.db-algebra,
+  .db-performance-toolbar,.db-keyboard-shell,.preset-browser,.preset-manager,.dream-atlas-filters,
+  .preset-browser-list
+) > *{position:relative;z-index:1}
+.db-hero-studio .db-spectrum-shell,
+.db-hero-studio .db-algebra,
+.db-binding-layer,
+.db-bind-middle,
+.preset-browser-list,
+.dream-atlas-filters,
+.preset-manager{
+  background-image:
+    linear-gradient(140deg, rgba(11,14,31,.96), rgba(6,8,22,.96)),
+    var(--db-metal);
+}
+.db-binding-layer,.db-bind-middle{padding:18px 20px}
+.db-spectrum-shell::before{opacity:.24}
+.db-art-label,.db-badge,.db-status-chip{
+  background:rgba(8,10,24,.78);
+  border:1px solid rgba(226,186,121,.30);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+}
+.db-controls-heading,.db-section-title{align-items:center}
+.db-controls-heading p,.db-section-title p,.db-keyboard-title p,.midi-connect-panel p,.midi-connect-panel small{color:#b7b2c7}
+.db-performance-dock{
+  position:fixed;
+  left:max(10px, env(safe-area-inset-left));
+  right:max(10px, env(safe-area-inset-right));
+  bottom:var(--db-dock-bottom);
+  z-index:40;
+  display:grid;
+  gap:10px;
+}
+.db-performance-toolbar,
+.db-keyboard-shell{pointer-events:auto}
+.db-performance-toolbar{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  min-height:var(--db-dock-toolbar);
+  padding:16px 18px;
+  border-radius:22px;
+}
+.db-keyboard-title{margin:0;display:grid;gap:4px;max-width:620px}
+.db-keyboard-title .db-eyebrow{margin-bottom:0}
+.db-keyboard-title h2{margin:0;font-family:Georgia,serif;font-size:clamp(24px,2.4vw,34px);font-weight:400}
+.db-keyboard-title p{margin:0;font-size:12px;line-height:1.45}
+.octave-controls{margin:0;justify-content:flex-end;flex-wrap:nowrap;gap:10px}
+.octave-btn,#octaveDisplay{
+  min-height:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 16px;
+  border-radius:14px;
+  border:1px solid rgba(204,167,250,.28);
+  background:linear-gradient(180deg, rgba(34,29,64,.96), rgba(14,16,30,.98));
+  color:#eee1ff;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+}
+#octaveDisplay{min-width:96px;font-weight:700;font-size:14px}
+.db-keyboard-shell{
+  border-radius:26px;
+  min-height:var(--db-dock-keys);
+  padding:14px 16px 10px;
+}
+.keyboard{
+  width:100%;
+  margin:0;
+  min-height:200px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch;
+}
+.key{height:176px;font-size:14px;padding-top:128px}
+.key.black-key{height:112px;padding-top:74px;font-size:11px}
+.midi-connect-panel h3{margin:0 0 12px;font-family:Georgia,serif;font-weight:400;font-size:24px;color:#f0ddff}
+.midi-connect-panel > div{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.midi-connect-panel > div > *{flex:1 1 180px}
+.midi-connect-panel button{min-height:44px}
+.controls{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.db-module{border-radius:22px}
+.db-module summary{padding:18px 22px;font-size:12px;letter-spacing:.16em;color:#efe1ff}
+.db-module .db-module-content,.resonant-field-content,.fm-resonance-content,.polynomial-ring-content{padding:20px 22px 22px}
+.db-module summary::after{right:20px}
+.db-hero-studio{padding:22px}
+.db-brand p{color:#f0dcc4}
+.db-nav{border-color:rgba(255,255,255,.03);padding:13px 14px}
+.db-nav:hover,.db-nav.active{background:linear-gradient(180deg,rgba(124,76,199,.42),rgba(49,35,91,.55));box-shadow:inset 0 -2px 0 rgba(201,141,255,.9),0 0 18px rgba(137,86,222,.24)}
+.preset-browser-btn,.db-compact-btn,.db-gold-button,.db-micro-btn,.preset-browser-tab,.preset-manager-actions button,.preset-import-btn,.preset-browser-close,.db-library-manage{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03),0 6px 20px rgba(0,0,0,.15);
+}
+.preset-browser-close,.db-library-manage{
+  border:1px solid rgba(216,171,255,.3);
+  border-radius:10px;
+  color:#edd4fa;
+  background:linear-gradient(180deg,rgba(60,40,86,.88),rgba(25,18,41,.96));
+  min-height:42px;
+  padding:0 14px;
+}
+@media (max-width:1200px){
+  .controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+  :root{--db-dock-toolbar:118px;--db-dock-keys:224px}
+  .db-hero{grid-template-columns:1fr}
+  .db-performance-toolbar{align-items:flex-start;flex-direction:column}
+  .octave-controls{width:100%;justify-content:flex-start}
+}
+@media (max-width:640px){
+  :root{--db-dock-toolbar:122px;--db-dock-keys:200px;--db-dock-total:calc(var(--db-dock-toolbar) + var(--db-dock-keys) + 46px)}
+  .app{padding-left:10px;padding-right:10px}
+  .db-masthead{padding:14px 14px 12px}
+  .db-preset-strip{padding:12px 14px}
+  .db-controls-heading{padding:14px 16px}
+  .db-binding-studio,.midi-connect-panel{padding:16px}
+  .db-hero-art,.db-hero-studio{min-height:340px}
+  .db-hero-caption{inset:auto 18px 18px}
+  .db-hero-caption h2{font-size:48px}
+  .db-performance-dock{left:max(6px, env(safe-area-inset-left));right:max(6px, env(safe-area-inset-right))}
+  .db-performance-toolbar{padding:12px 14px;border-radius:18px}
+  .db-keyboard-title h2{font-size:28px}
+  .db-keyboard-title p{font-size:11px}
+  .db-keyboard-shell{padding:10px 10px 8px;border-radius:18px}
+  .key{height:150px;padding-top:109px;font-size:13px;flex-basis:66px;min-width:66px}
+  .key.black-key{height:96px;padding-top:62px;font-size:10px;flex-basis:24px;min-width:24px;margin-left:-12px;margin-right:-12px}
+  .controls{grid-template-columns:1fr}
+  :where(.db-masthead,.db-preset-strip,.db-hero-art,.db-hero-studio,.db-binding-studio,.db-controls-heading,.db-module,.midi-connect-panel,.db-binding-layer,.db-bind-middle,.db-spectrum-shell,.db-algebra,.db-performance-toolbar,.db-keyboard-shell,.preset-browser,.preset-manager,.dream-atlas-filters,.preset-browser-list)::before{
+    background:
+      url("assets/interface/corner-top-left.webp") left top/92px auto no-repeat,
+      url("assets/interface/corner-top-right.webp") right top/92px auto no-repeat,
+      url("assets/interface/corner-bottom-left.webp") left bottom/92px auto no-repeat,
+      url("assets/interface/corner-bottom-right.webp") right bottom/92px auto no-repeat,
+      url("assets/interface/side-left.webp") left center/14px 100% no-repeat,
+      url("assets/interface/side-right.webp") right center/14px 100% no-repeat;
+  }
+}
+@media (max-height:540px) and (orientation:landscape){
+  :root{--db-dock-toolbar:84px;--db-dock-keys:164px;--db-dock-total:calc(var(--db-dock-toolbar) + var(--db-dock-keys) + 28px)}
+  .db-performance-toolbar{padding:10px 14px;min-height:var(--db-dock-toolbar)}
+  .db-keyboard-title p{display:none}
+  .db-keyboard-shell{padding:8px 10px 6px;min-height:var(--db-dock-keys)}
+  .key{height:120px;padding-top:84px;font-size:11px}
+  .key.black-key{height:76px;padding-top:49px;font-size:9px}
+}
+
+/* Reuse the user's existing interface collection. No duplicate assets/ui directory. */
+.db-masthead{background-image:linear-gradient(110deg,rgba(11,13,29,.92),rgba(6,8,20,.97)),url("assets/interface/metallic-panel.webp")}
+.db-masthead::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:url("assets/interface/celestial-header.webp") center top/auto 100% no-repeat;opacity:.24}
+.db-masthead>*{z-index:1}
+.db-brand .db-sigil{background:url("assets/interface/central-emblem.webp") center/contain no-repeat; color:transparent;border:none;box-shadow:none}
+.db-controls-heading{border-bottom:1px solid rgba(204,164,235,.28)}
+.db-controls-heading::after{content:"";position:absolute;left:12%;right:12%;bottom:0;height:15px;background:url("assets/interface/lunar-divider.webp") center bottom/contain no-repeat;opacity:.62;pointer-events:none}
+.db-section-title::after{content:"";position:absolute;bottom:-8px;left:30%;right:30%;height:12px;background:url("assets/interface/small-divider.webp") center/contain no-repeat;opacity:.55;pointer-events:none}
+.db-realm-gallery{max-height:none;grid-template-columns:repeat(4,minmax(0,1fr))}
+.db-realm-card img{object-fit:cover}
+.db-realm-card{min-height:110px}
+.db-realm-card img{height:115px}
+.db-realm-card--visual{cursor:default}
+.db-realm-card--visual:focus-visible{outline:none}
+.db-atlas-art-label{flex:1 1 100%;font-size:10px;letter-spacing:.14em;color:#e4c28e;margin:6px 0 0}
+@media(max-width:680px){.db-realm-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
