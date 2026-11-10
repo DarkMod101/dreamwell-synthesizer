@@ -18223,19 +18223,19 @@ function dbCaptureSound(side) {
 // Each clickable artwork represents one actual preset environment (8 sounds each).
 // WebP images are visual illustrations only; canonical IDs preserve all 104 patches.
 const dbRealmArt = {
-  "lucidDreaming": "lucid-dreaming.webp",
-  "cityscape": "Cityscape.webp",
+  "lucidStates": "lucid-dreaming.webp",
+  "cityscapes": "Cityscape.webp",
   "houseOfMemories": "the-house-of-memories.webp",
   "neverEndingFields": "never-ending-fields.webp",
-  "ancientWorlds": "ancient-worlds.webp",
-  "celestialDreams": "celestial-dreams.webp",
+  "castlesAndPonds": "castlesAndPonds.svg",
+  "dreamMountainPeaks": "dreamMountainPeaks.svg",
   "secretSparkleCaverns": "secret-sparkle-caverns.webp",
-  "shadowEncounters": "shadow-encounters.webp",
-  "forgottenRealms": "forgotten-realms.webp",
+  "mirrorWalking": "mirrorWalking.svg",
+  "cozyDreams": "cozyDreams.svg",
   "infiniteCarRide": "infinite-car-ride.webp",
-  "dreamDistortions": "dream-distortions.webp",
-  "theVoid": "the-void.webp",
-  "sensualExperience": "sensual-experience.webp"
+  "fallingInReverse": "fallingInReverse.svg",
+  "timeSkip": "timeSkip.svg",
+  "sensualExperience": "sensual-experience.webp",
 };
 function dbRenderGallery() {
   const target=document.getElementById('dbRealmGallery');
@@ -18251,8 +18251,22 @@ function dbRenderGallery() {
     card.dataset.realm=id;
     card.setAttribute('aria-label',`Explore ${option.textContent} presets`);
     const art=document.createElement('img');
-    art.src=`assets/realms/${dbRealmArt[id] || 'lucid-dreaming.webp'}`;
+    art.src=`assets/realms/${dbRealmArt[id] || `${id}.svg`}`;
     art.alt=''; art.loading='lazy';
+    // Exact filenames verified against the GitHub assets/realms listing.
+    const fallbackSvg = {
+      lucidStates:'lucidStates.svg', cityscapes:'cityscapes.svg',
+      houseOfMemories:'houseOfMemories.svg', neverEndingFields:'neverEndingFields.svg',
+      secretSparkleCaverns:'secretSparkleCaverns.svg',
+      infiniteCarRide:'infiniteCarRide.svg', sensualExperience:'sensualExperience.svg'
+    };
+    art.onerror=()=>{
+      const fallback=fallbackSvg[id];
+      if(fallback && !art.src.endsWith('/'+fallback)){
+        art.onerror=null;
+        art.src='assets/realms/'+fallback;
+      }
+    };
     const caption=document.createElement('span');
     caption.textContent=option.textContent;
     card.append(art);
