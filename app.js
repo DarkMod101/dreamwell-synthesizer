@@ -18221,27 +18221,36 @@ function dbCaptureSound(side) {
     dbStoreBinding();
 }
 function dbRenderGallery() {
+    // Seven cinematic art windows. The 13 sound environments and their 104
+    // presets remain independently available through the existing filter.
     const target=document.getElementById('dbRealmGallery');
     if (!target) return;
     target.replaceChildren();
-    const realmSelect=document.getElementById('dreamAtlasRealm');
-    for (const realm of dreamAtlasRealms) {
-        const button=document.createElement('button');
-        button.type='button';button.className='db-realm-card';button.dataset.realm=realm.id;
-        button.title=realm.theme;button.setAttribute('aria-label',`Explore ${realm.title}`);
-        const image=document.createElement('img');image.src=`assets/realms/${realm.id}.svg`;
-        image.loading='lazy';image.alt='';
-        const name=document.createElement('span');name.textContent=realm.title;
-        button.append(image,name);
-        button.addEventListener('click',() => {
-            if (realmSelect) realmSelect.value = realm.id;
-            renderPresetBrowser('atlas');
-            dbSyncGallery();
-        });
-        target.append(button);
+    const gateways=[
+      ['celestial-dreams','Celestial Dreams'],
+      ['lucid-dreaming','Lucid Dreaming'],
+      ['ancient-worlds','Ancient Worlds'],
+      ['forgotten-realms','Forgotten Realms'],
+      ['shadow-encounters','Shadow Encounters'],
+      ['dream-distortions','Dream Distortions'],
+      ['the-void','The Void']
+    ];
+    for(const [slug,title] of gateways){
+      const card=document.createElement('div');
+      card.className='db-realm-card db-realm-card--visual';
+      card.setAttribute('role','img');
+      card.setAttribute('aria-label',title+' artwork');
+      const art=document.createElement('img');
+      art.src=`assets/realms/${slug}.webp`;
+      art.loading='lazy';
+      art.alt='';
+      const caption=document.createElement('span');
+      caption.textContent=title;
+      card.append(art,caption);
+      target.append(card);
     }
-    dbSyncGallery();
 }
+
 function dbSyncGallery() {
     const active=document.getElementById('dreamAtlasRealm')?.value;
     document.querySelectorAll('.db-realm-card').forEach(button => {
