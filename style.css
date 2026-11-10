@@ -716,8 +716,13 @@ input[type=range]{min-height:18px}
  .db-primary-nav{order:0;flex:1}
 }
 
-/* Dream Atlas artwork includes its own title; display it without an extra caption. */
-.db-realm-card::after{display:none!important}
-.db-realm-card img{object-fit:cover;width:100%;height:auto;aspect-ratio:16/9}
-.db-realm-card{min-height:0;aspect-ratio:16/9}
-.db-realm-gallery{max-height:320px}
+/* Dream Binder keyboard placement — last instrument section, never a viewport dock. */
+html, body { scroll-behavior:auto; }
+main.app #dbPerformanceDock {
+  position:static!important; inset:auto!important; top:auto!important; right:auto!important; bottom:auto!important; left:auto!important;
+  transform:none!important; float:none!important; width:auto!important; height:auto!important;
+  margin:16px 0 0!important; z-index:auto!important;
+}
+main.app #dbPerformanceDock .db-keyboard-shell {position:relative!important; inset:auto!important; transform:none!important;}
+main.app #dbPerformanceDock .keyboard {position:relative!important; bottom:auto!important;}
+main.app {padding-bottom:18px!important;}
