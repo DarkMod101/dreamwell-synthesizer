@@ -7761,13 +7761,13 @@ textures: {
 // ========================================
 const dreamAtlasRealms = [
   {
-    "id": "lucidStates",
-    "title": "Lucid States",
+    "id": "lucidDreaming",
+    "title": "Lucid Dreaming",
     "theme": "The moment you realize the world is a dream."
   },
   {
-    "id": "cityscapes",
-    "title": "Cityscapes",
+    "id": "cityscape",
+    "title": "Cityscape",
     "theme": "Neon streets and windows that lead nowhere."
   },
   {
@@ -7777,17 +7777,17 @@ const dreamAtlasRealms = [
   },
   {
     "id": "neverEndingFields",
-    "title": "Never-Ending Fields",
+    "title": "Never Ending Fields",
     "theme": "Wind, wild grass, distant lights and a horizon without an edge."
   },
   {
-    "id": "castlesAndPonds",
-    "title": "Castles and Ponds",
+    "id": "ancientWorlds",
+    "title": "Ancient Worlds",
     "theme": "Still water, ancient stone and impossible gardens."
   },
   {
-    "id": "dreamMountainPeaks",
-    "title": "Dream Mountain Peaks",
+    "id": "celestialDreams",
+    "title": "Celestial Dreams",
     "theme": "Cloud oceans, thin air and the scale of impossible altitude."
   },
   {
@@ -7796,14 +7796,14 @@ const dreamAtlasRealms = [
     "theme": "Bioluminescent stone, impossible crystals and delicate echoes."
   },
   {
-    "id": "mirrorWalking",
-    "title": "Mirror Walking",
+    "id": "shadowEncounters",
+    "title": "Shadow Encounters",
     "theme": "Reflections that move differently from the original."
   },
   {
-    "id": "cozyDreams",
-    "title": "Cozy Dreams",
-    "theme": "Comfort, softness and gentle interior spaces."
+    "id": "forgottenRealms",
+    "title": "Forgotten Realms",
+    "theme": "Comforting places and memories that linger beyond waking."
   },
   {
     "id": "infiniteCarRide",
@@ -7811,13 +7811,13 @@ const dreamAtlasRealms = [
     "theme": "A nighttime road, passing lamps and nowhere to arrive."
   },
   {
-    "id": "fallingInReverse",
-    "title": "Falling in Reverse",
+    "id": "dreamDistortions",
+    "title": "Dream Distortions",
     "theme": "Weightlessness, inverted gravity and disorientation."
   },
   {
-    "id": "timeSkip",
-    "title": "Time Skip",
+    "id": "theVoid",
+    "title": "The Void",
     "theme": "Missing moments and clocks out of agreement."
   },
   {
@@ -7830,8 +7830,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_Conscious_Awakening",
     "name": "Conscious Awakening",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "pads",
     "description": "A horizon of light gradually comes into focus.",
     "recommendedOctave": "-1 / 0",
@@ -7895,8 +7895,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_Weightless_Geometry",
     "name": "Weightless Geometry",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "pads",
     "description": "A floating bodyless room with gentle inner motion.",
     "recommendedOctave": "-2 / -1",
@@ -7960,8 +7960,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_The_Memory_Returns",
     "name": "The Memory Returns",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "keys",
     "description": "A clear note carrying a half-remembered melody.",
     "recommendedOctave": "0 / +1",
@@ -8025,8 +8025,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_Familiar_Stranger",
     "name": "Familiar Stranger",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "leads",
     "description": "A voice-like tone, friendly yet impossibly unfamiliar.",
     "recommendedOctave": "-1 / 0",
@@ -8090,8 +8090,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_Soft_Lucidity",
     "name": "Soft Lucidity",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "bass",
     "description": "An elastic, soft pulse beneath the awakening.",
     "recommendedOctave": "-1 / 0",
@@ -8155,8 +8155,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_Beyond_the_Window",
     "name": "Beyond the Window",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "textures",
     "description": "An airy exterior world heard through distant glass.",
     "recommendedOctave": "-1 / 0",
@@ -8220,8 +8220,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_Dream_Sequence",
     "name": "Dream Sequence",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "arpeggiator",
     "description": "Flowing eighth-note pearls through a lucid landscape.",
     "recommendedOctave": "0 / +1",
@@ -8285,8 +8285,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_lucidStates_Between_Two_Sleeps",
     "name": "Between Two Sleeps",
-    "atlasRealm": "lucidStates",
-    "collection": "Lucid States",
+    "atlasRealm": "lucidDreaming",
+    "collection": "Lucid Dreaming",
     "category": "pads",
     "description": "Euphoric calm that wavers at the edge of waking.",
     "recommendedOctave": "-2 / -1",
@@ -8350,8 +8350,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Neon_Afterimage",
     "name": "Neon Afterimage",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "pads",
     "description": "Blue-purple neon stains wet pavement after midnight.",
     "recommendedOctave": "-1 / 0",
@@ -8415,8 +8415,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Empty_Boulevard",
     "name": "Empty Boulevard",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "pads",
     "description": "A vast abandoned boulevard humming at 3 a.m.",
     "recommendedOctave": "-2 / -1",
@@ -8480,8 +8480,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Rain_on_Glass",
     "name": "Rain on Glass",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "keys",
     "description": "Bright points of light against a rainy window.",
     "recommendedOctave": "0 / +1",
@@ -8545,8 +8545,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Rooftop_Transmission",
     "name": "Rooftop Transmission",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "leads",
     "description": "A narrow analog signal crossing a forest of antennas.",
     "recommendedOctave": "-1 / 0",
@@ -8610,8 +8610,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Underground_Current",
     "name": "Underground Current",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "bass",
     "description": "The mechanical heart beneath a sleeping city.",
     "recommendedOctave": "-1 / 0",
@@ -8675,8 +8675,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Ventilation_Shaft",
     "name": "Ventilation Shaft",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "textures",
     "description": "Filtered ventilation and deep infrastructure echoes.",
     "recommendedOctave": "-1 / 0",
@@ -8740,8 +8740,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Crosswalk_at_Infinity",
     "name": "Crosswalk at Infinity",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "arpeggiator",
     "description": "A restless sixteenth-note signal between silent avenues.",
     "recommendedOctave": "0 / +1",
@@ -8805,8 +8805,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cityscapes_Skyline_Receding",
     "name": "Skyline Receding",
-    "atlasRealm": "cityscapes",
-    "collection": "Cityscapes",
+    "atlasRealm": "cityscape",
+    "collection": "Cityscape",
     "category": "pads",
     "description": "Buildings shrink into a misty magnetic skyline.",
     "recommendedOctave": "-1 / 0",
@@ -9391,7 +9391,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_Golden_Distance",
     "name": "Golden Distance",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "pads",
     "description": "Grass and afternoon sunlight extending forever.",
     "recommendedOctave": "-2 / -1",
@@ -9456,7 +9456,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_Blue_Hour_Prairie",
     "name": "Blue Hour Prairie",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "pads",
     "description": "Fields turning blue as the last sunlight disappears.",
     "recommendedOctave": "-2 / -1",
@@ -9521,7 +9521,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_Dew_on_the_Grass",
     "name": "Dew on the Grass",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "keys",
     "description": "Light crystalline drops suspended over the meadow.",
     "recommendedOctave": "0 / +1",
@@ -9586,7 +9586,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_Distant_Shepherd",
     "name": "Distant Shepherd",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "leads",
     "description": "A gentle singing line from the far side of the field.",
     "recommendedOctave": "-1 / 0",
@@ -9651,7 +9651,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_Roots_Beneath_Earth",
     "name": "Roots Beneath Earth",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "bass",
     "description": "Warm deep vibration beneath the open landscape.",
     "recommendedOctave": "-1 / 0",
@@ -9716,7 +9716,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_Grasswind",
     "name": "Grasswind",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "textures",
     "description": "A soft-moving synthetic breeze through endless stalks.",
     "recommendedOctave": "-1 / 0",
@@ -9781,7 +9781,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_Fireflies_by_the_Road",
     "name": "Fireflies by the Road",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "arpeggiator",
     "description": "Unhurried eighth-note sparks appearing beyond the grass.",
     "recommendedOctave": "0 / +1",
@@ -9846,7 +9846,7 @@ const dreamAtlasPatches = [
     "key": "atlas_neverEndingFields_After_the_Rain",
     "name": "After the Rain",
     "atlasRealm": "neverEndingFields",
-    "collection": "Never-Ending Fields",
+    "collection": "Never Ending Fields",
     "category": "pads",
     "description": "A quiet clean landscape stretching beyond memory.",
     "recommendedOctave": "-2 / -1",
@@ -9910,8 +9910,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Castle_Beneath_Clouds",
     "name": "Castle Beneath Clouds",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "pads",
     "description": "Immense stone towers rising into luminous cloud.",
     "recommendedOctave": "-2 / -1",
@@ -9975,8 +9975,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Stillwater_Garden",
     "name": "Stillwater Garden",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "pads",
     "description": "A vast pond almost completely without a ripple.",
     "recommendedOctave": "-2 / -1",
@@ -10040,8 +10040,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Silver_Fountain",
     "name": "Silver Fountain",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "keys",
     "description": "Tiny bright droplets between old marble pillars.",
     "recommendedOctave": "0 / +1",
@@ -10105,8 +10105,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Keeper_of_the_Gate",
     "name": "Keeper of the Gate",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "leads",
     "description": "A broad ancient melody echoing from an empty watchtower.",
     "recommendedOctave": "-1 / 0",
@@ -10170,8 +10170,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Moat_Below",
     "name": "Moat Below",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "bass",
     "description": "Deep measured bass under the still surface of a moat.",
     "recommendedOctave": "-1 / 0",
@@ -10235,8 +10235,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Stone_Hall_Drips",
     "name": "Stone Hall Drips",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "textures",
     "description": "Water-like synthetic ticks receding in a huge hall.",
     "recommendedOctave": "0 / +1",
@@ -10300,8 +10300,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Court_of_Lanterns",
     "name": "Court of Lanterns",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "arpeggiator",
     "description": "A gently descending eighth-note court dance.",
     "recommendedOctave": "0 / +1",
@@ -10365,8 +10365,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_castlesAndPonds_Moon_on_the_Water",
     "name": "Moon on the Water",
-    "atlasRealm": "castlesAndPonds",
-    "collection": "Castles and Ponds",
+    "atlasRealm": "ancientWorlds",
+    "collection": "Ancient Worlds",
     "category": "pads",
     "description": "Moonlight moving through the reflected castle.",
     "recommendedOctave": "-2 / -1",
@@ -10430,8 +10430,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_Above_the_Cloud_Sea",
     "name": "Above the Cloud Sea",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "pads",
     "description": "An endless canopy of white clouds from the summit.",
     "recommendedOctave": "-2 / -1",
@@ -10495,8 +10495,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_The_Summit_is_Silent",
     "name": "The Summit is Silent",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "pads",
     "description": "Thin frozen air, absolute stillness, immense distance.",
     "recommendedOctave": "-2 / -1",
@@ -10560,8 +10560,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_Ice_Crystal_Sunlight",
     "name": "Ice-Crystal Sunlight",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "keys",
     "description": "Hard, glittering points of reflected alpine sun.",
     "recommendedOctave": "0 / +1",
@@ -10625,8 +10625,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_Skyline_Call",
     "name": "Skyline Call",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "leads",
     "description": "A high open melodic signal across vast alpine air.",
     "recommendedOctave": "-1 / 0",
@@ -10690,8 +10690,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_Bedrock_Resonance",
     "name": "Bedrock Resonance",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "bass",
     "description": "Ancient rock vibrating underneath immense peaks.",
     "recommendedOctave": "-1 / 0",
@@ -10755,8 +10755,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_Glacial_Draft",
     "name": "Glacial Draft",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "textures",
     "description": "A synthetic icy wind crossing bare mountain faces.",
     "recommendedOctave": "-1 / 0",
@@ -10820,8 +10820,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_Cloudstep_Ascension",
     "name": "Cloudstep Ascension",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "arpeggiator",
     "description": "Bright quarter-note steps slowly climbing above the clouds.",
     "recommendedOctave": "0 / +1",
@@ -10885,8 +10885,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_dreamMountainPeaks_Solar_Halo",
     "name": "Solar Halo",
-    "atlasRealm": "dreamMountainPeaks",
-    "collection": "Dream Mountain Peaks",
+    "atlasRealm": "celestialDreams",
+    "collection": "Celestial Dreams",
     "category": "pads",
     "description": "An enormous halo in an impossibly clear sky.",
     "recommendedOctave": "-1 / 0",
@@ -11470,8 +11470,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_The_Other_Side",
     "name": "The Other Side",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "pads",
     "description": "A smooth reflection opens into an unrelated room.",
     "recommendedOctave": "-2 / -1",
@@ -11535,8 +11535,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_Reflections_Misalign",
     "name": "Reflections Misalign",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "pads",
     "description": "Two copies of the same world slowly drifting apart.",
     "recommendedOctave": "-2 / -1",
@@ -11600,8 +11600,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_Silver_Fingertips",
     "name": "Silver Fingertips",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "keys",
     "description": "Cold reflective keys; one strike produces split-colored echoes.",
     "recommendedOctave": "0 / +1",
@@ -11665,8 +11665,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_Reverse_Doppelg_nger",
     "name": "Reverse Doppelgänger",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "leads",
     "description": "An unstable voice moving between near-identical timbres.",
     "recommendedOctave": "-1 / 0",
@@ -11730,8 +11730,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_Behind_the_Mirror",
     "name": "Behind the Mirror",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "bass",
     "description": "A hollow, glass-edged pulse on the wrong side of reality.",
     "recommendedOctave": "-1 / 0",
@@ -11795,8 +11795,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_Cracked_Looking_Glass",
     "name": "Cracked Looking Glass",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "textures",
     "description": "Metallic grain, fractured highs and a shifting reflection.",
     "recommendedOctave": "0 / +1",
@@ -11860,8 +11860,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_Double_Exposure",
     "name": "Double Exposure",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "arpeggiator",
     "description": "As-played sixteenths chase the reflected keyboard order.",
     "recommendedOctave": "0 / +1",
@@ -11925,8 +11925,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_mirrorWalking_Hall_of_Doubles",
     "name": "Hall of Doubles",
-    "atlasRealm": "mirrorWalking",
-    "collection": "Mirror Walking",
+    "atlasRealm": "shadowEncounters",
+    "collection": "Shadow Encounters",
     "category": "pads",
     "description": "A hall where every surface repeats a different version.",
     "recommendedOctave": "-2 / -1",
@@ -11990,8 +11990,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Blanket_Fort",
     "name": "Blanket Fort",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "pads",
     "description": "Soft sheltered warmth around a candlelit nook.",
     "recommendedOctave": "-2 / -1",
@@ -12055,8 +12055,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Window_Rain_at_Dawn",
     "name": "Window Rain at Dawn",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "pads",
     "description": "Slow raindrops against a warm morning window.",
     "recommendedOctave": "-1 / 0",
@@ -12120,8 +12120,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Sleepy_Lantern_Keys",
     "name": "Sleepy Lantern Keys",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "keys",
     "description": "Rounded soft struck keys with little upper attack.",
     "recommendedOctave": "0 / +1",
@@ -12185,8 +12185,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Humming_on_the_Sofa",
     "name": "Humming on the Sofa",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "leads",
     "description": "A tender sustained analog melody under a blanket.",
     "recommendedOctave": "-1 / 0",
@@ -12250,8 +12250,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Fireside_Low_Note",
     "name": "Fireside Low Note",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "bass",
     "description": "Gentle warm low register; no aggressive transients.",
     "recommendedOctave": "-1 / 0",
@@ -12315,8 +12315,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Soft_Quilt_Air",
     "name": "Soft Quilt Air",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "textures",
     "description": "A low filtered airy bed, more feeling than noise.",
     "recommendedOctave": "-1 / 0",
@@ -12380,8 +12380,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Nightlight_Carousel",
     "name": "Nightlight Carousel",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "arpeggiator",
     "description": "Soft quarter notes circling peacefully without urgency.",
     "recommendedOctave": "0 / +1",
@@ -12445,8 +12445,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_cozyDreams_Safe_Harbor",
     "name": "Safe Harbor",
-    "atlasRealm": "cozyDreams",
-    "collection": "Cozy Dreams",
+    "atlasRealm": "forgottenRealms",
+    "collection": "Forgotten Realms",
     "category": "pads",
     "description": "A smooth tranquil one-note sanctuary.",
     "recommendedOctave": "-2 / -1",
@@ -13030,8 +13030,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Gravity_Unlearned",
     "name": "Gravity Unlearned",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "pads",
     "description": "A suspended low note, pressure without direction.",
     "recommendedOctave": "-2 / -1",
@@ -13095,8 +13095,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Ceiling_Beneath_You",
     "name": "Ceiling Beneath You",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "pads",
     "description": "An unstable layer turning spatial orientation inside out.",
     "recommendedOctave": "-2 / -1",
@@ -13160,8 +13160,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Upside_Down_Piano",
     "name": "Upside-Down Piano",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "keys",
     "description": "Glassy struck notes that keep no stable center.",
     "recommendedOctave": "0 / +1",
@@ -13225,8 +13225,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Reverse_Lift",
     "name": "Reverse Lift",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "leads",
     "description": "A gliding melodic signal rising through an impossible void.",
     "recommendedOctave": "-1 / 0",
@@ -13290,8 +13290,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Negative_Mass",
     "name": "Negative Mass",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "bass",
     "description": "A dense hollow low-register foundation that seems to float.",
     "recommendedOctave": "-1 / 0",
@@ -13355,8 +13355,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Air_Without_Floor",
     "name": "Air Without Floor",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "textures",
     "description": "A drifting breath with no physical source.",
     "recommendedOctave": "-1 / 0",
@@ -13420,8 +13420,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Inverse_Cascade",
     "name": "Inverse Cascade",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "arpeggiator",
     "description": "An inverted rapid sixteenth-note fall that keeps ascending.",
     "recommendedOctave": "0 / +1",
@@ -13485,8 +13485,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_fallingInReverse_Without_a_Ground",
     "name": "Without a Ground",
-    "atlasRealm": "fallingInReverse",
-    "collection": "Falling in Reverse",
+    "atlasRealm": "dreamDistortions",
+    "collection": "Dream Distortions",
     "category": "pads",
     "description": "A profound slow drift into featureless reverse space.",
     "recommendedOctave": "-2 / -1",
@@ -13550,8 +13550,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Displaced_Seconds",
     "name": "Displaced Seconds",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "pads",
     "description": "A dim temporal pulse inside a seemingly still atmosphere.",
     "recommendedOctave": "-2 / -1",
@@ -13615,8 +13615,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Forgotten_Minute",
     "name": "Forgotten Minute",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "pads",
     "description": "The gradual sensation of a lost interval of time.",
     "recommendedOctave": "-2 / -1",
@@ -13680,8 +13680,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Clock_Without_Hands",
     "name": "Clock Without Hands",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "keys",
     "description": "Bright but irregular-seeming struck synthetic ticks.",
     "recommendedOctave": "0 / +1",
@@ -13745,8 +13745,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Yesterday_Tomorrow",
     "name": "Yesterday Tomorrow",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "leads",
     "description": "An unstable digital melody that sounds a little out of phase.",
     "recommendedOctave": "-1 / 0",
@@ -13810,8 +13810,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Temporal_Anchor",
     "name": "Temporal Anchor",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "bass",
     "description": "A forceful, steady low note against the drifting world.",
     "recommendedOctave": "-1 / 0",
@@ -13875,8 +13875,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Tape_Jump",
     "name": "Tape Jump",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "textures",
     "description": "Stylized jump-cut noise and digital time fragments.",
     "recommendedOctave": "0 / +1",
@@ -13940,8 +13940,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Lost_Frame_Loop",
     "name": "Lost Frame Loop",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "arpeggiator",
     "description": "Fast thirty-second-note fragments in a cycling order.",
     "recommendedOctave": "0 / +1",
@@ -14005,8 +14005,8 @@ const dreamAtlasPatches = [
   {
     "key": "atlas_timeSkip_Unfinished_Hour",
     "name": "Unfinished Hour",
-    "atlasRealm": "timeSkip",
-    "collection": "Time Skip",
+    "atlasRealm": "theVoid",
+    "collection": "The Void",
     "category": "pads",
     "description": "A hovering clock-like resonance that never resolves.",
     "recommendedOctave": "-2 / -1",
@@ -18223,13 +18223,19 @@ function dbCaptureSound(side) {
 // Each clickable artwork represents one actual preset environment (8 sounds each).
 // WebP images are visual illustrations only; canonical IDs preserve all 104 patches.
 const dbRealmArt = {
-  lucidStates:'lucid-dreaming', cityscapes:'dream-distortions',
-  houseOfMemories:'forgotten-realms', neverEndingFields:'celestial-dreams',
-  castlesAndPonds:'ancient-worlds', dreamMountainPeaks:'celestial-dreams',
-  secretSparkleCaverns:'celestial-dreams', mirrorWalking:'dream-distortions',
-  cozyDreams:'lucid-dreaming', infiniteCarRide:'shadow-encounters',
-  fallingInReverse:'the-void', timeSkip:'the-void',
-  sensualExperience:'lucid-dreaming'
+  "lucidDreaming": "lucid-dreaming.webp",
+  "cityscape": "Cityscape.webp",
+  "houseOfMemories": "the-house-of-memories.webp",
+  "neverEndingFields": "never-ending-fields.webp",
+  "ancientWorlds": "ancient-worlds.webp",
+  "celestialDreams": "celestial-dreams.webp",
+  "secretSparkleCaverns": "secret-sparkle-caverns.webp",
+  "shadowEncounters": "shadow-encounters.webp",
+  "forgottenRealms": "forgotten-realms.webp",
+  "infiniteCarRide": "infinite-car-ride.webp",
+  "dreamDistortions": "dream-distortions.webp",
+  "theVoid": "the-void.webp",
+  "sensualExperience": "sensual-experience.webp"
 };
 function dbRenderGallery() {
   const target=document.getElementById('dbRealmGallery');
@@ -18245,11 +18251,11 @@ function dbRenderGallery() {
     card.dataset.realm=id;
     card.setAttribute('aria-label',`Explore ${option.textContent} presets`);
     const art=document.createElement('img');
-    art.src=`assets/realms/${dbRealmArt[id] || 'lucid-dreaming'}.webp`;
+    art.src=`assets/realms/${dbRealmArt[id] || 'lucid-dreaming.webp'}`;
     art.alt=''; art.loading='lazy';
     const caption=document.createElement('span');
     caption.textContent=option.textContent;
-    card.append(art,caption);
+    card.append(art);
     card.addEventListener('click',()=>{
       realmSelect.value=id;
       selectPresetBank('atlas');
