@@ -726,3 +726,6 @@ main.app #dbPerformanceDock {
 main.app #dbPerformanceDock .db-keyboard-shell {position:relative!important; inset:auto!important; transform:none!important;}
 main.app #dbPerformanceDock .keyboard {position:relative!important; bottom:auto!important;}
 main.app {padding-bottom:18px!important;}
+
+/* Page-end keyboard: final authoritative override. */
+body main.app > #dbPerformanceDock { position:static!important; display:block!important; inset:auto!important; transform:none!important; margin:16px 0 0!important; width:100%!important; }
