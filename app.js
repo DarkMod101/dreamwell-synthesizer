@@ -18220,43 +18220,53 @@ function dbCaptureSound(side) {
     dbSetStatus(`CURRENT SOUND CAPTURED INTO SOURCE ${side}. ${dbGetMode()==='off' ? 'Select Bind or Split to audition.' : 'Play notes to audition.'}`);
     dbStoreBinding();
 }
+// Each clickable artwork represents one actual preset environment (8 sounds each).
+// WebP images are visual illustrations only; canonical IDs preserve all 104 patches.
+const dbRealmArt = {
+  lucidStates:'lucid-dreaming', cityscapes:'dream-distortions',
+  houseOfMemories:'forgotten-realms', neverEndingFields:'celestial-dreams',
+  castlesAndPonds:'ancient-worlds', dreamMountainPeaks:'celestial-dreams',
+  secretSparkleCaverns:'celestial-dreams', mirrorWalking:'dream-distortions',
+  cozyDreams:'lucid-dreaming', infiniteCarRide:'shadow-encounters',
+  fallingInReverse:'the-void', timeSkip:'the-void',
+  sensualExperience:'lucid-dreaming'
+};
 function dbRenderGallery() {
-    // Seven cinematic art windows. The 13 sound environments and their 104
-    // presets remain independently available through the existing filter.
-    const target=document.getElementById('dbRealmGallery');
-    if (!target) return;
-    target.replaceChildren();
-    const gateways=[
-      ['celestial-dreams','Celestial Dreams'],
-      ['lucid-dreaming','Lucid Dreaming'],
-      ['ancient-worlds','Ancient Worlds'],
-      ['forgotten-realms','Forgotten Realms'],
-      ['shadow-encounters','Shadow Encounters'],
-      ['dream-distortions','Dream Distortions'],
-      ['the-void','The Void']
-    ];
-    for(const [slug,title] of gateways){
-      const card=document.createElement('div');
-      card.className='db-realm-card db-realm-card--visual';
-      card.setAttribute('role','img');
-      card.setAttribute('aria-label',title+' artwork');
-      const art=document.createElement('img');
-      art.src=`assets/realms/${slug}.webp`;
-      art.loading='lazy';
-      art.alt='';
-      const caption=document.createElement('span');
-      caption.textContent=title;
-      card.append(art,caption);
-      target.append(card);
-    }
-}
-
-function dbSyncGallery() {
-    const active=document.getElementById('dreamAtlasRealm')?.value;
-    document.querySelectorAll('.db-realm-card').forEach(button => {
-        button.classList.toggle('active',button.dataset.realm===active);
-        button.setAttribute('aria-pressed',String(button.dataset.realm===active));
+  const target=document.getElementById('dbRealmGallery');
+  const realmSelect=document.getElementById('dreamAtlasRealm');
+  if (!target || !realmSelect) return;
+  target.replaceChildren();
+  // Source of truth is the existing select: IDs and labels match patch.atlasRealm.
+  for (const option of Array.from(realmSelect.options).filter(o=>o.value!=='all')) {
+    const id=option.value;
+    const card=document.createElement('button');
+    card.type='button';
+    card.className='db-realm-card';
+    card.dataset.realm=id;
+    card.setAttribute('aria-label',`Explore ${option.textContent} presets`);
+    const art=document.createElement('img');
+    art.src=`assets/realms/${dbRealmArt[id] || 'lucid-dreaming'}.webp`;
+    art.alt=''; art.loading='lazy';
+    const caption=document.createElement('span');
+    caption.textContent=option.textContent;
+    card.append(art,caption);
+    card.addEventListener('click',()=>{
+      realmSelect.value=id;
+      selectPresetBank('atlas');
+      dbSyncGallery();
+      document.getElementById('presetBrowserList')?.scrollTo({top:0,behavior:'smooth'});
     });
+    target.append(card);
+  }
+  dbSyncGallery();
+}
+function dbSyncGallery() {
+  const active=document.getElementById('dreamAtlasRealm')?.value;
+  document.querySelectorAll('.db-realm-card').forEach(card=>{
+    const selected=card.dataset.realm===active;
+    card.classList.toggle('active',selected);
+    card.setAttribute('aria-pressed',String(selected));
+  });
 }
 function dbUpdateAlgebraStatus() {
     const s=polynomialRingState;
