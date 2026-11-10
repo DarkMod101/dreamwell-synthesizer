@@ -26,10 +26,10 @@
 <p class="preset-message" id="presetMessage"></p>
 </section>
 <section aria-label="Dream Binder instrument overview" class="db-hero">
-<div aria-label="Celestial gothic portal above cosmic mountains" class="db-hero-art" role="img">
+<div aria-label="The Dream Nexus, a gateway between astral and nightmare realms" class="db-hero-art" role="img">
 <div class="db-hero-caption"><span class="db-eyebrow">01 / RESONANCE SOURCE</span><h2>Enter the<br/><em>unheard.</em></h2><p>Every dream leaves a resonance.<br/>Every resonance remembers a time.</p>
 <button class="db-gold-button" id="dbAtlasHero" type="button">EXPLORE DREAM ATLAS <span aria-hidden="true">↗</span></button></div>
-<span class="db-art-label">✦   THE CELESTIAL GATE</span>
+<span class="db-art-label">✦   THE DREAM NEXUS</span>
 </div>
 <div class="db-hero-studio">
 <div class="db-studio-top"><div><span class="db-eyebrow">02 / SOUND ARCHITECTURE</span><h2>Resonance Laboratory</h2></div><span class="db-status-chip">● LIVE SIGNAL PATH</span></div>
@@ -455,11 +455,11 @@
 <button class="key" data-note="987.77">B5</button>
 </section>
 <footer class="db-footer"><span>✧ DREAM BINDER</span><span>RESONANT DOORWAYS · CREATIVE SYNTHESIS</span><span>LOCAL-FIRST AUDIO / WEB MIDI</span></footer></main>
-<div class="preset-browser-overlay hidden" id="presetBrowserOverlay">
+<div class="preset-browser-overlay hidden" id="presetBrowserOverlay" role="dialog" aria-modal="true" aria-label="Dream Binder sound library" aria-hidden="true">
 <div class="preset-browser">
 <div class="preset-browser-header">
 <h2>Presets</h2>
-<button class="preset-browser-close" id="closePresetBrowser">×</button>
+<button class="preset-browser-close" id="closePresetBrowser" type="button" aria-label="Close sound library">×</button>
 </div>
 <div aria-label="Save and manage personal patches" class="preset-manager">
 <label class="preset-manager-name" for="presetNameInput">Sound name</label>
@@ -524,5 +524,6 @@
 </div>
 </div>
 <script src="app.js"></script>
+<script src="nexus-ui.js"></script>
 </body>
 </html>
