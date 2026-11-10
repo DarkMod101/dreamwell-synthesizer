@@ -73,3 +73,10 @@
   });
   syncState();
 })();
+
+// Final DOM safeguard: keyboard must follow all instrument sections.
+document.addEventListener('DOMContentLoaded', () => {
+  const main = document.querySelector('main.app');
+  const dock = document.getElementById('dbPerformanceDock');
+  if (main && dock && main.lastElementChild !== dock) main.appendChild(dock);
+});
