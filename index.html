@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dream Binder · Resonant Doorways — Synth Studio</title>
-<meta content="#080717" name="theme-color"/><link href="style.css?v=db-keyboard-page-end-20261110" rel="stylesheet"/></head>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=db-layout-atlas-04" rel="stylesheet"/></head>
 <body>
 <main class="app">
 <header class="db-masthead">
@@ -16,7 +17,7 @@
 <button class="db-nav" data-db-nav="piano" type="button">♬  PIANO</button>
 <button class="db-nav" data-db-nav="choir" type="button">◈  CHOIR</button>
 <button class="db-nav" data-db-nav="bindings" type="button">∞  BINDINGS</button>
-<button class="db-nav" data-db-nav="atlas" aria-label="Dream Atlas" type="button">✦  DREAM ATLAS</button>
+<button aria-label="Dream Atlas" class="db-nav" data-db-nav="atlas" type="button">✦  DREAM ATLAS</button>
 </nav>
 <div class="db-head-actions"><span aria-hidden="true" class="db-live-dot"></span><span class="db-live-status">STUDIO / READY</span><button class="db-compact-btn" id="dbOpenMIDI" type="button">⌘ MIDI</button></div>
 </header>
@@ -50,19 +51,9 @@
 </section>
 <div class="db-controls-heading" id="dbSoundArchitecture"><div><span class="db-eyebrow">04 / CONTROL RACK</span><h2>Sound Architecture</h2><p>Oscillators, enveloping motion, spectral geometry and atmosphere.</p></div><span class="db-optional-label">SELECT A MODULE TO EXPAND ▾</span></div>
 <section aria-label="Sound design modules" class="controls">
-
 <!-- DREAM BINDER — FM RESONANCE PANEL -->
-
 <!-- DREAM BINDER — RESONANT FIELD: COHERENCE + DECOHERENCE -->
-
 <!-- DREAM BINDER — POLYNOMIAL RINGS / KRULL DIMENSION: SYNTH ONLY -->
-
-
-
-
-
-
-
 <div class="db-control-column" data-column="1"><details class="panel db-module db-group-osc" open=""><summary>OSCILLATORS · A + B</summary><div class="db-module-content"><label>
           Waveform A
           <select id="waveform">
@@ -407,7 +398,8 @@
 <small>Keys and sustain pedal (CC64) supported. Pads sending MIDI notes also play notes. Browser support varies; USB MIDI on Android is not guaranteed.</small>
 </section>
 <footer class="db-footer"><span>✧ DREAM BINDER</span><span>RESONANT DOORWAYS · CREATIVE SYNTHESIS</span><span>LOCAL-FIRST AUDIO / WEB MIDI</span></footer>
-<section class="db-performance-dock" id="dbPerformanceDock" aria-label="Performance keyboard dock">
+
+<section aria-label="Performance keyboard dock" class="db-performance-dock" id="dbPerformanceDock">
 <div class="db-performance-toolbar">
 <div class="db-keyboard-title"><span class="db-eyebrow">05 / KEYBOARD</span><h2>Performance</h2><p>Touch / MIDI</p></div>
 <section class="octave-controls">
@@ -456,17 +448,16 @@
 <button class="key" data-note="880.00">A5</button>
 <button class="key black-key" data-note="932.33">A#5</button>
 <button class="key" data-note="987.77">B5</button>
-</section></div></section>
-</main>
-<div class="preset-browser-overlay hidden" id="presetBrowserOverlay" role="dialog" aria-modal="true" aria-label="Dream Binder sound library" aria-hidden="true">
+</section></div></section></main>
+<div aria-hidden="true" aria-label="Dream Binder sound library" aria-modal="true" class="preset-browser-overlay hidden" id="presetBrowserOverlay" role="dialog">
 <div class="preset-browser">
 <div class="preset-browser-header">
 <h2>Presets</h2>
-<button class="db-library-manage" id="dbManagerToggle" type="button" aria-controls="dbPresetManager" aria-expanded="false">Manage sounds</button>
-<button class="preset-browser-close" id="closePresetBrowser" type="button" aria-label="Close sound library">×</button>
+<button aria-controls="dbPresetManager" aria-expanded="false" class="db-library-manage" id="dbManagerToggle" type="button">Manage sounds</button>
+<button aria-label="Close sound library" class="preset-browser-close" id="closePresetBrowser" type="button">×</button>
 </div>
 <div class="db-library-scroll" id="dbLibraryScroll">
-<div aria-label="Save and manage personal patches" class="preset-manager" id="dbPresetManager" hidden>
+<div aria-label="Save and manage personal patches" class="preset-manager" hidden="" id="dbPresetManager">
 <label class="preset-manager-name" for="presetNameInput">Sound name</label>
 <input autocomplete="off" class="preset-manager-input" id="presetNameInput" maxlength="75" placeholder="Name your sound..." type="text"/>
 <div class="preset-manager-actions">
@@ -531,6 +522,6 @@
 </div><!-- /preset-browser -->
 </div><!-- /preset-browser-overlay -->
 <script src="app.js"></script>
-<script src="nexus-ui.js?v=db-keyboard-page-end-20261110"></script>
+<script src="nexus-ui.js?v=db-layout-atlas-04"></script>
 </body>
 </html>
