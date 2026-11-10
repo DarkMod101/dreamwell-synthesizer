@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dream Binder · Resonant Doorways — Synth Studio</title>
-<meta content="#080717" name="theme-color"/><link href="style.css" rel="stylesheet"/></head>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=db-ui-batch-01" rel="stylesheet"/></head>
 <body>
 <main class="app">
 <header class="db-masthead">
@@ -16,7 +16,7 @@
 <button class="db-nav" data-db-nav="piano" type="button">♬  PIANO</button>
 <button class="db-nav" data-db-nav="choir" type="button">◈  CHOIR</button>
 <button class="db-nav" data-db-nav="bindings" type="button">∞  BINDINGS</button>
-<button class="db-nav" data-db-nav="atlas" type="button">✦  DREAM ATLAS</button>
+<button class="db-nav" data-db-nav="atlas" aria-label="Dream Atlas" type="button">✦  ATLAS</button>
 </nav>
 <div class="db-head-actions"><span aria-hidden="true" class="db-live-dot"></span><span class="db-live-status">STUDIO / READY</span><button class="db-compact-btn" id="dbOpenMIDI" type="button">⌘ MIDI</button></div>
 </header>
@@ -459,9 +459,11 @@
 <div class="preset-browser">
 <div class="preset-browser-header">
 <h2>Presets</h2>
+<button class="db-library-manage" id="dbManagerToggle" type="button" aria-controls="dbPresetManager" aria-expanded="false">Manage sounds</button>
 <button class="preset-browser-close" id="closePresetBrowser" type="button" aria-label="Close sound library">×</button>
 </div>
-<div aria-label="Save and manage personal patches" class="preset-manager">
+<div class="db-library-scroll" id="dbLibraryScroll">
+<div aria-label="Save and manage personal patches" class="preset-manager" id="dbPresetManager" hidden>
 <label class="preset-manager-name" for="presetNameInput">Sound name</label>
 <input autocomplete="off" class="preset-manager-input" id="presetNameInput" maxlength="75" placeholder="Name your sound..." type="text"/>
 <div class="preset-manager-actions">
@@ -487,7 +489,18 @@
 <button class="preset-browser-tab" data-bank="user">My Presets</button>
 </div>
 <div class="dream-atlas-filters" hidden="" id="dreamAtlasFilters">
-<p class="dream-atlas-intro">13 dream environments · 104 new sounds. Explore a realm or browse everything.</p><div aria-label="Illustrated Dream Atlas realms" class="db-realm-gallery" id="dbRealmGallery"></div>
+<p class="dream-atlas-intro">THE DREAM ATLAS · Seven visual gateways</p>
+<div class="db-atlas-chapters" aria-label="Seven cinematic realm artworks">
+<figure class="db-atlas-chapter"><img src="assets/realms/celestial-dreams.webp" alt="Celestial Dreams realm artwork" loading="lazy" decoding="async"/><figcaption>Celestial Dreams</figcaption></figure>
+<figure class="db-atlas-chapter"><img src="assets/realms/lucid-dreaming.webp" alt="Lucid Dreaming realm artwork" loading="lazy" decoding="async"/><figcaption>Lucid Dreaming</figcaption></figure>
+<figure class="db-atlas-chapter"><img src="assets/realms/ancient-worlds.webp" alt="Ancient Worlds realm artwork" loading="lazy" decoding="async"/><figcaption>Ancient Worlds</figcaption></figure>
+<figure class="db-atlas-chapter"><img src="assets/realms/forgotten-realms.webp" alt="Forgotten Realms realm artwork" loading="lazy" decoding="async"/><figcaption>Forgotten Realms</figcaption></figure>
+<figure class="db-atlas-chapter"><img src="assets/realms/shadow-encounters.webp" alt="Shadow Encounters realm artwork" loading="lazy" decoding="async"/><figcaption>Shadow Encounters</figcaption></figure>
+<figure class="db-atlas-chapter"><img src="assets/realms/dream-distortions.webp" alt="Dream Distortions realm artwork" loading="lazy" decoding="async"/><figcaption>Dream Distortions</figcaption></figure>
+<figure class="db-atlas-chapter"><img src="assets/realms/the-void.webp" alt="The Void realm artwork" loading="lazy" decoding="async"/><figcaption>The Void</figcaption></figure>
+</div>
+<p class="db-atlas-legacy-note">Browse 104 sounds across the 13 existing sound environments using the filters below. The seven visual gateways are artwork previews; they do not change your preset mappings.</p>
+<div aria-label="Illustrated Dream Atlas realms" class="db-realm-gallery" id="dbRealmGallery"></div>
 <label for="dreamAtlasRealm">Dream environment
         <select id="dreamAtlasRealm">
 <option value="all">All 13 Realms</option>
@@ -521,9 +534,10 @@
 <p class="dream-atlas-tip">Suggested octave shifts and sound descriptions appear after selecting a sound. For Arpeggiator presets, hold one or more keys to start; rates are 1/4, 1/8, 1/16, and 1/32.</p>
 </div>
 <div class="preset-browser-list" id="presetBrowserList"></div>
-</div>
-</div>
+</div><!-- /db-library-scroll -->
+</div><!-- /preset-browser -->
+</div><!-- /preset-browser-overlay -->
 <script src="app.js"></script>
-<script src="nexus-ui.js"></script>
+<script src="nexus-ui.js?v=db-ui-batch-01"></script>
 </body>
 </html>
