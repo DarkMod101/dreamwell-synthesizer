@@ -727,5 +727,13 @@ main.app #dbPerformanceDock .db-keyboard-shell {position:relative!important; ins
 main.app #dbPerformanceDock .keyboard {position:relative!important; bottom:auto!important;}
 main.app {padding-bottom:18px!important;}
 
-/* Page-end keyboard: final authoritative override. */
-body main.app > #dbPerformanceDock { position:static!important; display:block!important; inset:auto!important; transform:none!important; margin:16px 0 0!important; width:100%!important; }
+/* v04: keyboard always at document end, never viewport anchored */
+html body main.app {display:block!important;}
+html body main.app #dbPerformanceDock {
+ position:static!important;display:block!important;float:none!important;
+ inset:auto!important;transform:none!important;z-index:auto!important;
+ width:100%!important;max-width:100%!important;margin:16px 0 0!important;
+}
+html body main.app #dbPerformanceDock .db-performance-toolbar,
+html body main.app #dbPerformanceDock .db-keyboard-shell {position:static!important;}
+html body main.app .db-realm-gallery {display:grid!important;}
