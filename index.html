@@ -4,19 +4,19 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dream Binder · Resonant Doorways — Synth Studio</title>
-<meta content="#080717" name="theme-color"/><link href="style.css?v=db-ui-batch-01" rel="stylesheet"/></head>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=db-app-interface-02" rel="stylesheet"/></head>
 <body>
 <main class="app">
 <header class="db-masthead">
 <div class="db-brand"><span aria-hidden="true" class="db-sigil">✧</span>
 <div><h1>DREAM BINDER</h1><p>RESONANT DOORWAYS <span> / REALM WALKING THROUGH TIME</span></p></div>
 </div>
-<nav aria-label="Studio navigation" class="db-primary-nav">
+<nav aria-label="Instrument navigation" class="db-primary-nav">
 <button aria-current="page" class="db-nav active" data-db-nav="synth" type="button">⌁  SYNTH</button>
 <button class="db-nav" data-db-nav="piano" type="button">♬  PIANO</button>
 <button class="db-nav" data-db-nav="choir" type="button">◈  CHOIR</button>
 <button class="db-nav" data-db-nav="bindings" type="button">∞  BINDINGS</button>
-<button class="db-nav" data-db-nav="atlas" aria-label="Dream Atlas" type="button">✦  ATLAS</button>
+<button class="db-nav" data-db-nav="atlas" aria-label="Dream Atlas" type="button">✦  DREAM ATLAS</button>
 </nav>
 <div class="db-head-actions"><span aria-hidden="true" class="db-live-dot"></span><span class="db-live-status">STUDIO / READY</span><button class="db-compact-btn" id="dbOpenMIDI" type="button">⌘ MIDI</button></div>
 </header>
@@ -406,14 +406,16 @@
 <p id="midiStatus" role="status">MIDI disabled — connect a controller and select Enable MIDI.</p>
 <small>Keys and sustain pedal (CC64) supported. Pads sending MIDI notes also play notes. Browser support varies; USB MIDI on Android is not guaranteed.</small>
 </section>
+<section class="db-performance-dock" id="dbPerformanceDock" aria-label="Performance keyboard dock">
+<div class="db-performance-toolbar">
+<div class="db-keyboard-title"><span class="db-eyebrow">05 / PERFORMANCE</span><h2>Play the resonance</h2><p>Touch the keys or connect your Akai MPK mini through USB-C OTG.</p></div>
 <section class="octave-controls">
 <button class="octave-btn" id="octaveDown">◀ OCT</button>
-<span id="octaveDisplay">
-    Shift: 0
-  </span>
+<span id="octaveDisplay">Shift: 0</span>
 <button class="octave-btn" id="octaveUp">OCT ▶</button>
 </section>
-<div class="db-keyboard-title"><span class="db-eyebrow">05 / PERFORMANCE</span><h2>Play the resonance</h2><p>Touch the keys or connect your Akai MPK mini through USB-C OTG.</p></div><section aria-label="Three octave touch keyboard" class="keyboard">
+</div>
+<div class="db-keyboard-shell"><section aria-label="Three octave touch keyboard" class="keyboard">
 <!-- Octave 3 -->
 <button class="key" data-note="130.81">C3</button>
 <button class="key black-key" data-note="138.59">C#3</button>
@@ -453,7 +455,7 @@
 <button class="key" data-note="880.00">A5</button>
 <button class="key black-key" data-note="932.33">A#5</button>
 <button class="key" data-note="987.77">B5</button>
-</section>
+</section></div></section>
 <footer class="db-footer"><span>✧ DREAM BINDER</span><span>RESONANT DOORWAYS · CREATIVE SYNTHESIS</span><span>LOCAL-FIRST AUDIO / WEB MIDI</span></footer></main>
 <div class="preset-browser-overlay hidden" id="presetBrowserOverlay" role="dialog" aria-modal="true" aria-label="Dream Binder sound library" aria-hidden="true">
 <div class="preset-browser">
