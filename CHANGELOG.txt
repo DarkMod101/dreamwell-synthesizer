@@ -1,0 +1,8 @@
+Dream Nexus UI batch
+- Preserved original app.js byte-for-byte (no changes to synthesis or preset logic).
+- Added CSS overrides for viewport-safe Presets/Dream Atlas overlay with internal scrolling.
+- Added separate nexus-ui.js for Escape, focus containment/return and body scroll lock.
+- Updated hero art reference to assets/backgrounds/studio-nexus.webp with gradient fallback.
+- Updated visual labels and accessible dialog metadata.
+- Images and original audio/sample assets are not included.
+Suggested Git commit: feat(ui): introduce Dream Nexus theme and viewport-safe preset atlas navigation
