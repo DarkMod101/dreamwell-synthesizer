@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dream Binder · Resonant Doorways — Synth Studio</title>
-<meta content="#080717" name="theme-color"/><link href="style.css?v=db-app-interface-02" rel="stylesheet"/></head>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=db-workstation-03" rel="stylesheet"/></head>
 <body>
 <main class="app">
 <header class="db-masthead">
@@ -27,12 +27,12 @@
 </section>
 <section aria-label="Dream Binder instrument overview" class="db-hero">
 <div aria-label="The Dream Nexus, a gateway between astral and nightmare realms" class="db-hero-art" role="img">
-<div class="db-hero-caption"><span class="db-eyebrow">01 / RESONANCE SOURCE</span><h2>Enter the<br/><em>unheard.</em></h2><p>Every dream leaves a resonance.<br/>Every resonance remembers a time.</p>
+<div class="db-hero-caption"><span class="db-eyebrow">01 / DREAM NEXUS</span><h2>RESONANT<br/><em>DOORWAYS</em></h2><p>Every dream leaves a resonance.<br/>Every resonance remembers a time.</p>
 <button class="db-gold-button" id="dbAtlasHero" type="button">EXPLORE DREAM ATLAS <span aria-hidden="true">↗</span></button></div>
 <span class="db-art-label">✦   THE DREAM NEXUS</span>
 </div>
 <div class="db-hero-studio">
-<div class="db-studio-top"><div><span class="db-eyebrow">02 / SOUND ARCHITECTURE</span><h2>Resonance Laboratory</h2></div><span class="db-status-chip">● LIVE SIGNAL PATH</span></div>
+<div class="db-studio-top"><div><span class="db-eyebrow">02 / SIGNAL</span><h2>Resonance Display</h2></div><span class="db-status-chip">● LIVE SIGNAL PATH</span></div>
 <div class="db-spectrum-shell"><div class="db-spectrum-header"><span>HARMONIC SIGNATURE</span><span>OSC A / OSC B / SUB</span></div><canvas aria-label="Low-power frequency spectrum display" height="170" id="dbSpectrumCanvas" width="780"></canvas><div class="db-spectrum-axis"><span>20 Hz</span><span>220 Hz</span><span>2.2 kHz</span><span>20 kHz</span></div></div>
 <div class="db-algebra">
 <div aria-hidden="true" class="db-algebra-orbit"><span>Spec(R)</span><i></i><i></i><i></i><b>✧</b></div>
@@ -48,7 +48,7 @@
 <div class="db-binding-layer"><div class="db-layer-head"><span class="db-layer-icon alt">B</span><span>RESONANCE SOURCE B</span></div><label for="dbLayerB">Second sound<select aria-label="Binding source B preset" id="dbLayerB"></select></label><button class="db-micro-btn" id="dbCaptureB" type="button">Capture current sound → B</button></div>
 </div><p class="db-bind-status" id="dbBindingStatus" role="status">Single mode: existing Synth, Piano and Choir behavior is unchanged.</p>
 </section>
-<div class="db-controls-heading" id="dbSoundArchitecture"><div><span class="db-eyebrow">04 / SOUND DESIGN</span><h2>Shape the impossible.</h2><p>Oscillators, enveloping motion, spectral geometry and atmosphere.</p></div><span class="db-optional-label">SELECT A MODULE TO EXPAND ▾</span></div>
+<div class="db-controls-heading" id="dbSoundArchitecture"><div><span class="db-eyebrow">04 / CONTROL RACK</span><h2>Sound Architecture</h2><p>Oscillators, enveloping motion, spectral geometry and atmosphere.</p></div><span class="db-optional-label">SELECT A MODULE TO EXPAND ▾</span></div>
 <section aria-label="Sound design modules" class="controls">
 
 <!-- DREAM BINDER — FM RESONANCE PANEL -->
@@ -408,7 +408,7 @@
 </section>
 <section class="db-performance-dock" id="dbPerformanceDock" aria-label="Performance keyboard dock">
 <div class="db-performance-toolbar">
-<div class="db-keyboard-title"><span class="db-eyebrow">05 / PERFORMANCE</span><h2>Play the resonance</h2><p>Touch the keys or connect your Akai MPK mini through USB-C OTG.</p></div>
+<div class="db-keyboard-title"><span class="db-eyebrow">05 / KEYBOARD</span><h2>Performance</h2><p>Touch / MIDI</p></div>
 <section class="octave-controls">
 <button class="octave-btn" id="octaveDown">◀ OCT</button>
 <span id="octaveDisplay">Shift: 0</span>
@@ -491,17 +491,7 @@
 <button class="preset-browser-tab" data-bank="user">My Presets</button>
 </div>
 <div class="dream-atlas-filters" hidden="" id="dreamAtlasFilters">
-<p class="dream-atlas-intro">THE DREAM ATLAS · Seven visual gateways</p>
-<div class="db-atlas-chapters" aria-label="Seven cinematic realm artworks">
-<figure class="db-atlas-chapter"><img src="assets/realms/celestial-dreams.webp" alt="Celestial Dreams realm artwork" loading="lazy" decoding="async"/><figcaption>Celestial Dreams</figcaption></figure>
-<figure class="db-atlas-chapter"><img src="assets/realms/lucid-dreaming.webp" alt="Lucid Dreaming realm artwork" loading="lazy" decoding="async"/><figcaption>Lucid Dreaming</figcaption></figure>
-<figure class="db-atlas-chapter"><img src="assets/realms/ancient-worlds.webp" alt="Ancient Worlds realm artwork" loading="lazy" decoding="async"/><figcaption>Ancient Worlds</figcaption></figure>
-<figure class="db-atlas-chapter"><img src="assets/realms/forgotten-realms.webp" alt="Forgotten Realms realm artwork" loading="lazy" decoding="async"/><figcaption>Forgotten Realms</figcaption></figure>
-<figure class="db-atlas-chapter"><img src="assets/realms/shadow-encounters.webp" alt="Shadow Encounters realm artwork" loading="lazy" decoding="async"/><figcaption>Shadow Encounters</figcaption></figure>
-<figure class="db-atlas-chapter"><img src="assets/realms/dream-distortions.webp" alt="Dream Distortions realm artwork" loading="lazy" decoding="async"/><figcaption>Dream Distortions</figcaption></figure>
-<figure class="db-atlas-chapter"><img src="assets/realms/the-void.webp" alt="The Void realm artwork" loading="lazy" decoding="async"/><figcaption>The Void</figcaption></figure>
-</div>
-<p class="db-atlas-legacy-note">Browse 104 sounds across the 13 existing sound environments using the filters below. The seven visual gateways are artwork previews; they do not change your preset mappings.</p>
+<p class="dream-atlas-intro">SELECT A REALM · 8 PRESETS PER ENVIRONMENT</p>
 <div aria-label="Illustrated Dream Atlas realms" class="db-realm-gallery" id="dbRealmGallery"></div>
 <label for="dreamAtlasRealm">Dream environment
         <select id="dreamAtlasRealm">
@@ -540,6 +530,6 @@
 </div><!-- /preset-browser -->
 </div><!-- /preset-browser-overlay -->
 <script src="app.js"></script>
-<script src="nexus-ui.js?v=db-ui-batch-01"></script>
+<script src="nexus-ui.js?v=db-workstation-03"></script>
 </body>
 </html>
