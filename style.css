@@ -715,3 +715,9 @@ input[type=range]{min-height:18px}
  .db-masthead{flex-wrap:nowrap}
  .db-primary-nav{order:0;flex:1}
 }
+
+/* Dream Atlas artwork includes its own title; display it without an extra caption. */
+.db-realm-card::after{display:none!important}
+.db-realm-card img{object-fit:cover;width:100%;height:auto;aspect-ratio:16/9}
+.db-realm-card{min-height:0;aspect-ratio:16/9}
+.db-realm-gallery{max-height:320px}
