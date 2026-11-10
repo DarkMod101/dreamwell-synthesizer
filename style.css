@@ -49,3 +49,230 @@ body.db-library-open{overflow:hidden!important}
 @media(max-width:650px),(max-height:560px){.preset-browser-overlay{align-items:stretch}.preset-browser{height:100%!important;border-radius:14px}.preset-browser-header{margin-bottom:7px}.preset-browser-header h2{font-size:20px}.preset-manager{max-height:23dvh;padding:8px;margin-bottom:6px}.preset-manager-actions{gap:4px}.preset-manager-actions button{min-height:35px;padding:7px}.dream-atlas-filters{max-height:30dvh;padding:8px}.db-realm-gallery{max-height:120px}.preset-browser-list{margin-top:6px;padding:7px}}
 @media(max-height:420px){.preset-manager{max-height:95px}.dream-atlas-filters{max-height:110px}.preset-browser-tabs{min-height:35px}.preset-browser-list{min-height:45px}}
 @media(prefers-reduced-motion:reduce){.db-realm-card img{transition:none}}
+
+
+/* ================================================================
+   DREAM BINDER · UI BATCH 01 — 2026-11-10
+   Responsive performance-first layout + one-scroll sound library.
+   Visual layer only: audio parameters and core engine untouched.
+   ================================================================ */
+
+/* Studio Nexus is the subtle ambience for the playable instrument. */
+body {
+  background:
+    linear-gradient(180deg, rgba(5, 7, 19, .92), rgba(6, 7, 19, .96)),
+    url("assets/backgrounds/studio-nexus.webp") center center / cover fixed no-repeat,
+    #070916;
+}
+.app { display:flex; flex-direction:column; min-width:0; }
+.app > * { min-width:0; }
+
+/* Performance first. DOM stays intact, and all existing JS IDs are untouched. */
+.db-masthead {order:0; min-height:68px; padding:9px 0; flex-wrap:wrap; gap:8px 18px;}
+.db-preset-strip {order:1;}
+.db-keyboard-title {order:2; margin:12px 0 6px;}
+.octave-controls {order:3; margin:0 0 9px; justify-content:flex-start;}
+.keyboard {order:4;}
+.db-controls-heading {order:5; margin-top:20px;}
+.controls {order:6;}
+.db-binding-studio {order:7;}
+.midi-connect-panel {order:8;}
+.db-hero {order:9; margin:10px 0 22px; min-height:0;}
+.db-footer {order:10;}
+.db-primary-nav {min-width:0; scrollbar-width:thin; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch;}
+.db-nav {flex:0 0 auto;}
+.db-hero-art {min-height:210px;}
+.db-hero-studio {min-height:210px;}
+.db-hero-caption {inset:auto 19px 17px;}
+.db-hero-caption h2 {font-size:clamp(30px,3.5vw,48px);}
+.db-hero-caption p {font-size:11px; margin-bottom:11px;}
+.db-hero-studio {
+  background:
+    linear-gradient(140deg, rgba(8,9,22,.80),rgba(9,8,22,.88)),
+    url("assets/interface/metallic-panel.webp") center / cover no-repeat,
+    #0a0918;
+}
+.db-hero {grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);}
+.db-spectrum-shell {min-height:0;}
+.db-spectrum-shell canvas {height:108px;}
+.db-algebra {min-height:72px;}
+.db-algebra-orbit {flex-basis:65px; width:65px; height:64px;}
+
+/* Conserve vertical height while retaining a fully playable touch keyboard. */
+.keyboard {min-height:150px; max-height:150px; padding:8px 10px 12px;}
+.key {height:129px; padding-top:91px;}
+.key.black-key {height:86px; padding-top:58px;}
+.key:focus-visible {outline:2px solid #c5a3eb; outline-offset:-3px;}
+.db-keyboard-title h2 {margin-bottom:2px;}
+
+/* Atmosphere in Binding of Dreams without obscuring labels. */
+.db-binding-layer:first-child {
+  background:
+    linear-gradient(130deg, rgba(8,9,23,.83),rgba(7,9,22,.91)),
+    url("assets/bindings/source-a.webp") center 44% / cover no-repeat,
+    #0b0d1a;
+}
+.db-binding-layer:last-child {
+  background:
+    linear-gradient(130deg, rgba(13,8,24,.83),rgba(11,8,25,.92)),
+    url("assets/bindings/source-b.webp") center 44% / cover no-repeat,
+    #100a1b;
+}
+.db-bind-middle {
+  background:
+    linear-gradient(130deg, rgba(9,9,24,.87),rgba(9,9,24,.93)),
+    url("assets/bindings/hybrid-core.webp") center 48% / cover no-repeat,
+    #0a0a19;
+}
+.db-controls-heading::after {
+  content:"";
+  align-self:center;
+  display:block;
+  flex:0 0 clamp(90px,15vw,210px);
+  width:clamp(90px,15vw,210px);
+  height:64px;
+  background:url("assets/interface/small-divider.webp") center / contain no-repeat;
+  opacity:.54;
+  pointer-events:none;
+}
+.db-module {background:linear-gradient(155deg,rgba(20,21,40,.94),rgba(9,11,24,.96));}
+
+/* Mobile/landscape page controls stay reachable with a horizontal nav. */
+@media (max-width:900px) {
+  .db-masthead {display:grid;grid-template-columns:minmax(0,1fr) auto;min-height:0;}
+  .db-brand {min-width:0;}
+  .db-primary-nav {order:3;grid-column:1 / -1;display:flex;justify-content:flex-start;width:100%;padding:5px 0;}
+  .db-head-actions {display:flex;}
+  .db-live-status {display:none;}
+  .db-nav {font-size:11px;padding:10px 12px;}
+  .db-hero {grid-template-columns:1fr 1fr;}
+  .db-hero-art {min-height:210px;}
+  .db-hero-studio {min-height:210px;}
+  .db-algebra {display:none;}
+  .controls {grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media(max-width:650px) {
+  .db-masthead {gap:5px 8px;}
+  .db-brand h1 {font-size:clamp(18px,5vw,23px);letter-spacing:.07em;}
+  .db-sigil {width:37px;height:37px;font-size:23px;}
+  .db-head-actions .db-compact-btn {padding:8px 10px;font-size:10px;}
+  .db-nav {font-size:10px;padding:9px 11px;}
+  .db-strip-label {flex:1 1 100%; margin:0;}
+  .db-strip-label small {font-size:9px;}
+  .db-preset-strip {gap:7px;padding:9px 0;}
+  .db-preset-strip .preset-browser-btn {flex:1 1 110px;}
+  .db-keyboard-title p {font-size:10px;}
+  .controls {grid-template-columns:1fr;}
+  .db-hero {grid-template-columns:1fr;}
+  .db-hero-art {min-height:220px;}
+  .db-hero-studio {min-height:175px;}
+  .db-spectrum-shell canvas {height:84px;}
+  .db-controls-heading::after {display:none;}
+  .db-optional-label {display:none;}
+  .db-footer {flex-wrap:wrap;}
+}
+@media (orientation:landscape) and (max-height:560px) {
+  .app {padding-left:clamp(8px,2vw,24px);padding-right:clamp(8px,2vw,24px);}
+  .db-masthead {min-height:0;padding:4px 0;}
+  .db-brand h1 {font-size:18px;}
+  .db-brand p {font-size:8px;margin:3px 0 0;}
+  .db-primary-nav {padding:0;}
+  .db-nav {padding:6px 10px;}
+  .db-preset-strip {padding:6px 0;}
+  .db-keyboard-title {margin:6px 0 0;}
+  .db-keyboard-title .db-eyebrow {margin-bottom:3px;}
+  .db-keyboard-title h2 {font-size:20px;}
+  .db-keyboard-title p {display:none;}
+  .octave-controls {margin:0 0 5px;}
+  .octave-btn {padding:6px 11px;}
+  .keyboard {min-height:128px;max-height:128px;padding:6px 8px 10px;}
+  .key {height:111px;padding-top:79px;}
+  .key.black-key {height:73px;padding-top:47px;}
+  .db-hero {grid-template-columns:1fr 1fr;}
+}
+
+/* A single scroll area solves stacked/clipped preset regions on Android. */
+.preset-browser-overlay {
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  height:100dvh!important;inset:0!important;box-sizing:border-box;
+  padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right))
+          max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+}
+.preset-browser-overlay.hidden {display:none!important;}
+.preset-browser {
+  display:flex!important;flex-direction:column!important;
+  width:min(1160px,100%)!important;min-height:0!important;
+  height:min(880px,100%)!important;max-height:100%!important;
+  padding:clamp(8px,1.6vw,18px)!important;
+  overflow:hidden!important;
+  background:linear-gradient(145deg,rgba(17,17,40,.98),rgba(6,9,23,.99));
+}
+.preset-browser.db-atlas-active {
+  background-image:
+    linear-gradient(180deg,rgba(9,9,24,.94),rgba(6,7,17,.98)),
+    url("assets/backgrounds/dream-atlas.webp");
+  background-size:cover;background-position:center;
+}
+.preset-browser-header {flex:0 0 auto;display:flex;align-items:center;gap:9px;margin:0 0 7px;}
+.preset-browser-header h2 {flex:1;min-width:0;font-size:clamp(21px,3vw,27px);}
+.db-library-manage {
+  flex:0 0 auto;min-height:40px;border-radius:9px;border:1px solid rgba(205,167,236,.45);
+  background:rgba(54,35,75,.68);color:#f0ddff;padding:8px 12px;font-size:12px;
+}
+.preset-browser-close {flex:0 0 44px;min-width:44px;min-height:44px;}
+.db-library-scroll {flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-color:#7c5498 #100d1e;}
+.db-library-scroll > * {min-width:0;}
+.preset-manager {max-height:none!important;overflow:visible!important;flex:none!important;margin:0 0 12px;}
+.preset-manager[hidden] {display:none!important;}
+.preset-browser-tabs {position:sticky;top:0;z-index:5;display:flex;min-height:0!important;
+  gap:5px;overflow-x:auto;padding:6px 0 9px;margin:0 0 6px;
+  background:rgba(11,10,27,.98);backdrop-filter:blur(10px);}
+.preset-browser-tab {min-height:40px;padding:9px 13px;}
+.dream-atlas-filters {display:flex;flex-wrap:wrap;flex:none!important;max-height:none!important;
+  overflow:visible!important;margin:0 0 8px;padding:12px;gap:11px;}
+.dream-atlas-filters[hidden] {display:none!important;}
+/* The 13 old SVG category tiles remain in app.js but don't compete with
+   the new 7 artwork chapters; the 13 environment filter still works. */
+.db-realm-gallery {display:none!important;}
+.db-atlas-chapters {display:flex;gap:10px;flex:1 1 100%;overflow-x:auto;
+  min-width:0;padding:0 0 11px;scroll-snap-type:x proximity;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+.db-atlas-chapter {flex:0 0 clamp(130px,18vw,190px);margin:0;position:relative;
+  overflow:hidden;scroll-snap-align:start;border:1px solid rgba(180,150,214,.31);
+  border-radius:12px;background:#11131f;}
+.db-atlas-chapter img {display:block;width:100%;height:clamp(100px,11vw,150px);object-fit:cover;}
+.db-atlas-chapter figcaption {padding:8px 10px;color:#e5d6ef;font-family:Georgia,serif;
+  letter-spacing:.035em;font-size:13px;line-height:1.2;background:#101020;}
+.db-atlas-legacy-note {flex:1 1 100%;margin:0;font-size:11px;line-height:1.5;color:#b7afc9;}
+.dream-atlas-filters > label {min-width:0;flex:1 1 180px;}
+.preset-browser-list {display:block;flex:none!important;max-height:none!important;
+  min-height:0!important;overflow:visible!important;margin:8px 0 0;padding:11px;}
+.preset-browser-preset {min-height:42px;}
+body.db-library-open {overflow:hidden!important;}
+@media(max-width:650px) {
+  .preset-browser {height:100%!important;border-radius:14px;}
+  .preset-browser-header {margin-bottom:5px;}
+  .db-library-manage {min-height:38px;padding:7px 9px;font-size:11px;}
+  .preset-browser-tabs {padding:5px 0 7px;}
+  .preset-browser-tab {min-height:39px;font-size:11px;}
+  .db-atlas-chapter {flex-basis:138px;}
+  .db-atlas-chapter img {height:115px;}
+  .preset-manager-actions {gap:6px;}
+  .preset-manager-actions button,.preset-import-btn {min-height:41px;}
+}
+@media (orientation:landscape) and (max-height:560px) {
+  .preset-browser-overlay {padding:4px max(8px,env(safe-area-inset-right)) 4px max(8px,env(safe-area-inset-left));}
+  .preset-browser {height:100%!important;border-radius:12px;}
+  .preset-browser-header h2 {font-size:21px;}
+  .db-atlas-chapter img {height:90px;}
+  .db-atlas-chapter {flex-basis:130px;}
+  .preset-manager {padding:9px;}
+  .preset-browser-tabs {margin-bottom:4px;}
+}
+
+/* Keep all five primary navigation destinations visible on phone-width screens. */
+@media(max-width:650px) {
+  .db-primary-nav {justify-content:space-between;gap:0;}
+  .db-nav {font-size:9px;padding:8px 6px;letter-spacing:.025em;}
+}
