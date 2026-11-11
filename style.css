@@ -1135,3 +1135,38 @@ body::after {display:none!important;}
 
 /* Portrait: leave the preset/save area empty; preserve its existing layout. */
 @media (orientation:portrait){ .db-preset-strip .db-portrait-motto{display:none!important;} }
+
+/* Dream Binder landscape masthead: panoramic artwork beneath the existing gold logo.
+   Portrait deliberately retains its original dark, clean logo backdrop. */
+@media (orientation: landscape) {
+  .db-masthead {
+    min-height: clamp(115px, 13vw, 205px) !important;
+    padding: 8px 20px !important;
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: 14px;
+    background-color: #191820 !important;
+    background-image: url('assets/backgrounds/dream-binder-title-banner.webp') !important;
+    background-position: center 49% !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+  }
+  .db-masthead::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(16,15,21,.04), rgba(16,15,21,.19) 35%, rgba(16,15,21,.28) 50%, rgba(16,15,21,.12) 65%, rgba(16,15,21,.04));
+  }
+  .db-masthead .db-logo-brand { position: relative; z-index: 1; }
+  .db-masthead .db-gold-logo {
+    height: clamp(108px, 12vw, 190px) !important;
+    width: min(70%, 880px) !important;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,.9)) drop-shadow(0 0 16px rgba(235,170,87,.4));
+  }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  .db-masthead { min-height: clamp(98px, 12vw, 160px) !important; }
+  .db-masthead .db-gold-logo { height: clamp(94px, 11vw, 150px) !important; }
+}
