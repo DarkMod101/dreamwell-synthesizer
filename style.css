@@ -1170,3 +1170,35 @@ body::after {display:none!important;}
   .db-masthead { min-height: clamp(98px, 12vw, 160px) !important; }
   .db-masthead .db-gold-logo { height: clamp(94px, 11vw, 150px) !important; }
 }
+
+/* 2026-11-11 — Show the existing cinematic banner in portrait as well.
+   Keep the transparent gold logo centered above it, without changing landscape. */
+@media (orientation: portrait) {
+  .db-masthead {
+    min-height: clamp(145px, 30vw, 205px) !important;
+    padding: 8px 12px !important;
+    overflow: hidden !important;
+    isolation: isolate !important;
+    border-radius: 14px !important;
+    background-color: #191820 !important;
+    background-image: url('assets/backgrounds/dream-binder-title-banner.webp') !important;
+    background-position: center center !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+  }
+  .db-masthead::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(9,8,18,.05), rgba(9,8,18,.24) 50%, rgba(9,8,18,.05));
+  }
+  .db-masthead .db-logo-brand { position: relative !important; z-index: 1 !important; }
+  .db-masthead .db-gold-logo {
+    width: min(78%, 560px) !important;
+    height: clamp(100px, 24vw, 160px) !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,.9)) drop-shadow(0 0 14px rgba(235,170,87,.35)) !important;
+  }
+}
