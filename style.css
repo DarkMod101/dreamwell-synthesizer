@@ -1392,3 +1392,14 @@ body::after {display:none!important;}
 .db-masthead .db-logo-brand { z-index:4 !important; }
 @media (orientation:portrait) { .db-masthead .db-banner-mist {height:48% !important;} }
 @media (prefers-reduced-motion:reduce) { .db-masthead .db-banner-mist {opacity:.30 !important;} }
+
+/* Dream Binder — 3s splash hold + 1.5s cinematic dissolve.
+   The app is rendered underneath the splash throughout the transition. */
+#db-startup-splash {
+  transition: opacity 1500ms cubic-bezier(.45, 0, .25, 1) !important;
+  will-change: opacity;
+}
+#db-startup-splash.db-splash-exit { opacity: 0 !important; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  #db-startup-splash { transition-duration: 0ms !important; will-change: auto; }
+}
