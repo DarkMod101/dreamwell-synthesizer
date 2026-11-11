@@ -1385,3 +1385,10 @@ body::after {display:none!important;}
 .db-masthead .db-logo-brand { position:relative !important; z-index:2 !important; }
 @media (orientation:portrait) { .db-masthead .db-banner-mist {height:43% !important;} }
 @media (prefers-reduced-motion:reduce) { .db-masthead .db-banner-mist {opacity:.3;} }
+
+/* Mist visibility fix: above banner image and tint, below gold logo. */
+.db-masthead::before { z-index:0 !important; }
+.db-masthead .db-banner-mist { z-index:3 !important; opacity:.88 !important; height:54% !important; mix-blend-mode:screen; }
+.db-masthead .db-logo-brand { z-index:4 !important; }
+@media (orientation:portrait) { .db-masthead .db-banner-mist {height:48% !important;} }
+@media (prefers-reduced-motion:reduce) { .db-masthead .db-banner-mist {opacity:.30 !important;} }
