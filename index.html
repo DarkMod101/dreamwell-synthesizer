@@ -4,11 +4,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Dream Binder · Resonant Doorways — Synth Studio</title>
-<meta content="#080717" name="theme-color"/><link href="style.css?v=db-layout-atlas-04" rel="stylesheet"/></head>
+<title>Dream Binder · Resonance Workstation</title>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=resonance-workstation-batch-1" rel="stylesheet"/></head>
 <body>
-<main class="app">
-<header class="db-masthead">
+<main class="app db-workstation"><section class="db-chassis" id="dbInstrumentShell"><header class="db-masthead">
 <div class="db-brand"><span aria-hidden="true" class="db-sigil">✧</span>
 <div><h1>DREAM BINDER</h1><p>RESONANT DOORWAYS <span> / REALM WALKING THROUGH TIME</span></p></div>
 </div>
@@ -20,15 +19,13 @@
 <button aria-label="Dream Atlas" class="db-nav" data-db-nav="atlas" type="button">✦  DREAM ATLAS</button>
 </nav>
 <div class="db-head-actions"><span aria-hidden="true" class="db-live-dot"></span><span class="db-live-status">STUDIO / READY</span><button class="db-compact-btn" id="dbOpenMIDI" type="button">⌘ MIDI</button></div>
-</header>
-<section class="presets db-preset-strip"><span class="db-strip-label"><span class="db-strip-star">✦</span> SOUND LIBRARY <small>104 ATLAS SOUNDS</small></span>
+</header><div class="db-patchbar"><div class="db-patch-info"><span class="db-dot-power"></span><div><small>CURRENT SOUND SOURCE</small><strong id="dbEngineDisplay">SYNTH / RESONANCE SOURCE</strong></div></div><section class="presets db-preset-strip"><span class="db-strip-label"><span class="db-strip-star">✦</span> SOUND LIBRARY <small>104 ATLAS SOUNDS</small></span>
 <button class="preset-browser-btn" id="openPresetBrowser" type="button">Presets</button>
 <button class="preset-browser-btn" id="quickSavePreset" type="button">Save Sound</button>
 <p class="preset-message" id="presetMessage"></p>
-</section>
-<section aria-label="Dream Binder instrument overview" class="db-hero">
+</section></div><section class="db-monitor-row"><section aria-label="Dream Nexus visual and live harmonic signal displays" class="db-hero">
 <div aria-label="The Dream Nexus, a gateway between astral and nightmare realms" class="db-hero-art" role="img">
-<div class="db-hero-caption"><span class="db-eyebrow">01 / DREAM NEXUS</span><h2>RESONANT<br/><em>DOORWAYS</em></h2><p>Every dream leaves a resonance.<br/>Every resonance remembers a time.</p>
+<div class="db-hero-caption"><span class="db-eyebrow">01 / DREAM NEXUS</span><h2>RESONANCE NEXUS</h2><p>Every dream leaves a resonance.</p>
 <button class="db-gold-button" id="dbAtlasHero" type="button">EXPLORE DREAM ATLAS <span aria-hidden="true">↗</span></button></div>
 <span class="db-art-label">✦   THE DREAM NEXUS</span>
 </div>
@@ -40,21 +37,7 @@
 <div class="db-algebra-copy"><span class="db-eyebrow">GEOMETRY OF HARMONICS</span><strong>R = ℝ[x₁, x₂, x₃]</strong><p>Prime ideal chain: (0) ⊂ (x₁) ⊂ (x₁,x₂) ⊂ (x₁,x₂,x₃)</p><small id="dbMathStatus">Polynomial field bypassed · dimension 1</small></div>
 </div>
 </div>
-</section>
-<section aria-label="Binding of Dreams and keyboard zoning" class="db-binding-studio" id="dbBindingStudio">
-<div class="db-section-title"><div><span class="db-eyebrow">03 / PERFORMANCE ARCHITECTURE</span><h2>Binding of Dreams <span>∞</span></h2><p>Two independent preset voices. One performance.</p></div><span class="db-badge">EXPERIMENTAL · V1</span></div>
-<div class="db-binding-grid">
-<div class="db-binding-layer"><div class="db-layer-head"><span class="db-layer-icon">A</span><span>RESONANCE SOURCE A</span></div><label for="dbLayerA">First sound<select aria-label="Binding source A preset" id="dbLayerA"></select></label><button class="db-micro-btn" id="dbCaptureA" type="button">Capture current sound → A</button></div>
-<div class="db-bind-middle"><span class="db-infinity">∞</span><label for="dbPerformanceMode">PERFORMANCE MODE<select id="dbPerformanceMode"><option value="off">Single · Original Instrument</option><option value="layer">Bind · Both sounds together</option><option value="split">Split · Left / Right Keys</option></select></label><label for="dbBlend">A ↔ B BALANCE <strong id="dbBlendValue">50 / 50</strong><input id="dbBlend" max="100" min="0" type="range" value="50"/></label><label class="db-split-row" for="dbSplitNote">SPLIT POINT <select id="dbSplitNote"></select></label></div>
-<div class="db-binding-layer"><div class="db-layer-head"><span class="db-layer-icon alt">B</span><span>RESONANCE SOURCE B</span></div><label for="dbLayerB">Second sound<select aria-label="Binding source B preset" id="dbLayerB"></select></label><button class="db-micro-btn" id="dbCaptureB" type="button">Capture current sound → B</button></div>
-</div><p class="db-bind-status" id="dbBindingStatus" role="status">Single mode: existing Synth, Piano and Choir behavior is unchanged.</p>
-</section>
-<div class="db-controls-heading" id="dbSoundArchitecture"><div><span class="db-eyebrow">04 / CONTROL RACK</span><h2>Sound Architecture</h2><p>Oscillators, enveloping motion, spectral geometry and atmosphere.</p></div><span class="db-optional-label">SELECT A MODULE TO EXPAND ▾</span></div>
-<section aria-label="Sound design modules" class="controls">
-<!-- DREAM BINDER — FM RESONANCE PANEL -->
-<!-- DREAM BINDER — RESONANT FIELD: COHERENCE + DECOHERENCE -->
-<!-- DREAM BINDER — POLYNOMIAL RINGS / KRULL DIMENSION: SYNTH ONLY -->
-<div class="db-control-column" data-column="1"><details class="panel db-module db-group-osc" open=""><summary>OSCILLATORS · A + B</summary><div class="db-module-content"><label>
+</section></section><div class="db-console-top"><div class="db-console-engrave">DREAM BINDER  /  RESONANCE WORKSTATION</div><div class="db-console-status">●  AUDIO-FIRST  •  REAL-TIME SOUND DESIGN</div></div><section class="db-edit-console" id="dbSoundArchitecture"><nav aria-label="Sound design pages" class="db-edit-tabs"><button aria-selected="true" class="db-edit-tab active" data-page="source" type="button">ORIGIN</button><button aria-selected="false" class="db-edit-tab" data-page="shape" type="button">PHYSICS</button><button aria-selected="false" class="db-edit-tab" data-page="resonance" type="button">RESONANCE</button><button aria-selected="false" class="db-edit-tab" data-page="motion" type="button">MOTION</button><button aria-selected="false" class="db-edit-tab" data-page="voicing" type="button">VOICING</button><button aria-selected="false" class="db-edit-tab" data-page="master" type="button">MASTER</button><button aria-selected="false" class="db-edit-tab" data-page="bindings" type="button">BINDINGS</button><button aria-selected="false" class="db-edit-tab" data-page="midi" type="button">MIDI</button><button aria-selected="false" class="db-edit-tab" data-page="fx" type="button">FX RACK</button></nav><div class="db-screen-frame"><div class="db-screen-caption"><div><span class="db-screen-kicker">01 / INSTRUMENT MODULE</span><h2 id="dbScreenTitle">ORIGIN  /  OSCILLATORS</h2><p id="dbScreenSubtitle">Frequency sources and tonal foundation</p></div><div class="db-screen-state">●  LIVE PARAMETER VIEW</div></div><div class="db-editor-body"><div class="db-signal-visual"><div class="db-visual-head"><span>SIGNAL / FIELD</span><span id="dbVisualType">WAVEFORM GEOMETRY</span></div><canvas aria-label="Parameter-driven waveform and resonance visualization" height="380" id="dbWorkstationCanvas" role="img" width="720"></canvas><div class="db-signal-readout"><span>LIVE • MODEL</span><span>AUDIO PRIORITY</span><span>24 FPS CAP</span></div></div><div class="db-pane-host"><section class="db-edit-pane" data-pane="source" id="dbPaneSource"><div class="db-pane-modules"><details class="panel db-module db-group-osc" open=""><summary>OSCILLATORS · A + B</summary><div class="db-module-content"><label>
           Waveform A
           <select id="waveform">
 <option value="sine">Sine</option>
@@ -100,7 +83,33 @@
 <option value="0.5">1/8 (Eighth)</option>
 <option value="0.25">1/16 (Sixteenth)</option>
 </select>
-</label></div></details><details class="panel db-module db-module-envelope" open=""><summary>ENVELOPE</summary><div class="db-module-content">
+</label></div></details><details class="panel db-module db-workstation-module db-tone-sub" open=""><summary>SUB OSCILLATOR</summary><div class="db-module-content"><label>
+<span>Sub Waveform</span>
+<select id="subWaveform">
+<option value="sine">Sine</option>
+<option value="triangle">Triangle</option>
+<option value="square">Square</option>
+</select>
+</label><label>
+<span>Sub Level <strong id="subLevelValue">0%</strong></span>
+<input id="subLevel" max="100" min="0" step="1" type="range" value="0"/>
+</label></div></details></div></section><section class="db-edit-pane" data-pane="shape" hidden="" id="dbPaneShape"><div class="db-pane-modules"><details class="panel db-module db-module-filter" open=""><summary>FILTER</summary><div class="db-module-content">
+<label>
+          Filter Type
+          <select id="filterType">
+<option value="lowpass">Low Pass</option>
+<option value="highpass">High Pass</option>
+</select>
+</label>
+<label>
+<span>Cutoff <strong id="cutoffValue">4000 Hz</strong></span>
+<input id="cutoff" max="12000" min="80" step="1" type="range" value="4000"/>
+</label>
+<label>
+<span>Resonance <strong id="resonanceValue">Q 1.0</strong></span>
+<input id="resonance" max="20" min="0" step="0.1" type="range" value="1"/>
+</label>
+</div></details><details class="panel db-module db-module-envelope" open=""><summary>ENVELOPE</summary><div class="db-module-content">
 <label>
 <span>Attack <strong id="attackValue">0.05 s</strong></span>
 <input id="attack" max="2" min="0.01" step="0.01" type="range" value="0.05"/>
@@ -117,61 +126,7 @@
 <span>Release <strong id="releaseValue">0.50 s</strong></span>
 <input id="release" max="5" min="0.01" step="0.01" type="range" value="0.50"/>
 </label>
-</div></details><details class="panel resonant-field-panel db-module">
-<summary>Resonant Field</summary>
-<div class="resonant-field-content">
-<p>Harmonic · Modulation · Spatial Resonance Rings</p>
-<label>
-<span>Coherence <strong id="coherenceValue">0%</strong></span>
-<input id="coherence" max="100" min="0" step="1" type="range" value="0"/>
-</label>
-<label>
-<span>Decoherence <strong id="decoherenceValue">0%</strong></span>
-<input id="decoherence" max="100" min="0" step="1" type="range" value="0"/>
-</label>
-<p>Coherence aligns harmonic and spatial motion; Decoherence introduces independent evolution. Both controls can coexist. Currently active on Synth only.</p>
-</div>
-</details></div><div class="db-control-column" data-column="2"><details class="panel db-module db-group-motion" open=""><summary>WAVE FUSION · MOTION</summary><div class="db-module-content"><label>
-<span>
-    Wave Fusion
-    <strong id="waveFusionValue">50%</strong>
-</span>
-<input id="waveFusion" max="100" min="0" step="1" type="range" value="50"/>
-</label><label>
-<span>Origin</span>
-<select id="origin">
-<option selected="" value="pure">Pure</option>
-<option value="vintage">Vintage</option>
-<option value="dream">Dream</option>
-<option value="glass">Glass</option>
-<option value="hollow">Hollow</option>
-<option value="ancient">Ancient</option>
-<option value="cosmic">Cosmic</option>
-</select>
-</label><label>
-<span>Morph Curve</span>
-<select id="waveFusionCurve">
-<option value="linear">Linear</option>
-<option selected="" value="smooth">Smooth</option>
-<option value="deep">Deep</option>
-<option value="bright">Bright</option>
-</select>
-</label><label class="checkbox-row">
-<input id="dreamMorphMotion" type="checkbox"/>
-  Dream Morph Motion
-</label><label>
-<span>Voice Spread <strong id="voiceSpreadValue">0%</strong></span>
-<input id="voiceSpread" max="100" min="0" step="1" type="range" value="0"/>
-</label><label class="checkbox-row">
-<input checked="" id="deepDreamOrbit" type="checkbox"/>
-  Deep Dream Orbit
-</label><label>
-<span>Drift <strong id="driftValue">0</strong></span>
-<input id="drift" max="100" min="0" step="1" type="range" value="0"/>
-</label><label>
-<span>Stereo Width <strong id="stereoWidthValue">0%</strong></span>
-<input id="stereoWidth" max="100" min="0" step="1" type="range" value="0"/>
-</label></div></details><details class="panel fm-resonance-panel db-module" open="">
+</div></details><details class="panel fm-resonance-panel db-module" open="">
 <summary>FM Resonance</summary>
 <div class="fm-resonance-content">
 <p>Independent Frequency Modulation</p>
@@ -224,23 +179,7 @@
 <input id="fmRelease" max="5" min="0.01" step="0.01" type="range" value="0.30"/>
 </label>
 </div>
-</details><details class="panel db-module db-module-filter" open=""><summary>FILTER</summary><div class="db-module-content">
-<label>
-          Filter Type
-          <select id="filterType">
-<option value="lowpass">Low Pass</option>
-<option value="highpass">High Pass</option>
-</select>
-</label>
-<label>
-<span>Cutoff <strong id="cutoffValue">4000 Hz</strong></span>
-<input id="cutoff" max="12000" min="80" step="1" type="range" value="4000"/>
-</label>
-<label>
-<span>Resonance <strong id="resonanceValue">Q 1.0</strong></span>
-<input id="resonance" max="20" min="0" step="0.1" type="range" value="1"/>
-</label>
-</div></details></div><div class="db-control-column" data-column="3"><details class="panel polynomial-ring-panel db-module" id="polynomialRingPanel" open="">
+</details></div></section><section class="db-edit-pane" data-pane="resonance" hidden="" id="dbPaneResonance"><div class="db-pane-modules"><details class="panel polynomial-ring-panel db-module" id="polynomialRingPanel" open="">
 <summary>Polynomial Rings · Krull Dimension</summary>
 <div class="polynomial-ring-content">
 <p class="polynomial-ring-intro">Sculpt the harmonics of a dream. Real polynomial waveshaping meets multivariate oscillator interactions.</p>
@@ -276,29 +215,54 @@
 <p aria-live="polite" class="polynomial-ring-status" id="polynomialRingStatus">Bypassed — original Synth sound preserved.</p>
 <p class="polynomial-ring-note">Synth only. Degree controls harmonic order; Dimension adds audio-rate polynomial variables. Try 30–45% with a held note, then move through dimensions 1→3. Higher dimensions are not automatically louder or better.</p>
 </div>
-</details><details class="panel db-module db-group-textures"><summary>SUB · LIVING TEXTURES</summary><div class="db-module-content"><label>
-<span>Sub Waveform</span>
-<select id="subWaveform">
-<option value="sine">Sine</option>
-<option value="triangle">Triangle</option>
-<option value="square">Square</option>
-</select>
+</details><details class="panel resonant-field-panel db-module">
+<summary>Resonant Field</summary>
+<div class="resonant-field-content">
+<p>Harmonic · Modulation · Spatial Resonance Rings</p>
+<label>
+<span>Coherence <strong id="coherenceValue">0%</strong></span>
+<input id="coherence" max="100" min="0" step="1" type="range" value="0"/>
+</label>
+<label>
+<span>Decoherence <strong id="decoherenceValue">0%</strong></span>
+<input id="decoherence" max="100" min="0" step="1" type="range" value="0"/>
+</label>
+<p>Coherence aligns harmonic and spatial motion; Decoherence introduces independent evolution. Both controls can coexist. Currently active on Synth only.</p>
+</div>
+</details></div></section><section class="db-edit-pane" data-pane="motion" hidden="" id="dbPaneMotion"><div class="db-pane-modules"><details class="panel db-module db-group-motion" open=""><summary>WAVE FUSION · MOTION</summary><div class="db-module-content"><label>
+<span>
+    Wave Fusion
+    <strong id="waveFusionValue">50%</strong>
+</span>
+<input id="waveFusion" max="100" min="0" step="1" type="range" value="50"/>
 </label><label>
-<span>Sub Level <strong id="subLevelValue">0%</strong></span>
-<input id="subLevel" max="100" min="0" step="1" type="range" value="0"/>
-</label><label>
-<span>Texture Type</span>
-<select id="noiseType">
-<option value="white">White</option>
-<option value="dark">Dark Void</option>
-<option value="air">Air</option>
-<option value="dust">Stardust</option>
-<option value="machine">Ancient Machine</option>
+<span>Origin</span>
+<select id="origin">
+<option selected="" value="pure">Pure</option>
+<option value="vintage">Vintage</option>
+<option value="dream">Dream</option>
+<option value="glass">Glass</option>
+<option value="hollow">Hollow</option>
+<option value="ancient">Ancient</option>
 <option value="cosmic">Cosmic</option>
 </select>
 </label><label>
-<span>Noise Layer <strong id="noiseAmountValue">0%</strong></span>
-<input id="noiseAmount" max="100" min="0" step="1" type="range" value="0"/>
+<span>Morph Curve</span>
+<select id="waveFusionCurve">
+<option value="linear">Linear</option>
+<option selected="" value="smooth">Smooth</option>
+<option value="deep">Deep</option>
+<option value="bright">Bright</option>
+</select>
+</label><label class="checkbox-row">
+<input id="dreamMorphMotion" type="checkbox"/>
+  Dream Morph Motion
+</label><label>
+<span>Voice Spread <strong id="voiceSpreadValue">0%</strong></span>
+<input id="voiceSpread" max="100" min="0" step="1" type="range" value="0"/>
+</label><label>
+<span>Drift <strong id="driftValue">0</strong></span>
+<input id="drift" max="100" min="0" step="1" type="range" value="0"/>
 </label></div></details><details class="panel db-module db-module-dream-wave"><summary>DREAM WAVE</summary><div class="db-module-content">
 <label>
 <span>LFO Rate <strong id="lfoRateValue">2.0 Hz</strong></span>
@@ -315,27 +279,6 @@
 <option value="pitch">Pitch</option>
 <option value="volume">Volume</option>
 </select>
-</label>
-</div></details></div><div class="db-control-column" data-column="4"><details class="panel db-module db-module-space"><summary>SPACE</summary><div class="db-module-content">
-<label>
-<span>Reverb Mix <strong id="reverbMixValue">25%</strong></span>
-<input id="reverbMix" max="1" min="0" step="0.01" type="range" value="0.25"/>
-</label>
-<label>
-<span>Reverb Decay <strong id="reverbDecayValue">3.0 s</strong></span>
-<input id="reverbDecay" max="8" min="0.5" step="0.1" type="range" value="3"/>
-</label>
-<label>
-<span>Delay Mix <strong id="delayMixValue">55%</strong></span>
-<input id="delayMix" max="1" min="0" step="0.01" type="range" value="0.55"/>
-</label>
-<label>
-<span>Delay Time <strong id="delayTimeValue">550 ms</strong></span>
-<input id="delayTime" max="1.5" min="0.05" step="0.01" type="range" value="0.55"/>
-</label>
-<label>
-<span>Feedback <strong id="delayFeedbackValue">55%</strong></span>
-<input id="delayFeedback" max="0.85" min="0" step="0.01" type="range" value="0.55"/>
 </label>
 </div></details><details class="panel db-module db-module-dream-arpeggiator" open=""><summary>DREAM ARPEGGIATOR</summary><div class="db-module-content">
 <label class="checkbox-row">
@@ -368,7 +311,7 @@
 <option value="asPlayed">As Played</option>
 </select>
 </label>
-</div></details><details class="panel db-module db-module-master" open=""><summary>MASTER</summary><div class="db-module-content">
+</div></details></div></section><section class="db-edit-pane" data-pane="voicing" hidden="" id="dbPaneVoicing"><div class="db-pane-modules"><div class="db-voicing-controls"><p class="db-pane-note">Select a source. These buttons use your existing Synth, Piano and Ah Choir engines; no audio logic has been replaced.</p><div class="db-voice-selector"><button class="db-voice-switch" data-voice="synth" type="button">SYNTH</button><button class="db-voice-switch" data-voice="piano" type="button">PIANO</button><button class="db-voice-switch" data-voice="choir" type="button">CHOIR</button></div><div class="db-voice-info">SYNTH  ·  Oscillator sources, FM, harmonic geometry and field modulation</div><div class="db-voice-info">PIANO  ·  Existing clean, click-free piano voicing and resonance</div><div class="db-voice-info">CHOIR  ·  Existing cinematic Ah choir, preserved voice and release behavior</div></div></div></section><section class="db-edit-pane" data-pane="master" hidden="" id="dbPaneMaster"><div class="db-pane-modules"><details class="panel db-module db-module-master" open=""><summary>MASTER</summary><div class="db-module-content">
 <label class="checkbox-row">
 <input id="glideEnabled" type="checkbox"/>
   Portamento / Glide
@@ -381,12 +324,15 @@
 <span>Master Volume <strong id="masterVolumeValue">25%</strong></span>
 <input id="masterVolume" max="1" min="0" step="0.01" type="range" value="0.25"/>
 </label>
-<label>
-<span>Presence <strong id="presenceValue">0%</strong></span>
-<input id="presence" max="100" min="0" step="1" type="range" value="0"/>
-</label>
-</div></details></div></section>
-<section aria-label="External MIDI keyboard" class="midi-connect-panel" id="dbMidiPanel">
+
+</div></details></div></section><section class="db-edit-pane" data-pane="bindings" hidden="" id="dbPaneBindings"><div class="db-pane-modules"><section aria-label="Binding of Dreams and keyboard zoning" class="db-binding-studio" id="dbBindingStudio">
+<div class="db-section-title"><div><span class="db-eyebrow">03 / PERFORMANCE ARCHITECTURE</span><h2>Binding of Dreams <span>∞</span></h2><p>Two independent preset voices. One performance.</p></div><span class="db-badge">EXPERIMENTAL · V1</span></div>
+<div class="db-binding-grid">
+<div class="db-binding-layer"><div class="db-layer-head"><span class="db-layer-icon">A</span><span>RESONANCE SOURCE A</span></div><label for="dbLayerA">First sound<select aria-label="Binding source A preset" id="dbLayerA"></select></label><button class="db-micro-btn" id="dbCaptureA" type="button">Capture current sound → A</button></div>
+<div class="db-bind-middle"><span class="db-infinity">∞</span><label for="dbPerformanceMode">PERFORMANCE MODE<select id="dbPerformanceMode"><option value="off">Single · Original Instrument</option><option value="layer">Bind · Both sounds together</option><option value="split">Split · Left / Right Keys</option></select></label><label for="dbBlend">A ↔ B BALANCE <strong id="dbBlendValue">50 / 50</strong><input id="dbBlend" max="100" min="0" type="range" value="50"/></label><label class="db-split-row" for="dbSplitNote">SPLIT POINT <select id="dbSplitNote"></select></label></div>
+<div class="db-binding-layer"><div class="db-layer-head"><span class="db-layer-icon alt">B</span><span>RESONANCE SOURCE B</span></div><label for="dbLayerB">Second sound<select aria-label="Binding source B preset" id="dbLayerB"></select></label><button class="db-micro-btn" id="dbCaptureB" type="button">Capture current sound → B</button></div>
+</div><p class="db-bind-status" id="dbBindingStatus" role="status">Single mode: existing Synth, Piano and Choir behavior is unchanged.</p>
+</section></div></section><section class="db-edit-pane" data-pane="midi" hidden="" id="dbPaneMidi"><div class="db-pane-modules"><section aria-label="External MIDI keyboard" class="midi-connect-panel" id="dbMidiPanel">
 <h3>🎹 MIDI Controller · MPK mini</h3>
 <div>
 <button id="midiEnable" type="button">Enable MIDI</button>
@@ -396,10 +342,44 @@
 </div>
 <p id="midiStatus" role="status">MIDI disabled — connect a controller and select Enable MIDI.</p>
 <small>Keys and sustain pedal (CC64) supported. Pads sending MIDI notes also play notes. Browser support varies; USB MIDI on Android is not guaranteed.</small>
-</section>
-<footer class="db-footer"><span>✧ DREAM BINDER</span><span>RESONANT DOORWAYS · CREATIVE SYNTHESIS</span><span>LOCAL-FIRST AUDIO / WEB MIDI</span></footer>
-
-<section aria-label="Performance keyboard dock" class="db-performance-dock" id="dbPerformanceDock">
+</section></div></section><section class="db-edit-pane" data-pane="fx" hidden="" id="dbPaneFx"><div class="db-pane-modules"><div class="db-fx-selection"><p class="db-pane-note">The effects rack remains below the main display. Tap FOCUS on any rack to open its actual controls here.</p><div class="db-fx-selection-buttons"><button class="db-fx-quick-button" data-focus="reverb" type="button">REVERB</button><button class="db-fx-quick-button" data-focus="delay" type="button">DELAY</button><button class="db-fx-quick-button" data-focus="noise" type="button">LIVING TEXTURES</button><button class="db-fx-quick-button" data-focus="orbit" type="button">DEEP DREAM ORBIT</button><button class="db-fx-quick-button" data-focus="presence" type="button">PRESENCE</button></div></div></div></section><section class="db-edit-pane" data-pane="focus" hidden="" id="dbPaneFocus"><div class="db-focus-bar"><button class="db-back-rack" id="dbRackBack" type="button">← BACK TO SOUND DESIGN</button></div><div class="db-pane-modules db-rack-focus-slot" id="dbRackFocusSlot"></div></section></div></div></div></section><section class="db-effects-rack" id="dbEffectsRack"><div class="db-rack-head"><div><span class="db-screen-kicker">EXTERNAL MODULAR PROCESSORS</span><h2>ATMOSPHERIC EFFECTS RACK</h2></div><span class="db-rack-legend">●  SIGNAL / EFFECTS MODULES</span></div><section class="db-rack-unit" data-rack="reverb"><div class="db-rack-left"><span class="db-rack-light"></span><div><strong>REVERB</strong><small>SPATIAL TAIL</small></div></div><canvas aria-label="REVERB parameter visualization" class="db-rack-canvas" data-rack-canvas="reverb" height="94" role="img" width="330"></canvas><div class="db-rack-controls" id="dbRackControlsReverb"><details class="panel db-module db-workstation-module db-rack-reverb" open=""><summary>REVERB</summary><div class="db-module-content"><label>
+<span>Reverb Mix <strong id="reverbMixValue">25%</strong></span>
+<input id="reverbMix" max="1" min="0" step="0.01" type="range" value="0.25"/>
+</label><label>
+<span>Reverb Decay <strong id="reverbDecayValue">3.0 s</strong></span>
+<input id="reverbDecay" max="8" min="0.5" step="0.1" type="range" value="3"/>
+</label></div></details></div><button aria-label="Focus REVERB controls in the central display" class="db-rack-focus" data-focus="reverb" type="button">FOCUS ↗</button></section><section class="db-rack-unit" data-rack="delay"><div class="db-rack-left"><span class="db-rack-light"></span><div><strong>DELAY</strong><small>ECHO PATH</small></div></div><canvas aria-label="DELAY parameter visualization" class="db-rack-canvas" data-rack-canvas="delay" height="94" role="img" width="330"></canvas><div class="db-rack-controls" id="dbRackControlsDelay"><details class="panel db-module db-workstation-module db-rack-delay" open=""><summary>DELAY</summary><div class="db-module-content"><label>
+<span>Delay Mix <strong id="delayMixValue">55%</strong></span>
+<input id="delayMix" max="1" min="0" step="0.01" type="range" value="0.55"/>
+</label><label>
+<span>Delay Time <strong id="delayTimeValue">550 ms</strong></span>
+<input id="delayTime" max="1.5" min="0.05" step="0.01" type="range" value="0.55"/>
+</label><label>
+<span>Feedback <strong id="delayFeedbackValue">55%</strong></span>
+<input id="delayFeedback" max="0.85" min="0" step="0.01" type="range" value="0.55"/>
+</label></div></details></div><button aria-label="Focus DELAY controls in the central display" class="db-rack-focus" data-focus="delay" type="button">FOCUS ↗</button></section><section class="db-rack-unit" data-rack="noise"><div class="db-rack-left"><span class="db-rack-light"></span><div><strong>LIVING TEXTURES</strong><small>NOISE FIELD</small></div></div><canvas aria-label="LIVING TEXTURES parameter visualization" class="db-rack-canvas" data-rack-canvas="noise" height="94" role="img" width="330"></canvas><div class="db-rack-controls" id="dbRackControlsNoise"><details class="panel db-module db-workstation-module db-rack-noise" open=""><summary>LIVING TEXTURES</summary><div class="db-module-content"><label>
+<span>Texture Type</span>
+<select id="noiseType">
+<option value="white">White</option>
+<option value="dark">Dark Void</option>
+<option value="air">Air</option>
+<option value="dust">Stardust</option>
+<option value="machine">Ancient Machine</option>
+<option value="cosmic">Cosmic</option>
+</select>
+</label><label>
+<span>Noise Layer <strong id="noiseAmountValue">0%</strong></span>
+<input id="noiseAmount" max="100" min="0" step="1" type="range" value="0"/>
+</label></div></details></div><button aria-label="Focus LIVING TEXTURES controls in the central display" class="db-rack-focus" data-focus="noise" type="button">FOCUS ↗</button></section><section class="db-rack-unit" data-rack="orbit"><div class="db-rack-left"><span class="db-rack-light"></span><div><strong>DEEP DREAM ORBIT</strong><small>SPATIAL MOTION</small></div></div><canvas aria-label="DEEP DREAM ORBIT parameter visualization" class="db-rack-canvas" data-rack-canvas="orbit" height="94" role="img" width="330"></canvas><div class="db-rack-controls" id="dbRackControlsOrbit"><details class="panel db-module db-workstation-module db-rack-orbit" open=""><summary>DEEP DREAM ORBIT</summary><div class="db-module-content"><label class="checkbox-row">
+<input checked="" id="deepDreamOrbit" type="checkbox"/>
+  Deep Dream Orbit
+</label><label>
+<span>Stereo Width <strong id="stereoWidthValue">0%</strong></span>
+<input id="stereoWidth" max="100" min="0" step="1" type="range" value="0"/>
+</label></div></details></div><button aria-label="Focus DEEP DREAM ORBIT controls in the central display" class="db-rack-focus" data-focus="orbit" type="button">FOCUS ↗</button></section><section class="db-rack-unit" data-rack="presence"><div class="db-rack-left"><span class="db-rack-light"></span><div><strong>PRESENCE</strong><small>TONAL DEPTH</small></div></div><canvas aria-label="PRESENCE parameter visualization" class="db-rack-canvas" data-rack-canvas="presence" height="94" role="img" width="330"></canvas><div class="db-rack-controls" id="dbRackControlsPresence"><details class="panel db-module db-workstation-module db-rack-presence" open=""><summary>PRESENCE</summary><div class="db-module-content"><label>
+<span>Presence <strong id="presenceValue">0%</strong></span>
+<input id="presence" max="100" min="0" step="1" type="range" value="0"/>
+</label></div></details></div><button aria-label="Focus PRESENCE controls in the central display" class="db-rack-focus" data-focus="presence" type="button">FOCUS ↗</button></section></section><footer class="db-footer"><span>✧ DREAM BINDER</span><span>RESONANT DOORWAYS · CREATIVE SYNTHESIS</span><span>LOCAL-FIRST AUDIO / WEB MIDI</span></footer></section><section aria-label="Performance keyboard dock" class="db-performance-dock" id="dbPerformanceDock">
 <div class="db-performance-toolbar">
 <div class="db-keyboard-title"><span class="db-eyebrow">05 / KEYBOARD</span><h2>Performance</h2><p>Touch / MIDI</p></div>
 <section class="octave-controls">
@@ -521,7 +501,7 @@
 </div><!-- /db-library-scroll -->
 </div><!-- /preset-browser -->
 </div><!-- /preset-browser-overlay -->
-<script src="app.js"></script>
-<script src="nexus-ui.js?v=db-layout-atlas-04"></script>
+<script src="app.js?v=resonance-workstation-batch-1"></script>
+<script src="nexus-ui.js?v=resonance-workstation-batch-1"></script>
 </body>
 </html>
