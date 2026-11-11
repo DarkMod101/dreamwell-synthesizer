@@ -1221,3 +1221,87 @@ body::after {display:none!important;}
 @media (prefers-reduced-motion: reduce) {
   #db-startup-splash { transition-duration: 0ms; }
 }
+
+/* 2026-11-11 — Landscape viewport repair (REDMAGIC / mobile Chrome).
+   Keep the full harmonic spectrum and Atlas filter controls accessible. */
+@media (orientation: landscape) and (max-height: 650px) {
+  .db-hero-studio {
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 180px !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+  }
+  .db-spectrum-shell {
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 125px !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .db-spectrum-shell canvas {
+    display: block !important;
+    width: 100% !important;
+    height: 83px !important;
+    min-height: 83px !important;
+    flex: 0 0 83px !important;
+  }
+  .db-spectrum-axis {
+    position: relative !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    flex: 0 0 auto !important;
+    margin-top: 3px !important;
+    padding-bottom: 3px !important;
+    visibility: visible !important;
+  }
+  .preset-browser-overlay {
+    box-sizing: border-box !important;
+    padding: 5px max(8px, env(safe-area-inset-right)) 5px max(8px, env(safe-area-inset-left)) !important;
+    align-items: stretch !important;
+  }
+  .preset-browser {
+    box-sizing: border-box !important;
+    height: 100% !important;
+    max-height: calc(100dvh - 10px) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 9px 12px !important;
+  }
+  .preset-browser-header { flex: 0 0 auto !important; }
+  .db-library-scroll {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    padding-bottom: 20px !important;
+  }
+  .dream-atlas-filters {
+    display: flex;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    flex: 0 0 auto !important;
+  }
+  .dream-atlas-filters[hidden] { display: none !important; }
+  .dream-atlas-filters > label {
+    min-width: min(210px, 40%) !important;
+    flex: 1 1 210px !important;
+  }
+  .dream-atlas-filters select {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .preset-browser-list { min-height: 0 !important; overflow: visible !important; }
+}
