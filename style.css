@@ -1132,3 +1132,6 @@ body::after {display:none!important;}
  .db-masthead{min-height:72px!important;padding:2px 8px!important;}
  .db-masthead .db-gold-logo{height:72px!important;width:min(100%,640px)!important;}
 }
+
+/* Portrait: leave the preset/save area empty; preserve its existing layout. */
+@media (orientation:portrait){ .db-preset-strip .db-portrait-motto{display:none!important;} }
