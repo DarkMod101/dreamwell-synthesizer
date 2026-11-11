@@ -26,7 +26,7 @@
 <p class="preset-message" id="presetMessage"></p>
 </section></div><section class="db-monitor-row"><section aria-label="Dream Nexus visual and live harmonic signal displays" class="db-hero">
 <div class="db-hero-art" aria-label="Dream Atlas gateway artwork">
-<button class="db-atlas-entry" id="dbAtlasHero" type="button" aria-label="Enter Dream Atlas"><span>ENTER DREAM ATLAS</span></button>
+<button class="db-atlas-entry" id="dbAtlasHero" type="button" aria-label="Enter Dream Atlas"><canvas class="db-atlas-static" id="dbAtlasStatic" width="128" height="128" aria-hidden="true"></canvas><span>ENTER DREAM ATLAS</span></button>
 </div>
 <div class="db-hero-studio">
 <div class="db-studio-top"><div><span class="db-eyebrow">02 / SIGNAL</span><h2>Resonance Display</h2></div><span class="db-status-chip">● LIVE SIGNAL PATH</span></div>
@@ -502,6 +502,7 @@
 </div><!-- /preset-browser-overlay -->
 <script src="app.js?v=atlas-entry-clean-1"></script>
 <script src="nexus-ui.js?v=atlas-entry-clean-1"></script>
+<script src="atlas-static.js?v=1" defer></script>
 <script>
 /* Splash is visual only; audio engines and existing startup code remain unchanged. */
 (function () {
