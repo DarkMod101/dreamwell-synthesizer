@@ -1305,3 +1305,35 @@ body::after {display:none!important;}
   }
   .preset-browser-list { min-height: 0 !important; overflow: visible !important; }
 }
+
+/* Dream Binder 2026-11-11: Match Dream Atlas gateway to the full Resonance Display height.
+   Only the landscape gateway is changed; portrait and audio remain untouched. */
+@media (orientation: landscape) {
+  .db-hero {
+    align-items: stretch !important;
+    grid-auto-rows: auto !important;
+  }
+  .db-hero-art {
+    align-self: stretch !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: hidden !important;
+    background-image: linear-gradient(rgba(255,255,255,.105),rgba(221,195,255,.075)), url('assets/backgrounds/studio-nexus.webp') !important;
+    background-blend-mode: screen, normal !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    filter: none !important;
+  }
+  .db-atlas-entry {
+    color: #34343d !important;
+    -webkit-text-stroke: .35px rgba(255,255,255,.92);
+    text-shadow: 0 0 1px #fff, 0 0 3px rgba(255,255,255,.95), 0 0 6px rgba(255,255,255,.60) !important;
+  }
+  .db-atlas-entry:hover,.db-atlas-entry:active { color: #42414b !important; }
+}
+@media (orientation: landscape) and (max-height: 650px) {
+  .db-hero { align-items: stretch !important; }
+  .db-hero-art { height: auto !important; min-height: 100% !important; }
+  .db-hero-studio { height: auto !important; }
+}
