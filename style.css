@@ -1098,3 +1098,23 @@ body::after {display:none!important;}
 @media(max-height:500px) and (orientation:landscape){
  .db-atlas-entry {font-size:clamp(12px,1.5vw,21px);letter-spacing:.13em;}
 }
+
+/* DREAM BINDER — Clean branded masthead / portrait patchbar */
+.db-masthead .db-primary-nav{display:none!important;}
+.db-masthead .db-brand{flex:1 1 auto!important;min-width:0;}
+.db-masthead .db-brand h1{color:#f3d6a1!important;text-shadow:0 0 9px rgba(247,195,122,.70),0 0 26px rgba(178,111,245,.46)!important;}
+.db-masthead .db-sigil{box-shadow:0 0 15px rgba(226,171,109,.42),inset 0 0 20px rgba(192,141,220,.28)!important;}
+.db-portrait-motto{display:none;}
+@media (orientation:portrait){
+  .db-masthead{justify-content:center!important;}
+  .db-masthead .db-brand{justify-content:center!important;text-align:center;}
+  .db-masthead .db-brand h1{font-size:clamp(22px,5.5vw,37px)!important;letter-spacing:.14em!important;}
+  .db-masthead .db-head-actions{display:none!important;}
+  .db-preset-strip .preset-browser-btn,
+  .db-preset-strip #quickSavePreset,
+  .db-preset-strip #openPresetBrowser,
+  .db-preset-strip .db-strip-label,
+  .db-preset-strip .preset-message{display:none!important;}
+  .db-preset-strip{display:flex!important;justify-content:center!important;align-items:center!important;min-width:0!important;}
+  .db-portrait-motto{display:block!important;color:#e8d3ff;font-size:clamp(11px,2.7vw,19px);font-weight:750;letter-spacing:.18em;text-align:center;text-shadow:0 0 7px rgba(208,135,255,.95),0 0 19px rgba(143,84,235,.8),0 0 30px rgba(113,76,214,.4);white-space:nowrap;}
+}
