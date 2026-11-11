@@ -1337,3 +1337,27 @@ body::after {display:none!important;}
   .db-hero-art { height: auto !important; min-height: 100% !important; }
   .db-hero-studio { height: auto !important; }
 }
+
+/* Unified Dream Atlas gateway appearance: portrait + landscape. */
+.db-hero-art {
+  background-image: linear-gradient(rgba(255,255,255,.085),rgba(221,195,255,.055)), url('assets/backgrounds/studio-nexus.webp') !important;
+  background-color: #0f0d17 !important;
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-blend-mode: screen, normal !important;
+  filter: none !important;
+}
+.db-atlas-entry, .db-atlas-entry:hover, .db-atlas-entry:active {
+  color: #000 !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: 0 0 1px rgba(255,255,255,.95), 0 0 2px rgba(255,255,255,.72) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: clamp(12px,1.65vw,26px) !important;
+  letter-spacing: .17em !important;
+}
+@media (orientation:landscape) {
+  .db-hero { align-items:stretch !important; }
+  .db-hero-art { height:auto !important; min-height:100% !important; align-self:stretch !important; }
+}
