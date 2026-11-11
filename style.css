@@ -1074,3 +1074,27 @@ body::after {display:none!important;}
 }
 .db-visual-quality{display:flex;align-items:center;min-height:27px;}
 #dbVisualQuality{font-size:9px;min-height:25px;width:auto;max-width:162px;letter-spacing:.08em;padding:3px 21px 3px 7px;border:1px solid #60586f;border-radius:3px;background-color:#151923;color:#b3d6de;}
+
+/* Dream Atlas gateway: unobstructed artwork, typography-only navigation. */
+.db-hero-art {
+  background: url('assets/backgrounds/studio-nexus.webp') center center / cover no-repeat #0f0d17 !important;
+  isolation: isolate;
+}
+.db-hero-art::before,.db-hero-art::after { content:none !important;display:none !important; }
+.db-atlas-entry {
+  position:absolute;inset:0;z-index:4;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  padding:10px;border:0;border-radius:0;
+  background:transparent !important;box-shadow:none !important;
+  color:#f0dfff;font-family:'Arial Narrow','Segoe UI',Arial,sans-serif;
+  font-weight:650;font-size:clamp(12px,1.65vw,26px);
+  letter-spacing:.17em;line-height:1.15;text-align:center;
+  text-shadow:0 0 5px #32104c,0 0 13px #9b55f0,0 2px 6px #080510;
+  -webkit-tap-highlight-color:transparent;
+}
+.db-atlas-entry span {pointer-events:none;}
+.db-atlas-entry:hover,.db-atlas-entry:active {background:transparent !important;color:#fff !important;}
+.db-atlas-entry:focus-visible {outline:2px solid #9befff;outline-offset:-4px;}
+@media(max-height:500px) and (orientation:landscape){
+ .db-atlas-entry {font-size:clamp(12px,1.5vw,21px);letter-spacing:.13em;}
+}
