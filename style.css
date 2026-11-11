@@ -1361,3 +1361,13 @@ body::after {display:none!important;}
   .db-hero { align-items:stretch !important; }
   .db-hero-art { height:auto !important; min-height:100% !important; align-self:stretch !important; }
 }
+
+/* Dream Atlas: subtle procedural analog snow, independent of audio. */
+.db-atlas-entry { overflow: hidden !important; isolation: isolate; }
+.db-atlas-entry .db-atlas-static {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; pointer-events: none; opacity: .05; z-index: 0;
+  image-rendering: pixelated; mix-blend-mode: screen;
+}
+.db-atlas-entry > span { position: relative; z-index: 1; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .db-atlas-entry .db-atlas-static { opacity: .025; } }
