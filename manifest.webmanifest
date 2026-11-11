@@ -1,0 +1,23 @@
+{
+  "name": "Dream Binder \u2014 Resonant Doorways",
+  "short_name": "Dream Binder",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080611",
+  "theme_color": "#080611",
+  "icons": [
+    {
+      "src": "assets/icon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
