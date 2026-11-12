@@ -1403,3 +1403,51 @@ body::after {display:none!important;}
 @media (prefers-reduced-motion: reduce) {
   #db-startup-splash { transition-duration: 0ms !important; will-change: auto; }
 }
+
+
+/* DREAM BINDER — Source status: precision-machined dark chrome (visual-only).
+   A single continuous face removes the apparent horizontal seam on the right. */
+.db-patchbar {
+  position:relative !important;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(172,181,193,.62) !important;
+  border-radius:9px !important;
+  background:linear-gradient(180deg,
+    #858b95 0%,#535964 2%,#303640 8%,#262c36 25%,
+    #1b202a 52%,#272d37 76%,#363d47 93%,#737b85 100%) !important;
+  box-shadow:0 2px 6px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(247,251,255,.42),
+    inset 0 3px 5px rgba(255,255,255,.055),
+    inset 0 -2px 4px rgba(0,0,0,.65) !important;
+}
+/* Remove inherited decorative rules that can draw across the blank right side. */
+.db-patchbar::before,.db-patchbar::after,
+.db-patch-info::before,.db-patch-info::after {
+  content:none !important;
+  display:none !important;
+  background:none !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.db-patch-info {position:relative !important;z-index:1;min-width:0;}
+.db-patch-info small {
+  color:#b5b4c5 !important;
+  text-shadow:0 -1px 1px rgba(0,0,0,.95),0 1px 0 rgba(255,255,255,.12),0 0 5px rgba(173,151,202,.18) !important;
+  font-weight:700;
+}
+.db-patch-info strong {
+  color:#bcebf2 !important;
+  text-shadow:0 -1px 1px #050a11,0 1px 0 rgba(255,255,255,.16),0 0 7px rgba(103,224,235,.33) !important;
+  font-weight:760;
+}
+.db-patchbar .db-dot-power {
+  box-shadow:0 0 0 2px #171f29,0 1px 1px rgba(255,255,255,.45),0 0 9px rgba(92,230,225,.65) !important;
+}
+@media (orientation:portrait) {
+  .db-patchbar {min-height:56px !important;}
+  .db-patchbar .db-preset-strip {background:none !important;border:0 !important;box-shadow:none !important;}
+  .db-patchbar .db-preset-strip::before,.db-patchbar .db-preset-strip::after {
+    content:none !important;display:none !important;
+  }
+}
