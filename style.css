@@ -1709,3 +1709,33 @@ body::after {display:none!important;}
     background-image:url("assets/ui/effects-rack-engraved-portrait-4k.webp") !important;
   }
 }
+
+
+/* Dream Binder — Workstation chrome mesh ONLY.
+   Add class="db-workstation-mesh" to the EXISTING wrapper that contains
+   DREAM BINDER / RESONANCE WORKSTATION and BALANCED VISUALS.
+   Do not replace your existing style.css or existing controls. */
+.db-workstation-mesh {
+  position: relative;
+  box-sizing: border-box;
+  isolation: isolate;
+  min-height: 96px;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #050508;
+  background-image: url("assets/ui/workstation-mesh-landscape.webp");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+/* Keep the title, dropdown, and all other HTML controls ABOVE the image. */
+.db-workstation-mesh > * { position: relative; z-index: 1; }
+@media (orientation: portrait) {
+  .db-workstation-mesh {
+    min-height: 100px;
+    padding: 13px 17px;
+    background-image: url("assets/ui/workstation-mesh-portrait.webp");
+  }
+}
