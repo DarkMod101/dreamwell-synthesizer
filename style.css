@@ -1740,3 +1740,20 @@ body::after {display:none!important;}
     background-size: calc(100% - 18px) calc(100% - 4px);
   }
 }
+
+/* Workstation mesh: retain the COMPLETE chrome frame and all four screws.
+   Keep the existing HTML controls live and the panel height unchanged. */
+.db-console-top.db-workstation-mesh {
+  background-position: center center !important;
+  background-size: calc(100% - 82px) calc(100% - 10px) !important;
+  background-repeat: no-repeat !important;
+}
+/* Shift only the floating workstation title approximately four character spaces right. */
+.db-console-top.db-workstation-mesh .db-console-engrave {
+  transform: translateX(16px) !important;
+}
+@media (orientation: portrait) {
+  .db-console-top.db-workstation-mesh {
+    background-size: calc(100% - 62px) calc(100% - 10px) !important;
+  }
+}
