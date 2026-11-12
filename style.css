@@ -1591,3 +1591,121 @@ body::after {display:none!important;}
   .db-effects-rack .db-rack-head h2 {font-size:clamp(14px,1.65vw,19px) !important;}
   .db-effects-rack .db-rack-head .db-rack-legend {max-width:210px;font-size:10px !important;}
 }
+
+/* DREAM BINDER — Chrome header label placement, reference layout.
+   Position only the three live text labels; leave chrome and rack modules intact. */
+.db-effects-rack .db-rack-head {
+  position:relative !important;
+  display:block !important;
+  height:154px !important;
+  min-height:154px !important;
+  padding:0 !important;
+  overflow:hidden !important;
+}
+.db-effects-rack .db-rack-head > :first-child {
+  position:absolute !important;
+  top:28px;
+  left:clamp(40px,6.2vw,96px);
+  right:36%;
+  width:auto;
+  max-width:none;
+  min-width:0;
+}
+.db-effects-rack .db-rack-head h2 {
+  margin:14px 0 0 !important;
+  max-width:none !important;
+  text-wrap:wrap !important;
+}
+.db-effects-rack .db-rack-head .db-rack-legend {
+  position:absolute !important;
+  right:clamp(24px,4vw,58px);
+  bottom:30px;
+  width:max-content;
+  max-width:37% !important;
+  text-align:right !important;
+}
+@media (orientation:portrait) {
+  .db-effects-rack .db-rack-head {
+    height:202px !important;
+    min-height:202px !important;
+  }
+  .db-effects-rack .db-rack-head > :first-child {
+    top:30px;
+    left:26px;
+    right:22px;
+  }
+  .db-effects-rack .db-rack-head h2 {
+    margin-top:66px !important;
+    max-width:27ch !important;
+    font-size:clamp(16px,4vw,21px) !important;
+  }
+  .db-effects-rack .db-rack-head .db-rack-legend {
+    right:20px;
+    bottom:14px;
+    max-width:62% !important;
+    font-size:10px !important;
+  }
+}
+@media (orientation:landscape) and (max-height:600px) {
+  .db-effects-rack .db-rack-head {
+    height:112px !important;
+    min-height:112px !important;
+  }
+  .db-effects-rack .db-rack-head > :first-child {
+    top:26px;
+    left:clamp(52px,7vw,108px);
+    right:34%;
+  }
+  .db-effects-rack .db-rack-head h2 {
+    margin-top:18px !important;
+    font-size:clamp(15px,1.8vw,21px) !important;
+  }
+  .db-effects-rack .db-rack-head .db-rack-legend {
+    right:clamp(28px,5vw,80px);
+    bottom:20px;
+    max-width:32% !important;
+  }
+}
+
+
+/* DREAM BINDER — Single engraved effects rack nameplate.
+   Scoped ONLY to the effects rack header. Preserve existing rack modules,
+   chrome controls, visualizations, and all other panels.
+   Uses orientation-specific WebP files with the approved baked-in lettering. */
+.db-effects-rack > .db-rack-head {
+  box-sizing:border-box !important;
+  display:block !important;
+  position:relative !important;
+  padding:0 !important;
+  margin:0 !important;
+  overflow:hidden !important;
+  height:clamp(98px, 15.9vw, 122px) !important;
+  min-height:0 !important;
+  max-height:none !important;
+  background-image:url("assets/ui/effects-rack-engraved-landscape-4k.webp") !important;
+  background-repeat:no-repeat !important;
+  background-position:center !important;
+  background-size:100% 100% !important;
+  border:0 !important;
+}
+/* Text is printed in the WebP. Keep original DOM wording for assistive tech,
+   without rendering duplicate labels on top of the engraved artwork. */
+.db-effects-rack > .db-rack-head > div,
+.db-effects-rack > .db-rack-head > .db-rack-legend {
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  clip-path:inset(50%) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+@media (orientation:portrait) {
+  .db-effects-rack > .db-rack-head {
+    height:clamp(104px, 22.4vw, 145px) !important;
+    background-image:url("assets/ui/effects-rack-engraved-portrait-4k.webp") !important;
+  }
+}
