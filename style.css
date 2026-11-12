@@ -1666,3 +1666,38 @@ body::after {display:none!important;}
     max-width:32% !important;
   }
 }
+
+/* Dream Binder — portrait-only compact chrome rack header.
+   Landscape remains byte-for-byte unchanged from the approved baseline.
+   Preserve the faceplate aspect ratio (crop, never stretch). */
+@media (orientation:portrait) {
+  .db-effects-rack .db-rack-head {
+    height:132px !important;
+    min-height:132px !important;
+    max-height:132px !important;
+    box-sizing:border-box !important;
+    background-image:linear-gradient(180deg,rgba(6,7,12,.08),rgba(5,6,10,.18)),url("assets/ui/chrome-faceplate-4k.webp") !important;
+    background-size:cover !important;
+    background-position:center center !important;
+    background-repeat:no-repeat !important;
+  }
+  .db-effects-rack .db-rack-head > :first-child {
+    top:14px !important;
+    left:clamp(25px,5.4vw,38px) !important;
+    right:16px !important;
+  }
+  .db-effects-rack .db-rack-head h2 {
+    margin-top:44px !important;
+    font-size:clamp(14px,3.65vw,19px) !important;
+    line-height:1.13 !important;
+    letter-spacing:.065em !important;
+    max-width:29ch !important;
+  }
+  .db-effects-rack .db-rack-head .db-rack-legend {
+    right:16px !important;
+    bottom:10px !important;
+    max-width:75% !important;
+    font-size:clamp(9px,2.15vw,11px) !important;
+    white-space:nowrap !important;
+  }
+}
