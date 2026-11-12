@@ -1521,3 +1521,73 @@ body::after {display:none!important;}
   background-image:linear-gradient(180deg,rgba(5,7,12,.40),rgba(5,7,12,.60)),url("assets/ui/chrome-silver-portrait-4k.webp") !important;
  }
 }
+
+
+/* DREAM BINDER — Effects rack header typography fit (portrait + landscape).
+   Header-only correction: chrome textures, sliders, knobs and audio remain unchanged. */
+.db-effects-rack .db-rack-head {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,auto);
+  align-items:center !important;
+  column-gap:clamp(10px,2vw,26px) !important;
+  min-height:94px;
+  padding:15px clamp(15px,2.2vw,30px) 18px !important;
+  overflow:hidden;
+}
+.db-effects-rack .db-rack-head > :first-child {min-width:0;max-width:100%;}
+.db-effects-rack .db-rack-head h2 {
+  margin:5px 0 0 !important;
+  font-size:clamp(13px,1.25vw,19px) !important;
+  line-height:1.22 !important;
+  letter-spacing:.105em !important;
+  font-weight:750 !important;
+  overflow-wrap:normal;
+  text-wrap:balance;
+  max-width:100%;
+}
+.db-effects-rack .db-rack-head .db-eyebrow,
+.db-effects-rack .db-rack-head small {
+  font-size:clamp(9px,.8vw,11px) !important;
+  line-height:1.35 !important;
+  letter-spacing:.095em !important;
+  margin:0 !important;
+}
+.db-effects-rack .db-rack-head .db-rack-legend {
+  min-width:0;
+  max-width:230px;
+  font-size:clamp(9px,.85vw,12px) !important;
+  line-height:1.35 !important;
+  letter-spacing:.075em !important;
+  text-align:right;
+  overflow-wrap:normal;
+}
+@media (orientation:portrait) {
+  .db-effects-rack .db-rack-head {
+    grid-template-columns:minmax(0,1fr) !important;
+    justify-items:start;
+    align-content:center;
+    row-gap:6px !important;
+    min-height:116px;
+    padding:17px 15px 18px !important;
+  }
+  .db-effects-rack .db-rack-head h2 {
+    font-size:clamp(14px,3.55vw,18px) !important;
+    letter-spacing:.08em !important;
+    line-height:1.2 !important;
+    max-width:26ch;
+  }
+  .db-effects-rack .db-rack-head .db-rack-legend {
+    max-width:100%;
+    font-size:10px !important;
+    line-height:1.25 !important;
+    text-align:left;
+  }
+}
+@media (orientation:landscape) and (max-height:600px) {
+  .db-effects-rack .db-rack-head {
+    min-height:84px;
+    padding:13px 20px 16px !important;
+  }
+  .db-effects-rack .db-rack-head h2 {font-size:clamp(14px,1.65vw,19px) !important;}
+  .db-effects-rack .db-rack-head .db-rack-legend {max-width:210px;font-size:10px !important;}
+}
