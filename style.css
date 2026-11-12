@@ -1757,3 +1757,45 @@ body::after {display:none!important;}
     padding-inline: 27px !important;
   }
 }
+
+/* Dream Binder — responsive workstation mesh proportion correction, 2026-11-12.
+   Keep all HTML title/dropdown live; preserve other instrument styling. */
+.db-console-top.db-workstation-mesh {
+  width:100% !important;
+  min-width:0 !important;
+  height:clamp(112px, 10.2vw, 144px) !important;
+  min-height:0 !important;
+  box-sizing:border-box !important;
+  padding:16px clamp(24px, 3.5vw, 52px) !important;
+  background-size:100% 100% !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+  overflow:hidden !important;
+  border:0 !important;
+  border-radius:0 !important;
+  align-content:center !important;
+}
+.db-console-top.db-workstation-mesh .db-console-engrave {
+  margin-left: 14px !important;
+}
+@media (orientation:portrait) {
+  .db-console-top.db-workstation-mesh {
+    height:clamp(132px, 22vw, 168px) !important;
+    padding:19px 30px !important;
+    align-content:space-around !important;
+  }
+  .db-console-top.db-workstation-mesh .db-console-engrave {
+    margin-left:14px !important;
+  }
+}
+
+/* Dream Binder: decorative translucent signal cables. No controls affected. */
+.db-chassis { position:relative; }
+.db-living-cable { position:absolute; pointer-events:none !important; overflow:visible; z-index:3; opacity:.78; contain:layout style; }
+.db-living-cable .cable-shadow { fill:none; stroke:#010106; stroke-width:8; stroke-linecap:round; opacity:.85; }
+.db-living-cable .cable-jacket { fill:none; stroke:rgba(25,23,38,.94); stroke-width:5.2; stroke-linecap:round; }
+.db-living-cable .cable-glass { fill:none; stroke:rgba(151,151,183,.33); stroke-width:1.35; stroke-linecap:round; }
+.db-living-cable .cable-core { fill:none; stroke:rgba(135,86,193,.32); stroke-width:1.2; stroke-linecap:round; }
+.db-living-cable .cable-pulse { fill:none; stroke:#b18de5; stroke-width:1.35; stroke-linecap:round; stroke-dasharray:3 120; filter:drop-shadow(0 0 2px rgba(158,99,220,.3)); animation:dbCablePulse 8s linear infinite; opacity:.54; }
+@keyframes dbCablePulse { from {stroke-dashoffset:120} to {stroke-dashoffset:0} }
+@media (prefers-reduced-motion:reduce) { .db-living-cable .cable-pulse { animation:none; opacity:.18 } }
