@@ -1727,7 +1727,7 @@ body::after {display:none!important;}
   background-image: url("assets/ui/workstation-mesh-landscape.webp");
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 100% 100%;
+  background-size: calc(100% - 22px) calc(100% - 4px);
   overflow: hidden;
 }
 /* Keep the title, dropdown, and all other HTML controls ABOVE the image. */
@@ -1737,5 +1737,6 @@ body::after {display:none!important;}
     min-height: 100px;
     padding: 13px 17px;
     background-image: url("assets/ui/workstation-mesh-portrait.webp");
+    background-size: calc(100% - 18px) calc(100% - 4px);
   }
 }
