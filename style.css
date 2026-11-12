@@ -1452,57 +1452,35 @@ body::after {display:none!important;}
   }
 }
 
-
-/* DREAM BINDER / DARK BRUSHED TITANIUM — HARDWARE PASS 01
-   Scoped, static CSS material treatment. Preserves all instrument behavior,
-   artwork, display canvases, animations, and touchscreen targets. */
-:root { --db-metal-edge:#747983; --db-metal-light:#a0a4a9; --db-metal-shadow:#090b10; }
-/* Fine horizontal machining lines: 1px texture, subtle light and dark bands. */
+/* DREAM BINDER — 4K dark chrome hybrid hardware skin, baseline source panel build.
+   WebP provides metal materials; controls, text, displays and interaction remain CSS/JS.
+   All rules scoped to existing workstation; no audio logic changed. */
 .db-chassis {
-  background:
-    repeating-linear-gradient(0deg,rgba(240,243,249,.027) 0px,rgba(240,243,249,.027) 1px,rgba(0,0,0,.035) 1px,rgba(0,0,0,.035) 3px),
-    linear-gradient(105deg,#20232a 0%,#30333a 12%,#191c23 43%,#272a31 78%,#15171d 100%) !important;
-  border-color:#666b75 !important;
-  box-shadow:inset 0 1px 0 #a0a5b17a,inset 0 -3px 4px #07080c,0 0 0 4px #08090d,0 18px 45px #0009 !important;
+  background-image: linear-gradient(180deg,rgba(5,6,10,.28),rgba(6,7,11,.55)),url("assets/ui/chassis-landscape-4k.webp") !important;
+  background-size:cover !important;background-position:center center !important;
+  border-color:#555861 !important;
+  box-shadow:inset 0 1px 1px #c0c3cb55,inset 0 -3px 6px #020205,0 0 0 4px #08090c,0 16px 36px #000a !important;
 }
-/* Raised metal faceplates, no texture on interactive artwork or waveform screens. */
-.db-patchbar,.db-console-top,.db-edit-console,.db-effects-rack,.db-rack-head,.db-keyboard-section,
-.db-keyboard-shell,.db-screen-caption,.db-edit-tabs {
-  background-image:
-    repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0px,rgba(255,255,255,.025) 1px,rgba(0,0,0,.032) 1px,rgba(0,0,0,.032) 3px),
-    linear-gradient(180deg,#34373e 0%,#22252d 9%,#171a21 48%,#22252b 96%,#34363d 100%) !important;
-  border-color:#5c616a !important;
-  box-shadow:inset 0 1px 0 rgba(210,218,227,.25),inset 0 -2px 3px rgba(0,0,0,.65),0 2px 5px #0007 !important;
+/* Recessed metal panels. Preserve existing live visualizations and content. */
+.db-patchbar,.db-edit-console,.db-effects-rack,.db-screen-frame {
+  background-image:linear-gradient(180deg,rgba(6,7,12,.10),rgba(5,6,10,.28)),url("assets/ui/chrome-faceplate-4k.webp") !important;
+  background-size:100% 100% !important;
+  background-position:center !important;
+  border-color:#555861 !important;
+  box-shadow:inset 0 1px 0 #bfc2ca4a,inset 0 -2px 3px #0009,0 3px 9px #0008 !important;
 }
-/* Individual dark brushed selector buttons, raised lip and tactile inset on selection. */
-.db-nav,.db-edit-tab,.preset-browser-btn,.db-compact-btn,.db-micro-btn,.db-rack-focus,
-.db-voice-switch,.db-fx-quick-button {
-  background-image:
-    repeating-linear-gradient(0deg,#ffffff07 0px,#ffffff07 1px,#00000008 1px,#00000008 3px),
-    linear-gradient(180deg,#3d4149 0%,#262932 13%,#171a21 89%,#111319 100%) !important;
-  border-color:#626872 !important;
-  box-shadow:inset 0 1px 0 #c2c8d13d,inset 0 -2px 1px #07090db3,0 1px 2px #0008 !important;
-  text-shadow:0 1px 1px #05060a;
+/* Chrome frame corners are visually scaled with the panel; internal controls remain separate.
+   The very wide image is reserved for wide panels, with neutral grain for smaller modules. */
+.db-rack-unit,.db-pane-modules > *, .db-signal-visual {
+  background-image:linear-gradient(180deg,rgba(7,8,12,.80),rgba(7,8,12,.89)),url("assets/ui/chrome-mesh-4k.webp") !important;
+  background-size:cover !important;background-position:center !important;
+  border-color:#42434b !important;
 }
-.db-nav.active,.db-edit-tab.active {
-  background-image:
-    repeating-linear-gradient(0deg,#ffffff06 0px,#ffffff06 1px,#00000009 1px,#00000009 3px),
-    linear-gradient(180deg,#303941,#1b242d 40%,#121a23) !important;
-  border-color:#8b9ba5 !important;
-  box-shadow:inset 0 2px 3px #020407c9,inset 0 -2px 0 #86c8d9,0 0 7px #6cb8c322 !important;
-  color:#c5eff4 !important;
+/* Keep the source text clean and remove the original decorative seam. */
+.db-patchbar::before,.db-patchbar::after {content:none !important;display:none !important;}
+/* Existing artwork and all input widgets remain above the texture. */
+.db-chassis .db-masthead,.db-chassis .db-hero-art,.db-chassis .db-atlas-entry {background-blend-mode:normal;}
+@media (orientation:portrait) {
+ .db-chassis {background-image:linear-gradient(180deg,rgba(5,6,10,.30),rgba(6,7,11,.56)),url("assets/ui/chassis-portrait-4k.webp") !important;background-size:cover !important;}
+ .db-patchbar,.db-edit-console,.db-effects-rack,.db-screen-frame {background-size:100% 100% !important;}
 }
-/* Recessed smoked-glass instrument monitors: retain actual live visuals. */
-.db-spectrum-shell,.db-screen-frame,.db-signal-visual,.db-rack-canvas {
-  border-color:#343b46 !important;
-  box-shadow:inset 0 2px 8px #000b,0 0 0 1px #777e865c !important;
-}
-.db-screen-frame { background:#090c14 !important; }
-.db-spectrum-shell { background:#070a12 !important; }
-/* Finely engraved illuminated legends. */
-.db-console-engrave,.db-screen-kicker,.db-rack-head h2,.db-screen-caption h2 {
-  text-shadow:0 1px 1px #000,0 -1px 0 #d5dbe329,0 0 7px #86c8d61c;
-}
-/* Keep the source status metal and remove decorative rule across its empty right side. */
-.db-patchbar::before,.db-patchbar::after,.db-patch-info::before,.db-patch-info::after {content:none !important;}
-/* No additional paint layer over the artwork, mist canvas, Atlas, or keyboard keys. */
