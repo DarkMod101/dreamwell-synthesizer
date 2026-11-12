@@ -1741,19 +1741,19 @@ body::after {display:none!important;}
   }
 }
 
-/* Workstation mesh: retain the COMPLETE chrome frame and all four screws.
-   Keep the existing HTML controls live and the panel height unchanged. */
+/* Final transparent workstation mesh: complete endcaps, no cropping. */
 .db-console-top.db-workstation-mesh {
-  background-position: center center !important;
-  background-size: calc(100% - 82px) calc(100% - 10px) !important;
+  background-color: transparent !important;
+  background-image: url("assets/ui/workstation-mesh-landscape.webp") !important;
+  background-size: 100% 100% !important;
+  background-position: center !important;
   background-repeat: no-repeat !important;
-}
-/* Shift only the floating workstation title approximately four character spaces right. */
-.db-console-top.db-workstation-mesh .db-console-engrave {
-  transform: translateX(16px) !important;
+  overflow: visible !important;
+  padding-inline: clamp(26px, 3vw, 46px) !important;
 }
 @media (orientation: portrait) {
   .db-console-top.db-workstation-mesh {
-    background-size: calc(100% - 62px) calc(100% - 10px) !important;
+    background-image: url("assets/ui/workstation-mesh-portrait.webp") !important;
+    padding-inline: 27px !important;
   }
 }
