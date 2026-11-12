@@ -1472,7 +1472,7 @@ body::after {display:none!important;}
 /* Chrome frame corners are visually scaled with the panel; internal controls remain separate.
    The very wide image is reserved for wide panels, with neutral grain for smaller modules. */
 .db-rack-unit,.db-pane-modules > *, .db-signal-visual {
-  background-image:linear-gradient(180deg,rgba(7,8,12,.80),rgba(7,8,12,.89)),url("assets/ui/chrome-mesh-4k.webp") !important;
+  background-image:linear-gradient(180deg,rgba(7,8,12,.80),rgba(7,8,12,.89)),url("assets/ui/chrome-mesh-landscape-4k.webp") !important;
   background-size:cover !important;background-position:center !important;
   border-color:#42434b !important;
 }
@@ -1483,4 +1483,11 @@ body::after {display:none!important;}
 @media (orientation:portrait) {
  .db-chassis {background-image:linear-gradient(180deg,rgba(5,6,10,.30),rgba(6,7,11,.56)),url("assets/ui/chassis-portrait-4k.webp") !important;background-size:cover !important;}
  .db-patchbar,.db-edit-console,.db-effects-rack,.db-screen-frame {background-size:100% 100% !important;}
+}
+
+/* Dream Binder chrome mesh: orientation-specific 4K WebP */
+@media (orientation: portrait) {
+  .db-rack-unit,.db-pane-modules > *, .db-signal-visual {
+    background-image: linear-gradient(180deg,rgba(7,8,12,.80),rgba(7,8,12,.89)),url("assets/ui/chrome-mesh-portrait-4k.webp") !important;
+  }
 }
