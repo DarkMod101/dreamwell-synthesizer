@@ -1799,3 +1799,13 @@ body::after {display:none!important;}
 .db-living-cable .cable-pulse { fill:none; stroke:#b18de5; stroke-width:1.35; stroke-linecap:round; stroke-dasharray:3 120; filter:drop-shadow(0 0 2px rgba(158,99,220,.3)); animation:dbCablePulse 8s linear infinite; opacity:.54; }
 @keyframes dbCablePulse { from {stroke-dashoffset:120} to {stroke-dashoffset:0} }
 @media (prefers-reduced-motion:reduce) { .db-living-cable .cable-pulse { animation:none; opacity:.18 } }
+
+/* 2026-11-13 — Landscape source panel cleanup.
+   Hide the redundant Sound Library / Presets / Save Sound section only.
+   Preserve the Current Sound Source indicator and chrome patchbar.
+   Keep HTML IDs and audio/preset logic intact. */
+@media (orientation: landscape) {
+  .db-patchbar > .db-preset-strip {
+    display: none !important;
+  }
+}
