@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const scene=document.getElementById('dt-scene'),ctx=scene.getContext('2d',{alpha:false});const crt=document.getElementById('dt-crt'),fx=crt.getContext('2d');const $=id=>document.getElementById('dt-'+id);const names=['HOUSE OF MEMORIES','INFINITE CAR RIDE','CELESTIAL DOORWAY','NEVER ENDING FIELDS'];let ch=0,playing=false,walk=false,drag=false,dragX=0,dragY=0,panX=0,panY=0,clock=0,last=0,raf=0,signalUntil=0,energy=0,freq=null;const W=960,H=540;
+const scene=document.getElementById('dt-scene'),ctx=scene.getContext('2d',{alpha:false});const crt=document.getElementById('dt-crt'),fx=crt.getContext('2d');const $=id=>document.getElementById('dt-'+id);const names=['HOUSE OF MEMORIES','INFINITE CAR RIDE','CELESTIAL DOORWAY','NEVER ENDING FIELDS'];let ch=0,playing=false,walk=false,drag=false,dragX=0,dragY=0,panX=0,panY=0,clock=0,last=0,raf=0,signalUntil=0,energy=0,freq=null,previousChannel=-1,transitionStart=0,transitionDuration=950,sceneVariant=0;const W=960,H=540;
 const rand=(n)=>{let v=Math.sin(n*127.1+47.9)*43758.5453;return v-Math.floor(v)};const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));const lerp=(a,b,t)=>a+(b-a)*t;
 function rect(x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h)}function line(x,y,X,Y,color,width=2){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(X,Y);ctx.stroke()}function ellipse(x,y,rx,ry,color){ctx.fillStyle=color;ctx.beginPath();ctx.ellipse(x,y,Math.max(1,rx),Math.max(1,ry),0,0,Math.PI*2);ctx.fill()}
 function gradient(a,b){let g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,a);g.addColorStop(1,b);rect(0,0,W,H,g)}function poly(points,c){ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(...points[0]);points.slice(1).forEach(p=>ctx.lineTo(...p));ctx.closePath();ctx.fill()}
@@ -15,8 +15,97 @@ function road(t,e){gradient('#080e23','#47364d');ellipse(760,180,105,105,'#86708
 function portal(t,e){gradient('#090c21','#2b1b45');stars(t);for(let j=7;j>=0;j--){let r=65+j*28+Math.sin(t*.3+j)*5;ctx.strokeStyle=`rgba(${125+j*10},${100+j*5},230,${.1+(7-j)*.035+e*.08})`;ctx.lineWidth=1+j*.4;ctx.beginPath();ctx.ellipse(480,275,r,r*1.25,Math.sin(t*.05)*.15,0,Math.PI*2);ctx.stroke()}poly([[110,H],[330,390],[630,390],[850,H]],'#11101e');for(let i=0;i<11;i++){let x=lerp(330,110,i/10),x2=lerp(630,850,i/10),y=lerp(390,H,i/10);line(x,y,x2,y,'#8d70c155',1)}for(let i=0;i<10;i++){let x=rand(i+990)*W,y=rand(i+1220)*H;ellipse(x,y,2+rand(i)*3,2+rand(i)*3,`rgba(194,155,255,${.15+.1*Math.sin(t+i)})`)}ellipse(480,275,63+e*10,95+e*13,'#6e50a145');ellipse(480,275,40+e*9,76+e*10,'#b8a7f470');ellipse(480,275,24,64,'#e4ddffbb')}
 function fields(t,e){gradient('#242d49','#b09aa2');ellipse(735,185,68,68,'#f3d5bb');poly([[0,300],[190,260],[400,295],[600,275],[W,300],[W,H],[0,H]],'#4e5b58');poly([[0,350],[320,310],[650,350],[W,315],[W,H],[0,H]],'#364943');for(let i=0;i<180;i++){let x=rand(i+650)*W,y=320+rand(i+840)*220,sw=Math.sin(t*.6+i)*4;line(x,y,x+sw,y-7-rand(i)*13,`rgba(176,168,133,${.08+rand(i)*.4})`,1)}let x=490;poly([[x-42,325],[x+42,325],[x+12,230],[x-12,230]],'#232a2c');poly([[x-95,230],[x+95,230],[x,142]],'#292a37');rect(x-13,267,25,58,'#121820');ellipse(x,290,4,5,'#d7c7a1');for(let i=0;i<28;i++){let xx=rand(i+230)*W,yy=rand(i+490)*H;ellipse(xx,yy,1+rand(i)*2,1+rand(i)*2,`rgba(244,218,175,${.08+e*.1})`)}}
 const renderers=[house,road,portal,fields];
-function change(n){ch=(n+names.length)%names.length;$('channel').value=ch;$('channelTag').textContent=`CH ${String(ch+1).padStart(2,'0')} · ${names[ch]}`;signalUntil=performance.now()+650;$('tuning').classList.add('on');setTimeout(()=>$('tuning').classList.remove('on'),400);panX=panY=0}
-function draw(t){const motion=Number($('motion').value)/100, response=Number($('response').value)/100;const phase=t*.12,keys=[{x:0,y:0,z:1},{x:18,y:-10,z:1.06},{x:-12,y:5,z:1.11},{x:0,y:0,z:1}];let k=Math.floor(phase)%3,u=phase%1;u=u*u*(3-2*u);const a=keys[k],b=keys[k+1];const px=walk?panX:lerp(a.x,b.x,u)*motion,py=walk?panY:lerp(a.y,b.y,u)*motion,z=walk?1.06:1+(lerp(a.z,b.z,u)-1)*motion;ctx.save();ctx.translate(W/2,H/2);ctx.scale(z,z);ctx.translate(-W/2+px,-H/2+py);renderers[ch](t,energy*response);ctx.restore();const fog=ctx.createRadialGradient(480,260,50,480,260,540);fog.addColorStop(0,'#1d1b3400');fog.addColorStop(1,'#080714aa');rect(0,0,W,H,fog);fx.clearRect(0,0,480,270);const fuzz=Number($('fuzz').value)/100,amount=Math.round(fuzz*25);for(let i=0;i<amount;i++){const y=rand(i+Math.floor(t*22)*47)*270;fx.fillStyle=`rgba(211,211,228,${.025+fuzz*.10})`;fx.fillRect(0,y,480,1+rand(i+7)*2)}for(let i=0;i<amount*4;i++){const x=rand(i+Math.floor(t*15)*19)*480,y=rand(i+Math.floor(t*15)*41)*270;fx.fillStyle=`rgba(218,213,232,${fuzz*.09})`;fx.fillRect(x,y,1+rand(i)*3,1)}if(performance.now()<signalUntil){for(let i=0;i<35;i++){const y=rand(i+Math.floor(t*50)*5)*270;fx.fillStyle=`rgba(235,225,244,${rand(i)*.38})`;fx.fillRect(0,y,480,1+rand(i)*8)}}}
+// Optional cinematic WebP layers. Absent files are skipped silently, leaving
+// the original procedural broadcasts fully functional and offline-ready.
+// Scene assets belong in assets/transmissions/<channel>/ and can be added later.
+const layerPaths=['house-of-memories','infinite-car-ride','celestial-doorway','never-ending-fields'];
+const layerNames=['background','midground','foreground'];
+const layerImages=layerPaths.map(folder=>layerNames.map(name=>{
+ const img=new Image();img.decoding='async';img._ready=false;
+ img.onload=()=>{img._ready=true};img.onerror=()=>{img._ready=false};
+ img.src=`assets/transmissions/${folder}/${name}.webp`;return img;
+}));
+const sceneBuffer=document.createElement('canvas');sceneBuffer.width=W;sceneBuffer.height=H;
+const sceneCtx=sceneBuffer.getContext('2d',{alpha:false});
+const prevBuffer=document.createElement('canvas');prevBuffer.width=W;prevBuffer.height=H;
+const prevCtx=prevBuffer.getContext('2d',{alpha:false});
+const cameraPaths=[
+ [{x:0,y:0,z:1.04},{x:-28,y:7,z:1.13},{x:22,y:-9,z:1.18},{x:0,y:0,z:1.04}],
+ [{x:0,y:0,z:1.04},{x:12,y:-8,z:1.10},{x:-12,y:4,z:1.14},{x:0,y:0,z:1.04}],
+ [{x:0,y:0,z:1.02},{x:-18,y:8,z:1.15},{x:20,y:-13,z:1.20},{x:0,y:0,z:1.02}],
+ [{x:0,y:0,z:1.03},{x:24,y:0,z:1.09},{x:-19,y:-12,z:1.16},{x:0,y:0,z:1.03}]
+];
+function drawArtwork(channel,t,e){
+ const layers=layerImages[channel];
+ if(!layers[0]._ready)return false;
+ // Per-layer displacement supplies depth without requiring a 3D engine.
+ for(let i=0;i<layers.length;i++){
+  const img=layers[i];if(!img._ready)continue;
+  const depth=[.24,.58,1][i];const zoom=1.08+depth*.07;
+  const w=W*zoom,h=H*zoom;
+  const driftX=Math.sin(t*.14+i*.8)*12*depth;
+  const driftY=Math.cos(t*.11+i)*7*depth;
+  ctx.drawImage(img,(W-w)/2+driftX,(H-h)/2+driftY,w,h);
+ }
+ // Gentle light breathing; never overwrite the original illustration.
+ ctx.fillStyle=`rgba(183,157,229,${.015+e*.045})`;ctx.fillRect(0,0,W,H);
+ return true;
+}
+function paintScene(channel,t,e){if(!drawArtwork(channel,t,e))renderers[channel](t,e)}
+function cameraAt(channel,t,motion){
+ const path=cameraPaths[channel],phase=t*.095,idx=Math.floor(phase)%3;
+ let u=phase%1;u=u*u*(3-2*u);
+ const a=path[idx],b=path[idx+1];
+ return {x:lerp(a.x,b.x,u)*motion,y:lerp(a.y,b.y,u)*motion,z:1+(lerp(a.z,b.z,u)-1)*motion};
+}
+function renderChannel(channel,t,e,motion){
+ const cam=cameraAt(channel,t,motion);
+ const x=walk?panX:cam.x,y=walk?panY:cam.y,z=walk?1.07:cam.z;
+ ctx.save();ctx.translate(W/2,H/2);ctx.scale(z,z);
+ ctx.translate(-W/2+x,-H/2+y);paintScene(channel,t,e);ctx.restore();
+}
+
+function change(n){
+ const next=(n+names.length)%names.length;
+ if(next!==ch){previousChannel=ch;prevCtx.drawImage(scene,0,0,W,H);transitionStart=performance.now()}
+ ch=next;$('channel').value=ch;$('channelTag').textContent=`CH ${String(ch+1).padStart(2,'0')} · ${names[ch]}`;signalUntil=performance.now()+650;$('tuning').classList.add('on');setTimeout(()=>$('tuning').classList.remove('on'),400);panX=panY=0}
+function draw(t){
+ const motion=Number($('motion').value)/100,response=Number($('response').value)/100;
+ renderChannel(ch,t,energy*response,motion);
+ const elapsed=performance.now()-transitionStart;
+ if(previousChannel>=0&&elapsed<transitionDuration){
+  const u=clamp(elapsed/transitionDuration,0,1);
+  ctx.save();ctx.globalAlpha=(1-u)*(1-u);ctx.drawImage(prevBuffer,0,0);ctx.restore();
+  // A short analog sync tear during a change of frequency.
+  if(u<.55){const bands=3+Math.round((1-u)*7);
+   for(let i=0;i<bands;i++){
+    const y=rand(i+Math.floor(t*30))*H,h=2+rand(i+45)*16;
+    ctx.drawImage(scene,0,y,W,h,(rand(i+19)-.5)*35*(1-u),y,W,h);
+   }
+  }
+ }else if(previousChannel>=0)previousChannel=-1;
+ const fog=ctx.createRadialGradient(480,260,50,480,260,540);
+ fog.addColorStop(0,'#1d1b3400');fog.addColorStop(1,'#080714aa');rect(0,0,W,H,fog);
+ fx.clearRect(0,0,480,270);
+ const fuzz=Number($('fuzz').value)/100,amount=Math.round(fuzz*25);
+ for(let i=0;i<amount;i++){
+  const y=rand(i+Math.floor(t*22)*47)*270;
+  fx.fillStyle=`rgba(211,211,228,${.025+fuzz*.10})`;
+  fx.fillRect(0,y,480,1+rand(i+7)*2);
+ }
+ for(let i=0;i<amount*4;i++){
+  const x=rand(i+Math.floor(t*15)*19)*480,y=rand(i+Math.floor(t*15)*41)*270;
+  fx.fillStyle=`rgba(218,213,232,${fuzz*.09})`;
+  fx.fillRect(x,y,1+rand(i)*3,1);
+ }
+ if(performance.now()<signalUntil){
+  for(let i=0;i<35;i++){
+   const y=rand(i+Math.floor(t*50)*5)*270;
+   fx.fillStyle=`rgba(235,225,244,${rand(i)*.38})`;
+   fx.fillRect(0,y,480,1+rand(i)*8);
+  }
+ }
+}
 function frame(now){if(!playing||document.hidden)return;if(now-last<42){raf=requestAnimationFrame(frame);return}const dt=last?Math.min(.1,(now-last)/1000):0;last=now;clock+=dt;energy*=.86;try{if(typeof dbAudioAnalyser!=='undefined'&&dbAudioAnalyser&&typeof audioContext!=='undefined'&&audioContext?.state==='running'){if(!freq||freq.length!==dbAudioAnalyser.frequencyBinCount)freq=new Uint8Array(dbAudioAnalyser.frequencyBinCount);dbAudioAnalyser.getByteFrequencyData(freq);let sum=0,count=0;for(let i=3;i<Math.min(110,freq.length);i++){sum+=freq[i];count++}energy=Math.max(energy,clamp(sum/Math.max(1,count)/130,0,1))}}catch(e){}draw(clock);raf=requestAnimationFrame(frame)}
 function start(){if(playing)return;playing=true;last=0;$('play').textContent='❚❚ Pause';raf=requestAnimationFrame(frame)}
 function stop(){playing=false;cancelAnimationFrame(raf);last=0;$('play').textContent='▶ Play'}
@@ -24,7 +113,7 @@ function open(){const modal=$('modal');modal.hidden=false;modal.setAttribute('ar
 function close(){stop();$('modal').hidden=true;$('modal').setAttribute('aria-hidden','true');document.body.classList.remove('dt-open');$('launch').focus()}
 $('launch').addEventListener('click',open);$('close').addEventListener('click',close);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('modal').hidden)close()});
 $('prev').addEventListener('click',()=>change(ch-1));$('next').addEventListener('click',()=>change(ch+1));$('channel').addEventListener('change',e=>change(Number(e.target.value)));$('play').addEventListener('click',()=>playing?stop():start());$('mode').addEventListener('click',()=>{walk=!walk;$('mode').textContent=walk?'DREAM WALK':'AUTO CAMERA'});
-scene.addEventListener('pointerdown',e=>{if(!walk)return;drag=true;dragX=e.clientX;dragY=e.clientY;scene.setPointerCapture(e.pointerId)});scene.addEventListener('pointermove',e=>{if(!drag||!walk)return;panX=clamp(panX+(e.clientX-dragX)*1.4,-85,85);panY=clamp(panY+(e.clientY-dragY)*1.4,-65,65);dragX=e.clientX;dragY=e.clientY});scene.addEventListener('pointerup',()=>drag=false);scene.addEventListener('pointercancel',()=>drag=false);scene.style.touchAction='pan-y';
+scene.addEventListener('pointerdown',e=>{if(!walk)return;drag=true;dragX=e.clientX;dragY=e.clientY;scene.setPointerCapture(e.pointerId)});scene.addEventListener('pointermove',e=>{if(!drag||!walk)return;panX=clamp(panX+(e.clientX-dragX)*1.4,-85,85);panY=clamp(panY+(e.clientY-dragY)*1.4,-65,65);dragX=e.clientX;dragY=e.clientY});scene.addEventListener('pointerup',()=>drag=false);scene.addEventListener('pointercancel',()=>drag=false);scene.style.touchAction='none';
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(raf);last=0}else if(playing)raf=requestAnimationFrame(frame)});window.addEventListener('pagehide',stop);if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){$('motion').value=0;$('fuzz').value=8}change(0);draw(0);
 window.DreamTransmissions={open,close,setAudioLevel(v){if(Number.isFinite(v))energy=Math.max(energy,clamp(v,0,1))},setChannel(n){if(Number.isFinite(n))change(Math.floor(n))}};
 })();
