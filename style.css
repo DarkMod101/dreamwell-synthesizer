@@ -1938,3 +1938,45 @@ body::after {display:none!important;}
   .preset-browser {padding:19px 24px !important;}
   .preset-browser::before {border-width:23px !important;border-image-width:23px !important;}
 }
+
+/* DREAM BINDER — PORTRAIT ATLAS FILTER BAY FIT (2026-11-13)
+   Keep both filter labels and selectors INSIDE the engraved gallery housing.
+   The gallery alone scrolls; the housing grows naturally with its controls.
+   Landscape and all audio/UI interactions are unchanged. */
+@media (orientation: portrait) {
+  .preset-browser .dream-atlas-filters {
+    box-sizing: border-box !important;
+    height: auto !important;
+    min-height: max-content !important;
+    max-height: none !important;
+    flex: 0 0 auto !important;
+    overflow: visible !important;
+    align-content: start !important;
+    padding: 15px 17px 20px !important;
+    gap: 13px !important;
+  }
+  .preset-browser .dream-atlas-filters > label {
+    box-sizing: border-box !important;
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+  .preset-browser .dream-atlas-filters > label select {
+    box-sizing: border-box !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px;
+  }
+  .preset-browser .dream-atlas-filters .db-realm-gallery {
+    flex: 0 0 100% !important;
+    min-width: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+  .preset-browser .db-library-scroll {
+    overflow-y: auto !important;
+    min-height: 0 !important;
+  }
+}
