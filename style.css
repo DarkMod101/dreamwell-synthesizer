@@ -1825,3 +1825,14 @@ body::after {display:none!important;}
       url("assets/ui/chrome-silver-portrait-4k.webp") !important;
   }
 }
+
+/* DREAM BINDER — LOCKED LANDSCAPE SOURCE PANEL FIX (2026-11-13)
+   Hide the redundant Sound Library / Presets / Save Sound strip ONLY
+   inside the Current Sound Source patchbar in landscape orientation.
+   Preserve the left source indicator, portrait layout, and preset browser elsewhere.
+   Keep this rule when merging future workstation visual updates. */
+@media (orientation: landscape) {
+  .db-patchbar > .db-preset-strip {
+    display: none !important;
+  }
+}
