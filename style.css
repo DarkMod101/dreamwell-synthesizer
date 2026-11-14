@@ -1998,3 +1998,7 @@ body::after {display:none!important;}
 .dt-glass #dt-crt{mix-blend-mode:normal!important;opacity:1!important;image-rendering:pixelated}
 .dt-sliders label:has(input:disabled){display:none!important}
 .dt-sliders{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+
+/* Dream Transmissions 08: transparent noise canvas must not conceal bedroom frames. */
+.dt-glass #dt-crt{mix-blend-mode:screen!important;opacity:.65!important;pointer-events:none!important}
+.dt-glass::after{background:radial-gradient(ellipse at center,transparent 55%,#02020799)!important}
