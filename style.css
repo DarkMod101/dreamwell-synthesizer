@@ -1992,3 +1992,9 @@ body::after {display:none!important;}
 .dt-panel-label{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 auto}.dt-panel-label>div{display:grid;gap:3px;min-width:0}.dt-panel-label small{font-size:9px;letter-spacing:.12em;color:#a59eaf}.dt-panel-label strong{font-size:clamp(11px,1.5vw,15px);letter-spacing:.12em;color:#eddef6;white-space:nowrap}.dt-panel-led{flex:none;width:9px;height:9px;border-radius:50%;background:#9ee8cd;box-shadow:0 0 8px #69dfb788}.dt-panel-sub{font-size:9px;letter-spacing:.12em;color:#aea2b8;white-space:nowrap}.dt-dedicated-panel .dt-launch{flex:none;width:auto;min-width:128px;min-height:38px;margin:0;padding:8px 15px;border:1px solid #9984aa;border-radius:8px;background:linear-gradient(#3a3047,#1c1827);box-shadow:inset 0 1px #ffffff20;color:#f0dbff;letter-spacing:.1em}
 @media(max-width:640px){.dt-dedicated-panel{min-height:58px;padding:8px 11px;gap:8px}.dt-panel-sub{display:none}.dt-panel-label{gap:8px}.dt-panel-label small{font-size:8px;letter-spacing:.06em}.dt-panel-label strong{font-size:10px;letter-spacing:.07em}.dt-dedicated-panel .dt-launch{min-width:96px;min-height:36px;padding:6px 8px;font-size:9px;letter-spacing:.03em}}
 @media(max-width:370px){.dt-panel-label small{display:none}.dt-dedicated-panel .dt-launch{min-width:85px}}
+
+/* Flipbook 05: true television white noise, never scanlines. */
+.dt-glass::after{background:radial-gradient(ellipse at center,transparent 55%,#02020799)!important}
+.dt-glass #dt-crt{mix-blend-mode:normal!important;opacity:1!important;image-rendering:pixelated}
+.dt-sliders label:has(input:disabled){display:none!important}
+.dt-sliders{grid-template-columns:repeat(2,minmax(0,1fr))!important}
