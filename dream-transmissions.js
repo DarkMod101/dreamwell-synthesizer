@@ -1,8 +1,8 @@
-/* Dream Binder Dream Transmissions 05 — true WebP flipbook, no parallax or scanlines. */
+/* Dream Binder Dream Transmissions 08 — true WebP flipbook, no parallax or scanlines. */
 (()=>{'use strict';
 const $=id=>document.getElementById('dt-'+id);
 const canvas=$('scene'),g=canvas.getContext('2d',{alpha:false});
-const noise=$('crt'),nctx=noise.getContext('2d',{alpha:false});
+const noise=$('crt'),nctx=noise.getContext('2d',{alpha:true});
 const W=960,H=540,FPS=12,COUNT=120;
 const names=['HOUSE OF MEMORIES','INFINITE CAR RIDE','CELESTIAL DOORWAY','NEVER ENDING FIELDS'];
 const memories=['childhood-bedroom'];
