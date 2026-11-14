@@ -15,7 +15,7 @@ function road(t,e){gradient('#080e23','#47364d');ellipse(760,180,105,105,'#86708
 function portal(t,e){gradient('#090c21','#2b1b45');stars(t);for(let j=7;j>=0;j--){let r=65+j*28+Math.sin(t*.3+j)*5;ctx.strokeStyle=`rgba(${125+j*10},${100+j*5},230,${.1+(7-j)*.035+e*.08})`;ctx.lineWidth=1+j*.4;ctx.beginPath();ctx.ellipse(480,275,r,r*1.25,Math.sin(t*.05)*.15,0,Math.PI*2);ctx.stroke()}poly([[110,H],[330,390],[630,390],[850,H]],'#11101e');for(let i=0;i<11;i++){let x=lerp(330,110,i/10),x2=lerp(630,850,i/10),y=lerp(390,H,i/10);line(x,y,x2,y,'#8d70c155',1)}for(let i=0;i<10;i++){let x=rand(i+990)*W,y=rand(i+1220)*H;ellipse(x,y,2+rand(i)*3,2+rand(i)*3,`rgba(194,155,255,${.15+.1*Math.sin(t+i)})`)}ellipse(480,275,63+e*10,95+e*13,'#6e50a145');ellipse(480,275,40+e*9,76+e*10,'#b8a7f470');ellipse(480,275,24,64,'#e4ddffbb')}
 function fields(t,e){gradient('#242d49','#b09aa2');ellipse(735,185,68,68,'#f3d5bb');poly([[0,300],[190,260],[400,295],[600,275],[W,300],[W,H],[0,H]],'#4e5b58');poly([[0,350],[320,310],[650,350],[W,315],[W,H],[0,H]],'#364943');for(let i=0;i<180;i++){let x=rand(i+650)*W,y=320+rand(i+840)*220,sw=Math.sin(t*.6+i)*4;line(x,y,x+sw,y-7-rand(i)*13,`rgba(176,168,133,${.08+rand(i)*.4})`,1)}let x=490;poly([[x-42,325],[x+42,325],[x+12,230],[x-12,230]],'#232a2c');poly([[x-95,230],[x+95,230],[x,142]],'#292a37');rect(x-13,267,25,58,'#121820');ellipse(x,290,4,5,'#d7c7a1');for(let i=0;i<28;i++){let xx=rand(i+230)*W,yy=rand(i+490)*H;ellipse(xx,yy,1+rand(i)*2,1+rand(i)*2,`rgba(244,218,175,${.08+e*.1})`)}}
 const renderers=[house,road,portal,fields];
-// Optional cinematic WebP layers. Absent files are skipped silently, leaving
+// Cinematic layered WebP scenes. Absent files are skipped silently, leaving
 // the original procedural broadcasts fully functional and offline-ready.
 // Scene assets belong in assets/transmissions/<channel>/ and can be added later.
 const layerPaths=['house-of-memories','infinite-car-ride','celestial-doorway','never-ending-fields'];
@@ -43,8 +43,8 @@ function drawArtwork(channel,t,e){
   const img=layers[i];if(!img._ready)continue;
   const depth=[.24,.58,1][i];const zoom=1.08+depth*.07;
   const w=W*zoom,h=H*zoom;
-  const driftX=Math.sin(t*.14+i*.8)*12*depth;
-  const driftY=Math.cos(t*.11+i)*7*depth;
+  const driftX=(Math.sin(t*.14+i*.8)*12+Math.sin(t*.047)*16)*depth;
+  const driftY=(Math.cos(t*.11+i)*7+Math.cos(t*.061)*9)*depth;
   ctx.drawImage(img,(W-w)/2+driftX,(H-h)/2+driftY,w,h);
  }
  // Gentle light breathing; never overwrite the original illustration.
