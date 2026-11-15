@@ -1,30 +1,44 @@
 (()=>{'use strict';
-const $=id=>document.getElementById(id),modal=$('dm-modal'),pad=$('dm-pad');
-if(!modal||!pad||!$('dm-launch'))return;
-const ids=[['cutoff','Filter Cutoff'],['resonance','Filter Resonance'],['waveFusion','Wave Fusion'],['coherence','Coherence'],['decoherence','Decoherence'],['presence','Presence'],['deepDreamOrbit','Deep Dream Orbit'],['stereoWidth','Stereo Width'],['reverbMix','Reverb Mix'],['delayMix','Delay Mix'],['noiseAmount','Noise Amount'],['polynomialRingAmount','Polynomial Ring Amount'],['fmAmount','FM Amount']];
-// Only expose controls backed by real range inputs. Checkboxes cannot accept continuous XY values.
-const controls=ids.filter(([id])=>{const el=$(id);return el&&el.type==='range'&&Number.isFinite(Number(el.min))&&Number.isFinite(Number(el.max))&&Number(el.max)>Number(el.min)});
-if(!controls.length){$('dm-launch').disabled=true;$('dm-launch').title='No compatible sound parameters found';return}
-const selects=[$('dm-x'),$('dm-y')];for(const select of selects){for(const [id,label] of controls){const opt=document.createElement('option');opt.value=id;opt.textContent=label;select.append(opt)}}
-selects[0].value=controls.some(([id])=>id==='cutoff')?'cutoff':controls[0][0];selects[1].value=controls.some(([id])=>id==='resonance')?'resonance':controls[Math.min(1,controls.length-1)][0];
-let x=.5,y=.5,dragging=false,activePointer=null,previousFocus=null,raf=0,last=0,phase=0,orbitRadius=.3;
-const clamp=v=>Math.max(0,Math.min(1,v));
-function apply(id,p){const el=$(id);if(!el||el.type!=='range')return;const min=Number(el.min),max=Number(el.max),step=Number(el.step);let val=min+(max-min)*clamp(p);if(Number.isFinite(step)&&step>0)val=min+Math.round((val-min)/step)*step;val=Math.max(min,Math.min(max,val));if(Number(el.value)===val)return;el.value=String(val);el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}
-function set(nx,ny){x=clamp(nx);y=clamp(ny);$('dm-orb').style.left=$('dm-trace').style.left=(x*100)+'%';$('dm-orb').style.top=$('dm-trace').style.top=((1-y)*100)+'%';pad.setAttribute('aria-valuenow',String(Math.round(x*100)));$('dm-values').textContent='X '+Math.round(x*100)+'% · Y '+Math.round(y*100)+'%';apply(selects[0].value,x);if(selects[1].value!==selects[0].value)apply(selects[1].value,y)}
-function move(e){const r=pad.getBoundingClientRect();if(!r.width||!r.height)return;set((e.clientX-r.left)/r.width,1-(e.clientY-r.top)/r.height)}
-function stopOrbit(){if(raf)cancelAnimationFrame(raf);raf=0;last=0}
-function tick(now){if(modal.hidden||!$('dm-orbit').checked||document.hidden){stopOrbit();return}if(!last)last=now;const dt=Math.min(.08,(now-last)/1000);last=now;const speed=Number($('dm-orbit-speed').value)||.3;phase+=dt*speed*Math.PI*2;if(!dragging)set(.5+orbitRadius*Math.cos(phase),.5+orbitRadius*Math.sin(phase));raf=requestAnimationFrame(tick)}
-function startOrbit(){if(raf||modal.hidden||!$('dm-orbit').checked||document.hidden)return;phase=Math.atan2(y-.5,x-.5);orbitRadius=Math.min(.49,Math.max(.08,Math.hypot(x-.5,y-.5)));raf=requestAnimationFrame(tick)}
-function open(){previousFocus=document.activeElement;modal.hidden=false;modal.setAttribute('aria-hidden','false');$('dm-close').focus();startOrbit()}
-function close(){stopOrbit();modal.hidden=true;modal.setAttribute('aria-hidden','true');if(previousFocus?.focus)previousFocus.focus()}
+const $=id=>document.getElementById(id),modal=$('dm-modal'),canvas=$('dm-geometry'),pad=$('dm-pad');
+if(!modal||!canvas||!pad||!$('dm-launch'))return;
+const available=[['cutoff','Filter Cutoff'],['resonance','Filter Resonance'],['waveFusion','Wave Fusion'],['coherence','Coherence'],['decoherence','Decoherence'],['presence','Presence'],['deepDreamOrbit','Deep Dream Orbit'],['stereoWidth','Stereo Width'],['reverbMix','Reverb Mix'],['delayMix','Delay Mix'],['noiseAmount','Noise Amount'],['polynomialRingAmount','Polynomial Ring Amount'],['fmAmount','FM Amount']].filter(([id])=>{let e=$(id);return e&&e.type==='range'&&Number(e.max)>Number(e.min)});
+const axes=[$('dm-x'),$('dm-y'),$('dm-z')];if(!available.length){$('dm-launch').disabled=true;$('dm-launch').title='No compatible synthesizer parameters';return}
+for(const sel of axes){for(const [id,label] of available){const o=document.createElement('option');o.value=id;o.textContent=label;sel.append(o)}}
+axes.forEach((s,i)=>s.value=available.find(v=>v[0]===(['cutoff','resonance','presence'][i]))?.[0]||available[Math.min(i,available.length-1)][0]);
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));let v=[.5,.5,.5],angleX=.3,angleY=-.4,run=false,phase=0,raf=0,last=0,lastAudio=0,lastVisual=0,drag=null,priorFocus=null;
+const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+function apply(id,p){const e=$(id);if(!e||e.type!=='range')return;const min=Number(e.min),max=Number(e.max),step=Number(e.step);let val=min+(max-min)*clamp(p);if(Number.isFinite(step)&&step>0)val=min+Math.round((val-min)/step)*step;val=clamp(val,min,max);if(Math.abs(Number(e.value)-val)<1e-8)return;e.value=String(val);e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))}
+function update(n,send=true){v=n.map(q=>clamp(q));$('dm-values').textContent=v.map((q,i)=>'XYZ'[i]+' '+Math.round(q*100)+'%').join(' · ');$('dm-z-depth').value=Math.round(v[2]*100);$('dm-z-value').textContent=Math.round(v[2]*100)+'%';$('dm-orb').style.left=$('dm-trace').style.left=v[0]*100+'%';$('dm-orb').style.top=$('dm-trace').style.top=(1-v[1])*100+'%';pad.setAttribute('aria-valuenow',Math.round(v[0]*100));if(send){const used=new Set();axes.forEach((s,i)=>{if(!used.has(s.value)){apply(s.value,v[i]);used.add(s.value)}})}}
+function path(t,type){const a=t*2*Math.PI;let x=0,y=0,z=0;switch(type){case 'orbit':x=Math.cos(a);y=Math.sin(a);z=Math.sin(a);break;case 'ellipse':x=Math.cos(a);y=.55*Math.sin(a);z=Math.sin(a+.8);break;case 'eight':x=Math.sin(a);y=Math.sin(2*a)/2;z=Math.cos(a);break;case 'spiral':{let r=.15+.85*(.5+.5*Math.sin(a/3));x=r*Math.cos(a);y=r*Math.sin(a);z=Math.sin(a/2);break}case 'helix':x=Math.cos(a);y=Math.sin(a);z=(2*((t%1+1)%1)-1);break;case 'trefoil':x=(Math.sin(a)+2*Math.sin(2*a))/3;y=(Math.cos(a)-2*Math.cos(2*a))/3;z=-Math.sin(3*a);break;case 'lorenz':{const f=lorenz[Math.floor(((t%1+1)%1)*(lorenz.length-1))];return f}default:x=Math.sin(3*a+.2);y=Math.sin(2*a);z=Math.sin(5*a+.5)}return [x,y,z]}
+// Precomputed, bounded Lorenz trajectory; normalized independently to [-1,1].
+const lorenz=[];{let x=.1,y=0,z=0;for(let i=0;i<3400;i++){const dt=.006,dx=10*(y-x),dy=x*(28-z)-y,dz=x*y-(8/3)*z;x+=dt*dx;y+=dt*dy;z+=dt*dz;if(i>400&&i%2===0)lorenz.push([x/25,y/30,(z-25)/27].map(q=>clamp(q,-1,1)))}}
+function trajectory(t){const p=path(t,$('dm-path').value),scale=Number($('dm-scale').value)/100;return p.map(q=>clamp(.5+q*.49*scale))}
+function projected(p,w,h){let x=p[0],y=p[1],z=p[2];let ca=Math.cos(angleY),sa=Math.sin(angleY);let X=x*ca-z*sa,Z=x*sa+z*ca;ca=Math.cos(angleX);sa=Math.sin(angleX);let Y=y*ca-Z*sa;Z=y*sa+Z*ca;let perspective=2.8/(2.8+Z*.38),r=Math.min(w,h)*.31;return [w/2+X*r*perspective,h/2-Y*r*perspective]}
+function paint(){let w=canvas.clientWidth,h=canvas.clientHeight;if(w<1||h<1)return;const dpr=Math.min(window.devicePixelRatio||1,1.5),pw=Math.round(w*dpr),ph=Math.round(h*dpr);if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='#080d18';ctx.fillRect(0,0,w,h);
+ctx.lineWidth=1;for(let k=-5;k<=5;k++){ctx.strokeStyle='#56617e26';for(let axis=0;axis<2;axis++){let a=axis===0?[k/5,-1,-1]:[-1,k/5,-1],b=axis===0?[k/5,1,-1]:[1,k/5,-1];let p=projected(a,w,h),q=projected(b,w,h);ctx.beginPath();ctx.moveTo(...p);ctx.lineTo(...q);ctx.stroke()}}
+for(let axis=0;axis<3;axis++){let a=[0,0,0],b=[0,0,0];a[axis]=-1.25;b[axis]=1.25;let p=projected(a,w,h),q=projected(b,w,h);ctx.strokeStyle=['#b8a1ff','#8fe4df','#efc58c'][axis];ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(...p);ctx.lineTo(...q);ctx.stroke();ctx.font='bold 12px sans-serif';ctx.fillText('XYZ'[axis],q[0]+5,q[1]-4)}
+// Actual mathematical trajectory, not a decorative unrelated animation.
+const steps=220,scale=Number($('dm-scale').value)/100;ctx.beginPath();for(let i=0;i<=steps;i++){let q=path(i/steps,$('dm-path').value).map(n=>n*scale),p=projected(q,w,h);if(i===0)ctx.moveTo(...p);else ctx.lineTo(...p)}ctx.strokeStyle='#9bb8f6';ctx.lineWidth=1.7;ctx.shadowColor='#758bf8';ctx.shadowBlur=9;ctx.stroke();ctx.shadowBlur=0;
+let marker=projected(v.map(n=>(n-.5)*2),w,h);ctx.beginPath();ctx.arc(...marker,5,0,Math.PI*2);ctx.fillStyle='#e9f4ff';ctx.shadowColor='#8acaff';ctx.shadowBlur=16;ctx.fill();ctx.shadowBlur=0;
+}
+function stop(){if(raf)cancelAnimationFrame(raf);raf=0;last=0;lastAudio=0;lastVisual=0}
+function tick(now){if(modal.hidden||document.hidden){stop();return}if(!last)last=now;let dt=Math.min(.06,(now-last)/1000);last=now;if(run){phase+=dt*Number($('dm-speed').value);if(now-lastAudio>30){update(trajectory(phase));lastAudio=now}}if(now-lastVisual>33){paint();lastVisual=now}raf=requestAnimationFrame(tick)}
+function ensure(){if(!raf&&!modal.hidden&&!document.hidden)raf=requestAnimationFrame(tick)}
+function setRunning(b){run=b;$('dm-run').textContent=b?'Ⅱ PAUSE PATH':'▶ START PATH';$('dm-run').setAttribute('aria-pressed',String(b));ensure()}
+function open(){priorFocus=document.activeElement;modal.hidden=false;modal.setAttribute('aria-hidden','false');$('dm-close').focus();ensure()}
+function close(){stop();modal.hidden=true;modal.setAttribute('aria-hidden','true');priorFocus?.focus?.()}
+function xy(e,el){let r=el.getBoundingClientRect();return [clamp((e.clientX-r.left)/r.width),clamp(1-(e.clientY-r.top)/r.height)]}
+function down(e,kind){if(drag)return;drag={id:e.pointerId,kind,x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId);if(kind==='pad'||$('dm-interaction').value==='perform'){setRunning(false);let p=xy(e,e.currentTarget);update([p[0],p[1],v[2]]);paint()}}
+function moving(e){if(!drag||e.pointerId!==drag.id)return;if(drag.kind==='geometry'&&$('dm-interaction').value==='rotate'){angleY+=(e.clientX-drag.x)*.009;angleX+=(e.clientY-drag.y)*.009;angleX=clamp(angleX,-1.5,1.5);paint()}else{let p=xy(e,e.currentTarget);update([p[0],p[1],v[2]]);paint()}drag.x=e.clientX;drag.y=e.clientY}
+function up(e){if(!drag||e.pointerId!==drag.id)return;drag=null;if(!run&&!$('dm-hold').checked){update([.5,.5,.5]);paint()}}
+for(const [el,kind] of [[pad,'pad'],[canvas,'geometry']]){el.addEventListener('pointerdown',e=>down(e,kind));el.addEventListener('pointermove',moving);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up)}
 $('dm-launch').addEventListener('click',open);$('dm-close').addEventListener('click',close);modal.addEventListener('pointerdown',e=>{if(e.target===modal)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)close()});
-pad.addEventListener('pointerdown',e=>{if(activePointer!==null)return;activePointer=e.pointerId;dragging=true;pad.setPointerCapture(e.pointerId);move(e)});
-pad.addEventListener('pointermove',e=>{if(dragging&&e.pointerId===activePointer)move(e)});
-function release(e){if(e.pointerId!==activePointer)return;dragging=false;activePointer=null;if($('dm-orbit').checked){stopOrbit();startOrbit()}else if(!$('dm-hold').checked)set(.5,.5)}
-pad.addEventListener('pointerup',release);pad.addEventListener('pointercancel',release);
-pad.addEventListener('keydown',e=>{const d=e.shiftKey?.1:.025;if(e.key==='ArrowRight')set(x+d,y);else if(e.key==='ArrowLeft')set(x-d,y);else if(e.key==='ArrowUp')set(x,y+d);else if(e.key==='ArrowDown')set(x,y-d);else return;e.preventDefault()});
-$('dm-center').addEventListener('click',()=>{set(.5,.5);if($('dm-orbit').checked){stopOrbit();startOrbit()}});
-$('dm-orbit').addEventListener('change',()=>{stopOrbit();if($('dm-orbit').checked)startOrbit();else if(!$('dm-hold').checked)set(.5,.5)});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopOrbit();else startOrbit()});
-for(const select of selects)select.addEventListener('change',()=>set(x,y));
+pad.addEventListener('keydown',e=>{let delta=e.shiftKey?.1:.025,n=[...v];if(e.key==='ArrowRight')n[0]+=delta;else if(e.key==='ArrowLeft')n[0]-=delta;else if(e.key==='ArrowUp')n[1]+=delta;else if(e.key==='ArrowDown')n[1]-=delta;else return;e.preventDefault();setRunning(false);update(n);paint()});
+$('dm-z-depth').addEventListener('input',e=>{setRunning(false);update([v[0],v[1],Number(e.target.value)/100]);paint()});
+$('dm-run').addEventListener('click',()=>setRunning(!run));$('dm-center').addEventListener('click',()=>{setRunning(false);update([.5,.5,.5]);paint()});
+$('dm-path').addEventListener('change',()=>{$('dm-shape-label').textContent=$('dm-path').selectedOptions[0].textContent.toUpperCase();phase=0;paint()});
+$('dm-speed').addEventListener('input',()=>{$('dm-speed-value').textContent=Number($('dm-speed').value).toFixed(2)+' Hz'});
+$('dm-scale').addEventListener('input',()=>{$('dm-scale-value').textContent=$('dm-scale').value+'%';paint()});
+for(const s of axes)s.addEventListener('change',()=>update(v));
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else ensure()});window.addEventListener('resize',()=>{if(!modal.hidden)paint()});
 })();
