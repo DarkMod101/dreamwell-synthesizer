@@ -1,14 +1,34 @@
-/* Dream Binder Dream Transmissions 08 — true WebP flipbook, no parallax or scanlines. */
+/* Dream Binder Dream Transmissions 11 — true WebP flipbook, no parallax or scanlines. */
 (()=>{'use strict';
 const $=id=>document.getElementById('dt-'+id);
 const canvas=$('scene'),g=canvas.getContext('2d',{alpha:false});
 const noise=$('crt'),nctx=noise.getContext('2d',{alpha:true});
 const W=960,H=540,FPS=12,COUNT=120;
+// Insertions are complete WebP frames played BETWEEN existing numbered frames.
+// Add future inserts here; never rename or replace the original 000–119 images.
+// Reuse the SAME twelve uploaded WebPs at four points in the bedroom loop.
+// Each is a full-scene frame, not a composited layer. No extra uploads needed.
+const CLASH_FRAMES=Array.from({length:12},(_,i)=>`020${String.fromCharCode(97+i)}.webp`);
+const CLASH_AFTER=[20,45,70,95];
+const INSERTS=Object.fromEntries(CLASH_AFTER.map(anchor=>[anchor,CLASH_FRAMES]));
+const sequence=[];
+for(let i=0;i<COUNT;i++){
+ sequence.push({name:String(i).padStart(3,'0')+'.webp',duration:1000/FPS});
+ for(const name of (INSERTS[i]||[])) sequence.push({name,duration:(name==='020f.webp'||name==='020g.webp')?105:65});
+}
+// Keep the entire cycle at exactly 10 seconds at 100% playback speed.
+const rawDuration=sequence.reduce((sum,entry)=>sum+entry.duration,0);
+const totalDuration=10000;
+const durationScale=totalDuration/rawDuration;
+for(const entry of sequence)entry.duration*=durationScale;
+function frameAt(ms){let t=((ms%totalDuration)+totalDuration)%totalDuration;for(let i=0;i<sequence.length;i++){t-=sequence[i].duration;if(t<0)return i;}return 0;}
 const names=['HOUSE OF MEMORIES','INFINITE CAR RIDE','CELESTIAL DOORWAY','NEVER ENDING FIELDS'];
 const memories=['childhood-bedroom'];
 let channel=0,memory=0,playing=false,raf=0,last=0,elapsed=0,noiseEnd=0,noiseStart=0,noiseDuration=520;
-const frames=memories.map(folder=>Array.from({length:COUNT},(_,i)=>{
- const img=new Image();img.decoding='async';img.src=`assets/transmissions/house-of-memories/${folder}/${String(i).padStart(3,'0')}.webp`;return img;
+const frames=memories.map(folder=>sequence.map(entry=>{
+ const img=new Image();img.decoding='async';
+ img.src=`assets/transmissions/house-of-memories/${folder}/${entry.name}`;
+ return img;
 }));
 function ready(img){return img&&img.complete&&img.naturalWidth>0}
 function label(){ $('channelTag').textContent=`CH ${String(channel+1).padStart(2,'0')} · ${names[channel]}`;}
@@ -26,7 +46,7 @@ function drawNoise(now){const fuzz=Number($('fuzz').value)/100,active=now<noiseE
 }
 function draw(now){g.fillStyle='#11101b';g.fillRect(0,0,W,H);
  if(channel===0){
-  const index=Math.floor(elapsed*FPS)%COUNT,img=frames[memory][index];
+  const index=frameAt(elapsed*1000),img=frames[memory][index];
   if(ready(img))g.drawImage(img,0,0,W,H);
   else {g.fillStyle='#ded0bf';g.font='24px sans-serif';g.textAlign='center';g.fillText('Loading childhood bedroom memory…',W/2,H/2);}
  }else{
@@ -38,7 +58,7 @@ function draw(now){g.fillStyle='#11101b';g.fillRect(0,0,W,H);
 function frame(now){if(!playing||document.hidden)return;
  if(!last)last=now;const delta=Math.min(.12,(now-last)/1000);last=now;
  const speed=Number($('motion').value)/100;
- if(channel===0){elapsed+=delta*(.5+speed*1.5);if(elapsed>=10){elapsed%=10;}}
+ if(channel===0){elapsed+=delta*(.5+speed*1.5);if(elapsed*1000>=totalDuration){elapsed%=totalDuration/1000;}}
  draw(now);raf=requestAnimationFrame(frame);
 }
 function play(){if(playing)return;playing=true;last=0;$('play').textContent='❚❚ Pause';raf=requestAnimationFrame(frame)}
