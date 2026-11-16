@@ -2274,3 +2274,54 @@ body::after {display:none!important;}
     max-width:82% !important;
   }
 }
+
+/* DREAM BINDER — Dream Atlas seven-realm entry artwork.
+   Keep the entire artwork visible: no stretching or cropping in either orientation. */
+.db-hero-art {
+  background-image: url('assets/backgrounds/dream-atlas-entry.webp') !important;
+  background-color: #070610 !important;
+  background-size: contain !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-blend-mode: normal !important;
+}
+.db-atlas-entry {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 0 12px clamp(12px, 4%, 28px) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #f1e7ff !important;
+  text-shadow: none !important;
+  -webkit-text-stroke: 0 !important;
+}
+.db-atlas-entry > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  min-height: 44px;
+  padding: 8px 28px;
+  border: 1px solid rgba(212,177,243,.54);
+  border-radius: 999px;
+  background: rgba(10,7,23,.83);
+  color: #f3e7ff;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(13px, 1.4vw, 19px);
+  font-weight: 400;
+  letter-spacing: .24em;
+  text-shadow: 0 0 5px rgba(212,171,255,.36);
+  box-shadow: 0 0 8px rgba(162,98,223,.14), inset 0 0 8px rgba(182,120,235,.08);
+  animation: dbAtlasEnterPulse 3.8s ease-in-out infinite;
+}
+@keyframes dbAtlasEnterPulse {
+  0%,100% { box-shadow: 0 0 6px rgba(162,98,223,.12), inset 0 0 7px rgba(182,120,235,.06); border-color: rgba(212,177,243,.42); }
+  50% { box-shadow: 0 0 15px rgba(176,110,238,.33), 0 0 24px rgba(160,95,215,.12), inset 0 0 10px rgba(182,120,235,.12); border-color: rgba(227,195,255,.72); }
+}
+.db-atlas-entry:hover > span,.db-atlas-entry:active > span { background: rgba(29,16,48,.91); }
+@media (prefers-reduced-motion: reduce) { .db-atlas-entry > span { animation: none !important; } }
+
+@media (orientation: landscape) {
+  .db-hero-art { background-image: url('assets/backgrounds/dream-atlas-entry.webp') !important; background-size: contain !important; background-blend-mode: normal !important; }
+}
