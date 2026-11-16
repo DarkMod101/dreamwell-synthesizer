@@ -2170,3 +2170,15 @@ body::after {display:none!important;}
     padding:6px 25px 6px 10px !important;
   }
 }
+
+/* DREAM BINDER — LANDSCAPE MESH CONTROL ALIGNMENT | FIX 14
+   Position relative to the rack, not the viewport. Preserve portrait and art. */
+@media (orientation:landscape) {
+  .db-console-top.db-workstation-mesh .db-visual-quality {
+    left:10.5% !important;
+    right:auto !important;
+    bottom:clamp(28px, 2.5vw, 38px) !important;
+    top:auto !important;
+    max-width:calc(89.5% - 20px) !important;
+  }
+}
