@@ -2402,3 +2402,64 @@ body::after {display:none!important;}
 @media (prefers-reduced-motion: reduce) {
   .db-atlas-entry > span { animation: none !important; }
 }
+
+/* DREAM ATLAS — final unobstructed ENTER, portrait + landscape */
+.db-hero-art .db-atlas-entry,
+.db-hero-art #dbAtlasHero {
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  display:flex !important;
+  align-items:flex-end !important;
+  justify-content:center !important;
+  padding:0 0 3px !important;
+  margin:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  outline-offset:-3px;
+  cursor:pointer;
+}
+.db-hero-art #dbAtlasHero > span,
+.db-hero-art #dbAtlasHero:hover > span,
+.db-hero-art #dbAtlasHero:active > span {
+  position:relative !important;
+  display:inline-block !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  max-width:max-content !important;
+  margin:0 !important;
+  padding:2px 4px !important;
+  background:none !important;
+  background-color:transparent !important;
+  background-image:none !important;
+  border:0 !important;
+  border-radius:0 !important;
+  outline:0 !important;
+  box-shadow:none !important;
+  filter:none !important;
+  font:400 clamp(9px,1vw,12px)/1.1 Georgia,'Times New Roman',serif !important;
+  letter-spacing:.23em !important;
+  color:#e6d8f0 !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+  -webkit-text-stroke:0 !important;
+  animation:dbAtlasQuietEnter 5s ease-in-out infinite !important;
+}
+.db-hero-art #dbAtlasHero > span::before,
+.db-hero-art #dbAtlasHero > span::after { content:none !important; display:none !important; }
+@keyframes dbAtlasQuietEnter {
+  0%,100% { opacity:.72; text-shadow:0 0 2px rgba(187,133,232,.22); }
+  50% { opacity:.95; text-shadow:0 0 6px rgba(184,127,239,.46); }
+}
+@media (orientation:portrait) {
+  .db-hero-art #dbAtlasHero { padding-bottom:2px !important; }
+  .db-hero-art #dbAtlasHero > span { font-size:9px !important; letter-spacing:.19em !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .db-hero-art #dbAtlasHero > span { animation:none !important; }
+}
