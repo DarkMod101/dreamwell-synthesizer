@@ -2342,3 +2342,63 @@ body::after {display:none!important;}
     background: rgba(9,7,19,.82);
   }
 }
+
+/* DREAM ATLAS — title-safe artwork and discreet ENTER label (2026-11-16).
+   Preserve artwork proportions; never crop its embedded typography. */
+.db-hero-art {
+  background-size: contain !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+.db-atlas-entry, .db-atlas-entry:hover, .db-atlas-entry:active {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 0 10px clamp(7px, 1.6vw, 15px) !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.db-atlas-entry > span, .db-atlas-entry:hover > span, .db-atlas-entry:active > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 5px 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #e5d8f2 !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-size: clamp(11px, 1.15vw, 15px) !important;
+  font-weight: 400 !important;
+  letter-spacing: .27em !important;
+  line-height: 1.2 !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: 0 0 3px rgba(195,149,238,.25) !important;
+  animation: dbAtlasTextPulse 4.8s ease-in-out infinite !important;
+}
+@keyframes dbAtlasTextPulse {
+  0%,100% { opacity: .74; text-shadow: 0 0 3px rgba(195,149,238,.22); }
+  50% { opacity: 1; text-shadow: 0 0 8px rgba(190,136,243,.53), 0 0 15px rgba(150,87,217,.16); }
+}
+@media (orientation: portrait) {
+  .db-hero-art {
+    background-image: url('assets/backgrounds/dream-atlas-entry-portrait.webp') !important;
+    background-size: contain !important;
+    background-position: center center !important;
+  }
+  .db-atlas-entry { padding-bottom: 5px !important; }
+  .db-atlas-entry > span { font-size: 11px !important; padding: 4px 8px !important; }
+}
+@media (orientation: landscape) {
+  .db-hero-art {
+    background-image: url('assets/backgrounds/dream-atlas-entry.webp') !important;
+    background-size: contain !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .db-atlas-entry > span { animation: none !important; }
+}
