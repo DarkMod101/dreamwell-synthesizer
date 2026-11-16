@@ -2033,50 +2033,76 @@ body::after {display:none!important;}
   z-index: 2;
 }
 
-/* DREAM BINDER — WORKSTATION PROPORTIONAL FIT 10
-   Artwork is a wide hardware faceplate: size by width, not fixed heights.
-   Retain the user's installed portrait/landscape WebPs and live selector. */
+/* DREAM BINDER — WORKSTATION FIT 11 | RESTORE ORIGINAL RACK FOOTPRINT
+   The blue titanium artwork stays in assets/ui/; no asset replacements.
+   Key fix: restore original hardware-rack heights (pre-Fit-09/10),
+   and compensate for transparent padding baked into the blue WebPs.
+   Keep the existing Balanced Visuals select as LIVE HTML, not artwork. */
 .db-console-top.db-workstation-mesh {
   position:relative !important;
-  display:flex !important;
-  flex-wrap:nowrap !important;
+  display:block !important;
+  box-sizing:border-box !important;
   width:100% !important;
   max-width:100% !important;
   min-width:0 !important;
-  aspect-ratio: 5.25 / 1 !important;
-  height:auto !important;
-  min-height:0 !important;
+  flex:0 0 auto !important;
+  aspect-ratio:auto !important;
+  height:clamp(112px, 10.2vw, 144px) !important;
+  min-height:112px !important;
   max-height:none !important;
-  box-sizing:border-box !important;
-  flex-shrink:0 !important;
-  margin:0 0 6px !important;
+  margin:0 0 8px !important;
   padding:0 !important;
   border:0 !important;
   border-radius:0 !important;
   background-color:transparent !important;
   background-image:url("assets/ui/workstation-mesh-landscape.webp") !important;
-  background-position:center !important;
-  background-size:100% 100% !important;
+  background-position:center center !important;
+  /* Original files have transparent bands above and below the casing.
+     Magnify vertically INSIDE the restored-height area to remove those bands. */
+  background-size:100% 140% !important;
   background-repeat:no-repeat !important;
-  overflow:visible !important;
-  align-items:center !important;
-  justify-content:flex-end !important;
+  overflow:hidden !important;
 }
 @media (orientation:portrait) {
   .db-console-top.db-workstation-mesh {
+    height:clamp(132px, 22vw, 168px) !important;
+    min-height:132px !important;
     background-image:url("assets/ui/workstation-mesh-portrait.webp") !important;
-    justify-content:flex-start !important;
+    background-size:100% 140% !important;
   }
 }
-/* Engraving is part of the image; retain actual interactive controls. */
+/* The title is engraved in the installed blue artwork. */
 .db-console-top.db-workstation-mesh .db-console-engrave {
   visibility:hidden !important;
   pointer-events:none !important;
 }
-.db-console-top.db-workstation-mesh select,
-.db-console-top.db-workstation-mesh button,
-.db-console-top.db-workstation-mesh [role="combobox"] {
-  visibility:visible !important;
+/* Move the real selector into the free mesh area on the LEFT,
+   clear of the cabling and connector plate on the right. */
+.db-console-top.db-workstation-mesh .db-visual-quality {
+  position:absolute !important;
+  inset:auto auto clamp(13px, 1.6vw, 24px) clamp(22px, 4vw, 50px) !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  z-index:10 !important;
+  width:auto !important;
+  max-width:calc(100% - 54px) !important;
+  margin:0 !important;
+  transform:none !important;
+}
+@media (orientation:portrait) {
+  .db-console-top.db-workstation-mesh .db-visual-quality {
+    bottom:clamp(23px, 6vw, 30px) !important;
+    left:clamp(26px, 7vw, 38px) !important;
+  }
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality {
+  display:block !important;
   position:relative !important;
-  z-index:5 !important;
+  z-index:11 !important;
+  visibility:visible !important;
+  pointer-events:auto !important;
+  width:auto !important;
+  max-width:min(166px, 100%) !important;
+  margin:0 !important;
 }
