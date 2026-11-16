@@ -2002,3 +2002,33 @@ body::after {display:none!important;}
 /* Dream Transmissions 08: transparent noise canvas must not conceal bedroom frames. */
 .dt-glass #dt-crt{mix-blend-mode:screen!important;opacity:.65!important;pointer-events:none!important}
 .dt-glass::after{background:radial-gradient(ellipse at center,transparent 55%,#02020799)!important}
+
+/* DREAM BINDER — BLUE TITANIUM WORKSTATION PANEL — 2026-11-16
+   Install: append to END of existing style.css. Existing audio and selectors untouched.
+   The artwork includes the engraved title; hide ONLY the duplicate HTML engraving.
+   Orientation-specific WebPs preserve the existing portrait/landscape asset dimensions. */
+.db-console-top.db-workstation-mesh {
+  background-image: url("assets/ui/workstation-mesh-landscape.webp") !important;
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: 100% 100% !important;
+  overflow: visible !important;
+}
+@media (orientation: portrait) {
+  .db-console-top.db-workstation-mesh {
+    background-image: url("assets/ui/workstation-mesh-portrait.webp") !important;
+  }
+}
+/* The heading is already engraved in the WebP; don't render it twice.
+   Keep any actual controls (including Balanced Visuals) interactive. */
+.db-console-top.db-workstation-mesh .db-console-engrave {
+  visibility: hidden !important;
+}
+.db-console-top.db-workstation-mesh select,
+.db-console-top.db-workstation-mesh button,
+.db-console-top.db-workstation-mesh [role="combobox"] {
+  visibility: visible !important;
+  position: relative;
+  z-index: 2;
+}
