@@ -2199,3 +2199,78 @@ body::after {display:none!important;}
     background-size:100% 100% !important;
   }
 }
+
+/* Dream Binder — Balanced Visuals recessed control (portrait + landscape)
+   Append to the END of the currently deployed style.css.
+   No changes to artwork, rack sizing, or sound engine. */
+.db-console-top.db-workstation-mesh .db-visual-quality {
+  position:absolute !important;
+  top:auto !important;
+  right:auto !important;
+  left:9% !important;
+  bottom:23% !important;
+  display:flex !important;
+  align-items:center !important;
+  width:max-content !important;
+  max-width:80% !important;
+  margin:0 !important;
+  padding:3px !important;
+  border:1px solid rgba(105,91,126,.42) !important;
+  border-radius:5px !important;
+  background:linear-gradient(180deg,#040407,#111018 45%,#07070c) !important;
+  box-shadow:inset 0 2px 5px #000,0 1px 0 rgba(155,110,215,.18) !important;
+  transform:none !important;
+  z-index:12 !important;
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality {
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  position:relative !important;
+  box-sizing:border-box !important;
+  width:auto !important;
+  max-width:100% !important;
+  min-height:28px !important;
+  margin:0 !important;
+  padding:5px 26px 5px 10px !important;
+  border:1px solid #292631 !important;
+  border-top-color:#494150 !important;
+  border-radius:3px !important;
+  color:#c6c4d1 !important;
+  font:700 10px/1.3 inherit !important;
+  font-family:inherit !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  letter-spacing:.055em !important;
+  background-color:#0a0b10 !important;
+  background-image:linear-gradient(45deg,transparent 50%,#a99cba 50%),linear-gradient(135deg,#a99cba 50%,transparent 50%),linear-gradient(180deg,#1b1a22,#09090d 68%,#121019) !important;
+  background-position:calc(100% - 15px) 49%,calc(100% - 10px) 49%,0 0 !important;
+  background-size:5px 5px,5px 5px,100% 100% !important;
+  background-repeat:no-repeat !important;
+  box-shadow:inset 0 1px 3px #000,0 0 5px rgba(128,68,192,.1) !important;
+  text-shadow:none !important;
+  cursor:pointer !important;
+  pointer-events:auto !important;
+  visibility:visible !important;
+  z-index:13 !important;
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality:focus-visible {
+  outline:1px solid #9b76c7 !important;
+}
+@media (orientation:portrait) {
+  .db-console-top.db-workstation-mesh .db-visual-quality {
+    left:9% !important;
+    bottom:22% !important;
+    max-width:82% !important;
+  }
+  .db-console-top.db-workstation-mesh #dbVisualQuality {
+    font-size:10px !important;
+    min-height:27px !important;
+  }
+}
+@media (orientation:landscape) {
+  .db-console-top.db-workstation-mesh .db-visual-quality {
+    left:9% !important;
+    bottom:22% !important;
+    max-width:82% !important;
+  }
+}
