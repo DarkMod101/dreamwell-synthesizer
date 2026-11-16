@@ -2106,3 +2106,67 @@ body::after {display:none!important;}
   max-width:min(166px, 100%) !important;
   margin:0 !important;
 }
+
+
+/* DREAM BINDER — BALANCED VISUALS INTEGRATED HARDWARE CONTROL | FIX 12
+   Surgical selector-only refinement. Fit 11 rack geometry and WebP art unchanged. */
+.db-console-top.db-workstation-mesh .db-visual-quality {
+  position:absolute !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:clamp(28px, 2.5vw, 38px) !important;
+  left:clamp(38px, 4.7vw, 68px) !important;
+  width:max-content !important;
+  max-width:calc(100% - 90px) !important;
+  min-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  transform:none !important;
+  z-index:12 !important;
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality {
+  display:block !important;
+  box-sizing:border-box !important;
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  position:relative !important;
+  width:auto !important;
+  max-width:100% !important;
+  min-height:29px !important;
+  padding:6px 26px 6px 12px !important;
+  font-family:inherit !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  letter-spacing:.065em !important;
+  line-height:1.3 !important;
+  color:#b8dce4 !important;
+  border:1px solid #303c43 !important;
+  border-top-color:#54636b !important;
+  border-bottom-color:#101519 !important;
+  border-radius:4px !important;
+  background-color:#10171c !important;
+  background-image:linear-gradient(45deg,transparent 50%,#aebbc1 50%),linear-gradient(135deg,#aebbc1 50%,transparent 50%),linear-gradient(180deg,#27333a 0%,#151e24 15%,#0d1318 70%,#1b252b 100%) !important;
+  background-position:calc(100% - 15px) 48%,calc(100% - 10px) 48%,0 0 !important;
+  background-size:5px 5px,5px 5px,100% 100% !important;
+  background-repeat:no-repeat !important;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.88),inset 0 1px 0 rgba(133,180,196,.12),0 1px 1px rgba(0,0,0,.55) !important;
+  text-shadow:0 0 5px rgba(83,180,206,.14) !important;
+  outline-offset:2px !important;
+  cursor:pointer !important;
+  pointer-events:auto !important;
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality:focus-visible {
+  outline:1px solid #86bdcb !important;
+}
+@media (orientation:portrait) {
+  .db-console-top.db-workstation-mesh .db-visual-quality {
+    left:clamp(32px, 7vw, 44px) !important;
+    bottom:clamp(33px, 6vw, 42px) !important;
+    max-width:calc(100% - 72px) !important;
+  }
+  .db-console-top.db-workstation-mesh #dbVisualQuality {
+    font-size:10px !important;
+    min-height:29px !important;
+    padding:6px 25px 6px 10px !important;
+  }
+}
