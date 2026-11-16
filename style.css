@@ -2182,3 +2182,20 @@ body::after {display:none!important;}
     max-width:calc(89.5% - 20px) !important;
   }
 }
+
+/* DREAM BINDER — WORKSTATION FIT 15 | COMPLETE PANEL VISIBLE
+   Overrides Fit 11's 140% zoom. Retains approved panel footprint,
+   selector placement and live controls in both orientations. */
+.db-console-top.db-workstation-mesh {
+  background-image:url("assets/ui/workstation-mesh-landscape.webp") !important;
+  background-size:100% 100% !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  overflow:visible !important;
+}
+@media (orientation:portrait) {
+  .db-console-top.db-workstation-mesh {
+    background-image:url("assets/ui/workstation-mesh-portrait.webp") !important;
+    background-size:100% 100% !important;
+  }
+}
