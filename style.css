@@ -2033,40 +2033,50 @@ body::after {display:none!important;}
   z-index: 2;
 }
 
-/* DREAM BINDER — WORKSTATION FIT CORRECTION 09
-   Overrides older fixed-height rules; keeps live controls untouched. */
+/* DREAM BINDER — WORKSTATION PROPORTIONAL FIT 10
+   Artwork is a wide hardware faceplate: size by width, not fixed heights.
+   Retain the user's installed portrait/landscape WebPs and live selector. */
 .db-console-top.db-workstation-mesh {
+  position:relative !important;
   display:flex !important;
+  flex-wrap:nowrap !important;
   width:100% !important;
-  max-width:none !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  aspect-ratio: 5.25 / 1 !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-height:none !important;
   box-sizing:border-box !important;
   flex-shrink:0 !important;
-  height:clamp(155px, 14.17vw, 225px) !important;
-  min-height:155px !important;
   margin:0 0 6px !important;
-  padding:20px clamp(24px,3vw,48px) !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background-color:transparent !important;
   background-image:url("assets/ui/workstation-mesh-landscape.webp") !important;
   background-position:center !important;
   background-size:100% 100% !important;
   background-repeat:no-repeat !important;
-  align-items:center !important;
-  justify-content:space-between !important;
   overflow:visible !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
 }
 @media (orientation:portrait) {
   .db-console-top.db-workstation-mesh {
-    height:clamp(150px, 27vw, 215px) !important;
-    min-height:150px !important;
-    padding:18px 28px !important;
     background-image:url("assets/ui/workstation-mesh-portrait.webp") !important;
+    justify-content:flex-start !important;
   }
 }
-/* Do not conceal the functional selector; only duplicate baked title. */
-.db-console-top.db-workstation-mesh .db-console-engrave {visibility:hidden !important;}
+/* Engraving is part of the image; retain actual interactive controls. */
+.db-console-top.db-workstation-mesh .db-console-engrave {
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
 .db-console-top.db-workstation-mesh select,
 .db-console-top.db-workstation-mesh button,
 .db-console-top.db-workstation-mesh [role="combobox"] {
   visibility:visible !important;
-  position:relative;
-  z-index:5;
+  position:relative !important;
+  z-index:5 !important;
 }
