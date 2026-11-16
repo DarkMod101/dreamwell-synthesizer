@@ -2325,3 +2325,20 @@ body::after {display:none!important;}
 @media (orientation: landscape) {
   .db-hero-art { background-image: url('assets/backgrounds/dream-atlas-entry.webp') !important; background-size: contain !important; background-blend-mode: normal !important; }
 }
+
+/* Dream Atlas: portrait-specific approved art, original landscape unchanged.
+   Portrait art is 3:1, matching the shallow Atlas entry window. */
+@media (orientation: portrait) {
+  .db-hero-art {
+    background-image: url("assets/backgrounds/dream-atlas-entry-portrait.webp") !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+  }
+  .db-atlas-entry { padding-bottom: 9px !important; }
+  .db-atlas-entry > span {
+    min-height: 34px; min-width: 100px;
+    padding: 5px 18px; font-size: 13px; letter-spacing: .2em;
+    background: rgba(9,7,19,.82);
+  }
+}
