@@ -2566,3 +2566,57 @@ body::after {display:none!important;}
  .db-hero-art::after,.db-spectrum-shell::after,
  .db-edit-pane .db-module::after,.db-signal-visual::after {transition:none !important;}
 }
+
+
+/* ============================================================
+ DREAM BINDER / STAGE 04 — HARDWARE CONTROLS (VISUAL ONLY)
+ Existing HTML inputs, drag handlers, readouts and audio stay intact.
+ Assets are transparent WebP; never cover the interactive surface.
+ ============================================================ */
+:root { --db04-cyan:#8bd9eb; --db04-violet:#b38de9; }
+/* The knob ring is independent from the live SVG progress/readout. */
+.db-neon-control:not(.db-fader) {
+ background-image:url("assets/ui/stage-04/titanium-knob-ring.webp") !important;
+ background-position:center !important;background-repeat:no-repeat !important;
+ background-size:100% 100% !important;
+ border-radius:50% !important;
+ box-shadow:0 2px 8px #000c, inset 0 1px 1px #d4e5ff24 !important;
+ isolation:isolate;
+}
+.db-neon-control:not(.db-fader) svg {position:relative;z-index:1;filter:drop-shadow(0 0 2px #7ac8e044) !important;}
+.db-neon-control:not(.db-fader) .db-knob-well {fill:#090c14;stroke:#44485b;stroke-width:5;}
+.db-neon-control:not(.db-fader) .db-knob-track {stroke:#252c3c;}
+.db-neon-control:not(.db-fader) .db-knob-progress {stroke:#8bd9eb;filter:drop-shadow(0 0 3px #62cbe4);}
+.db-neon-control.db-violet .db-knob-progress {stroke:#c19bf3 !important;filter:drop-shadow(0 0 3px #a874ef) !important;}
+.db-neon-control.db-gold .db-knob-progress {stroke:#e0c092 !important;filter:drop-shadow(0 0 3px #c99b56) !important;}
+.db-neon-control:not(.db-fader) .db-neon-value {z-index:2;color:#e4f4fc;text-shadow:0 1px 3px #000,0 0 7px #8ac9e533;}
+/* The fader well is artwork only. The real fader fill/thumb remain live. */
+.db-neon-control.db-fader {
+ background-image:url("assets/ui/stage-04/titanium-fader-well.webp") !important;
+ background-color:#0b0e17 !important;background-size:100% 100% !important;
+ background-repeat:no-repeat !important;background-position:center !important;
+ border:1px solid #555768 !important;border-radius:23px !important;
+ box-shadow:inset 0 2px 6px #000,0 2px 5px #000a,0 0 0 1px #c5c5dc1c !important;
+ isolation:isolate;
+}
+.db-neon-control.db-fader .db-fader-line {z-index:1;background:#070b14;box-shadow:inset 0 0 5px #000,0 0 5px #70c5e42c;}
+.db-neon-control.db-fader .db-fader-fill {background:linear-gradient(0deg,#37628e,#75d5e5) !important;box-shadow:0 0 5px #77d6ee66;}
+.db-neon-control.db-fader .db-fader-thumb {
+ z-index:2;background-image:url("assets/ui/stage-04/chrome-fader-handle.webp") !important;
+ background-size:100% 100% !important;background-repeat:no-repeat !important;
+ border:1px solid #aebaca !important;border-radius:2px !important;
+ box-shadow:0 2px 5px #000e !important;
+}
+/* Selects and toggles belong to the same metal family, without changing hit targets. */
+.db-pane-modules select,.db-rack-controls select {
+ background-color:#0d1420 !important;border-color:#647185 !important;
+ box-shadow:inset 0 2px 5px #0009,0 1px 0 #e3efff12 !important;
+}
+.db-pane-modules input[type=checkbox],.db-rack-controls input[type=checkbox] {accent-color:#8bd9eb !important;}
+.db-neon-control:focus-visible {outline:2px solid #b7eaf8 !important;outline-offset:3px;}
+@media (orientation:portrait) {
+ .db-neon-control:not(.db-fader) {background-size:100% 100% !important;}
+}
+@media (prefers-reduced-motion:reduce) {
+ .db-neon-control {transition:none !important;}
+}
