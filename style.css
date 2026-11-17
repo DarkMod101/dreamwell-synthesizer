@@ -2862,3 +2862,36 @@ body::after {display:none!important;}
   background-size:100% auto !important;
   background-repeat:repeat-y !important;
 }
+
+/* STAGE 07B — continuous chassis backing / gap repair.
+   The decorative frame remains a separate 9-slice WebP layer.
+   This does not change the audio engine, controls, or panel artwork. */
+.db-chassis {
+  background-color:#11121a !important;
+  background-image:url("assets/ui/stage-07/brushed-metal-synth-background.webp") !important;
+  background-position:center top !important;
+  background-size:100% auto !important;
+  background-repeat:repeat-y !important;
+  /* Remove the thin inset perimeter which was exposing black gutters. */
+  background-origin:border-box !important;
+  background-clip:border-box !important;
+}
+/* Transparent *layout* wrappers allow the chassis metal to be seen
+   between modules. Do not make actual displays or controls transparent. */
+.db-chassis > .db-monitor-row,
+.db-chassis > .db-console-top,
+.db-chassis > .db-edit-console,
+.db-chassis > .db-effects-rack,
+.db-chassis > .db-keyboard-title {
+  background-color:transparent !important;
+}
+/* Preserve the workstation art: its dedicated image is on the child layer. */
+.db-chassis > .db-console-top.db-workstation-mesh {
+  background-image:none !important;
+  background-color:transparent !important;
+}
+/* Do not permit outer layout gutters to become opaque strips. */
+.db-chassis .db-monitor-row,
+.db-chassis .db-hero { background:transparent !important; }
+/* The decorative rim must stay on top without blocking touch input. */
+.db-chassis::after {pointer-events:none !important;}
