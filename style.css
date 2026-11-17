@@ -2620,3 +2620,21 @@ body::after {display:none!important;}
 @media (prefers-reduced-motion:reduce) {
  .db-neon-control {transition:none !important;}
 }
+
+
+/* STAGE 05 — Approved visual reference, first genuine section reconstruction.
+   Six accessible live buttons; no sound engine changes. */
+.db-console-top.db-workstation-mesh{position:relative!important;background-image:none!important; background-color:#06050a!important; padding:0!important; min-height:0!important; aspect-ratio:965/250!important; overflow:visible!important; display:block!important;}
+.db-console-top.db-workstation-mesh::before,.db-console-top.db-workstation-mesh::after{pointer-events:none!important}
+.db-console-top.db-workstation-mesh .db-console-engrave{display:none!important}
+.db-stage05-panel{position:absolute;inset:0;isolation:isolate;}
+.db-stage05-art{position:absolute;inset:0;background:url('assets/ui/stage-05/approved-workstation.webp') center / 100% 100% no-repeat;pointer-events:none;}
+.db-stage05-tiles{position:absolute;left:5.2%;right:5.2%;top:27%;height:47%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1.4%;z-index:2}
+.db-stage05-tiles button{display:block;min-width:0;appearance:none;background:transparent;border:1px solid transparent;border-radius:9px;cursor:pointer;touch-action:manipulation;color:transparent}
+.db-stage05-tiles button:active{background:rgba(166,68,255,.16);box-shadow:inset 0 0 15px #b357ef,0 0 12px #9d40d9}
+.db-stage05-tiles button:focus-visible{outline:2px solid #c08cff;outline-offset:0}
+/* The existing Balanced Visuals select remains a native interactive control. */
+.db-console-top.db-workstation-mesh .db-visual-quality{z-index:15!important;left:34%!important;bottom:6%!important;width:32%!important;max-width:32%!important;min-width:0!important;}
+.db-console-top.db-workstation-mesh #dbVisualQuality{width:100%!important;min-width:0!important;max-width:100%!important;background:rgba(7,5,15,.68)!important;box-shadow:none!important;border-color:transparent!important;color:#f1defe!important;text-align:center!important;}
+@media (orientation:portrait){.db-console-top.db-workstation-mesh{aspect-ratio:965/250!important}.db-stage05-tiles{top:27%;height:47%}.db-console-top.db-workstation-mesh .db-visual-quality{left:31%!important;width:38%!important;max-width:38%!important;bottom:4%!important}.db-console-top.db-workstation-mesh #dbVisualQuality{font-size:9px!important;min-height:23px!important;padding:2px 6px!important}}
+/* Reference artwork is deliberately confined to the workstation. The rest of the app remains unchanged. */
