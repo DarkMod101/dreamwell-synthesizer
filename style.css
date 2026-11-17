@@ -2895,3 +2895,38 @@ body::after {display:none!important;}
 .db-chassis .db-hero { background:transparent !important; }
 /* The decorative rim must stay on top without blocking touch input. */
 .db-chassis::after {pointer-events:none !important;}
+
+/* DREAM BINDER / STAGE 08 — CORNER MOUNT HARDWARE
+   Add at the END of existing style.css. No JS or HTML changes.
+   Only the two top brackets and thin rails are drawn. Controls stay clickable.
+   If your installation uses different panel selectors, adjust the list below.
+*/
+:root { --db-stage08-corners: url("assets/ui/stage-08/stage-08-corner-mount-portrait.webp"); }
+@media (orientation: landscape) {
+  :root { --db-stage08-corners: url("assets/ui/stage-08/stage-08-corner-mount-landscape.webp"); }
+}
+/* Stage 08 individual display mounts; deliberately NOT the entire outer chassis. */
+.db-masthead,
+.db-spectrum-shell,
+.db-screen-frame,
+.db-effects-rack,
+.db-signal-visual {
+  position: relative;
+  isolation: isolate;
+}
+.db-masthead::after,
+.db-spectrum-shell::after,
+.db-screen-frame::after,
+.db-effects-rack::after,
+.db-signal-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background-image: var(--db-stage08-corners);
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size: 100% auto;
+}
+/* Brackets sit on top; existing artwork, sliders, buttons and keyboard stay intact. */
