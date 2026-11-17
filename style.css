@@ -2463,3 +2463,45 @@ body::after {display:none!important;}
 @media (prefers-reduced-motion:reduce) {
   .db-hero-art #dbAtlasHero > span { animation:none !important; }
 }
+
+
+/* ===============================================================
+   DREAM BINDER — STAGE 02 / TITANIUM CHASSIS (2026-11-17)
+   Decorative WebP layers only. Audio, controls, and layout untouched.
+   Frame is a border-image so it does NOT stretch over interactive UI.
+   =============================================================== */
+.db-chassis {
+  position:relative !important;
+  isolation:isolate !important;
+  background-image:linear-gradient(180deg,rgba(6,7,13,.20),rgba(5,6,11,.32)),url("assets/ui/stage-02/black-titanium-grain.webp") !important;
+  background-repeat:no-repeat,repeat !important;
+  background-size:100% 100%,512px 512px !important;
+  background-position:center,top left !important;
+  border:2px solid rgba(89,91,106,.95) !important;
+  box-shadow:inset 0 2px 3px rgba(189,191,214,.15),inset 0 -6px 16px rgba(0,0,0,.78),0 0 0 3px #07080d,0 22px 55px rgba(0,0,0,.70) !important;
+}
+.db-chassis::after {
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
+  z-index:30 !important;
+  pointer-events:none !important;
+  border:clamp(13px,2.0vw,28px) solid transparent !important;
+  border-image-source:url("assets/ui/stage-02/chassis-rim-landscape-4k.webp") !important;
+  border-image-slice:74 !important;
+  border-image-width:1 !important;
+  border-image-repeat:stretch !important;
+}
+/* Keep control panels readable and visibly recessed; no bitmap controls. */
+.db-chassis .db-edit-console,
+.db-chassis .db-screen-frame,
+.db-chassis .db-patchbar {
+  border-color:rgba(83,79,103,.84) !important;
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.66),inset 0 1px 0 rgba(191,168,221,.12),0 1px 0 rgba(136,130,157,.24) !important;
+}
+@media (orientation:portrait) {
+  .db-chassis::after {border-image-source:url("assets/ui/stage-02/chassis-rim-portrait-4k.webp") !important;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .db-chassis::after {animation:none !important;}
+}
