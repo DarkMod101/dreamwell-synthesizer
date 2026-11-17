@@ -2505,3 +2505,64 @@ body::after {display:none!important;}
 @media (prefers-reduced-motion:reduce) {
   .db-chassis::after {animation:none !important;}
 }
+
+/* ================================================================
+ DREAM BINDER — STAGE 03 / INDEPENDENT HARDWARE PANEL OVERLAYS
+ Uses transparent WebP border-image art: controls/canvases stay live.
+ Landscape + portrait: nine-slice prevents artwork stretching.
+ ================================================================ */
+.db-hero-art, .db-spectrum-shell, .db-console-top,
+.db-edit-pane .db-module, .db-hero-studio, .db-signal-visual {
+  position:relative;
+}
+/* Frame artwork sits above surfaces but cannot intercept touch. */
+.db-hero-art::after, .db-spectrum-shell::after,
+.db-edit-pane .db-module::after, .db-signal-visual::after {
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+  border:clamp(8px,1.1vw,15px) solid transparent;
+  border-image-slice:78 fill; border-image-width:1;
+  border-image-repeat:stretch;
+  box-sizing:border-box;
+}
+.db-hero-art::after {
+  border-image-source:url("assets/ui/stage-03/atlas-frame.webp");
+  border-image-slice:78;
+}
+.db-spectrum-shell::after,.db-signal-visual::after {
+  border-image-source:url("assets/ui/stage-03/signal-glass-frame.webp");
+  border-image-slice:75;
+}
+.db-edit-pane .db-module::after {
+  border-image-source:url("assets/ui/stage-03/module-inset-frame.webp");
+  border-image-slice:80;
+}
+/* Restore breathing room around live form controls inside the inset. */
+.db-edit-pane .db-module {
+  background-image:linear-gradient(120deg,rgba(140,120,164,.055),transparent 44%,rgba(0,0,0,.20)),
+    url("assets/ui/stage-03/titanium-sheen.webp") !important;
+  background-size:100% 100%,512px 256px !important;
+  background-repeat:no-repeat,repeat !important;
+  border-color:rgba(61,60,76,.72) !important;
+}
+/* The workstation is an existing illustrated panel; apply only a thin
+   edge finish so its original lettering and six bays remain visible. */
+.db-console-top {
+  border:clamp(5px,.55vw,9px) solid transparent !important;
+  border-image-source:url("assets/ui/stage-03/workstation-frame.webp") !important;
+  border-image-slice:76 !important;
+  border-image-width:1 !important;
+  border-image-repeat:stretch !important;
+  box-sizing:border-box !important;
+}
+/* Do not overlay the Effects Rack banner, Dream Matrix or keyboard. */
+@media (orientation:portrait) {
+ .db-hero-art::after,.db-spectrum-shell::after,
+ .db-edit-pane .db-module::after,.db-signal-visual::after {
+  border-width:8px;
+ }
+ .db-console-top {border-width:6px !important;}
+}
+@media (prefers-reduced-motion:reduce) {
+ .db-hero-art::after,.db-spectrum-shell::after,
+ .db-edit-pane .db-module::after,.db-signal-visual::after {transition:none !important;}
+}
