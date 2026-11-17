@@ -2638,3 +2638,69 @@ body::after {display:none!important;}
 .db-console-top.db-workstation-mesh #dbVisualQuality{width:100%!important;min-width:0!important;max-width:100%!important;background:rgba(7,5,15,.68)!important;box-shadow:none!important;border-color:transparent!important;color:#f1defe!important;text-align:center!important;}
 @media (orientation:portrait){.db-console-top.db-workstation-mesh{aspect-ratio:965/250!important}.db-stage05-tiles{top:27%;height:47%}.db-console-top.db-workstation-mesh .db-visual-quality{left:31%!important;width:38%!important;max-width:38%!important;bottom:4%!important}.db-console-top.db-workstation-mesh #dbVisualQuality{font-size:9px!important;min-height:23px!important;padding:2px 6px!important}}
 /* Reference artwork is deliberately confined to the workstation. The rest of the app remains unchanged. */
+
+
+/* STAGE 05B — WORKSTATION EDGE ALIGNMENT / FINAL CASCADE OVERRIDE
+   Stage 03's nine-slice workstation-frame border was still active under
+   Stage 05A's fully illustrated artwork. The legacy fixed-height and
+   oversized artwork rules also survived via !important. */
+.db-console-top.db-workstation-mesh {
+  box-sizing:border-box !important;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  height:auto !important;
+  min-height:0 !important;
+  aspect-ratio:1930 / 500 !important;
+  margin:0 0 10px !important;
+  padding:0 !important;
+  border:0 none !important;
+  border-image:none !important;
+  border-radius:0 !important;
+  background:none !important;
+  box-shadow:none !important;
+  overflow:visible !important;
+  isolation:isolate !important;
+}
+.db-console-top.db-workstation-mesh::before,
+.db-console-top.db-workstation-mesh::after {
+  content:none !important;
+  border:0 !important;
+  border-image:none !important;
+  box-shadow:none !important;
+}
+.db-console-top.db-workstation-mesh .db-stage05-panel {
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  margin:0 !important;
+  padding:0 !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+.db-console-top.db-workstation-mesh .db-stage05-art {
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  background-image:url('assets/ui/stage-05/approved-workstation.webp') !important;
+  background-size:100% 100% !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+  border:0 !important;
+  box-shadow:none !important;
+  pointer-events:none !important;
+}
+/* Buttons and native visual-quality control remain on top and clickable. */
+.db-console-top.db-workstation-mesh .db-stage05-tiles {z-index:5 !important;}
+.db-console-top.db-workstation-mesh .db-visual-quality {z-index:15 !important;}
+@media (orientation:portrait) {
+  .db-console-top.db-workstation-mesh {
+    height:auto !important;
+    min-height:0 !important;
+    aspect-ratio:1930 / 500 !important;
+    border:0 none !important;
+    border-image:none !important;
+  }
+}
