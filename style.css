@@ -2850,3 +2850,15 @@ body::after {display:none!important;}
 @media (orientation:portrait) {
  .db-chassis::after {border-image-width:12px !important;border-width:12px !important;}
 }
+
+
+/* STAGE 07 — brushed metal across the complete synthesizer chassis.
+   Uses only the CENTER of the supplied panel, avoiding a duplicate border.
+   The Stage 06 outer rim and individual module artwork remain untouched. */
+.db-chassis {
+  background-color:#080910 !important;
+  background-image:url("assets/ui/stage-07/brushed-metal-synth-background.webp") !important;
+  background-position:center top !important;
+  background-size:100% auto !important;
+  background-repeat:repeat-y !important;
+}
