@@ -2704,3 +2704,79 @@ body::after {display:none!important;}
     border-image:none !important;
   }
 }
+
+/* STAGE 05C — single exterior chassis rim and selector below artwork.
+   This deliberately does not alter Stage 05B's workstation aspect ratio or tile hotspots. */
+.db-chassis {
+  border:0 !important;
+  border-radius:18px !important;
+  box-shadow:0 0 0 3px #07080d,0 18px 40px #0009 !important;
+}
+/* Retire the old chassis decorations responsible for doubled vertical lines. */
+.db-chassis::before { content:none !important; display:none !important; }
+.db-chassis::after {
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  inset:0 !important;
+  z-index:30 !important;
+  pointer-events:none !important;
+  box-sizing:border-box !important;
+  border:12px solid transparent !important;
+  border-image-source:url("assets/ui/stage-05c/outer-rim-transparent.webp") !important;
+  border-image-slice:76 !important;
+  border-image-width:12px !important;
+  border-image-repeat:stretch !important;
+  background:none !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+}
+@media (orientation:portrait) {
+  .db-chassis::after {
+    border-image-source:url("assets/ui/stage-05c/outer-rim-transparent.webp") !important;
+    border-image-slice:76 !important;
+    border-image-width:10px !important;
+  }
+}
+/* Create a separate, dedicated row for the native selector.
+   No overlapping of six illustrated modules or their click targets. */
+.db-console-top.db-workstation-mesh {
+  margin-bottom:43px !important;
+  overflow:visible !important;
+}
+.db-console-top.db-workstation-mesh .db-visual-quality {
+  position:absolute !important;
+  top:calc(100% + 5px) !important;
+  bottom:auto !important;
+  left:50% !important;
+  right:auto !important;
+  transform:translateX(-50%) !important;
+  width:min(235px,62%) !important;
+  max-width:62% !important;
+  min-height:30px !important;
+  z-index:15 !important;
+  display:flex !important;
+  justify-content:center !important;
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality {
+  width:100% !important;
+  max-width:100% !important;
+  min-height:30px !important;
+  text-align:center !important;
+  background-color:#100d19 !important;
+  border:1px solid #6e4c8b !important;
+  border-radius:6px !important;
+  box-shadow:inset 0 1px 4px #000b,0 0 8px #a346d54a !important;
+  color:#f0dafa !important;
+}
+@media (orientation:portrait) {
+  .db-console-top.db-workstation-mesh {margin-bottom:39px !important;}
+  .db-console-top.db-workstation-mesh .db-visual-quality {
+    top:calc(100% + 4px) !important;
+    bottom:auto !important;
+    left:50% !important;
+    transform:translateX(-50%) !important;
+    width:min(225px,60%) !important;
+    max-width:60% !important;
+  }
+}
