@@ -3343,3 +3343,69 @@ body::after {display:none!important;}
 .db-realm-card{position:relative;transition:box-shadow .4s ease,filter .4s ease!important}
 .db-realm-card.db-realm-entering{filter:brightness(1.18)!important;box-shadow:0 0 0 2px #bb90e8,0 0 28px rgba(161,90,240,.62)!important}
 @media(prefers-reduced-motion:reduce){.db-realm-card{transition:none!important}}
+
+
+/* DREAM BINDER · Resonance Display chassis integration · 2026-11-18
+   Transparent center leaves the original live canvas visible and interactive.
+   Separate original portrait/landscape frames; no changes to audio or Atlas. */
+.db-chassis .db-hero-studio {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  aspect-ratio: 2172 / 724 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: url('assets/ui/resonance-display-chassis-portrait.webp') center center / 100% 100% no-repeat transparent !important;
+}
+@media (orientation: landscape) {
+  .db-chassis .db-hero-studio {
+    background-image: url('assets/ui/resonance-display-chassis-landscape.webp') !important;
+  }
+}
+/* Title is engraved in the frame artwork; don't double-render it. */
+.db-chassis .db-hero-studio > .db-studio-top { display: none !important; }
+.db-chassis .db-hero-studio > .db-spectrum-shell {
+  position: absolute !important;
+  box-sizing: border-box !important;
+  inset: 26% 5.3% 19% 5.3% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 2px 4px !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #070912 !important;
+}
+.db-chassis .db-hero-studio > .db-spectrum-shell::before { inset: 0 !important; }
+.db-chassis .db-hero-studio .db-spectrum-header,
+.db-chassis .db-hero-studio .db-spectrum-axis {
+  position: relative !important;
+  z-index: 1 !important;
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(6px, 1.15vw, 10px) !important;
+  line-height: 1.15 !important;
+}
+.db-chassis .db-hero-studio .db-spectrum-shell canvas {
+  position: relative !important;
+  z-index: 1 !important;
+  display: block !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+}
+.db-chassis .db-hero-studio > .db-algebra { display: none !important; }
