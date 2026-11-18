@@ -2857,7 +2857,7 @@ body::after {display:none!important;}
    The Stage 06 outer rim and individual module artwork remain untouched. */
 .db-chassis {
   background-color:#080910 !important;
-  background-image:url("assets/ui/stage-07/brushed-metal-synth-background.webp") !important;
+  background-image:url("assets/ui/stage-08/brushed-metal-synth-background.webp") !important;
   background-position:center top !important;
   background-size:100% auto !important;
   background-repeat:repeat-y !important;
@@ -2868,7 +2868,7 @@ body::after {display:none!important;}
    This does not change the audio engine, controls, or panel artwork. */
 .db-chassis {
   background-color:#11121a !important;
-  background-image:url("assets/ui/stage-07/brushed-metal-synth-background.webp") !important;
+  background-image:url("assets/ui/stage-08/brushed-metal-synth-background.webp") !important;
   background-position:center top !important;
   background-size:100% auto !important;
   background-repeat:repeat-y !important;
@@ -3008,7 +3008,7 @@ body::after {display:none!important;}
   background-color: #171922 !important;
   background-image:
     linear-gradient(90deg,rgba(3,4,8,.30),transparent 3%,transparent 97%,rgba(3,4,8,.30)),
-    url("assets/ui/stage-07/brushed-metal-synth-background.webp") !important;
+    url("assets/ui/stage-08/brushed-metal-synth-background.webp") !important;
   background-size:100% 100%,100% auto !important;
   background-position:center top !important;
   background-repeat:no-repeat,repeat-y !important;
@@ -3069,3 +3069,17 @@ body::after {display:none!important;}
 @media (orientation:landscape) {
   .db-chassis {padding:12px 12px 12px !important;}
 }
+
+/* STAGE 12 — Restore supplied brushed metal beneath all modules.
+   Keep Stage 11 geometry and Stage 06 perimeter intact. */
+.db-chassis {
+  background-color:#0d0e15 !important;
+  background-image:url("assets/ui/stage-08/brushed-metal-synth-background.webp") !important;
+  background-size:100% auto !important;
+  background-position:center top !important;
+  background-repeat:repeat-y !important;
+  background-origin:border-box !important;
+  background-clip:border-box !important;
+}
+/* Do not cover the actual metal image with the Stage 11 solid-color underlay. */
+.db-chassis::before { content:none !important; display:none !important; }
