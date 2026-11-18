@@ -2959,3 +2959,16 @@ body::after {display:none!important;}
     background-size:clamp(95px, 11%, 180px) auto,clamp(95px, 11%, 180px) auto !important;
   }
 }
+
+/* STAGE 08E — transparent cropped metal corners. Overrides Stage 08C/08D.
+   Each image is tightly cropped; no compensating negative offsets. */
+.db-chassis > .db-masthead::after {
+  background-position: left top, right top !important;
+  background-size: clamp(65px, 18%, 130px) auto, clamp(65px, 18%, 130px) auto !important;
+}
+@media (orientation:landscape) {
+  .db-chassis > .db-masthead::after {
+    background-position: left top, right top !important;
+    background-size: clamp(90px, 12%, 165px) auto, clamp(90px, 12%, 165px) auto !important;
+  }
+}
