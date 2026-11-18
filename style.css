@@ -2896,3 +2896,33 @@ body::after {display:none!important;}
 /* The decorative rim must stay on top without blocking touch input. */
 .db-chassis::after {pointer-events:none !important;}
 
+
+
+/* STAGE 08 FIX — HEADER ONLY: two bolted upper corner mounts.
+   Overrides the older .db-masthead::after {content:none!important} rule.
+   Does not affect the Stage 06/07 chassis, Atlas, audio or controls. */
+.db-masthead { position:relative !important; isolation:isolate !important; overflow:hidden !important; }
+.db-masthead::after {
+  content:"" !important;
+  display:block !important;
+  position:absolute !important;
+  inset:0 !important;
+  z-index:12 !important;
+  pointer-events:none !important;
+  opacity:1 !important;
+  border:0 !important;
+  box-shadow:none !important;
+  background-image:url("assets/ui/stage-08/stage-08-corner-mount-portrait.webp") !important;
+  background-repeat:no-repeat !important;
+  background-position:center top !important;
+  background-size:100% auto !important;
+  mix-blend-mode:normal !important;
+}
+@media (orientation:landscape) {
+  .db-masthead::after {
+    background-image:url("assets/ui/stage-08/stage-08-corner-mount-landscape.webp") !important;
+  }
+}
+/* Keep logo and animated mist visible; brackets do not catch taps. */
+.db-masthead .db-logo-brand {position:relative !important;z-index:4 !important;}
+.db-masthead .db-banner-mist {pointer-events:none !important;}
