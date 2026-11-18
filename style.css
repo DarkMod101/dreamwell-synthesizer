@@ -3428,3 +3428,20 @@ body::after {display:none!important;}
   outline: none !important;
   box-shadow: none !important;
 }
+
+/* Dream Binder · targeted viewport fit · 2026-11-18
+   Keep the existing artwork, chassis, waveform and navigation intact. */
+@media (orientation: portrait) {
+  /* The Dream Atlas heading is printed in the WebP. Lower the entire
+     undistorted image slightly so its upper lettering clears the edge. */
+  .db-chassis .db-hero-art {
+    background-position: center calc(50% + 8px) !important;
+  }
+}
+@media (orientation: landscape) {
+  /* Reclaim clearance at the right chassis rim without resizing the
+     Resonance Display image or shifting the Dream Atlas panel. */
+  .db-chassis .db-hero-studio {
+    transform: translateX(-14px) !important;
+  }
+}
