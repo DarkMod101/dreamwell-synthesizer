@@ -3246,3 +3246,11 @@ body::after {display:none!important;}
     padding-left: 24px !important;
   }
 }
+
+/* DREAM BINDER — portrait source indicator inset (2026-11-18).
+   Match the 24px landscape inset without altering artwork or other panels. */
+@media (orientation: portrait) {
+  .db-chassis > .db-patchbar {
+    padding-left: 24px !important;
+  }
+}
