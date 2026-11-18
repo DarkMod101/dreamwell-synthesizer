@@ -17871,6 +17871,12 @@ const dbUI = {
     status: document.getElementById('dbBindingStatus')
 };
 const DB_BINDING_STORAGE = 'dreamBinderBindingsV1';
+const DB_EVOLUTION_STORAGE = 'dreamBinderResonanceEvolutionsV1';
+const dbEvolutionMaxDepth = /Android/i.test(navigator.userAgent) ? 4 : 8;
+const dbEvolutionMaxLeaves = /Android/i.test(navigator.userAgent) ? 4 : 8;
+function dbEvolutionLibrary(){try {const data=JSON.parse(localStorage.getItem(DB_EVOLUTION_STORAGE)||'{}');return data&&typeof data==='object'&&!Array.isArray(data)?data:{};}catch(_){return {};}}
+function dbEvolutionStore(data){localStorage.setItem(DB_EVOLUTION_STORAGE,JSON.stringify(data));}
+
 const dbCapture = { A: null, B: null };
 let dbAudioAnalyser = null;
 let dbSpectrumFrame = 0;
@@ -17919,6 +17925,10 @@ function dbSettingsForLayer(selection) {
         const patch = dreamAtlasPatches.find(p => p.key === key);
         return patch ? {name: patch.name, engine: patch.engine || 'synth',settings:patch.settings} : null;
     }
+    if (bank === 'evolution') {
+        const item=dbEvolutionLibrary()[key];
+        return item ? {name:item.name,engine:'evolution',evolution:item} : null;
+    }
     if (bank === 'user') {
         const settings = getSavedPresets()[key];
         return settings ? {name:key, engine:settings.engine || 'synth', settings} : null;
@@ -17953,6 +17963,12 @@ function dbFillLayerSelectors() {
         const atlas = document.createElement('optgroup'); atlas.label = 'Dream Atlas · 104 Sounds';
         for (const patch of dreamAtlasPatches) atlas.append(new Option(`${patch.collection} · ${patch.name}`, `atlas:${patch.key}`));
         select.add(atlas);
+        const evolutions=dbEvolutionLibrary();
+        if(Object.keys(evolutions).length){
+            const group=document.createElement('optgroup');group.label='∞ My Resonance Evolutions';
+            for(const [id,item] of Object.entries(evolutions)) group.append(new Option(`${item.name} · G${item.depth}`,`evolution:${id}`));
+            select.add(group);
+        }
         const saved = getSavedPresets();
         if (Object.keys(saved).length) {
             const users = document.createElement('optgroup'); users.label = 'My Presets';
@@ -18070,7 +18086,7 @@ function dbAttachEcho(ctx, entry, patch) {
     else if (entry.voice?.textureProcessingNodes) entry.voice.textureProcessingNodes.push(...cleanup);
     else entry.extraCleanup = cleanup;
 }
-function dbCreateBindingVoice(frequency, patch, side) {
+function dbCreateBindingVoice(frequency, patch, side, evolutionWeight=1) {
     if (!patch) return null;
     return dbWithPreset(patch, () => {
         const ctx = getAudioContext();
@@ -18078,8 +18094,8 @@ function dbCreateBindingVoice(frequency, patch, side) {
             createPianoNote(frequency);
             const voice = activePianoNodes[activePianoNodes.length-1];
             const output = voice?.nodes?.find(node => node?.pan && typeof node.pan.setValueAtTime === 'function'); // pianoPan, preserves orbit
-            const gain = dbInsertGain(ctx, output, dbLayerWeight(side), voice?.nodes);
-            const entry={engine:'piano',voice,gain,side};
+            const gain = dbInsertGain(ctx, output, dbLayerWeight(side)*evolutionWeight, voice?.nodes);
+            const entry={engine:'piano',voice,gain,side,evolutionWeight};
             dbAttachEcho(ctx,entry,patch);
             return entry;
         }
@@ -18088,14 +18104,14 @@ function dbCreateBindingVoice(frequency, patch, side) {
             const voice = createChoirNote(frequency);
             const outputs = voice?.textureProcessingNodes;
             const output = outputs?.[outputs.length - 1]; // choirOrbitPanner
-            const gain = dbInsertGain(ctx, output, dbLayerWeight(side), outputs);
-            const entry={engine:'choir',voice,gain,side};
+            const gain = dbInsertGain(ctx, output, dbLayerWeight(side)*evolutionWeight, outputs);
+            const entry={engine:'choir',voice,gain,side,evolutionWeight};
             dbAttachEcho(ctx,entry,patch);
             return entry;
         }
         const voice = createNote(frequency);
-        const gain = dbInsertGain(ctx, voice.stereoPanner,dbLayerWeight(side));
-        const entry={engine:'synth',voice,gain,side};
+        const gain = dbInsertGain(ctx, voice.stereoPanner,dbLayerWeight(side)*evolutionWeight);
+        const entry={engine:'synth',voice,gain,side,evolutionWeight};
         dbAttachEcho(ctx,entry,patch);
         return entry;
     });
@@ -18124,16 +18140,16 @@ function dbReleaseAllBindings() {
         dbStopBindingEntry(Number(key),entry);
     }
 }
-function dbCreateVoiceWithAsyncChoir(frequency, patch, side, entry) {
+function dbCreateVoiceWithAsyncChoir(frequency, patch, side, entry, evolutionWeight=1) {
     if (patch?.engine === 'choir' && !choirAhC3Buffer) {
         loadChoirAhC3Sample().then(buffer => {
             if (!buffer || dbHeldLayers.get(String(frequency)) !== entry) return;
-            const voice = dbCreateBindingVoice(frequency,patch,side);
+            const voice = dbCreateBindingVoice(frequency,patch,side,evolutionWeight);
             if (voice && voice.engine !== 'choir-pending') entry.layers.push(voice);
         }).catch(()=>dbSetStatus('Choir sample unavailable. Keep the audio asset in your project.'));
         return;
     }
-    const voice = dbCreateBindingVoice(frequency,patch,side);
+    const voice = dbCreateBindingVoice(frequency,patch,side,evolutionWeight);
     if (voice && voice.engine !== 'choir-pending') entry.layers.push(voice);
 }
 function dbBindingPress(frequency) {
@@ -18155,7 +18171,9 @@ function dbBindingPress(frequency) {
     try {
         for (const side of targets) {
             const patch = dbSettingsForLayer(dbUI[side]?.value);
-            dbCreateVoiceWithAsyncChoir(frequency,patch,side,entry);
+            if(patch?.engine==='evolution') {
+                for(const leaf of patch.evolution.leaves) dbCreateVoiceWithAsyncChoir(frequency,leaf.patch,side,entry,leaf.weight);
+            } else dbCreateVoiceWithAsyncChoir(frequency,patch,side,entry);
         }
     } catch (error) {
         console.error('Binding of Dreams voice error:',error);
@@ -18202,7 +18220,7 @@ function dbUpdateBlend() {
     if (label) label.textContent = `${100-n} / ${n}`;
     for (const entry of dbHeldLayers.values()) {
         for (const layer of entry.layers) {
-            if (layer?.gain && audioContext) layer.gain.gain.setTargetAtTime(dbLayerWeight(layer.side),audioContext.currentTime,.024);
+            if (layer?.gain && audioContext) layer.gain.gain.setTargetAtTime(dbLayerWeight(layer.side)*(layer.evolutionWeight??1),audioContext.currentTime,.024);
         }
     }
     dbStoreBinding();
@@ -18215,7 +18233,7 @@ function dbRandomizeBinding() {
     const options = [...dbUI.A.options].filter(option =>
         !option.disabled && option.value &&
         !option.value.startsWith('capture:') &&
-        !!dbSettingsForLayer(option.value)
+        !!dbSettingsForLayer(option.value) && !option.value.startsWith('evolution:')
     );
     // Each unique ID is eligible once; exclude ephemeral captures.
     const ids = [...new Set(options.map(option => option.value))];
@@ -18416,6 +18434,77 @@ function dbSelectSource(source) {
     });
     document.getElementById('dbSoundArchitecture')?.scrollIntoView({behavior:'smooth',block:'start'});
 }
+// Resonance Evolution stores immutable leaf snapshots, not recursive runtime graphs.
+// This prevents cycles and allows strict limits before any audio voice is created.
+function dbEvolutionFlatten(selection){
+    const patch=dbSettingsForLayer(selection);
+    if(!patch) throw Error('Select a valid source preset.');
+    if(patch.engine==='evolution'){
+        const item=patch.evolution;
+        if(!Array.isArray(item.leaves)||!item.leaves.length||item.leaves.length>dbEvolutionMaxLeaves) throw Error('This Evolution exceeds the device layer budget.');
+        return {depth:Number(item.depth)||1,leaves:item.leaves.map(leaf=>({patch:structuredClone(leaf.patch),weight:Number(leaf.weight)}))};
+    }
+    return {depth:0,leaves:[{patch:{name:patch.name,engine:patch.engine,settings:structuredClone(patch.settings)},weight:1}]};
+}
+function dbEvolutionPreview(){
+    const a=dbEvolutionFlatten(dbUI.A?.value),b=dbEvolutionFlatten(dbUI.B?.value);
+    const depth=Math.max(a.depth,b.depth)+1;
+    const count=a.leaves.length+b.leaves.length;
+    if(depth>dbEvolutionMaxDepth) throw Error(`Generation ${depth} exceeds this device's ${dbEvolutionMaxDepth}-generation limit.`);
+    if(count>dbEvolutionMaxLeaves) throw Error(`${count} sound layers exceed this device's ${dbEvolutionMaxLeaves}-layer budget. Choose a simpler Evolution.`);
+    const balance=Number(dbUI.balance?.value??50)/100;
+    const left=Math.cos(balance*Math.PI/2),right=Math.sin(balance*Math.PI/2);
+    return {depth,leaves:[...a.leaves.map(leaf=>({...leaf,weight:leaf.weight*left})),...b.leaves.map(leaf=>({...leaf,weight:leaf.weight*right}))]};
+}
+const dbEvolutionWordsA=['Forgotten','Celestial','Eternal','Silent','Lucid','Velvet','Astral','Midnight','Hollow','Infinite','Silver','Dreaming','Ancient','Hidden','Wandering'];
+const dbEvolutionWordsB=['Doorway','Echoes','Horizons','Memories','Reverie','Orbit','Whispers','Afterglow','Sanctuary','Labyrinth','Resonance','Tides','Embers','Mirrors','Awakening'];
+function dbSuggestEvolutionName(){
+    const name=dbEvolutionWordsA[Math.floor(Math.random()*dbEvolutionWordsA.length)]+' '+dbEvolutionWordsB[Math.floor(Math.random()*dbEvolutionWordsB.length)];
+    const field=document.getElementById('dbEvolutionName');if(field){field.value=name;field.focus();}
+}
+function dbEvolutionOpen(){
+    const status=document.getElementById('dbEvolutionDialogStatus');
+    try{
+        if(dbGetMode()!=='layer') throw Error('Select Bind · Both sounds together before saving.');
+        const preview=dbEvolutionPreview();
+        if(status)status.textContent=`Generation ${preview.depth} · ${preview.leaves.length} active sound layers`;
+        document.getElementById('dbEvolutionName').value='';
+        document.getElementById('dbEvolutionDialog')?.showModal();
+        dbSuggestEvolutionName();
+    }catch(error){dbSetStatus(`EVOLUTION · ${error.message}`);}
+}
+function dbEvolutionSave(event){
+    if(event.submitter?.value!=='save')return;
+    event.preventDefault();
+    const name=document.getElementById('dbEvolutionName')?.value.trim();
+    const status=document.getElementById('dbEvolutionDialogStatus');
+    if(!name){if(status)status.textContent='Enter a name for your Evolution.';return;}
+    try{
+        const preview=dbEvolutionPreview();
+        const library=dbEvolutionLibrary();
+        const id=globalThis.crypto?.randomUUID?.()||`evo-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        library[id]={name:name.slice(0,64),depth:preview.depth,leaves:preview.leaves,created:Date.now()};
+        dbEvolutionStore(library);
+        dbFillLayerSelectors();
+        document.getElementById('dbEvolutionDialog')?.close();
+        dbSetStatus(`∞ EVOLUTION SAVED · ${name} · Generation ${preview.depth}. Available as Source A or B.`);
+        dbEvolutionUpdateLimit();
+    }catch(error){if(status)status.textContent=`Could not save: ${error.message}`;}
+}
+function dbEvolutionLoad(){
+    const library=dbEvolutionLibrary(),ids=Object.keys(library);
+    if(!ids.length){dbSetStatus('EVOLUTION · Save your first Binding to begin.');return;}
+    dbFillLayerSelectors();
+    const id=ids[ids.length-1];
+    dbReleaseAllBindings();dbUI.A.value=`evolution:${id}`;
+    dbUI.mode.value='layer';dbSyncMode();dbUpdateBlend();
+    dbSetStatus(`∞ EVOLUTION LOADED · ${library[id].name} as Source A. Choose Source B to evolve again.`);
+    dbEvolutionUpdateLimit();
+}
+function dbEvolutionUpdateLimit(){
+    const label=document.getElementById('dbEvolutionLimit');if(!label)return;
+    try{const v=dbEvolutionPreview();label.textContent=`GEN ${v.depth}/${dbEvolutionMaxDepth} · ${v.leaves.length}/${dbEvolutionMaxLeaves} LAYERS`;}catch(_){label.textContent=`MAX ${dbEvolutionMaxDepth} GENERATIONS · ${dbEvolutionMaxLeaves} LAYERS`;}
+}
 // Init at script end after all existing preset constants and note functions.
 dbPopulateSplitNotes();
 dbFillLayerSelectors();
@@ -18429,6 +18518,12 @@ for(const id of ['dbLayerA','dbLayerB','dbSplitNote']) document.getElementById(i
 dbUI.mode?.addEventListener('change',dbSyncMode);
 dbUI.balance?.addEventListener('input',dbUpdateBlend);
 document.getElementById('dbRandomizeBinding')?.addEventListener('click',dbRandomizeBinding);
+document.getElementById('dbSaveEvolution')?.addEventListener('click',dbEvolutionOpen);
+document.getElementById('dbLoadEvolution')?.addEventListener('click',dbEvolutionLoad);
+document.getElementById('dbSuggestEvolutionName')?.addEventListener('click',dbSuggestEvolutionName);
+document.getElementById('dbEvolutionForm')?.addEventListener('submit',dbEvolutionSave);
+for(const id of ['dbLayerA','dbLayerB','dbBlend'])document.getElementById(id)?.addEventListener('change',dbEvolutionUpdateLimit);
+dbEvolutionUpdateLimit();
 document.getElementById('dbCaptureA')?.addEventListener('click',()=>dbCaptureSound('A'));
 document.getElementById('dbCaptureB')?.addEventListener('click',()=>dbCaptureSound('B'));
 document.getElementById('dbAtlasHero')?.addEventListener('click',()=>dbSelectSource('atlas'));
