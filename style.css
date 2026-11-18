@@ -3333,3 +3333,13 @@ body::after {display:none!important;}
 @media (prefers-reduced-motion: reduce) {
   .db-hero-art #dbAtlasHero > span::before { transition: none !important; }
 }
+
+/* Dream Atlas · lightweight doorway-to-collection transition */
+.db-atlas-journey[hidden]{display:none!important}
+.db-atlas-journey{margin:18px 0 10px;padding:15px 14px 12px;border-top:1px solid rgba(176,137,220,.28);border-bottom:1px solid rgba(176,137,220,.2);background:linear-gradient(90deg,rgba(56,33,78,.19),rgba(8,8,17,.12))}
+.db-atlas-return{display:inline-flex;align-items:center;min-height:38px;padding:7px 12px;border:1px solid rgba(171,135,216,.46);border-radius:7px;background:#171324;color:#e8d8f6;font-size:11px;letter-spacing:.12em;font-weight:700}
+.db-atlas-return:hover,.db-atlas-return:focus-visible{border-color:#cda8ff;box-shadow:0 0 13px rgba(164,105,240,.25)}
+.db-atlas-journey-heading{margin-top:12px;color:#f0d9ff;font-family:Georgia,'Times New Roman',serif;font-size:clamp(17px,3vw,25px);letter-spacing:.13em;text-shadow:0 2px 9px #000}
+.db-realm-card{position:relative;transition:box-shadow .4s ease,filter .4s ease!important}
+.db-realm-card.db-realm-entering{filter:brightness(1.18)!important;box-shadow:0 0 0 2px #bb90e8,0 0 28px rgba(161,90,240,.62)!important}
+@media(prefers-reduced-motion:reduce){.db-realm-card{transition:none!important}}
