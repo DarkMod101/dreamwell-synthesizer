@@ -3409,3 +3409,22 @@ body::after {display:none!important;}
   margin: 0 !important;
 }
 .db-chassis .db-hero-studio > .db-algebra { display: none !important; }
+
+
+/* DREAM BINDER · Resonance Display — remove obsolete nested CSS/glass frame.
+   The new portrait/landscape WebP is the sole visible chassis.
+   Leave the live waveform, labels, geometry and all other racks untouched. */
+.db-chassis .db-hero-studio > .db-spectrum-shell::after,
+.db-chassis .db-hero-studio > .db-spectrum-shell::before {
+  content: none !important;
+  display: none !important;
+  border: 0 !important;
+  border-image: none !important;
+  box-shadow: none !important;
+}
+.db-chassis .db-hero-studio > .db-spectrum-shell {
+  border: 0 !important;
+  border-image: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
