@@ -2841,7 +2841,7 @@ body::after {display:none!important;}
 /* STAGE 06 — approved dark gunmetal outer chassis, transparent WebP.
    Nine-slice stretches only rails, never corner screws. */
 .db-chassis::after {
- border-image-source:url("assets/ui/stage-06/dark-gunmetal-outer-chassis.webp") !important;
+ border-image-source:url("assets/ui/stage-08/dark-gunmetal-outer-chassis-flush.webp") !important;
  border-image-slice:78 82 78 82 !important;
  border-image-width:17px !important;
  border-width:17px !important;
@@ -3017,7 +3017,7 @@ body::after {display:none!important;}
 .db-chassis::after {
   display:block !important;
   content:"" !important;
-  border-image-source:url("assets/ui/stage-06/dark-gunmetal-outer-chassis.webp") !important;
+  border-image-source:url("assets/ui/stage-08/dark-gunmetal-outer-chassis-flush.webp") !important;
   pointer-events:none !important;
 }
 /* An underlay fills transparent pixels INSIDE the frame, not over the UI. */
@@ -3164,5 +3164,9 @@ body::after {display:none!important;}
 }
 /* Preserve the existing outer chassis art and its corner bolts. */
 .db-chassis::after {
-  border-image-source:url("assets/ui/stage-06/dark-gunmetal-outer-chassis.webp") !important;
+  border-image-source:url("assets/ui/stage-08/dark-gunmetal-outer-chassis-flush.webp") !important;
 }
+
+/* Stage 08 rim-matte repair: the approved outer frame is unchanged in size.
+   Its opaque black inner matte is transparent in the WebP named above,
+   revealing the existing brushed-metal backing underneath on all four sides. */
