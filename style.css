@@ -3170,3 +3170,53 @@ body::after {display:none!important;}
 /* Stage 08 rim-matte repair: the approved outer frame is unchanged in size.
    Its opaque black inner matte is transparent in the WebP named above,
    revealing the existing brushed-metal backing underneath on all four sides. */
+/* STAGE 08 — LANDSCAPE INNER FIT REPAIR
+   Fix clipped source light, clipped right-side labels,
+   and reduce masthead head-cropping without stretching the banner. */
+@media (orientation: landscape) {
+
+  /* Pull the live content slightly inward so the outer chassis overlay
+     no longer cuts into the content area. */
+  .db-chassis > .db-masthead,
+  .db-chassis > .db-patchbar,
+  .db-chassis > .db-monitor-row,
+  .db-chassis > .db-console-top,
+  .db-chassis > .db-edit-console,
+  .db-chassis > .db-effects-rack,
+  .db-chassis > .db-keyboard-title,
+  .db-chassis > .keyboard,
+  .db-chassis > .octave-controls {
+    width: calc(100% - 28px) !important;
+    margin-left: 14px !important;
+    margin-right: 14px !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Keep the banner proportional, but reveal a little more of the upper artwork
+     so the figure’s head is not cropped so hard. */
+  .db-masthead {
+    background-size: cover !important;
+    background-position: center 40% !important;
+    overflow: hidden !important;
+  }
+
+  /* Give the source panel a little more breathing room so the cyan light
+     is fully visible and not cut by the left inner edge. */
+  .db-patchbar {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    overflow: hidden !important;
+  }
+
+  .db-patch-info {
+    padding-left: 2px !important;
+  }
+
+  .db-patchbar .db-dot-power {
+    width: 10px !important;
+    height: 10px !important;
+    margin-left: 0 !important;
+    flex: 0 0 auto !important;
+  }
+}
