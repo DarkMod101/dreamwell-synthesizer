@@ -1685,7 +1685,9 @@ body::after {display:none!important;}
   background-image:url("assets/ui/effects-rack-engraved-landscape-4k.webp") !important;
   background-repeat:no-repeat !important;
   background-position:center !important;
-  background-size:100% 100% !important;
+  /* Preserve the artwork's original proportions; crop excess rather than stretch lettering. */
+  background-size:cover !important;
+  background-color:#08080c !important;
   border:0 !important;
 }
 /* Text is printed in the WebP. Keep original DOM wording for assistive tech,
@@ -1707,6 +1709,7 @@ body::after {display:none!important;}
   .db-effects-rack > .db-rack-head {
     height:clamp(104px, 22.4vw, 145px) !important;
     background-image:url("assets/ui/effects-rack-engraved-portrait-4k.webp") !important;
+    background-size:cover !important;
   }
 }
 
@@ -3252,5 +3255,14 @@ body::after {display:none!important;}
 @media (orientation: portrait) {
   .db-chassis > .db-patchbar {
     padding-left: 24px !important;
+  }
+}
+
+
+/* Dream Binder — landscape FX rack: fill the entire header without distorting engraved lettering. */
+@media (orientation:landscape) {
+  .db-effects-rack > .db-rack-head {
+    background-size:cover !important;
+    background-position:center center !important;
   }
 }
