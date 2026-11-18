@@ -3266,3 +3266,19 @@ body::after {display:none!important;}
     background-position:center center !important;
   }
 }
+
+/* Dream Atlas portrait: fill the full banner width with the expanded artwork.
+   Landscape and all other panels remain unchanged. */
+@media (orientation: portrait) {
+  .db-hero-art {
+    background-image: url('assets/backgrounds/dream-atlas-entry-portrait.webp') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+  }
+  .db-hero-art .db-atlas-entry .db-atlas-static {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
