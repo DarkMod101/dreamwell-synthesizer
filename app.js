@@ -18458,9 +18458,31 @@ function dbEvolutionPreview(){
 }
 const dbEvolutionWordsA=['Forgotten','Celestial','Eternal','Silent','Lucid','Velvet','Astral','Midnight','Hollow','Infinite','Silver','Dreaming','Ancient','Hidden','Wandering'];
 const dbEvolutionWordsB=['Doorway','Echoes','Horizons','Memories','Reverie','Orbit','Whispers','Afterglow','Sanctuary','Labyrinth','Resonance','Tides','Embers','Mirrors','Awakening'];
+let dbPreviousEvolutionSuggestion = '';
 function dbSuggestEvolutionName(){
-    const name=dbEvolutionWordsA[Math.floor(Math.random()*dbEvolutionWordsA.length)]+' '+dbEvolutionWordsB[Math.floor(Math.random()*dbEvolutionWordsB.length)];
-    const field=document.getElementById('dbEvolutionName');if(field){field.value=name;field.focus();}
+    const field=document.getElementById('dbEvolutionName');
+    if(!field)return;
+    const current=field.value.trim();
+    const total=dbEvolutionWordsA.length*dbEvolutionWordsB.length;
+    let name='';
+    // Never repeat the displayed suggestion when the user presses again.
+    for(let attempt=0;attempt<12;attempt++){
+        name=dbEvolutionWordsA[Math.floor(Math.random()*dbEvolutionWordsA.length)]+' '+dbEvolutionWordsB[Math.floor(Math.random()*dbEvolutionWordsB.length)];
+        if(name!==current && name!==dbPreviousEvolutionSuggestion)break;
+    }
+    if(name===current||name===dbPreviousEvolutionSuggestion){
+        const start=Math.floor(Math.random()*total);
+        for(let i=0;i<total;i++){
+            const n=(start+i)%total;
+            const candidate=dbEvolutionWordsA[Math.floor(n/dbEvolutionWordsB.length)]+' '+dbEvolutionWordsB[n%dbEvolutionWordsB.length];
+            if(candidate!==current&&candidate!==dbPreviousEvolutionSuggestion){name=candidate;break;}
+        }
+    }
+    field.value=name;
+    dbPreviousEvolutionSuggestion=name;
+    field.dispatchEvent(new Event('input',{bubbles:true}));
+    field.focus();
+    field.select();
 }
 function dbEvolutionOpen(){
     const status=document.getElementById('dbEvolutionDialogStatus');
@@ -18492,14 +18514,47 @@ function dbEvolutionSave(event){
     }catch(error){if(status)status.textContent=`Could not save: ${error.message}`;}
 }
 function dbEvolutionLoad(){
-    const library=dbEvolutionLibrary(),ids=Object.keys(library);
-    if(!ids.length){dbSetStatus('EVOLUTION · Save your first Binding to begin.');return;}
-    dbFillLayerSelectors();
-    const id=ids[ids.length-1];
-    dbReleaseAllBindings();dbUI.A.value=`evolution:${id}`;
-    dbUI.mode.value='layer';dbSyncMode();dbUpdateBlend();
-    dbSetStatus(`∞ EVOLUTION LOADED · ${library[id].name} as Source A. Choose Source B to evolve again.`);
-    dbEvolutionUpdateLimit();
+    const dialog=document.getElementById('dbEvolutionLibraryDialog');
+    const list=document.getElementById('dbEvolutionLibraryList');
+    if(!dialog||!list){dbSetStatus('EVOLUTION · Library panel unavailable.');return;}
+    const library=dbEvolutionLibrary();
+    const entries=Object.entries(library).filter(([,item])=>item&&Array.isArray(item.leaves))
+        .sort((a,b)=>(b[1].created||0)-(a[1].created||0));
+    list.replaceChildren();
+    if(!entries.length){
+        const empty=document.createElement('p');
+        empty.textContent='No saved Evolutions yet. Create a Binding, then select SAVE EVOLUTION to add it here.';
+        list.append(empty);
+    }
+    for(const [id,item] of entries){
+        const row=document.createElement('div');row.className='db-evolution-library-row';
+        const info=document.createElement('div');
+        const title=document.createElement('strong');title.textContent=item.name||'Untitled Evolution';
+        const detail=document.createElement('small');detail.textContent=`GEN ${item.depth||1} · ${item.leaves.length} LAYERS`;
+        info.append(title,detail);
+        const actions=document.createElement('div');actions.className='db-evolution-library-row-actions';
+        for(const side of ['A','B']){
+            const button=document.createElement('button');button.type='button';
+            button.textContent=`LOAD → ${side}`;
+            button.addEventListener('click',()=>{
+                dbFillLayerSelectors();
+                const value=`evolution:${id}`;
+                if(![...dbUI[side].options].some(option=>option.value===value)){
+                    dbSetStatus('EVOLUTION · This preset is unavailable.');return;
+                }
+                dbReleaseAllBindings();
+                dbUI[side].value=value;
+                dbUI.mode.value='layer';
+                dbSyncMode();dbUpdateBlend();dbEvolutionUpdateLimit();
+                dialog.close();
+                dbSetStatus(`∞ EVOLUTION LOADED · ${item.name} as Source ${side}.`);
+                document.getElementById('dbBindingStudio')?.scrollIntoView({behavior:'smooth',block:'start'});
+            });
+            actions.append(button);
+        }
+        row.append(info,actions);list.append(row);
+    }
+    if(!dialog.open)dialog.showModal();
 }
 function dbEvolutionUpdateLimit(){
     const label=document.getElementById('dbEvolutionLimit');if(!label)return;
@@ -18521,6 +18576,7 @@ document.getElementById('dbRandomizeBinding')?.addEventListener('click',dbRandom
 document.getElementById('dbSaveEvolution')?.addEventListener('click',dbEvolutionOpen);
 document.getElementById('dbLoadEvolution')?.addEventListener('click',dbEvolutionLoad);
 document.getElementById('dbSuggestEvolutionName')?.addEventListener('click',dbSuggestEvolutionName);
+document.getElementById('dbEvolutionLibraryClose')?.addEventListener('click',()=>document.getElementById('dbEvolutionLibraryDialog')?.close());
 document.getElementById('dbEvolutionForm')?.addEventListener('submit',dbEvolutionSave);
 for(const id of ['dbLayerA','dbLayerB','dbBlend'])document.getElementById(id)?.addEventListener('change',dbEvolutionUpdateLimit);
 dbEvolutionUpdateLimit();
