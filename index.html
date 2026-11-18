@@ -526,5 +526,38 @@
 })();
 </script>
 <script src="banner-mist.js?v=1" defer></script>
+
+<!-- Dream Binder Stage 05: connect artwork hotspots to existing working navigation. -->
+<script>
+(function () {
+  if (window.__dbStage05RoutingInstalled) return;
+  window.__dbStage05RoutingInstalled = true;
+  document.addEventListener('click', function (event) {
+    const tile = event.target.closest('.db-stage05-tiles button[data-stage05-page]');
+    if (!tile) return;
+    event.preventDefault();
+    const buttons = Array.from(tile.parentElement.querySelectorAll('button[data-stage05-page]'));
+    const index = buttons.indexOf(tile);
+    // The fifth and sixth panels use the existing effects and bindings pages.
+    const page = tile.dataset.stage05Page;
+    const tab = document.querySelector('.db-edit-tab[data-page="' + page + '"]');
+    if (!tab) { console.warn('Dream Binder: no destination tab for', page); return; }
+    tab.click();
+    buttons.forEach(b => b.classList.remove('db-stage05-selected'));
+    tile.classList.add('db-stage05-selected');
+    tile.setAttribute('aria-pressed', 'true');
+    buttons.filter(b => b !== tile).forEach(b => b.setAttribute('aria-pressed', 'false'));
+    // Noise/Textures: bring up its live controls, not just the FX landing page.
+    if (index === 3) {
+      const noiseFocus = document.querySelector('.db-fx-quick-button[data-focus="noise"]');
+      if (noiseFocus) noiseFocus.click();
+    }
+    // Atmosphere FX: land on the effects rack controls.
+    if (index === 4) {
+      document.querySelector('.db-edit-tab[data-page="fx"]')?.click();
+    }
+  });
+})();
+</script>
 </body>
 </html>
