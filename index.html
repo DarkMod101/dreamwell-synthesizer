@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dream Binder · Resonance Workstation</title>
-<meta content="#080717" name="theme-color"/><link href="style.css?v=resonance-chassis-20261118" rel="stylesheet"/><link rel="manifest" href="manifest.webmanifest"/><link rel="icon" type="image/png" href="assets/icon/icon-192.png"/><meta name="apple-mobile-web-app-capable" content="yes"/></head>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=resonance-chassis-20261118" rel="stylesheet"/><link rel="stylesheet" href="dream-matrix.css?v=matrix-restored-20261118"/><link rel="manifest" href="manifest.webmanifest"/><link rel="icon" type="image/png" href="assets/icon/icon-192.png"/><meta name="apple-mobile-web-app-capable" content="yes"/></head>
 <body>
 <div id="db-startup-splash" role="status" aria-label="Opening Dream Binder">
   <img src="assets/splash/dream-binder-splash.webp" alt="Dream Binder — Resonant Doorways" fetchpriority="high" />
@@ -379,7 +379,33 @@
 </label></div></details></div><button aria-label="Focus DEEP DREAM ORBIT controls in the central display" class="db-rack-focus" data-focus="orbit" type="button">FOCUS ↗</button></section><section class="db-rack-unit" data-rack="presence"><div class="db-rack-left"><span class="db-rack-light"></span><div><strong>PRESENCE</strong><small>TONAL DEPTH</small></div></div><canvas aria-label="PRESENCE parameter visualization" class="db-rack-canvas" data-rack-canvas="presence" height="94" role="img" width="330"></canvas><div class="db-rack-controls" id="dbRackControlsPresence"><details class="panel db-module db-workstation-module db-rack-presence" open=""><summary>PRESENCE</summary><div class="db-module-content"><label>
 <span>Presence <strong id="presenceValue">0%</strong></span>
 <input id="presence" max="100" min="0" step="1" type="range" value="0"/>
-</label></div></details></div><button aria-label="Focus PRESENCE controls in the central display" class="db-rack-focus" data-focus="presence" type="button">FOCUS ↗</button></section></section></section><section aria-label="Performance keyboard dock" class="db-performance-dock" id="dbPerformanceDock">
+</label></div></details></div><button aria-label="Focus PRESENCE controls in the central display" class="db-rack-focus" data-focus="presence" type="button">FOCUS ↗</button></section></section></section><!-- Dream Matrix: dedicated module immediately above the performance keyboard -->
+<section class="dm-dedicated-panel" aria-label="Dream Matrix workstation">
+  <div><small>RESONANCE / PERFORMANCE</small><strong>DREAM MATRIX</strong><span>XYZ modulation · geometry · motion</span></div>
+  <button id="dm-launch" type="button">OPEN DREAM MATRIX ↗</button>
+</section>
+<div class="dm-overlay" id="dm-modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Dream Matrix">
+ <section class="dm-station">
+  <header><div><small>RESONANT DOORWAYS / PERFORMANCE</small><h2>DREAM <em>MATRIX</em> <span class="dm-tag">XYZ</span></h2></div><button type="button" id="dm-close" aria-label="Close Dream Matrix">✕ CLOSE</button></header>
+  <div class="dm-layout">
+   <div class="dm-main">
+    <div class="dm-geometry-shell"><div class="dm-geometry-head"><span>RESONANCE GEOMETRY</span><span id="dm-shape-label">ORBIT</span></div><canvas id="dm-geometry" width="780" height="420" aria-label="Interactive three-dimensional resonance trajectory"></canvas><div class="dm-geometry-bottom"><span>XYZ / RESONANCE FIELD</span><span id="dm-values">X 50% · Y 50% · Z 50%</span></div></div>
+    <div id="dm-pad" class="dm-pad" role="slider" tabindex="0" aria-label="Dream Matrix XY performance pad" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"><div class="dm-grid"></div><div id="dm-trace" class="dm-trace"></div><div id="dm-orb" class="dm-orb"></div><span class="dm-corner dm-tl">Y + / X −</span><span class="dm-corner dm-br">X + / Y −</span></div>
+   </div>
+   <div class="dm-side">
+    <div class="dm-mappings"><label>X AXIS<select id="dm-x"></select></label><label>Y AXIS<select id="dm-y"></select></label><label>Z AXIS<select id="dm-z"></select></label></div>
+    <label class="dm-field">TRAJECTORY<select id="dm-path"><option value="orbit">Orbit</option><option value="ellipse">Ellipse</option><option value="eight">Figure Eight</option><option value="spiral">Spiral</option><option value="helix">Helix</option><option value="trefoil">Trefoil</option><option value="lorenz">Lorenz Attractor</option></select></label>
+    <label class="dm-field">INTERACTION<select id="dm-interaction"><option value="rotate">Rotate Geometry</option><option value="perform">Perform XYZ</option></select></label>
+    <label class="dm-field">Z DEPTH <output id="dm-z-value">50%</output><input type="range" id="dm-z-depth" min="0" max="100" value="50"></label>
+    <label class="dm-field">PATH SPEED <output id="dm-speed-value">0.30 Hz</output><input type="range" id="dm-speed" min="0.05" max="2" step="0.05" value="0.3"></label>
+    <label class="dm-field">PATH SCALE <output id="dm-scale-value">85%</output><input type="range" id="dm-scale" min="5" max="100" value="85"></label>
+    <div class="dm-actions"><button type="button" id="dm-run">▶ START PATH</button><button type="button" id="dm-center">◎ CENTER</button><label><input type="checkbox" id="dm-hold" checked> HOLD</label></div>
+    <p class="dm-note">Map three sound parameters to X, Y and Z. Drag the pad or run a trajectory to shape the sound.</p>
+   </div>
+  </div>
+ </section>
+</div>
+<section aria-label="Performance keyboard dock" class="db-performance-dock" id="dbPerformanceDock">
 <div class="db-performance-toolbar">
 <div class="db-keyboard-title"><span class="db-eyebrow">05 / KEYBOARD</span><h2>Performance</h2><p>Touch / MIDI</p></div>
 <section class="octave-controls">
@@ -503,6 +529,7 @@
 </div><!-- /preset-browser -->
 </div><!-- /preset-browser-overlay -->
 <script src="app.js?v=dream-journey-20261118"></script>
+<script src="dream-matrix.js?v=matrix-restored-20261118" defer></script>
 <script src="nexus-ui.js?v=atlas-entry-clean-1"></script>
 <script src="atlas-static.js?v=1" defer></script>
 <script>
