@@ -2898,77 +2898,40 @@ body::after {display:none!important;}
 
 
 
-/* STAGE 08C — isolated bolted CORNER pieces; no connecting top bar.
-   Uses two independent transparent WebPs per orientation.
-   Keep the existing masthead ::before for its background artwork. */
-.db-masthead {
+/* STAGE 08F — RESTORED CONNECTED HEADER MOUNT
+   One solid-metal upper mounting piece per orientation. The empty opening
+   is transparent only so the original banner remains visible underneath.
+   No four-corner layers, no negative offsets, no oversized corner art. */
+.db-chassis > .db-masthead {
   position:relative !important;
   isolation:isolate !important;
   overflow:hidden !important;
 }
-.db-masthead::after {
+.db-chassis > .db-masthead::after {
   content:"" !important;
   display:block !important;
   position:absolute !important;
-  inset:0 !important;
+  top:0 !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:auto !important;
+  height:44% !important;
   z-index:12 !important;
   pointer-events:none !important;
   opacity:1 !important;
   border:0 !important;
   box-shadow:none !important;
   background-color:transparent !important;
-  background-image:
-    url("assets/ui/stage-08/stage-08-portrait-left-corner.webp"),
-    url("assets/ui/stage-08/stage-08-portrait-right-corner.webp") !important;
-  background-repeat:no-repeat,no-repeat !important;
-  background-position:left 2% top 2%,right 2% top 2% !important;
-  background-size:19% auto,19% auto !important;
+  background-image:url("assets/ui/stage-08/stage-08-corner-mount-portrait.webp") !important;
+  background-repeat:no-repeat !important;
+  background-position:center top !important;
+  background-size:100% 100% !important;
   mix-blend-mode:normal !important;
 }
 @media (orientation:landscape) {
-  .db-masthead::after {
-    background-image:
-      url("assets/ui/stage-08/stage-08-landscape-left-corner.webp"),
-      url("assets/ui/stage-08/stage-08-landscape-right-corner.webp") !important;
-    background-position:left 1% top 3%,right 1% top 3% !important;
-    background-size:12% auto,12% auto !important;
-  }
-}
-.db-masthead .db-banner-mist {pointer-events:none !important;}
-
-
-/* STAGE 08D — CORNER ANCHOR FIX (2026-11-17)
-   Existing Stage 08 WebPs remain unchanged. The brackets attach to the
-   masthead edges; landscape source WebPs contain transparent top padding,
-   compensated below. No header resize or audio changes. */
-.db-chassis > .db-masthead { position:relative !important; overflow:hidden !important; }
-.db-chassis > .db-masthead::after {
-  inset:0 !important;
-  background-position:left 0 top 0, right 0 top 0 !important;
-  background-size:clamp(76px, 17%, 136px) auto,clamp(76px, 17%, 136px) auto !important;
-  background-origin:border-box !important;
-  background-clip:border-box !important;
-  pointer-events:none !important;
-}
-@media (orientation:landscape) {
   .db-chassis > .db-masthead::after {
-    /* Remove the visible top gap caused by transparent pixels in landscape WebPs. */
-    background-position:
-      left 0 top calc(-1 * clamp(17px, 2.0vw, 31px)),
-      right 0 top calc(-1 * clamp(17px, 2.0vw, 31px)) !important;
-    background-size:clamp(95px, 11%, 180px) auto,clamp(95px, 11%, 180px) auto !important;
+    height:61% !important;
+    background-image:url("assets/ui/stage-08/stage-08-corner-mount-landscape.webp") !important;
   }
 }
-
-/* STAGE 08E — transparent cropped metal corners. Overrides Stage 08C/08D.
-   Each image is tightly cropped; no compensating negative offsets. */
-.db-chassis > .db-masthead::after {
-  background-position: left top, right top !important;
-  background-size: clamp(65px, 18%, 130px) auto, clamp(65px, 18%, 130px) auto !important;
-}
-@media (orientation:landscape) {
-  .db-chassis > .db-masthead::after {
-    background-position: left top, right top !important;
-    background-size: clamp(90px, 12%, 165px) auto, clamp(90px, 12%, 165px) auto !important;
-  }
-}
+.db-masthead .db-banner-mist { pointer-events:none !important; }
