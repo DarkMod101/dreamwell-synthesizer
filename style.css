@@ -3129,3 +3129,40 @@ body::after {display:none!important;}
 }
 @media (orientation:portrait) {.db-chassis {padding:3px !important;}}
 @media (orientation:landscape) {.db-chassis {padding:4px !important;}}
+
+
+/* STAGE 08 — FRAME-TO-FACEPLATE FIT (2026-11-18)
+   The frame is an overlay, not a layout box. Keep all art proportional.
+   Fill the exposed perimeter with the same metal texture rather than
+   enlarging any banner, Dream Atlas artwork, or workstation tiles. */
+.db-chassis {
+  padding:0 !important;
+  background-color:#181a24 !important;
+  background-image:url("assets/ui/stage-08/brushed-metal-synth-background.webp") !important;
+  background-size:100% auto !important;
+  background-position:center top !important;
+  background-repeat:repeat-y !important;
+  background-origin:border-box !important;
+  background-clip:border-box !important;
+  overflow:hidden !important;
+}
+.db-chassis::before {content:none !important;display:none !important;}
+.db-chassis::after {inset:0 !important;pointer-events:none !important;}
+.db-chassis > .db-masthead,
+.db-chassis > .db-patchbar,
+.db-chassis > .db-monitor-row,
+.db-chassis > .db-console-top,
+.db-chassis > .db-edit-console,
+.db-chassis > .db-effects-rack,
+.db-chassis > .db-keyboard-title,
+.db-chassis > .keyboard,
+.db-chassis > .octave-controls {
+  width:100% !important;
+  max-width:100% !important;
+  margin-inline:0 !important;
+  min-width:0 !important;
+}
+/* Preserve the existing outer chassis art and its corner bolts. */
+.db-chassis::after {
+  border-image-source:url("assets/ui/stage-06/dark-gunmetal-outer-chassis.webp") !important;
+}
