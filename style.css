@@ -2935,3 +2935,27 @@ body::after {display:none!important;}
   }
 }
 .db-masthead .db-banner-mist {pointer-events:none !important;}
+
+
+/* STAGE 08D — CORNER ANCHOR FIX (2026-11-17)
+   Existing Stage 08 WebPs remain unchanged. The brackets attach to the
+   masthead edges; landscape source WebPs contain transparent top padding,
+   compensated below. No header resize or audio changes. */
+.db-chassis > .db-masthead { position:relative !important; overflow:hidden !important; }
+.db-chassis > .db-masthead::after {
+  inset:0 !important;
+  background-position:left 0 top 0, right 0 top 0 !important;
+  background-size:clamp(76px, 17%, 136px) auto,clamp(76px, 17%, 136px) auto !important;
+  background-origin:border-box !important;
+  background-clip:border-box !important;
+  pointer-events:none !important;
+}
+@media (orientation:landscape) {
+  .db-chassis > .db-masthead::after {
+    /* Remove the visible top gap caused by transparent pixels in landscape WebPs. */
+    background-position:
+      left 0 top calc(-1 * clamp(17px, 2.0vw, 31px)),
+      right 0 top calc(-1 * clamp(17px, 2.0vw, 31px)) !important;
+    background-size:clamp(95px, 11%, 180px) auto,clamp(95px, 11%, 180px) auto !important;
+  }
+}
