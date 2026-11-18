@@ -3238,3 +3238,11 @@ body::after {display:none!important;}
     letter-spacing: 0 !important;
   }
 }
+
+/* DREAM BINDER — landscape source indicator inset (2026-11-18).
+   Shift the orb and its label together; portrait and other panels unchanged. */
+@media (orientation: landscape) {
+  .db-chassis > .db-patchbar {
+    padding-left: 24px !important;
+  }
+}
