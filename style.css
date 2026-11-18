@@ -3170,53 +3170,71 @@ body::after {display:none!important;}
 /* Stage 08 rim-matte repair: the approved outer frame is unchanged in size.
    Its opaque black inner matte is transparent in the WebP named above,
    revealing the existing brushed-metal backing underneath on all four sides. */
-/* STAGE 08 — LANDSCAPE INNER FIT REPAIR
-   Fix clipped source light, clipped right-side labels,
-   and reduce masthead head-cropping without stretching the banner. */
-@media (orientation: landscape) {
 
-  /* Pull the live content slightly inward so the outer chassis overlay
-     no longer cuts into the content area. */
-  .db-chassis > .db-masthead,
-  .db-chassis > .db-patchbar,
-  .db-chassis > .db-monitor-row,
-  .db-chassis > .db-console-top,
-  .db-chassis > .db-edit-console,
-  .db-chassis > .db-effects-rack,
-  .db-chassis > .db-keyboard-title,
-  .db-chassis > .keyboard,
-  .db-chassis > .octave-controls {
-    width: calc(100% - 28px) !important;
-    margin-left: 14px !important;
-    margin-right: 14px !important;
-    max-width: none !important;
-    box-sizing: border-box !important;
+/* DREAM BINDER — COMPACT INTEGRATED VISUAL QUALITY SELECTOR (2026-11-18)
+   The existing native select remains fully functional. It sits over the
+   selector depicted in the workstation artwork, not in a separate row. */
+.db-console-top.db-workstation-mesh {
+  margin-bottom: 0 !important;
+  overflow: visible !important;
+}
+.db-console-top.db-workstation-mesh .db-visual-quality {
+  position: absolute !important;
+  top: auto !important;
+  bottom: 3% !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  width: 36% !important;
+  max-width: 36% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 16% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  z-index: 25 !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 20px 0 8px !important;
+  border: 1px solid rgba(151,91,193,.85) !important;
+  border-radius: 5px !important;
+  background: linear-gradient(180deg,#1a1127 0%,#07050e 52%,#130d1e 100%) !important;
+  color: #f3e6fc !important;
+  box-shadow: inset 0 1px 1px #9e6cc344, inset 0 -2px 4px #000, 0 0 7px #8f32c866 !important;
+  font: 600 clamp(8px, .8vw, 12px)/1.1 Georgia, serif !important;
+  letter-spacing: .08em !important;
+  text-align: center !important;
+  text-align-last: center !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+.db-console-top.db-workstation-mesh #dbVisualQuality:focus-visible {
+  outline: 2px solid #d5a0ff !important;
+  outline-offset: 2px !important;
+}
+@media (orientation: portrait) {
+  .db-console-top.db-workstation-mesh { margin-bottom: 0 !important; }
+  .db-console-top.db-workstation-mesh .db-visual-quality {
+    width: 38% !important;
+    max-width: 38% !important;
+    bottom: 3% !important;
+    height: 17% !important;
   }
-
-  /* Keep the banner proportional, but reveal a little more of the upper artwork
-     so the figure’s head is not cropped so hard. */
-  .db-masthead {
-    background-size: cover !important;
-    background-position: center 40% !important;
-    overflow: hidden !important;
-  }
-
-  /* Give the source panel a little more breathing room so the cyan light
-     is fully visible and not cut by the left inner edge. */
-  .db-patchbar {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-    overflow: hidden !important;
-  }
-
-  .db-patch-info {
-    padding-left: 2px !important;
-  }
-
-  .db-patchbar .db-dot-power {
-    width: 10px !important;
-    height: 10px !important;
-    margin-left: 0 !important;
-    flex: 0 0 auto !important;
+  .db-console-top.db-workstation-mesh #dbVisualQuality {
+    font-size: clamp(7px, 1.7vw, 10px) !important;
+    padding-right: 10px !important;
+    padding-left: 3px !important;
+    letter-spacing: 0 !important;
   }
 }
