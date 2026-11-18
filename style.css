@@ -3483,3 +3483,14 @@ body::after {display:none!important;}
 
 /* Resonance Evolution · non-invasive controls and naming dialog */
 .db-evolution-actions{display:grid;gap:7px;width:100%;margin:10px 0 4px;justify-items:start}.db-evolution-actions button,.db-evolution-dialog button{border:1px solid #a17cce;border-radius:8px;background:linear-gradient(145deg,#292235,#13131e);color:#ebd8ff;padding:10px 12px;font-size:11px;letter-spacing:.09em;font-weight:700;min-height:40px}.db-evolution-actions button:hover,.db-evolution-dialog button:hover{border-color:#d6b1ff;box-shadow:0 0 14px #a47dff35}.db-evolution-actions small{font-size:10px;color:#c2afd9;letter-spacing:.06em}.db-evolution-dialog{width:min(430px,calc(100% - 24px));max-height:85dvh;overflow:auto;border:1px solid #a38ac6;border-radius:15px;background:linear-gradient(135deg,#24212d,#0b0b13);color:#f3eaff;padding:23px;box-shadow:0 22px 80px #000}.db-evolution-dialog::backdrop{background:#02030bc9}.db-evolution-dialog h2{font-size:19px;letter-spacing:.12em}.db-evolution-dialog p{font-size:12px;line-height:1.5;color:#c8bad8}.db-evolution-dialog label{margin:14px 0}.db-evolution-dialog input{width:100%;padding:12px;border-radius:8px;border:1px solid #80718e;background:#11101a;color:white}.db-evolution-dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:17px}@media(prefers-reduced-motion:reduce){.db-evolution-actions button{transition:none}}
+
+/* Resonance Evolution: dedicated saved-preset browser */
+.db-evolution-library-dialog{width:min(560px,calc(100% - 24px))}
+.db-evolution-library-list{display:grid;gap:10px;max-height:55dvh;overflow-y:auto;padding:4px 2px}
+.db-evolution-library-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid #68587f;border-radius:10px;background:linear-gradient(130deg,#23202f,#11121b)}
+.db-evolution-library-row>div:first-child{display:grid;gap:5px;min-width:0;overflow-wrap:anywhere}
+.db-evolution-library-row strong{font-size:13px;color:#f0e5ff}
+.db-evolution-library-row small{font-size:10px;color:#b5a4d2;letter-spacing:.08em}
+.db-evolution-library-row-actions{display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
+.db-evolution-library-row-actions button{min-height:36px;padding:7px 9px;font-size:10px}
+@media(max-width:430px){.db-evolution-library-row{align-items:stretch;flex-direction:column}.db-evolution-library-row-actions{justify-content:flex-start}}
