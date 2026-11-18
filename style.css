@@ -3003,8 +3003,8 @@ body::after {display:none!important;}
    and let every interior section use the same shared mounting width.
    ================================================================ */
 .db-chassis {
-  /* Frame stays in place; the inner content gets a consistent safe inset. */
-  padding: 12px 11px 12px !important;
+  /* Frame position unchanged: open the inner mounting clearance. */
+  padding: 6px 5px 6px !important;
   background-color: #171922 !important;
   background-image:
     linear-gradient(90deg,rgba(3,4,8,.30),transparent 3%,transparent 97%,rgba(3,4,8,.30)),
@@ -3063,23 +3063,33 @@ body::after {display:none!important;}
 /* Keep the instrument image proportions and existing six tile hotspots. */
 .db-chassis > .db-masthead::after {content:none !important;display:none !important;}
 @media (orientation:portrait) {
-  .db-chassis {padding:10px 9px 10px !important;}
+  .db-chassis {padding:5px 4px 6px !important;}
   .db-chassis::before {inset:8px !important;}
 }
 @media (orientation:landscape) {
-  .db-chassis {padding:12px 12px 12px !important;}
+  .db-chassis {padding:7px 6px 7px !important;}
 }
 
-/* STAGE 12 — Restore supplied brushed metal beneath all modules.
-   Keep Stage 11 geometry and Stage 06 perimeter intact. */
+/* STAGE 08 — BRUSHED-METAL FACEPLATE / RIM SEAM REFINEMENT
+   Stage 11 alignment remains, but no longer holds modules in a wide inset.
+   The supplied metal texture is almost black at its own left/right edges;
+   enlarge the CSS background *only* so its dark baked-in vignettes fall
+   behind the existing Stage 06 rim. The outer rim stays exactly in place.
+   Only texture crops, never banner, buttons, keyboard or artwork. */
 .db-chassis {
   background-color:#0d0e15 !important;
   background-image:url("assets/ui/stage-08/brushed-metal-synth-background.webp") !important;
-  background-size:100% auto !important;
+  background-size:122% auto !important;
   background-position:center top !important;
   background-repeat:repeat-y !important;
   background-origin:border-box !important;
   background-clip:border-box !important;
 }
-/* Do not cover the actual metal image with the Stage 11 solid-color underlay. */
-.db-chassis::before { content:none !important; display:none !important; }
+/* The solid-color underlay hid the real brushed-metal grain. */
+.db-chassis::before {content:none !important;display:none !important;}
+@media (orientation:portrait) {
+  .db-chassis {background-size:124% auto !important;}
+}
+@media (orientation:landscape) {
+  .db-chassis {background-size:118% auto !important;}
+}
