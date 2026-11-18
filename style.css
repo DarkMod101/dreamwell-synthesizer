@@ -3442,6 +3442,6 @@ body::after {display:none!important;}
   /* Reclaim clearance at the right chassis rim without resizing the
      Resonance Display image or shifting the Dream Atlas panel. */
   .db-chassis .db-hero-studio {
-    transform: translateX(-4px) !important;
+    transform: translateX(-5px) !important;
   }
 }
