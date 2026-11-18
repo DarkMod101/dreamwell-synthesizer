@@ -2957,3 +2957,40 @@ body::after {display:none!important;}
 }
 /* The banner is once again its own artwork, not a bracket clipping area. */
 .db-chassis > .db-masthead { isolation:auto !important; }
+
+/* STAGE 10 — fine fit of the existing single outer chassis.
+   Stage 06 chassis art remains the only perimeter; Stage 08 remains
+   referenced above for rollback but its banner mount stays disabled.
+   Keep all modules and the audio/interaction layers unchanged. */
+.db-chassis {
+  padding-left:3px !important;
+  padding-right:3px !important;
+  padding-top:3px !important;
+}
+.db-chassis > .db-masthead {
+  margin-left:0 !important;
+  margin-right:0 !important;
+}
+.db-chassis > .db-masthead::after {
+  content:none !important;
+  display:none !important;
+  background-image:none !important;
+}
+@media (orientation:portrait) {
+  .db-chassis {
+    padding-left:2px !important;
+    padding-right:2px !important;
+    padding-top:3px !important;
+  }
+  /* Preserve portrait banner height and the current artwork fit. */
+}
+@media (orientation:landscape) {
+  .db-chassis > .db-masthead {
+    min-height:clamp(127px, 13vw, 217px) !important;
+  }
+}
+@media (orientation:landscape) and (max-height:500px) {
+  .db-chassis > .db-masthead {
+    min-height:clamp(110px, 12vw, 172px) !important;
+  }
+}
