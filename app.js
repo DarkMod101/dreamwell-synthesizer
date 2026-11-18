@@ -878,6 +878,10 @@ function selectPresetBank(bankName) {
     tab.classList.toggle("active-bank", tab.dataset.bank === bankName);
   });
   renderPresetBrowser(bankName);
+  if (bankName !== 'atlas') {
+    const journey = document.getElementById('dbAtlasJourney');
+    if (journey) journey.hidden = true;
+  }
 }
 
 function showPresetMessage(message) {
@@ -18258,15 +18262,45 @@ function dbRenderGallery() {
     caption.textContent=option.textContent;
     card.append(art);
     card.addEventListener('click',()=>{
-      realmSelect.value=id;
-      selectPresetBank('atlas');
-      dbSyncGallery();
-      document.getElementById('presetBrowserList')?.scrollTo({top:0,behavior:'smooth'});
+      dbEnterDreamRealm(id, option.textContent, card);
     });
     target.append(card);
   }
   dbSyncGallery();
 }
+// Dream Atlas navigation: entering a realm changes the visible collection,
+// never the active sound. Presets still load only when individually tapped.
+function dbAtlasScrollTo(element, smooth = true) {
+  const scroller = document.getElementById('dbLibraryScroll');
+  if (!scroller || !element) return;
+  const destination = element.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop - 12;
+  scroller.scrollTo({top: Math.max(0, destination), behavior: smooth && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'instant'});
+}
+function dbEnterDreamRealm(id, title, card) {
+  const realmSelect = document.getElementById('dreamAtlasRealm');
+  if (!realmSelect) return;
+  realmSelect.value = id;
+  selectPresetBank('atlas');
+  dbSyncGallery();
+  const journey = document.getElementById('dbAtlasJourney');
+  const heading = document.getElementById('dbAtlasJourneyHeading');
+  if (heading) heading.textContent = title.toUpperCase();
+  if (journey) journey.hidden = false;
+  card?.classList.add('db-realm-entering');
+  window.setTimeout(() => card?.classList.remove('db-realm-entering'), 500);
+  // Wait for the browser to paint the selected collection before scrolling.
+  requestAnimationFrame(() => requestAnimationFrame(() => dbAtlasScrollTo(journey || document.getElementById('presetBrowserList'))));
+}
+function dbReturnToDreams() {
+  const realmSelect = document.getElementById('dreamAtlasRealm');
+  if (realmSelect) realmSelect.value = 'all';
+  selectPresetBank('atlas');
+  dbSyncGallery();
+  const journey = document.getElementById('dbAtlasJourney');
+  if (journey) journey.hidden = true;
+  requestAnimationFrame(() => dbAtlasScrollTo(document.getElementById('dbRealmGallery')));
+}
+document.getElementById('dbAtlasReturn')?.addEventListener('click', dbReturnToDreams);
 function dbSyncGallery() {
   const active=document.getElementById('dreamAtlasRealm')?.value;
   document.querySelectorAll('.db-realm-card').forEach(card=>{
@@ -18326,7 +18360,7 @@ function dbDrawSpectrum(time) {
     context.fillStyle=fill;context.fill();context.restore();
 }
 function dbSelectSource(source) {
-    if (source==='atlas') {openPresetBrowser();selectPresetBank('atlas');dbSyncGallery();return;}
+    if (source==='atlas') {openPresetBrowser();dbReturnToDreams();return;}
     if (source==='bindings') {document.getElementById('dbBindingStudio')?.scrollIntoView({behavior:'smooth',block:'start'});return;}
     dbReleaseAllBindings();if (dbUI.mode) dbUI.mode.value='off';dbSyncMode();
     currentResonanceSource=source;currentEngine=source;
