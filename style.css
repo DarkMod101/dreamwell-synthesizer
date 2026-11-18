@@ -3282,3 +3282,54 @@ body::after {display:none!important;}
     height: 100% !important;
   }
 }
+
+
+/* DREAM ATLAS — compact ENTER label, readable over moving artwork.
+   Only the text element is styled; the full-size Atlas button and static canvas remain intact. */
+.db-hero-art #dbAtlasHero > span,
+.db-hero-art #dbAtlasHero:hover > span,
+.db-hero-art #dbAtlasHero:active > span {
+  z-index: 2 !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+  padding: 4px 13px !important;
+  color: #fff5ff !important;
+  font: 400 clamp(12px, 1.25vw, 16px)/1.2 Georgia, 'Times New Roman', serif !important;
+  letter-spacing: .24em !important;
+  text-shadow: 0 2px 3px #000, 0 0 7px #000, 0 0 12px rgba(0,0,0,.95) !important;
+  animation: none !important;
+  opacity: 1 !important;
+}
+.db-hero-art #dbAtlasHero > span::before,
+.db-hero-art #dbAtlasHero:hover > span::before,
+.db-hero-art #dbAtlasHero:active > span::before {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  inset: -4px -13px !important;
+  z-index: -1 !important;
+  pointer-events: none !important;
+  border-radius: 50% !important;
+  background: radial-gradient(ellipse, rgba(0,0,0,.94) 0%, rgba(0,0,0,.70) 43%, rgba(0,0,0,0) 75%) !important;
+  opacity: .88 !important;
+  transform: scale(1) !important;
+  transition: transform 420ms ease-out, opacity 420ms ease-out !important;
+}
+.db-hero-art #dbAtlasHero:is(:hover, :focus-visible, :active) > span::before {
+  transform: scale(1.65) !important;
+  opacity: 1 !important;
+}
+.db-hero-art #dbAtlasHero:active > span {
+  color: #ffffff !important;
+}
+@media (orientation: portrait) {
+  .db-hero-art #dbAtlasHero > span,
+  .db-hero-art #dbAtlasHero:hover > span,
+  .db-hero-art #dbAtlasHero:active > span {
+    font-size: 12px !important;
+    letter-spacing: .20em !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .db-hero-art #dbAtlasHero > span::before { transition: none !important; }
+}
