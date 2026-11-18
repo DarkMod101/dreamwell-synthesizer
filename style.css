@@ -3095,25 +3095,22 @@ body::after {display:none!important;}
 }
 
 
-/* STAGE 08 — FULL-WIDTH METAL FACE / OUTER RIM FIT (2026-11-18)
-   The existing Stage 06 rim stays in place. Remove the remaining layout
-   inset so the metal face and module stack extend behind its inner lip.
-   The 9-slice frame remains above everything and cannot intercept taps. */
+/* STAGE 08 — CORRECTED INNER CLEARANCE (NO ARTWORK SCALING)
+   Outer Stage 06 chassis is untouched. Background uses natural proportions.
+   Open the mounting area without enlarging banners, cards or controls. */
 .db-chassis {
   box-sizing:border-box !important;
-  padding:0 !important;
+  padding:4px !important;
   background-color:#181a24 !important;
   background-image:url("assets/ui/stage-08/brushed-metal-synth-background.webp") !important;
-  background-size:145% auto !important;
+  background-size:100% auto !important;
   background-position:center top !important;
   background-repeat:repeat-y !important;
   background-origin:border-box !important;
   background-clip:border-box !important;
 }
-.db-chassis::after {
-  inset:0 !important;
-  pointer-events:none !important;
-}
+.db-chassis::before {content:none !important;display:none !important;}
+.db-chassis::after {inset:0 !important;pointer-events:none !important;}
 .db-chassis > .db-masthead,
 .db-chassis > .db-patchbar,
 .db-chassis > .db-monitor-row,
@@ -3126,12 +3123,9 @@ body::after {display:none!important;}
   box-sizing:border-box !important;
   width:100% !important;
   max-width:100% !important;
+  min-width:0 !important;
   margin-left:0 !important;
   margin-right:0 !important;
 }
-@media (orientation:portrait) {
-  .db-chassis {padding:0 !important; background-size:155% auto !important;}
-}
-@media (orientation:landscape) {
-  .db-chassis {padding:0 !important; background-size:140% auto !important;}
-}
+@media (orientation:portrait) {.db-chassis {padding:3px !important;}}
+@media (orientation:landscape) {.db-chassis {padding:4px !important;}}
