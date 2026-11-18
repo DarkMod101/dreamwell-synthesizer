@@ -18207,6 +18207,52 @@ function dbUpdateBlend() {
     }
     dbStoreBinding();
 }
+// Discover two distinct real presets without loading or overwriting global sounds.
+function dbRandomizeBinding() {
+    if (!dbUI.A || !dbUI.B || !dbUI.mode || !dbUI.balance) return;
+    // Refresh available factory, Atlas and user presets before choosing.
+    dbFillLayerSelectors();
+    const options = [...dbUI.A.options].filter(option =>
+        !option.disabled && option.value &&
+        !option.value.startsWith('capture:') &&
+        !!dbSettingsForLayer(option.value)
+    );
+    // Each unique ID is eligible once; exclude ephemeral captures.
+    const ids = [...new Set(options.map(option => option.value))];
+    if (ids.length < 2) {
+        dbSetStatus('RANDOMIZER · At least two available presets are required.');
+        return;
+    }
+    const randomIndex = length => {
+        if (globalThis.crypto?.getRandomValues) {
+            const number = new Uint32Array(1);
+            const limit = Math.floor(0x100000000 / length) * length;
+            do { globalThis.crypto.getRandomValues(number); } while (number[0] >= limit);
+            return number[0] % length;
+        }
+        return Math.floor(Math.random() * length);
+    };
+    const firstIndex = randomIndex(ids.length);
+    const secondIndex = randomIndex(ids.length - 1);
+    const first = ids[firstIndex];
+    const second = ids[secondIndex >= firstIndex ? secondIndex + 1 : secondIndex];
+    dbReleaseAllBindings();
+    dbUI.A.value = first;
+    dbUI.B.value = second;
+    dbUI.balance.value = '50';
+    dbUI.mode.value = 'layer';
+    dbSyncMode();
+    dbUpdateBlend();
+    const left = dbSettingsForLayer(first)?.name || 'Source A';
+    const right = dbSettingsForLayer(second)?.name || 'Source B';
+    dbSetStatus(`✧ BINDING CREATED · ${left} + ${right} · 50 / 50. Play the keyboard to explore.`);
+    const button = document.getElementById('dbRandomizeBinding');
+    if (button) {
+        button.classList.remove('db-binding-randomized');
+        void button.offsetWidth;
+        button.classList.add('db-binding-randomized');
+    }
+}
 function dbPopulateSplitNotes() {
     if (!dbUI.split) return;
     for (let n=36;n<=84;n++) {
@@ -18382,6 +18428,7 @@ dbSpectrumFrame=requestAnimationFrame(dbDrawSpectrum);
 for(const id of ['dbLayerA','dbLayerB','dbSplitNote']) document.getElementById(id)?.addEventListener('change',dbSyncMode);
 dbUI.mode?.addEventListener('change',dbSyncMode);
 dbUI.balance?.addEventListener('input',dbUpdateBlend);
+document.getElementById('dbRandomizeBinding')?.addEventListener('click',dbRandomizeBinding);
 document.getElementById('dbCaptureA')?.addEventListener('click',()=>dbCaptureSound('A'));
 document.getElementById('dbCaptureB')?.addEventListener('click',()=>dbCaptureSound('B'));
 document.getElementById('dbAtlasHero')?.addEventListener('click',()=>dbSelectSource('atlas'));
