@@ -3494,3 +3494,7 @@ body::after {display:none!important;}
 .db-evolution-library-row-actions{display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
 .db-evolution-library-row-actions button{min-height:36px;padding:7px 9px;font-size:10px}
 @media(max-width:430px){.db-evolution-library-row{align-items:stretch;flex-direction:column}.db-evolution-library-row-actions{justify-content:flex-start}}
+
+/* Evolution dialogs: preserve native closed state and ensure tap target. */
+.db-evolution-dialog:not([open]){display:none!important}
+#dbEvolutionLibraryClose{position:relative;z-index:2;touch-action:manipulation;min-width:94px;min-height:44px}
