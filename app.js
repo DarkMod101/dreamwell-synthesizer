@@ -18576,7 +18576,26 @@ document.getElementById('dbRandomizeBinding')?.addEventListener('click',dbRandom
 document.getElementById('dbSaveEvolution')?.addEventListener('click',dbEvolutionOpen);
 document.getElementById('dbLoadEvolution')?.addEventListener('click',dbEvolutionLoad);
 document.getElementById('dbSuggestEvolutionName')?.addEventListener('click',dbSuggestEvolutionName);
-document.getElementById('dbEvolutionLibraryClose')?.addEventListener('click',()=>document.getElementById('dbEvolutionLibraryDialog')?.close());
+// Explicit Android-safe dismissal for both Evolution dialogs.
+function dbDismissEvolutionDialog(dialog){
+    if(!dialog)return;
+    if(typeof dialog.close==='function' && dialog.open)dialog.close();
+    // Keep the native dialog state intact; hidden is only a defensive fallback.
+}
+document.getElementById('dbEvolutionLibraryClose')?.addEventListener('click',(event)=>{
+    event.preventDefault();event.stopPropagation();
+    dbDismissEvolutionDialog(document.getElementById('dbEvolutionLibraryDialog'));
+});
+for(const dialogId of ['dbEvolutionLibraryDialog','dbEvolutionDialog']){
+    const dialog=document.getElementById(dialogId);
+    dialog?.addEventListener('click',(event)=>{
+        if(event.target===dialog){
+            const rect=dialog.getBoundingClientRect();
+            if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dbDismissEvolutionDialog(dialog);
+        }
+    });
+}
+
 document.getElementById('dbEvolutionForm')?.addEventListener('submit',dbEvolutionSave);
 for(const id of ['dbLayerA','dbLayerB','dbBlend'])document.getElementById(id)?.addEventListener('change',dbEvolutionUpdateLimit);
 dbEvolutionUpdateLimit();
