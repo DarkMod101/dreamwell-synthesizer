@@ -3515,3 +3515,6 @@ body::after {display:none!important;}
 /* Industrial Electronic Stage 5 — Rhythmic Gate (Motion) */
 .db-industrial-gate{grid-column:span 4}
 .db-industrial-gate .db-module-content{gap:12px}
+
+/* Stage 6: preserve existing scrollable factory-bank navigation on narrow Android screens. */
+.preset-browser-tabs{overflow-x:auto;overscroll-behavior-x:contain;}
