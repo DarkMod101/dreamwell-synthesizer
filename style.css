@@ -3502,3 +3502,6 @@ body::after {display:none!important;}
 /* Industrial Stage 1 — existing PHYSICS module styling */
 .db-pitch-envelope-module{grid-column:span 3}
 .db-pitch-envelope-module .db-module-content{gap:12px}
+
+/* Industrial Electronic Stage 2 — matches existing Resonance modules */
+.db-ring-panel{grid-column:span 3}
