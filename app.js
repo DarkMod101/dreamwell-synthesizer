@@ -2630,6 +2630,101 @@ function dbDriveCreate(ctx, input, output) {
   return voice;
 }
 
+// DREAM BINDER — INDUSTRIAL ELECTRONIC STAGE 4: SAMPLE & HOLD
+// A looped, stepped control buffer avoids per-note JavaScript timers.
+// Synth only. Disabled by default; no audio nodes allocated in bypass.
+const dbSHIds = ["dbSHEnabled", "dbSHRate", "dbSHDepth", "dbSHDestination"];
+function dbSHRead() {
+  const el = id => document.getElementById(id);
+  const num = (id, fallback) => Number(el(id)?.value ?? fallback);
+  return {
+    enabled: el("dbSHEnabled")?.checked === true,
+    rate: Math.max(0.5, Math.min(40, num("dbSHRate", 8))),
+    depth: Math.max(0, Math.min(100, num("dbSHDepth", 0))),
+    destination: el("dbSHDestination")?.value === "pitch" ? "pitch" : "filter"
+  };
+}
+function dbSHRefresh() {
+  const s = dbSHRead();
+  const rate = document.getElementById("dbSHRateValue");
+  const depth = document.getElementById("dbSHDepthValue");
+  if (rate) rate.textContent = `${s.rate.toFixed(1)} Hz`;
+  if (depth) depth.textContent = `${s.depth}%`;
+  if (typeof activeNotes !== "undefined") activeNotes.forEach(note => note.dbSH?.update());
+}
+for (const id of dbSHIds) {
+  document.getElementById(id)?.addEventListener("input", dbSHRefresh);
+  document.getElementById(id)?.addEventListener("change", dbSHRefresh);
+}
+dbSHRefresh();
+function dbSHApplyPreset(preset = {}) {
+  const set = (id, value, prop = "value") => {
+    const node = document.getElementById(id);
+    if (node) node[prop] = value;
+  };
+  set("dbSHEnabled", preset.dbSHEnabled === true, "checked");
+  set("dbSHRate", preset.dbSHRate ?? 8);
+  set("dbSHDepth", preset.dbSHDepth ?? 0);
+  set("dbSHDestination", preset.dbSHDestination ?? "filter");
+  dbSHRefresh();
+}
+const dbSHBuffers = new WeakMap();
+function dbSHGetBuffer(ctx) {
+  if (dbSHBuffers.has(ctx)) return dbSHBuffers.get(ctx);
+  // 64 random held values, each 256 samples; 64-step loop.
+  const steps = 64, samplesPerStep = 256;
+  const buffer = ctx.createBuffer(1, steps * samplesPerStep, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < steps; i++) {
+    const value = Math.random() * 2 - 1;
+    data.fill(value, i * samplesPerStep, (i + 1) * samplesPerStep);
+  }
+  dbSHBuffers.set(ctx, buffer);
+  return buffer;
+}
+function dbSHCreate(ctx, oscillatorA, oscillatorB, subOscillator, filter) {
+  const initial = dbSHRead();
+  if (!initial.enabled || initial.depth <= 0) return null;
+  const source = ctx.createBufferSource();
+  source.buffer = dbSHGetBuffer(ctx);
+  source.loop = true;
+  const pitchGain = ctx.createGain();
+  const filterGain = ctx.createGain();
+  source.connect(pitchGain);
+  source.connect(filterGain);
+  pitchGain.connect(oscillatorA.detune);
+  pitchGain.connect(oscillatorB.detune);
+  pitchGain.connect(subOscillator.detune);
+  filterGain.connect(filter.detune);
+  let stopped = false;
+  const voice = {
+    update() {
+      if (stopped) return;
+      const s = dbSHRead();
+      const now = ctx.currentTime;
+      const active = s.enabled ? s.depth / 100 : 0;
+      // Buffer's original step rate is sampleRate / 256.
+      source.playbackRate.setTargetAtTime(s.rate * 256 / ctx.sampleRate, now, 0.03);
+      pitchGain.gain.setTargetAtTime(s.destination === "pitch" ? 1200 * active : 0, now, 0.015);
+      filterGain.gain.setTargetAtTime(s.destination === "filter" ? 2400 * active : 0, now, 0.015);
+    },
+    stop(delay = 0) {
+      if (stopped) return;
+      stopped = true;
+      const seconds = Math.max(0, delay);
+      try { source.stop(ctx.currentTime + seconds); } catch (_) {}
+      setTimeout(() => {
+        for (const node of [source, pitchGain, filterGain]) {
+          try { node.disconnect(); } catch (_) {}
+        }
+      }, Math.ceil((seconds + 0.15) * 1000));
+    }
+  };
+  voice.update();
+  source.start();
+  return voice;
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
@@ -2894,6 +2989,7 @@ const resonantField = createSynthResonantField(
 const dbIndustrialDriveInput = ctx.createGain();
 const dbRing = dbRingCreate(ctx, frequency, resonantFieldOutput, dbIndustrialDriveInput);
 const dbDrive = dbDriveCreate(ctx, dbIndustrialDriveInput, noteGain);
+const dbSH = dbSHCreate(ctx, oscillatorA, oscillatorB, subOscillator, filter);
 
 noteGain.connect(stereoPanner);
 
@@ -2923,6 +3019,7 @@ stereoPanner.connect(delayNode);
   polynomialRing,
   dbRing,
   dbDrive,
+  dbSH,
   resonantField,
   lfoNodes,
   noiseSource,
@@ -3237,6 +3334,7 @@ if (note.release) {
   if (note.polynomialRing) note.polynomialRing.stop(release + 0.05);
   if (note.dbRing) note.dbRing.stop(release + 0.05);
   if (note.dbDrive) note.dbDrive.stop(release + 0.05);
+  if (note.dbSH) note.dbSH.stop(release + 0.05);
 
   if (note.resonantField) {
     note.resonantField.stop(release + 0.05);
@@ -17072,6 +17170,7 @@ function applyPresetSettings(preset) {
     dbPitchEnvApplyPreset(preset);
     dbRingApplyPreset(preset);
     dbDriveApplyPreset(preset);
+    dbSHApplyPreset(preset);
     if (!preset) return;
     dbReleaseAllBindings();
 
@@ -17594,6 +17693,7 @@ function getCurrentPresetSettings() {
   const dbPitch = dbPitchEnvRead();
   const dbRingState = dbRingRead();
   const dbDriveState = dbDriveRead();
+  const dbSHState = dbSHRead();
   // Snapshot the sound rather than only the legacy envelope/filter parameters.
   // Numeric values are serializable to JSON; checked boxes retain booleans.
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
@@ -17607,6 +17707,10 @@ function getCurrentPresetSettings() {
     dbDriveMix: dbDriveState.mix,
     dbDriveTone: dbDriveState.tone,
     dbDriveCharacter: dbDriveState.character,
+    dbSHEnabled: dbSHState.enabled,
+    dbSHRate: dbSHState.rate,
+    dbSHDepth: dbSHState.depth,
+    dbSHDestination: dbSHState.destination,
     dbPitchEnvEnabled: dbPitch.enabled,
     dbPitchEnvAmount: dbPitch.amount,
     dbPitchEnvAttack: dbPitch.attack,
