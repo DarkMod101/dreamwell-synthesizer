@@ -2430,6 +2430,93 @@ function dbPitchEnvSchedule(ctx, oscillators, frequency, startTime) {
   }
 }
 
+
+// DREAM BINDER — INDUSTRIAL ELECTRONIC STAGE 2: SYNTH RING MODULATION
+// A single modulator per active Synth note, allocated only when enabled.
+// No changes to Piano, Choir or existing neutral preset signal paths.
+const dbRingIds = ["dbRingEnabled", "dbRingFrequency", "dbRingDepth", "dbRingMode"];
+function dbRingRead() {
+  const el = id => document.getElementById(id);
+  const number = (id, fallback) => Number(el(id)?.value ?? fallback);
+  return {
+    enabled: el("dbRingEnabled")?.checked === true,
+    frequency: Math.max(0.5, Math.min(5000, number("dbRingFrequency", 110))),
+    depth: Math.max(0, Math.min(100, number("dbRingDepth", 0))),
+    mode: el("dbRingMode")?.value === "track" ? "track" : "fixed"
+  };
+}
+function dbRingRefresh() {
+  const s = dbRingRead();
+  const freq = document.getElementById("dbRingFrequencyValue");
+  const depth = document.getElementById("dbRingDepthValue");
+  if (freq) freq.textContent = `${s.frequency.toFixed(s.frequency < 10 ? 1 : 0)} Hz`;
+  if (depth) depth.textContent = `${s.depth}%`;
+  if (typeof activeNotes !== "undefined") activeNotes.forEach(note => note.dbRing?.update());
+}
+for (const id of dbRingIds) {
+  document.getElementById(id)?.addEventListener("input", dbRingRefresh);
+  document.getElementById(id)?.addEventListener("change", dbRingRefresh);
+}
+dbRingRefresh();
+function dbRingApplyPreset(preset = {}) {
+  const set = (id, value, key = "value") => { const e = document.getElementById(id); if (e) e[key] = value; };
+  set("dbRingEnabled", preset.dbRingEnabled === true, "checked");
+  set("dbRingFrequency", preset.dbRingFrequency ?? 110);
+  set("dbRingDepth", preset.dbRingDepth ?? 0);
+  set("dbRingMode", preset.dbRingMode ?? "fixed");
+  dbRingRefresh();
+}
+function dbRingCreate(ctx, noteFrequency, input, output) {
+  const state = dbRingRead();
+  if (!state.enabled || state.depth <= 0) {
+    input.connect(output);
+    return null;
+  }
+  const dry = ctx.createGain();
+  const wet = ctx.createGain();
+  const amplitude = ctx.createGain();
+  const carrier = ctx.createOscillator();
+  const bipolar = ctx.createGain();
+  carrier.type = "sine";
+  carrier.connect(bipolar);
+  bipolar.connect(amplitude.gain);
+  input.connect(dry);
+  input.connect(amplitude);
+  amplitude.connect(wet);
+  dry.connect(output);
+  wet.connect(output);
+  // Bipolar amplitude multiplication: a real ring modulator, not tremolo.
+  amplitude.gain.value = 0;
+  carrier.start();
+  let stopped = false;
+  const voice = {
+    update() {
+      if (stopped) return;
+      const s = dbRingRead();
+      const mix = s.enabled ? s.depth / 100 : 0;
+      const now = ctx.currentTime;
+      const hz = s.mode === "track" ? noteFrequency * s.frequency / 110 : s.frequency;
+      carrier.frequency.setTargetAtTime(Math.max(0.5, Math.min(ctx.sampleRate * 0.45, hz)), now, 0.015);
+      dry.gain.setTargetAtTime(1 - mix, now, 0.015);
+      wet.gain.setTargetAtTime(mix, now, 0.015);
+      bipolar.gain.setTargetAtTime(1, now, 0.015);
+    },
+    stop(delay = 0) {
+      if (stopped) return;
+      stopped = true;
+      const when = ctx.currentTime + Math.max(0, delay);
+      try { carrier.stop(when); } catch (_) {}
+      carrier.onended = () => {
+        for (const node of [carrier, bipolar, amplitude, dry, wet]) {
+          try { node.disconnect(); } catch (_) {}
+        }
+      };
+    }
+  };
+  voice.update();
+  return voice;
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
@@ -2690,7 +2777,8 @@ const resonantField = createSynthResonantField(
     stereoPanner, filter
 );
 
-resonantFieldOutput.connect(noteGain);
+// Stage 2 ring modulator inserted before the existing amplitude envelope.
+const dbRing = dbRingCreate(ctx, frequency, resonantFieldOutput, noteGain);
 
 noteGain.connect(stereoPanner);
 
@@ -2718,6 +2806,7 @@ stereoPanner.connect(delayNode);
   stereoPanner,
   noteGain,
   polynomialRing,
+  dbRing,
   resonantField,
   lfoNodes,
   noiseSource,
@@ -3030,6 +3119,7 @@ if (note.release) {
 
   // Keep the polynomial harmonics inside the standard note release tail.
   if (note.polynomialRing) note.polynomialRing.stop(release + 0.05);
+  if (note.dbRing) note.dbRing.stop(release + 0.05);
 
   if (note.resonantField) {
     note.resonantField.stop(release + 0.05);
@@ -16863,6 +16953,7 @@ startPianoWaveFusionModulation();
 
 function applyPresetSettings(preset) {
     dbPitchEnvApplyPreset(preset);
+    dbRingApplyPreset(preset);
     if (!preset) return;
     dbReleaseAllBindings();
 
@@ -17383,10 +17474,15 @@ function renderPresetBank(bankName) {
 }
 function getCurrentPresetSettings() {
   const dbPitch = dbPitchEnvRead();
+  const dbRingState = dbRingRead();
   // Snapshot the sound rather than only the legacy envelope/filter parameters.
   // Numeric values are serializable to JSON; checked boxes retain booleans.
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
   return {
+    dbRingEnabled: dbRingState.enabled,
+    dbRingFrequency: dbRingState.frequency,
+    dbRingDepth: dbRingState.depth,
+    dbRingMode: dbRingState.mode,
     dbPitchEnvEnabled: dbPitch.enabled,
     dbPitchEnvAmount: dbPitch.amount,
     dbPitchEnvAttack: dbPitch.attack,
