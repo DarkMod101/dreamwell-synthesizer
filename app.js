@@ -2517,6 +2517,119 @@ function dbRingCreate(ctx, noteFrequency, input, output) {
   return voice;
 }
 
+// DREAM BINDER — INDUSTRIAL ELECTRONIC STAGE 3: SYNTH DRIVE
+// Allocated per Synth voice only when enabled. No new oscillators or timers.
+const dbDriveIds = ["dbDriveEnabled", "dbDriveAmount", "dbDriveMix", "dbDriveTone", "dbDriveCharacter"];
+function dbDriveRead() {
+  const el = id => document.getElementById(id);
+  const num = (id, fallback) => Number(el(id)?.value ?? fallback);
+  return {
+    enabled: el("dbDriveEnabled")?.checked === true,
+    amount: Math.max(0, Math.min(100, num("dbDriveAmount", 30))),
+    mix: Math.max(0, Math.min(100, num("dbDriveMix", 40))),
+    tone: Math.max(300, Math.min(12000, num("dbDriveTone", 6000))),
+    character: ["soft", "hard", "fold"].includes(el("dbDriveCharacter")?.value) ? el("dbDriveCharacter").value : "soft"
+  };
+}
+const dbDriveCurveCache = new Map();
+function dbDriveCurve(amount, character) {
+  const key = `${Math.round(amount)}:${character}`;
+  if (dbDriveCurveCache.has(key)) return dbDriveCurveCache.get(key);
+  const curve = new Float32Array(2049);
+  const gain = 1 + amount * 0.23;
+  for (let i = 0; i < curve.length; i++) {
+    const x = (i / (curve.length - 1)) * 2 - 1;
+    let y;
+    if (character === "hard") y = Math.max(-1, Math.min(1, x * gain));
+    else if (character === "fold") {
+      const z = x * gain;
+      y = (2 / Math.PI) * Math.asin(Math.sin(z));
+    } else y = Math.tanh(x * gain) / Math.tanh(gain);
+    curve[i] = y;
+  }
+  // Bounded cache: repeated slider changes cannot grow memory indefinitely.
+  if (dbDriveCurveCache.size >= 24) dbDriveCurveCache.clear();
+  dbDriveCurveCache.set(key, curve);
+  return curve;
+}
+function dbDriveRefresh() {
+  const s = dbDriveRead();
+  const labels = {
+    dbDriveAmountValue: `${s.amount}%`,
+    dbDriveMixValue: `${s.mix}%`,
+    dbDriveToneValue: `${Math.round(s.tone)} Hz`
+  };
+  for (const [id, value] of Object.entries(labels)) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  }
+  if (typeof activeNotes !== "undefined") activeNotes.forEach(note => note.dbDrive?.update());
+}
+for (const id of dbDriveIds) {
+  document.getElementById(id)?.addEventListener("input", dbDriveRefresh);
+  document.getElementById(id)?.addEventListener("change", dbDriveRefresh);
+}
+dbDriveRefresh();
+function dbDriveApplyPreset(preset = {}) {
+  const set = (id, value, property = "value") => {
+    const node = document.getElementById(id);
+    if (node) node[property] = value;
+  };
+  set("dbDriveEnabled", preset.dbDriveEnabled === true, "checked");
+  set("dbDriveAmount", preset.dbDriveAmount ?? 30);
+  set("dbDriveMix", preset.dbDriveMix ?? 40);
+  set("dbDriveTone", preset.dbDriveTone ?? 6000);
+  set("dbDriveCharacter", preset.dbDriveCharacter ?? "soft");
+  dbDriveRefresh();
+}
+function dbDriveCreate(ctx, input, output) {
+  const initial = dbDriveRead();
+  if (!initial.enabled || initial.amount <= 0 || initial.mix <= 0) {
+    input.connect(output);
+    return null;
+  }
+  const dry = ctx.createGain();
+  const wet = ctx.createGain();
+  const shaper = ctx.createWaveShaper();
+  const lowpass = ctx.createBiquadFilter();
+  const trim = ctx.createGain();
+  lowpass.type = "lowpass";
+  shaper.oversample = "none"; // Mobile CPU budget; revisit quality after profiling.
+  input.connect(dry);
+  dry.connect(output);
+  input.connect(shaper);
+  shaper.connect(lowpass);
+  lowpass.connect(trim);
+  trim.connect(wet);
+  wet.connect(output);
+  let stopped = false;
+  const voice = {
+    update() {
+      if (stopped) return;
+      const state = dbDriveRead();
+      const now = ctx.currentTime;
+      const mix = state.enabled ? state.mix / 100 : 0;
+      shaper.curve = dbDriveCurve(state.amount, state.character);
+      lowpass.frequency.setTargetAtTime(state.tone, now, 0.025);
+      dry.gain.setTargetAtTime(1 - mix, now, 0.02);
+      wet.gain.setTargetAtTime(mix, now, 0.02);
+      // Approximate compensation; final loudness tuning remains for later.
+      trim.gain.setTargetAtTime(1 / (1 + state.amount * 0.008), now, 0.025);
+    },
+    stop(delay = 0) {
+      if (stopped) return;
+      stopped = true;
+      setTimeout(() => {
+        for (const node of [dry, wet, shaper, lowpass, trim]) {
+          try { node.disconnect(); } catch (_) {}
+        }
+      }, Math.ceil((Math.max(0, delay) + 0.15) * 1000));
+    }
+  };
+  voice.update();
+  return voice;
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
@@ -2778,7 +2891,9 @@ const resonantField = createSynthResonantField(
 );
 
 // Stage 2 ring modulator inserted before the existing amplitude envelope.
-const dbRing = dbRingCreate(ctx, frequency, resonantFieldOutput, noteGain);
+const dbIndustrialDriveInput = ctx.createGain();
+const dbRing = dbRingCreate(ctx, frequency, resonantFieldOutput, dbIndustrialDriveInput);
+const dbDrive = dbDriveCreate(ctx, dbIndustrialDriveInput, noteGain);
 
 noteGain.connect(stereoPanner);
 
@@ -2807,6 +2922,7 @@ stereoPanner.connect(delayNode);
   noteGain,
   polynomialRing,
   dbRing,
+  dbDrive,
   resonantField,
   lfoNodes,
   noiseSource,
@@ -3120,6 +3236,7 @@ if (note.release) {
   // Keep the polynomial harmonics inside the standard note release tail.
   if (note.polynomialRing) note.polynomialRing.stop(release + 0.05);
   if (note.dbRing) note.dbRing.stop(release + 0.05);
+  if (note.dbDrive) note.dbDrive.stop(release + 0.05);
 
   if (note.resonantField) {
     note.resonantField.stop(release + 0.05);
@@ -16954,6 +17071,7 @@ startPianoWaveFusionModulation();
 function applyPresetSettings(preset) {
     dbPitchEnvApplyPreset(preset);
     dbRingApplyPreset(preset);
+    dbDriveApplyPreset(preset);
     if (!preset) return;
     dbReleaseAllBindings();
 
@@ -17475,6 +17593,7 @@ function renderPresetBank(bankName) {
 function getCurrentPresetSettings() {
   const dbPitch = dbPitchEnvRead();
   const dbRingState = dbRingRead();
+  const dbDriveState = dbDriveRead();
   // Snapshot the sound rather than only the legacy envelope/filter parameters.
   // Numeric values are serializable to JSON; checked boxes retain booleans.
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
@@ -17483,6 +17602,11 @@ function getCurrentPresetSettings() {
     dbRingFrequency: dbRingState.frequency,
     dbRingDepth: dbRingState.depth,
     dbRingMode: dbRingState.mode,
+    dbDriveEnabled: dbDriveState.enabled,
+    dbDriveAmount: dbDriveState.amount,
+    dbDriveMix: dbDriveState.mix,
+    dbDriveTone: dbDriveState.tone,
+    dbDriveCharacter: dbDriveState.character,
     dbPitchEnvEnabled: dbPitch.enabled,
     dbPitchEnvAmount: dbPitch.amount,
     dbPitchEnvAttack: dbPitch.attack,
