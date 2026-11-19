@@ -3505,3 +3505,6 @@ body::after {display:none!important;}
 
 /* Industrial Electronic Stage 2 — matches existing Resonance modules */
 .db-ring-panel{grid-column:span 3}
+
+/* Industrial Electronic Stage 3: follows existing PHYSICS module grid */
+.db-drive-panel{grid-column:span 3}
