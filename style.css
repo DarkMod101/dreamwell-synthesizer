@@ -3511,3 +3511,7 @@ body::after {display:none!important;}
 
 /* Industrial Electronic Stage 4: integrated Motion module */
 .db-industrial-sample-hold{grid-column:span 3}
+
+/* Industrial Electronic Stage 5 — Rhythmic Gate (Motion) */
+.db-industrial-gate{grid-column:span 4}
+.db-industrial-gate .db-module-content{gap:12px}
