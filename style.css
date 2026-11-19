@@ -3498,3 +3498,7 @@ body::after {display:none!important;}
 /* Evolution dialogs: preserve native closed state and ensure tap target. */
 .db-evolution-dialog:not([open]){display:none!important}
 #dbEvolutionLibraryClose{position:relative;z-index:2;touch-action:manipulation;min-width:94px;min-height:44px}
+
+/* Industrial Stage 1 — existing PHYSICS module styling */
+.db-pitch-envelope-module{grid-column:span 3}
+.db-pitch-envelope-module .db-module-content{gap:12px}
