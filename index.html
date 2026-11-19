@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dream Binder · Resonance Workstation</title>
-<meta content="#080717" name="theme-color"/><link href="style.css?v=evolution-dom-order-fix-20261118b" rel="stylesheet"/><link rel="stylesheet" href="dream-matrix.css?v=matrix-restored-20261118"/><link rel="manifest" href="manifest.webmanifest"/><link rel="icon" type="image/png" href="assets/icon/icon-192.png"/><meta name="apple-mobile-web-app-capable" content="yes"/></head>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=industrial-drive-stage3-20261119" rel="stylesheet"/><link rel="stylesheet" href="dream-matrix.css?v=matrix-restored-20261118"/><link rel="manifest" href="manifest.webmanifest"/><link rel="icon" type="image/png" href="assets/icon/icon-192.png"/><meta name="apple-mobile-web-app-capable" content="yes"/></head>
 <body>
 <div id="db-startup-splash" role="status" aria-label="Opening Dream Binder">
   <img src="assets/splash/dream-binder-splash.webp" alt="Dream Binder — Resonant Doorways" fetchpriority="high" />
@@ -126,7 +126,15 @@
 <span>Release <strong id="releaseValue">0.50 s</strong></span>
 <input id="release" max="5" min="0.01" step="0.01" type="range" value="0.50"/>
 </label>
-</div></details><details class="panel db-module db-pitch-envelope-module" open=""><summary>INDUSTRIAL · PITCH ENVELOPE</summary><div class="db-module-content"><label class="checkbox-row"><input id="dbPitchEnvEnabled" type="checkbox"/>Enable Pitch Envelope</label><label><span>Pitch Amount <strong id="dbPitchEnvAmountValue">−24 st</strong></span><input id="dbPitchEnvAmount" type="range" min="-48" max="48" step="1" value="-24"/></label><label><span>Attack <strong id="dbPitchEnvAttackValue">0.00 s</strong></span><input id="dbPitchEnvAttack" type="range" min="0" max="2" step="0.01" value="0"/></label><label><span>Decay <strong id="dbPitchEnvDecayValue">0.25 s</strong></span><input id="dbPitchEnvDecay" type="range" min="0.01" max="5" step="0.01" value="0.25"/></label><label>Curve<select id="dbPitchEnvCurve"><option value="exponential">Exponential</option><option value="linear">Linear</option><option value="smooth">Smooth</option></select></label><p>Industrial lasers, rising chirps and electronic pitch drops. Off = original sound.</p></div></details><details class="panel fm-resonance-panel db-module" open="">
+</div></details><details class="panel db-module db-pitch-envelope-module" open=""><summary>INDUSTRIAL · PITCH ENVELOPE</summary><div class="db-module-content"><label class="checkbox-row"><input id="dbPitchEnvEnabled" type="checkbox"/>Enable Pitch Envelope</label><label><span>Pitch Amount <strong id="dbPitchEnvAmountValue">−24 st</strong></span><input id="dbPitchEnvAmount" type="range" min="-48" max="48" step="1" value="-24"/></label><label><span>Attack <strong id="dbPitchEnvAttackValue">0.00 s</strong></span><input id="dbPitchEnvAttack" type="range" min="0" max="2" step="0.01" value="0"/></label><label><span>Decay <strong id="dbPitchEnvDecayValue">0.25 s</strong></span><input id="dbPitchEnvDecay" type="range" min="0.01" max="5" step="0.01" value="0.25"/></label><label>Curve<select id="dbPitchEnvCurve"><option value="exponential">Exponential</option><option value="linear">Linear</option><option value="smooth">Smooth</option></select></label><p>Industrial lasers, rising chirps and electronic pitch drops. Off = original sound.</p></div></details><details class="panel db-module db-drive-panel" id="dbDrivePanel">
+<summary>Industrial Drive &amp; Distortion</summary><div class="db-module-content">
+<p>EBM bass, aggressive electronic textures and mechanical saturation. Synth only.</p>
+<label class="checkbox-row"><input id="dbDriveEnabled" type="checkbox"/> Enable Industrial Drive</label>
+<label><span>Drive <strong id="dbDriveAmountValue">30%</strong></span><input id="dbDriveAmount" type="range" min="0" max="100" step="1" value="30"/></label>
+<label><span>Wet Mix <strong id="dbDriveMixValue">40%</strong></span><input id="dbDriveMix" type="range" min="0" max="100" step="1" value="40"/></label>
+<label><span>Tone <strong id="dbDriveToneValue">6000 Hz</strong></span><input id="dbDriveTone" type="range" min="300" max="12000" step="100" value="6000"/></label>
+<label><span>Character</span><select id="dbDriveCharacter"><option value="soft">Soft Saturation</option><option value="hard">Hard Clip</option><option value="fold">Wavefold</option></select></label>
+</div></details><details class="panel fm-resonance-panel db-module" open="">
 <summary>FM Resonance</summary>
 <div class="fm-resonance-content">
 <p>Independent Frequency Modulation</p>
@@ -537,7 +545,7 @@
 </div><!-- /preset-browser-overlay -->
 <dialog id="dbEvolutionLibraryDialog" class="db-evolution-dialog db-evolution-library-dialog" aria-labelledby="dbEvolutionLibraryHeading"><h2 id="dbEvolutionLibraryHeading">∞ MY RESONANCE EVOLUTIONS</h2><p>Choose a saved Evolution and load it into Source A or B to create another Binding.</p><div id="dbEvolutionLibraryList" class="db-evolution-library-list"></div><div class="db-evolution-dialog-actions"><button type="button" id="dbEvolutionLibraryClose" aria-label="Close Evolution library">CLOSE</button></div></dialog>
 <dialog id="dbEvolutionDialog" class="db-evolution-dialog" aria-labelledby="dbEvolutionHeading"><form method="dialog" id="dbEvolutionForm"><h2 id="dbEvolutionHeading">∞ RESONANCE EVOLUTION</h2><p>Name your discovery. The original sounds remain untouched.</p><label>EVOLUTION NAME<input id="dbEvolutionName" maxlength="64" required autocomplete="off" placeholder="Name your new resonance"/></label><button type="button" id="dbSuggestEvolutionName">✧ SUGGEST A NAME</button><p id="dbEvolutionDialogStatus" role="status"></p><div class="db-evolution-dialog-actions"><button value="cancel" formnovalidate>Cancel</button><button id="dbConfirmEvolution" value="save">SAVE EVOLUTION</button></div></form></dialog>
-<script src="app.js?v=industrial-ring-stage2-20261119"></script>
+<script src="app.js?v=industrial-drive-stage3-20261119"></script>
 <script src="dream-matrix.js?v=matrix-restored-20261118" defer></script>
 <script src="nexus-ui.js?v=atlas-entry-clean-1"></script>
 <script src="atlas-static.js?v=1" defer></script>
