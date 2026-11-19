@@ -2372,6 +2372,64 @@ if (voice.textureSources && voice.textureProcessingNodes) {
     );
 }
 
+// DREAM BINDER — Industrial Electronic Stage 1: Synth-only pitch envelope.
+// No new audio oscillators or recurring timers. Preset values default to bypass.
+const dbPitchEnvIds = ["dbPitchEnvEnabled", "dbPitchEnvAmount", "dbPitchEnvAttack", "dbPitchEnvDecay", "dbPitchEnvCurve"];
+function dbPitchEnvRead() {
+  const el = id => document.getElementById(id);
+  const num = (id, fallback) => { const n = Number(el(id)?.value); return Number.isFinite(n) ? n : fallback; };
+  return { enabled: Boolean(el("dbPitchEnvEnabled")?.checked),
+    amount: Math.max(-48, Math.min(48, num("dbPitchEnvAmount", -24))),
+    attack: Math.max(0, Math.min(2, num("dbPitchEnvAttack", 0))),
+    decay: Math.max(0.01, Math.min(5, num("dbPitchEnvDecay", 0.25))),
+    curve: ["linear", "exponential", "smooth"].includes(el("dbPitchEnvCurve")?.value) ? el("dbPitchEnvCurve").value : "exponential" };
+}
+function dbPitchEnvRefresh() {
+  const p = dbPitchEnvRead();
+  const put = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+  put("dbPitchEnvAmountValue", `${p.amount > 0 ? "+" : ""}${p.amount} st`);
+  put("dbPitchEnvAttackValue", `${p.attack.toFixed(2)} s`);
+  put("dbPitchEnvDecayValue", `${p.decay.toFixed(2)} s`);
+}
+for (const id of dbPitchEnvIds) document.getElementById(id)?.addEventListener("input", dbPitchEnvRefresh);
+dbPitchEnvRefresh();
+function dbPitchEnvApplyPreset(preset) {
+  const set = (id, value, prop = "value") => { const el = document.getElementById(id); if (el) el[prop] = value; };
+  set("dbPitchEnvEnabled", preset.dbPitchEnvEnabled === true, "checked");
+  set("dbPitchEnvAmount", preset.dbPitchEnvAmount ?? -24);
+  set("dbPitchEnvAttack", preset.dbPitchEnvAttack ?? 0);
+  set("dbPitchEnvDecay", preset.dbPitchEnvDecay ?? 0.25);
+  set("dbPitchEnvCurve", preset.dbPitchEnvCurve ?? "exponential");
+  dbPitchEnvRefresh();
+}
+function dbPitchEnvSchedule(ctx, oscillators, frequency, startTime) {
+  const p = dbPitchEnvRead();
+  if (!p.enabled || p.amount === 0) return;
+  const target = Math.max(1, Math.min(ctx.sampleRate * 0.45, frequency));
+  const initial = Math.max(1, Math.min(ctx.sampleRate * 0.45, target * Math.pow(2, p.amount / 12)));
+  const attackEnd = startTime + Math.max(0.001, p.attack);
+  const end = attackEnd + p.decay;
+  for (const [osc, ratio] of oscillators) {
+    const param = osc.frequency;
+    const begin = initial * ratio, finish = target * ratio;
+    // Cancel the previous glide only when this feature is explicitly enabled.
+    param.cancelScheduledValues(startTime);
+    param.setValueAtTime(p.attack > 0 ? finish : begin, startTime);
+    if (p.attack > 0) {
+      if (p.curve === "linear") param.linearRampToValueAtTime(begin, attackEnd);
+      else param.exponentialRampToValueAtTime(Math.max(0.01, begin), attackEnd);
+    }
+    if (p.curve === "linear") param.linearRampToValueAtTime(finish, end);
+    else if (p.curve === "smooth") {
+      const steps = 12;
+      for (let i = 1; i <= steps; i++) {
+        const x = i / steps, eased = x * x * (3 - 2 * x);
+        param.linearRampToValueAtTime(begin + (finish - begin) * eased, attackEnd + p.decay * x);
+      }
+    } else param.exponentialRampToValueAtTime(Math.max(0.01, finish), end);
+  }
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
@@ -2454,6 +2512,8 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
   frequency,
   ctx.currentTime + glideTime
 );
+
+dbPitchEnvSchedule(ctx, [[oscillatorA, 1], [oscillatorB, 1], [subOscillator, 0.5]], frequency, ctx.currentTime);
 
 // ========================================
 // DREAM BINDER — FM RESONANCE
@@ -16802,6 +16862,7 @@ startPianoWaveFusionModulation();
 }
 
 function applyPresetSettings(preset) {
+    dbPitchEnvApplyPreset(preset);
     if (!preset) return;
     dbReleaseAllBindings();
 
@@ -17321,10 +17382,16 @@ function renderPresetBank(bankName) {
   });
 }
 function getCurrentPresetSettings() {
+  const dbPitch = dbPitchEnvRead();
   // Snapshot the sound rather than only the legacy envelope/filter parameters.
   // Numeric values are serializable to JSON; checked boxes retain booleans.
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
   return {
+    dbPitchEnvEnabled: dbPitch.enabled,
+    dbPitchEnvAmount: dbPitch.amount,
+    dbPitchEnvAttack: dbPitch.attack,
+    dbPitchEnvDecay: dbPitch.decay,
+    dbPitchEnvCurve: dbPitch.curve,
     engine: currentResonanceSource,
     mechanicalKeyClick: toyPianoKeyClickEnabled,
     mechanicalKeyDownGain: toyPianoKeyDownGain,
