@@ -2725,6 +2725,127 @@ function dbSHCreate(ctx, oscillatorA, oscillatorB, subOscillator, filter) {
   return voice;
 }
 
+// DREAM BINDER — INDUSTRIAL ELECTRONIC STAGE 5: RHYTHMIC GATE
+// Synth-only tempo-synchronized amplitude chopping. No JavaScript clock or polling.
+// A shared one-cycle buffer provides a click-smoothed gate envelope.
+const dbGateIds = ["dbGateEnabled", "dbGateBpm", "dbGateDivision", "dbGateDepth", "dbGateDuty"];
+function dbGateRead() {
+  const get = id => document.getElementById(id);
+  const number = (id, fallback) => Number(get(id)?.value ?? fallback);
+  const division = get("dbGateDivision")?.value || "8";
+  return {
+    enabled: get("dbGateEnabled")?.checked === true,
+    bpm: Math.max(40, Math.min(240, number("dbGateBpm", 120))),
+    division: ["4", "8", "16", "8t", "16t"].includes(division) ? division : "8",
+    depth: Math.max(0, Math.min(100, number("dbGateDepth", 0))),
+    duty: Math.max(10, Math.min(90, number("dbGateDuty", 50)))
+  };
+}
+function dbGateRefresh() {
+  const s = dbGateRead();
+  const labels = {
+    dbGateBpmValue: `${s.bpm} BPM`,
+    dbGateDepthValue: `${s.depth}%`,
+    dbGateDutyValue: `${s.duty}%`
+  };
+  for (const [id, value] of Object.entries(labels)) {
+    const node = document.getElementById(id);
+    if (node) node.textContent = value;
+  }
+  if (typeof activeNotes !== "undefined") activeNotes.forEach(note => note.dbGate?.update());
+}
+for (const id of dbGateIds) {
+  document.getElementById(id)?.addEventListener("input", dbGateRefresh);
+  document.getElementById(id)?.addEventListener("change", dbGateRefresh);
+}
+dbGateRefresh();
+function dbGateApplyPreset(preset = {}) {
+  const set = (id, value, property = "value") => {
+    const node = document.getElementById(id);
+    if (node) node[property] = value;
+  };
+  set("dbGateEnabled", preset.dbGateEnabled === true, "checked");
+  set("dbGateBpm", preset.dbGateBpm ?? 120);
+  set("dbGateDivision", preset.dbGateDivision ?? "8");
+  set("dbGateDepth", preset.dbGateDepth ?? 0);
+  set("dbGateDuty", preset.dbGateDuty ?? 50);
+  dbGateRefresh();
+}
+const dbGateBuffers = new WeakMap();
+function dbGateGetBuffer(ctx, duty) {
+  let cache = dbGateBuffers.get(ctx);
+  if (!cache) { cache = new Map(); dbGateBuffers.set(ctx, cache); }
+  if (cache.has(duty)) return cache.get(duty);
+  const size = 2048;
+  const buffer = ctx.createBuffer(1, size, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  const open = duty / 100;
+  const edge = 0.012; // 1.2% of cycle: smooth edges to avoid clicks.
+  const smooth = x => { const t = Math.max(0, Math.min(1, x)); return t*t*(3-2*t); };
+  for (let i = 0; i < size; i++) {
+    const phase = i / size;
+    const attack = smooth(phase / edge);
+    const release = 1 - smooth((phase - open + edge) / edge);
+    data[i] = Math.max(0, Math.min(1, attack, release));
+  }
+  cache.set(duty, buffer);
+  return buffer;
+}
+function dbGateCyclesPerSecond(s) {
+  const quarter = s.bpm / 60;
+  if (s.division === "4") return quarter;
+  if (s.division === "8") return quarter * 2;
+  if (s.division === "16") return quarter * 4;
+  if (s.division === "8t") return quarter * 3;
+  return quarter * 6;
+}
+function dbGateCreate(ctx, input, output) {
+  const initial = dbGateRead();
+  if (!initial.enabled || initial.depth <= 0) {
+    input.connect(output);
+    return null;
+  }
+  const dry = ctx.createGain();
+  const wet = ctx.createGain();
+  const modulated = ctx.createGain();
+  const source = ctx.createBufferSource();
+  source.loop = true;
+  source.buffer = dbGateGetBuffer(ctx, initial.duty);
+  input.connect(dry); dry.connect(output);
+  input.connect(modulated); modulated.connect(wet); wet.connect(output);
+  // Audio-rate envelope in [0,1] drives the wet path's gain.
+  modulated.gain.value = 0;
+  source.connect(modulated.gain);
+  let stopped = false;
+  const voice = {
+    update() {
+      if (stopped) return;
+      const s = dbGateRead();
+      const now = ctx.currentTime;
+      const mix = s.enabled ? s.depth / 100 : 0;
+      // Duty changes apply on the next note; an active AudioBufferSourceNode
+      // cannot reliably swap its buffer after start across Android browsers.
+      source.playbackRate.setTargetAtTime(dbGateCyclesPerSecond(s) * 2048 / ctx.sampleRate, now, 0.025);
+      dry.gain.setTargetAtTime(1 - mix, now, 0.015);
+      wet.gain.setTargetAtTime(mix, now, 0.015);
+    },
+    stop(delay = 0) {
+      if (stopped) return;
+      stopped = true;
+      const seconds = Math.max(0, delay);
+      try { source.stop(ctx.currentTime + seconds); } catch (_) {}
+      setTimeout(() => {
+        for (const node of [source, dry, wet, modulated]) {
+          try { node.disconnect(); } catch (_) {}
+        }
+      }, Math.ceil((seconds + 0.15) * 1000));
+    }
+  };
+  voice.update();
+  source.start();
+  return voice;
+}
+
 function createNote(frequency) {
   const ctx = getAudioContext();
 
@@ -2988,7 +3109,9 @@ const resonantField = createSynthResonantField(
 // Stage 2 ring modulator inserted before the existing amplitude envelope.
 const dbIndustrialDriveInput = ctx.createGain();
 const dbRing = dbRingCreate(ctx, frequency, resonantFieldOutput, dbIndustrialDriveInput);
-const dbDrive = dbDriveCreate(ctx, dbIndustrialDriveInput, noteGain);
+const dbGateInput = ctx.createGain();
+const dbDrive = dbDriveCreate(ctx, dbIndustrialDriveInput, dbGateInput);
+const dbGate = dbGateCreate(ctx, dbGateInput, noteGain);
 const dbSH = dbSHCreate(ctx, oscillatorA, oscillatorB, subOscillator, filter);
 
 noteGain.connect(stereoPanner);
@@ -3020,6 +3143,7 @@ stereoPanner.connect(delayNode);
   dbRing,
   dbDrive,
   dbSH,
+  dbGate,
   resonantField,
   lfoNodes,
   noiseSource,
@@ -3335,6 +3459,7 @@ if (note.release) {
   if (note.dbRing) note.dbRing.stop(release + 0.05);
   if (note.dbDrive) note.dbDrive.stop(release + 0.05);
   if (note.dbSH) note.dbSH.stop(release + 0.05);
+  if (note.dbGate) note.dbGate.stop(release + 0.05);
 
   if (note.resonantField) {
     note.resonantField.stop(release + 0.05);
@@ -17171,6 +17296,7 @@ function applyPresetSettings(preset) {
     dbRingApplyPreset(preset);
     dbDriveApplyPreset(preset);
     dbSHApplyPreset(preset);
+    dbGateApplyPreset(preset);
     if (!preset) return;
     dbReleaseAllBindings();
 
@@ -17694,6 +17820,7 @@ function getCurrentPresetSettings() {
   const dbRingState = dbRingRead();
   const dbDriveState = dbDriveRead();
   const dbSHState = dbSHRead();
+  const dbGateState = dbGateRead();
   // Snapshot the sound rather than only the legacy envelope/filter parameters.
   // Numeric values are serializable to JSON; checked boxes retain booleans.
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
@@ -17711,6 +17838,11 @@ function getCurrentPresetSettings() {
     dbSHRate: dbSHState.rate,
     dbSHDepth: dbSHState.depth,
     dbSHDestination: dbSHState.destination,
+    dbGateEnabled: dbGateState.enabled,
+    dbGateBpm: dbGateState.bpm,
+    dbGateDivision: dbGateState.division,
+    dbGateDepth: dbGateState.depth,
+    dbGateDuty: dbGateState.duty,
     dbPitchEnvEnabled: dbPitch.enabled,
     dbPitchEnvAmount: dbPitch.amount,
     dbPitchEnvAttack: dbPitch.attack,
