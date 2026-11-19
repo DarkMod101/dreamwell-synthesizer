@@ -3508,3 +3508,6 @@ body::after {display:none!important;}
 
 /* Industrial Electronic Stage 3: follows existing PHYSICS module grid */
 .db-drive-panel{grid-column:span 3}
+
+/* Industrial Electronic Stage 4: integrated Motion module */
+.db-industrial-sample-hold{grid-column:span 3}
