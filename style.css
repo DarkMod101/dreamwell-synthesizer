@@ -3518,3 +3518,6 @@ body::after {display:none!important;}
 
 /* Stage 6: preserve existing scrollable factory-bank navigation on narrow Android screens. */
 .preset-browser-tabs{overflow-x:auto;overscroll-behavior-x:contain;}
+
+/* Factory Resonance Evolution showcase */
+.db-factory-evolution-intro{padding:12px 16px;color:#c8b8e1;line-height:1.5}.db-factory-evolution-item{display:flex!important;flex-direction:column;align-items:flex-start;gap:5px;text-align:left}.db-factory-evolution-item small{font-size:.78rem;opacity:.78;white-space:normal}.db-factory-evolution-lineage{color:#d6b8ff;opacity:1!important}
