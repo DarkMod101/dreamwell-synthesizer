@@ -908,6 +908,7 @@ function renderPresetBrowser(bankName) {
   activePresetBank = bankName;
   presetBrowserList.replaceChildren();
 
+  if (bankName === "evolution-showcase") { dbRenderFactoryEvolutionBrowser(); updateDreamAtlasFilters(); return; }
   const saved = bankName === "user" ? getSavedPresets() : null;
   const atlasRealm = document.getElementById("dreamAtlasRealm")?.value || "all";
   const atlasInstrument = document.getElementById("dreamAtlasInstrument")?.value || "all";
@@ -18404,6 +18405,83 @@ const dbUI = {
 };
 const DB_BINDING_STORAGE = 'dreamBinderBindingsV1';
 const DB_EVOLUTION_STORAGE = 'dreamBinderResonanceEvolutionsV1';
+// Eight immutable factory demonstrations. These are not written to the user's saved Evolutions.
+// Generation II builds on the corresponding G1 snapshot, plus one new source.
+const dbFactoryEvolutionRecipes = [
+ {id:'forgottenVoices',name:'Forgotten Voices',description:'Vocal memory suspended in a dreamlike atmosphere.',sources:['choir','pads'],depth:1},
+ {id:'mechanicalMemories',name:'Mechanical Memories',description:'Piano memories beneath industrial machinery.',sources:['piano','industrial:industrialConveyorGhost'],depth:1},
+ {id:'celestialMachinery',name:'Celestial Machinery',description:'A floating pad entwined with metallic electronics.',sources:['signature:dreamPad','industrial:industrialRustline'],depth:1},
+ {id:'sleepingCity',name:'The Sleeping City',description:'A nocturnal atmosphere threaded with dark electro.',sources:['signature:theWell','industrial:industrialBlackCircuit'],depth:1},
+ {id:'echoesEternity',name:'Echoes of Eternity',description:'Forgotten Voices, evolved with a distant celestial layer.',parent:'forgottenVoices',extra:'signature:resonantDoorway',depth:2},
+ {id:'fracturedChildhood',name:'Fractured Childhood',description:'Mechanical Memories transformed by a haunted synthesizer.',parent:'mechanicalMemories',extra:'signature:falling',depth:2},
+ {id:'ghostMachine',name:'Ghost in the Machine',description:'Celestial Machinery becomes a living digital presence.',parent:'celestialMachinery',extra:'industrial:industrialStaticCorridor',depth:2},
+ {id:'cityNeverWas',name:'The City That Never Was',description:'The Sleeping City evolves into a forgotten industrial skyline.',parent:'sleepingCity',extra:'industrial:industrialLastMachineAwake',depth:2}
+];
+function dbFactorySource(selection){
+  if(selection==='choir'||selection==='piano'){
+    const banks=selection==='choir'?['choir','signature']:['keys','signature'];
+    for(const bank of banks)for(const patch of Object.values(presetBanks[bank]||{})){
+      if((patch.engine||patch.settings?.engine)===selection) return {name:patch.name,engine:selection,settings:patch.settings};
+    }
+    throw Error(`No ${selection} factory sound is available.`);
+  }
+  const sep=selection.indexOf(':');
+  const patch=presetBanks[selection.slice(0,sep)]?.[selection.slice(sep+1)];
+  if(!patch)throw Error(`Factory source ${selection} is missing.`);
+  return {name:patch.name,engine:patch.engine||patch.settings?.engine||'synth',settings:patch.settings};
+}
+const dbFactoryEvolutionCache=new Map();
+function dbFactoryEvolution(id){
+  if(dbFactoryEvolutionCache.has(id))return dbFactoryEvolutionCache.get(id);
+  const recipe=dbFactoryEvolutionRecipes.find(x=>x.id===id);
+  if(!recipe) return null;
+  let leaves;
+  if(recipe.parent){
+    const previous=dbFactoryEvolution(recipe.parent);
+    leaves=[...previous.leaves.map(x=>({...x,weight:x.weight*.78})),
+      {patch:structuredClone(dbFactorySource(recipe.extra)),weight:.32}];
+  }else{
+    leaves=recipe.sources.map((source)=>({patch:structuredClone(dbFactorySource(source)),weight:.52}));
+  }
+  const evolution={name:recipe.name,depth:recipe.depth,leaves,factory:true};
+  dbFactoryEvolutionCache.set(id,evolution);
+  return evolution;
+}
+function dbAuditionFactoryEvolution(id){
+  try{
+    const evo=dbFactoryEvolution(id);
+    if(!evo||evo.leaves.length>dbEvolutionMaxLeaves)throw Error('This factory Evolution exceeds the device budget.');
+    dbReleaseAllBindings();
+    dbFillLayerSelectors();
+    dbUI.A.value=`factory-evolution:${id}`;
+    // At zero balance Source B is silent, so the factory Evolution can be auditioned alone.
+    dbUI.balance.value='0';
+    dbUI.mode.value='layer';
+    dbSyncMode();dbUpdateBlend();dbEvolutionUpdateLimit();
+    closePresetBrowser();
+    dbSetStatus(`∞ FACTORY EVOLUTION · ${evo.name} · G${evo.depth} · Play the keyboard to audition.`);
+    document.getElementById('dbBindingStudio')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(error){showPresetMessage(`Could not load factory Evolution: ${error.message}`);}
+}
+function dbRenderFactoryEvolutionBrowser(){
+  const list=document.getElementById('presetBrowserList');if(!list)return;
+  const intro=document.createElement('p');intro.className='db-factory-evolution-intro';
+  intro.textContent='Eight curated sound combinations. Choose one to audition in Resonance Bindings. Your personal Evolutions remain separate.';
+  list.append(intro);
+  for(const generation of [1,2]){
+    const heading=document.createElement('h3');heading.className='preset-collection-heading';
+    heading.textContent=generation===1?'Generation I · First Resonance (4)':'Generation II · Evolved Resonance (4)';list.append(heading);
+    for(const recipe of dbFactoryEvolutionRecipes.filter(x=>x.depth===generation)){
+      const button=document.createElement('button');button.type='button';button.className='preset-browser-preset db-factory-evolution-item';
+      const title=document.createElement('strong');title.textContent=recipe.name;
+      const detail=document.createElement('small');detail.textContent=recipe.description;
+      button.append(title,detail);
+      if(recipe.parent){const lineage=document.createElement('small');lineage.className='db-factory-evolution-lineage';lineage.textContent=`G1 ${dbFactoryEvolutionRecipes.find(x=>x.id===recipe.parent).name} → G2 ${recipe.name}`;button.append(lineage);}
+      button.addEventListener('click',()=>dbAuditionFactoryEvolution(recipe.id));list.append(button);
+    }
+  }
+}
+
 const dbEvolutionMaxDepth = /Android/i.test(navigator.userAgent) ? 4 : 8;
 const dbEvolutionMaxLeaves = /Android/i.test(navigator.userAgent) ? 4 : 8;
 function dbEvolutionLibrary(){try {const data=JSON.parse(localStorage.getItem(DB_EVOLUTION_STORAGE)||'{}');return data&&typeof data==='object'&&!Array.isArray(data)?data:{};}catch(_){return {};}}
@@ -18457,6 +18535,10 @@ function dbSettingsForLayer(selection) {
         const patch = dreamAtlasPatches.find(p => p.key === key);
         return patch ? {name: patch.name, engine: patch.engine || 'synth',settings:patch.settings} : null;
     }
+    if (bank === 'factory-evolution') {
+        const item=dbFactoryEvolution(key);
+        return item ? {name:item.name,engine:'evolution',evolution:item} : null;
+    }
     if (bank === 'evolution') {
         const item=dbEvolutionLibrary()[key];
         return item ? {name:item.name,engine:'evolution',evolution:item} : null;
@@ -18495,6 +18577,9 @@ function dbFillLayerSelectors() {
         const atlas = document.createElement('optgroup'); atlas.label = 'Dream Atlas · 104 Sounds';
         for (const patch of dreamAtlasPatches) atlas.append(new Option(`${patch.collection} · ${patch.name}`, `atlas:${patch.key}`));
         select.add(atlas);
+        const factoryGroup=document.createElement('optgroup');factoryGroup.label='∞ Factory Evolution Showcase';
+        for(const recipe of dbFactoryEvolutionRecipes)factoryGroup.append(new Option(`${recipe.name} · G${recipe.depth}`,`factory-evolution:${recipe.id}`));
+        select.add(factoryGroup);
         const evolutions=dbEvolutionLibrary();
         if(Object.keys(evolutions).length){
             const group=document.createElement('optgroup');group.label='∞ My Resonance Evolutions';
@@ -19055,9 +19140,19 @@ function dbEvolutionLoad(){
     list.replaceChildren();
     if(!entries.length){
         const empty=document.createElement('p');
-        empty.textContent='No saved Evolutions yet. Create a Binding, then select SAVE EVOLUTION to add it here.';
+        empty.textContent='No personal Evolutions saved yet. Factory examples are available below.';
         list.append(empty);
     }
+    const factoryTitle=document.createElement('h3');factoryTitle.textContent='∞ FACTORY EVOLUTION SHOWCASE · 8 EXAMPLES';list.append(factoryTitle);
+    for(const recipe of dbFactoryEvolutionRecipes){
+      const row=document.createElement('div');row.className='db-evolution-library-row';
+      const info=document.createElement('div');const title=document.createElement('strong');title.textContent=recipe.name;
+      const detail=document.createElement('small');detail.textContent=`GEN ${recipe.depth} · ${recipe.description}`;info.append(title,detail);
+      const button=document.createElement('button');button.type='button';button.textContent='AUDITION';
+      button.addEventListener('click',()=>{dialog.close();dbAuditionFactoryEvolution(recipe.id);});
+      row.append(info,button);list.append(row);
+    }
+    if(entries.length){const personalTitle=document.createElement('h3');personalTitle.textContent='MY SAVED EVOLUTIONS';list.append(personalTitle);}
     for(const [id,item] of entries){
         const row=document.createElement('div');row.className='db-evolution-library-row';
         const info=document.createElement('div');
