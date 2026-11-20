@@ -18073,6 +18073,8 @@ arpLatchCheckbox.addEventListener("change", () => {
   arpLatchEnabled = arpLatchCheckbox.checked;
 
   if (!arpLatchEnabled) {
+    dbReleaseAllBindings();
+    refreshLatchedKeyHighlights();
     const latchedNotes =
       Array.from(arpHeldNotes);
 
@@ -18408,15 +18410,25 @@ const DB_EVOLUTION_STORAGE = 'dreamBinderResonanceEvolutionsV1';
 // Eight immutable factory demonstrations. These are not written to the user's saved Evolutions.
 // Generation II builds on the corresponding G1 snapshot, plus one new source.
 const dbFactoryEvolutionRecipes = [
- {id:'forgottenVoices',name:'Forgotten Voices',description:'Vocal memory suspended in a dreamlike atmosphere.',sources:['choir','pads'],depth:1},
- {id:'mechanicalMemories',name:'Mechanical Memories',description:'Piano memories beneath industrial machinery.',sources:['piano','industrial:industrialConveyorGhost'],depth:1},
- {id:'celestialMachinery',name:'Celestial Machinery',description:'A floating pad entwined with metallic electronics.',sources:['signature:dreamPad','industrial:industrialRustline'],depth:1},
- {id:'sleepingCity',name:'The Sleeping City',description:'A nocturnal atmosphere threaded with dark electro.',sources:['signature:theWell','industrial:industrialBlackCircuit'],depth:1},
- {id:'echoesEternity',name:'Echoes of Eternity',description:'Forgotten Voices, evolved with a distant celestial layer.',parent:'forgottenVoices',extra:'signature:resonantDoorway',depth:2},
- {id:'fracturedChildhood',name:'Fractured Childhood',description:'Mechanical Memories transformed by a haunted synthesizer.',parent:'mechanicalMemories',extra:'signature:falling',depth:2},
- {id:'ghostMachine',name:'Ghost in the Machine',description:'Celestial Machinery becomes a living digital presence.',parent:'celestialMachinery',extra:'industrial:industrialStaticCorridor',depth:2},
- {id:'cityNeverWas',name:'The City That Never Was',description:'The Sleeping City evolves into a forgotten industrial skyline.',parent:'sleepingCity',extra:'industrial:industrialLastMachineAwake',depth:2}
+ {id:'forgottenVoices',name:'Forgotten Voices',description:'A vast human choir haunted by flickering electronic pulses.',sources:['choir','industrial:industrialMagneticStorm'],depth:1},
+ {id:'mechanicalMemories',name:'Mechanical Memories',description:'Piano fragments colliding with rhythmic machine circuitry.',sources:['piano','industrial:industrialIronPulse'],depth:1},
+ {id:'celestialMachinery',name:'Celestial Machinery',description:'A luminous dream pad crossed with metallic, shifting industrial harmonics.',sources:['signature:dreamPad','industrial:industrialCoolingReactor'],depth:1},
+ {id:'sleepingCity',name:'The Sleeping City',description:'Nocturnal atmosphere and dark EBM bass pulses.',sources:['signature:theWell','industrial:industrialBlackCircuit'],depth:1},
+ {id:'echoesEternity',name:'Echoes of Eternity',description:'Choir and electromagnetic motion evolve into a celestial transmission.',parent:'forgottenVoices',extra:'industrial:industrialFracturedAntenna',depth:2},
+ {id:'fracturedChildhood',name:'Fractured Childhood',description:'A piano-memory machine fractured by pitch-swept electronics.',parent:'mechanicalMemories',extra:'industrial:industrialCoolingReactor',depth:2},
+ {id:'ghostMachine',name:'Ghost in the Machine',description:'An evolving metallic presence develops a restless digital heartbeat.',parent:'celestialMachinery',extra:'industrial:industrialStaticCorridor',depth:2},
+ {id:'cityNeverWas',name:'The City That Never Was',description:'Industrial pulses and a distant ghostly skyline in perpetual motion.',parent:'sleepingCity',extra:'industrial:industrialLastMachineAwake',depth:2}
 ];
+// Showcase-specific performance voicings; factory bank presets remain unchanged.
+const dbShowcaseIndustrialVoices = {
+ industrialMagneticStorm:{attack:.16,release:2.5,cutoff:3200,dbRingEnabled:true,dbRingFrequency:175,dbRingDepth:40,dbDriveEnabled:true,dbDriveAmount:38,dbDriveMix:28,dbDriveCharacter:'fold',dbSHEnabled:true,dbSHRate:5.2,dbSHDepth:34,dbSHDestination:'filter'},
+ industrialIronPulse:{attack:.012,release:.34,cutoff:1250,dbPitchEnvEnabled:true,dbPitchEnvAmount:-12,dbPitchEnvDecay:.18,dbDriveEnabled:true,dbDriveAmount:62,dbDriveMix:48,dbGateEnabled:true,dbGateBpm:128,dbGateDivision:'1/8',dbGateDepth:80,dbGateDuty:38},
+ industrialCoolingReactor:{attack:.18,release:2.1,dbPitchEnvEnabled:true,dbPitchEnvAmount:12,dbPitchEnvAttack:.12,dbPitchEnvDecay:1.4,dbRingEnabled:true,dbRingFrequency:120,dbRingDepth:33,dbDriveEnabled:true,dbDriveAmount:35,dbDriveMix:32,dbSHEnabled:true,dbSHRate:4.1,dbSHDepth:25},
+ industrialBlackCircuit:{attack:.025,release:.48,dbDriveEnabled:true,dbDriveAmount:67,dbDriveMix:52,dbGateEnabled:true,dbGateBpm:132,dbGateDivision:'1/8',dbGateDepth:85,dbGateDuty:43},
+ industrialFracturedAntenna:{attack:.05,release:1.7,dbRingEnabled:true,dbRingFrequency:330,dbRingDepth:52,dbDriveEnabled:true,dbDriveAmount:45,dbDriveMix:38,dbSHEnabled:true,dbSHRate:11,dbSHDepth:40,dbSHDestination:'pitch'},
+ industrialStaticCorridor:{attack:.24,release:2.1,dbRingEnabled:true,dbRingFrequency:75,dbRingDepth:33,dbDriveEnabled:true,dbDriveAmount:33,dbDriveMix:26,dbSHEnabled:true,dbSHRate:8.5,dbSHDepth:42,dbSHDestination:'filter'},
+ industrialLastMachineAwake:{attack:.3,release:2.5,dbRingEnabled:true,dbRingFrequency:91,dbRingDepth:31,dbDriveEnabled:true,dbDriveAmount:46,dbDriveMix:30,dbSHEnabled:true,dbSHRate:3.2,dbSHDepth:32}
+};
 function dbFactorySource(selection){
   if(selection==='choir'||selection==='piano'){
     const banks=selection==='choir'?['choir','signature']:['keys','signature'];
@@ -18428,7 +18440,7 @@ function dbFactorySource(selection){
   const sep=selection.indexOf(':');
   const patch=presetBanks[selection.slice(0,sep)]?.[selection.slice(sep+1)];
   if(!patch)throw Error(`Factory source ${selection} is missing.`);
-  return {name:patch.name,engine:patch.engine||patch.settings?.engine||'synth',settings:patch.settings};
+  return {name:patch.name,engine:patch.engine||patch.settings?.engine||'synth',settings:{...patch.settings,...(selection.startsWith('industrial:') ? (dbShowcaseIndustrialVoices[selection.slice(11)] || {}) : {})}};
 }
 const dbFactoryEvolutionCache=new Map();
 function dbFactoryEvolution(id){
@@ -18633,6 +18645,20 @@ function dbApplySilently(settings, engine) {
         if (element.type === 'checkbox') element.checked = !!settings[id];
         else element.value = settings[id];
     }
+    // Stage 7.1: each Binding leaf must carry its own Industrial DSP snapshot.
+    // Voice constructors read these controls when creating their audio graph.
+    for (const id of [
+      'dbPitchEnvEnabled','dbPitchEnvAmount','dbPitchEnvAttack','dbPitchEnvDecay','dbPitchEnvCurve',
+      'dbRingEnabled','dbRingFrequency','dbRingDepth','dbRingMode',
+      'dbDriveEnabled','dbDriveAmount','dbDriveMix','dbDriveTone','dbDriveCharacter',
+      'dbSHEnabled','dbSHRate','dbSHDepth','dbSHDestination',
+      'dbGateEnabled','dbGateBpm','dbGateDivision','dbGateDepth','dbGateDuty'
+    ]) {
+      const element = document.getElementById(id);
+      if (!element) continue;
+      if (element.type === 'checkbox') element.checked = settings[id] === true;
+      else if (settings[id] != null) element.value = settings[id];
+    }
     currentResonanceSource = engine;
     currentEngine = engine;
     // Preserve Piano voice character and optional toy-key mechanical behavior.
@@ -18772,7 +18798,16 @@ function dbCreateVoiceWithAsyncChoir(frequency, patch, side, entry, evolutionWei
 function dbBindingPress(frequency) {
     if (dbGetMode() === 'off') return false;
     const key = String(frequency);
-    if (dbHeldLayers.has(key)) return true;
+    if (dbHeldLayers.has(key)) {
+        if (arpLatchEnabled) {
+            const previous = dbHeldLayers.get(key);
+            dbHeldLayers.delete(key);
+            dbStopBindingEntry(frequency, previous);
+            setKeyActive(frequency,false);
+            setKeyLatched(frequency,false);
+        }
+        return true;
+    }
     // Existing 3-voice Synth pool is unchanged in single mode. Binding mode
     // has its own conservative polyphony limit for mobile performance.
     const android = /Android/i.test(navigator.userAgent);
@@ -18804,8 +18839,14 @@ function dbBindingRelease(frequency) {
     if (dbGetMode() === 'off') return false;
     const key = String(frequency);
     const entry = dbHeldLayers.get(key);
+    if (arpLatchEnabled && entry) {
+        setKeyActive(frequency,false);
+        setKeyLatched(frequency,true);
+        return true;
+    }
     if (entry) { dbHeldLayers.delete(key); dbStopBindingEntry(frequency,entry); }
     setKeyActive(frequency,false);
+    setKeyLatched(frequency,false);
     return true;
 }
 function dbSyncMode() {
@@ -18850,7 +18891,9 @@ function dbRandomizeBinding() {
     const options = [...dbUI.A.options].filter(option =>
         !option.disabled && option.value &&
         !option.value.startsWith('capture:') &&
-        !!dbSettingsForLayer(option.value) && !option.value.startsWith('evolution:')
+        !option.value.startsWith('evolution:') &&
+        !option.value.startsWith('factory-evolution:') &&
+        !option.value.startsWith('template:')
     );
     // Each unique ID is eligible once; exclude ephemeral captures.
     const ids = [...new Set(options.map(option => option.value))];
@@ -18871,6 +18914,7 @@ function dbRandomizeBinding() {
     const secondIndex = randomIndex(ids.length - 1);
     const first = ids[firstIndex];
     const second = ids[secondIndex >= firstIndex ? secondIndex + 1 : secondIndex];
+    try {
     dbReleaseAllBindings();
     dbUI.A.value = first;
     dbUI.B.value = second;
@@ -18887,6 +18931,7 @@ function dbRandomizeBinding() {
         void button.offsetWidth;
         button.classList.add('db-binding-randomized');
     }
+    } catch(error) { console.error('Binding randomizer:',error); dbSetStatus('RANDOMIZER · Could not activate this combination. Try again.'); }
 }
 function dbPopulateSplitNotes() {
     if (!dbUI.split) return;
