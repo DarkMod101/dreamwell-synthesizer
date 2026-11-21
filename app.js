@@ -18405,6 +18405,87 @@ const dbUI = {
     balance: document.getElementById('dbBlend'), split: document.getElementById('dbSplitNote'),
     status: document.getElementById('dbBindingStatus')
 };
+// Stage 7.2: editable per-source Binding snapshots (session-local, never rewrite factory patches).
+const dbBindingEdits = {A:{},B:{}};
+let dbBindingEditTarget = 'A';
+let dbBindingRefreshTimer = null;
+const dbBindingEditorIds = new Set([
+ 'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
+ 'subWaveform','subLevel','oscBLevel','oscBDetune','voiceSpread','beatTrackingMode',
+ 'beatRate','beatTempo','beatDivision','attack','decay','sustain','release',
+ 'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
+ 'noiseType','noiseAmount','drift','stereoWidth','deepDreamOrbit','glideEnabled',
+ 'glideTime','presence','fmAmount','fmRatio','fmAttack','fmDecay','fmSustain','fmRelease',
+ 'coherence','decoherence','polynomialRingEnabled','polynomialRingAmount',
+ 'polynomialRingDegree','polynomialRingCharacter','krullDimension',
+ 'dbPitchEnvEnabled','dbPitchEnvAmount','dbPitchEnvAttack','dbPitchEnvDecay','dbPitchEnvCurve',
+ 'dbRingEnabled','dbRingFrequency','dbRingDepth','dbRingMode',
+ 'dbDriveEnabled','dbDriveAmount','dbDriveMix','dbDriveTone','dbDriveCharacter',
+ 'dbSHEnabled','dbSHRate','dbSHDepth','dbSHDestination',
+ 'dbGateEnabled','dbGateBpm','dbGateDivision','dbGateDepth','dbGateDuty'
+]);
+function dbBindingEditablePatch(patch,side) {
+ if (!patch || patch.engine === 'evolution') return patch;
+ return {...patch,settings:{...patch.settings,...dbBindingEdits[side]}};
+}
+function dbBindingEditorLoad() {
+ if (dbGetMode()==='off') return;
+ const side=dbBindingEditTarget==='B'?'B':'A';
+ const patch=dbSettingsForLayer(dbUI[side]?.value);
+ if (!patch || patch.engine==='evolution') {
+   dbSetStatus('Evolution sources are composite. Edit an individual A or B sound to sculpt its parameters.');
+   return;
+ }
+ const settings={...patch.settings,...dbBindingEdits[side]};
+ // Display source parameters without mutating audio engine state or active voices.
+ for(const id of dbBindingEditorIds) {
+   const el=document.getElementById(id);
+   if (!el || settings[id]===undefined) continue;
+   if(el.type==='checkbox') el.checked=Boolean(settings[id]);
+   else el.value=settings[id];
+ }
+}
+function dbBindingRefreshHeld() {
+ if(dbGetMode()==='off') return;
+ // Revoice held/latching notes using the normal voice factories. This allows
+ // structural DSP edits (waveshapers, oscillator types) without graph mutation.
+ // Existing notes release through the established engine-specific pathways.
+ for(const [key,entry] of [...dbHeldLayers.entries()]) {
+   if(dbHeldLayers.get(key)!==entry) continue;
+   const freq=Number(key), latched=Boolean(entry.latched);
+   dbHeldLayers.delete(key);
+   dbStopBindingEntry(freq,entry);
+   dbBindingPress(freq);
+   if(latched) {const fresh=dbHeldLayers.get(key);if(fresh)fresh.latched=true;setKeyActive(freq,false);setKeyLatched(freq,true);}
+ }
+}
+function dbBindingScheduleRefresh() {
+ clearTimeout(dbBindingRefreshTimer);
+ dbBindingRefreshTimer=setTimeout(dbBindingRefreshHeld,130);
+}
+function dbBindingInitEditor() {
+ const host=document.querySelector('#dbBindingStudio .db-bind-middle');
+ if(!host || document.getElementById('dbBindingEditTarget')) return;
+ const label=document.createElement('label');
+ label.className='db-binding-edit-target';
+ label.innerHTML='<span>LIVE SOUND EDIT TARGET</span><select id="dbBindingEditTarget" aria-label="Choose Binding sound to edit"><option value="A">SOURCE A</option><option value="B">SOURCE B</option><option value="both">BOTH SOURCES</option></select><small>Origin, Physics, Resonance & Motion edits apply to the selected Binding source. Complex DSP changes retrigger held notes.</small>';
+ host.append(label);
+ const select=label.querySelector('select');
+ select.addEventListener('change',()=>{dbBindingEditTarget=select.value;if(select.value!=='both')dbBindingEditorLoad();});
+ document.addEventListener('input',dbBindingHandleEdit,true);
+ document.addEventListener('change',dbBindingHandleEdit,true);
+ for(const side of ['A','B']) dbUI[side]?.addEventListener('change',()=>{dbBindingEdits[side]={};if(dbBindingEditTarget===side)dbBindingEditorLoad();});
+}
+function dbBindingHandleEdit(event) {
+ if(dbGetMode()==='off' || !dbBindingEditorIds.has(event.target?.id)) return;
+ if(!event.target.closest('.db-edit-pane')) return;
+ const id=event.target.id;
+ const el=event.target;
+ const value=el.type==='checkbox'?el.checked:(el.type==='range'?Number(el.value):el.value);
+ const sides=dbBindingEditTarget==='both'?['A','B']:[dbBindingEditTarget];
+ for(const side of sides) dbBindingEdits[side][id]=value;
+ dbBindingScheduleRefresh();
+}
 const DB_BINDING_STORAGE = 'dreamBinderBindingsV1';
 const DB_EVOLUTION_STORAGE = 'dreamBinderResonanceEvolutionsV1';
 // Eight immutable factory demonstrations. These are not written to the user's saved Evolutions.
@@ -18731,7 +18812,7 @@ function dbAttachEcho(ctx, entry, patch) {
 }
 function dbCreateBindingVoice(frequency, patch, side, evolutionWeight=1) {
     if (!patch) return null;
-    return dbWithPreset(patch, () => {
+    return dbWithPreset(dbBindingEditablePatch(patch,side), () => {
         const ctx = getAudioContext();
         if (patch.engine === 'piano') {
             createPianoNote(frequency);
@@ -18816,7 +18897,7 @@ function dbBindingPress(frequency) {
         const [oldKey, oldEntry] = dbHeldLayers.entries().next().value;
         dbHeldLayers.delete(oldKey); dbStopBindingEntry(Number(oldKey),oldEntry);
     }
-    const entry = {layers:[]}; dbHeldLayers.set(key,entry);
+    const entry = {layers:[],latched:false}; dbHeldLayers.set(key,entry);
     const note = Math.round(69 + 12 * Math.log2(Math.max(.01,frequency) / 440));
     const targets = dbGetMode() === 'layer' ? ['A','B'] :
         [note < Number(dbUI.split?.value || 60) ? 'A' : 'B'];
@@ -18840,6 +18921,7 @@ function dbBindingRelease(frequency) {
     const key = String(frequency);
     const entry = dbHeldLayers.get(key);
     if (arpLatchEnabled && entry) {
+        entry.latched=true;
         setKeyActive(frequency,false);
         setKeyLatched(frequency,true);
         return true;
@@ -18850,6 +18932,7 @@ function dbBindingRelease(frequency) {
     return true;
 }
 function dbSyncMode() {
+    clearTimeout(dbBindingRefreshTimer);
     dbReleaseAllBindings();
     // A latched arpeggiator from Single mode must never keep playing behind
     // a new split/layer performance. Stop the timer without rewriting arp DSP.
@@ -19283,3 +19366,6 @@ for(const button of document.querySelectorAll('.preset-browser-tab')) button.add
 // Saved user presets become selectable as Binding layers when the browser opens.
 document.getElementById('openPresetBrowser')?.addEventListener('click',dbFillLayerSelectors);
 window.addEventListener('pagehide', dbReleaseAllBindings);
+
+// Stage 7.2 editor activation.
+dbBindingInitEditor();
