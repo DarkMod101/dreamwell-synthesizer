@@ -1038,6 +1038,8 @@ const stereoWidthSlider =
   document.getElementById("stereoWidth");
 const voiceSpreadSlider =
     document.getElementById("voiceSpread");
+const genesisModeSelect = document.getElementById("genesisMode");
+const genesisWidthSlider = document.getElementById("genesisWidth");
 const noiseTypeSelect =
   document.getElementById("noiseType");
 const noiseAmountSlider =
@@ -1320,6 +1322,23 @@ if (
 // Live Synth Voice Spread Control
 // ========================================
 
+// Genesis I: distribute existing unison voices before the shared stereo filter.
+// Each oscillator family has a bounded sum of weights, independent of Wave Fusion.
+function genesisUnisonWeights(spread) {
+    const amount = Math.max(0, Math.min(1, spread / 100));
+    const satellite = 0.65 * amount;
+    const core = 1 / (1 + 2 * satellite);
+    return {core, satellite: satellite * core};
+}
+function genesisWidth() { return Math.max(0, Math.min(1, getValue(genesisWidthSlider, 85) / 100)); }
+function genesisSetControls(settings = {}) {
+    if (genesisModeSelect) genesisModeSelect.value = settings.genesisMode === 'stereo' ? 'stereo' : 'legacy';
+    if (genesisWidthSlider) genesisWidthSlider.value = settings.genesisWidth ?? 85;
+    genesisRefreshDisplay();
+}
+function genesisRefreshDisplay() {
+    setDisplay(document.getElementById('genesisWidthValue'), `${Math.round(genesisWidth()*100)}%`);
+}
 function updateActiveSynthVoiceSpread() {
     if (!audioContext) return;
 
@@ -1352,7 +1371,10 @@ function updateActiveSynthVoiceSpread() {
             oscillatorBDetuneCents(note.fmFrequency, oscBDetune) - driftCents + spreadCents
         ];
 
-        note.unisonOscillators.forEach(({ osc, gain }, index) => {
+        const weights = note.genesisCoreGains ? genesisUnisonWeights(voiceSpread) : null;
+        if (weights) note.genesisCoreGains.forEach(node => node.gain.setTargetAtTime(weights.core, audioContext.currentTime, 0.035));
+        note.unisonOscillators.forEach(({ osc, gain, pan }, index) => {
+            if (pan) pan.pan.setTargetAtTime((index % 2 === 0 ? -1 : 1) * genesisWidth(), audioContext.currentTime, 0.035);
             osc.detune.setTargetAtTime(
                 detunes[index],
                 audioContext.currentTime,
@@ -1360,7 +1382,7 @@ function updateActiveSynthVoiceSpread() {
             );
 
             gain.gain.setTargetAtTime(
-                unisonLevel,
+                weights ? weights.satellite : unisonLevel,
                 audioContext.currentTime,
                 0.05
             );
@@ -1595,6 +1617,7 @@ function setDisplay(display, text) {
 }
 
 function updateValueDisplays() {
+  genesisRefreshDisplay();
   setDisplay(valueDisplays.oscBLevel, percent(getValue(oscBLevelSlider, 0.35)));
   setDisplay(valueDisplays.oscBDetune, cents(getValue(oscBDetuneSlider, 7)));
   setDisplay(valueDisplays.attack, seconds(getValue(attackSlider, 0.05)));
@@ -1986,7 +2009,8 @@ function updateWaveFusionGains(
   ctx,
   oscAGain,
   oscBGain,
-  presenceAmount = 0
+  presenceAmount = 0,
+  initialize = false
 ) {
     const rawWaveFusion =
         getValue(waveFusionSlider, 50) / 100;
@@ -2031,6 +2055,11 @@ const oscBLevel =
     const fusionB =
         Math.sin(waveFusion * Math.PI * 0.5);
 
+    if (initialize) {
+        oscAGain.gain.setValueAtTime(0.65 * fusionA, ctx.currentTime);
+        oscBGain.gain.setValueAtTime(oscBLevel * fusionB, ctx.currentTime);
+        return;
+    }
     oscAGain.gain.setTargetAtTime(
         0.65 * fusionA,
         ctx.currentTime,
@@ -2881,7 +2910,9 @@ resonantFieldOutput.gain.value = 1.0;
   const noiseSource = ctx.createBufferSource();
   const noiseGain = ctx.createGain();
   const textureCrossfadeGain = ctx.createGain();
-    stereoPanner.pan.value = (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 0) / 100);
+    const genesisStereo = genesisModeSelect?.value === 'stereo';
+    // Preserve Legacy random note positioning; Genesis centers the core image.
+    stereoPanner.pan.value = genesisStereo ? 0 : (Math.random() * 2 - 1) * (getValue(stereoWidthSlider, 0) / 100);
   
 const presenceAmount =
   getValue(presenceSlider, 0) / 100;
@@ -2898,6 +2929,9 @@ const voiceSpread =
 
 const spreadCents = voiceSpread * 0.35;
 const unisonOscillators = [];
+const genesisCoreGains = genesisStereo ? [ctx.createGain(), ctx.createGain()] : null;
+const genesisWeights = genesisStereo ? genesisUnisonWeights(voiceSpread) : null;
+if (genesisCoreGains) genesisCoreGains.forEach(node => node.gain.value = genesisWeights.core);
   
   const waveformA =
   waveformSelect ? waveformSelect.value : "sine";
@@ -3005,7 +3039,7 @@ subOscillator.frequency.exponentialRampToValueAtTime(
     ctx.currentTime + glideTime
 );
   
-  updateWaveFusionGains(ctx, oscAGain, oscBGain, presenceAmount);
+  updateWaveFusionGains(ctx, oscAGain, oscBGain, presenceAmount, genesisStereo);
     
 subGain.gain.value =
   getValue(subLevelSlider, 0) / 100 * 0.35;
@@ -3041,13 +3075,21 @@ noiseGain.gain.value =
     applyWaveform(osc, type, ctx);
     osc.frequency.value = frequency;
     osc.detune.value = detune;
-    gain.gain.value = unisonLevel;
+    gain.gain.value = genesisStereo ? genesisWeights.satellite : unisonLevel;
 
     osc.connect(gain);
-    gain.connect(filter);
+    let pan = null;
+    if (genesisStereo) {
+      const index = unisonOscillators.length;
+      pan = ctx.createStereoPanner();
+      pan.pan.value = (index % 2 === 0 ? -1 : 1) * genesisWidth();
+      gain.connect(pan);
+      // Unison follows its own oscillator's Wave Fusion and level controls.
+      pan.connect(index < 2 ? oscAGain : oscBGain);
+    } else gain.connect(filter);
     osc.start();
 
-    unisonOscillators.push({ osc, gain });
+    unisonOscillators.push({ osc, gain, pan });
   }
 
   addUnisonOscillator(waveformA, driftCents - spreadCents);
@@ -3072,8 +3114,15 @@ addUnisonOscillator(
 
   const lfoNodes = createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain);
 
-  oscillatorA.connect(oscAGain);
-  oscillatorB.connect(oscBGain);
+  if (genesisCoreGains) {
+    oscillatorA.connect(genesisCoreGains[0]);
+    oscillatorB.connect(genesisCoreGains[1]);
+    genesisCoreGains[0].connect(oscAGain);
+    genesisCoreGains[1].connect(oscBGain);
+  } else {
+    oscillatorA.connect(oscAGain);
+    oscillatorB.connect(oscBGain);
+  }
   subOscillator.connect(subGain);
   
   oscAGain.connect(filter);
@@ -3156,6 +3205,8 @@ stereoPanner.connect(delayNode);
   subGain,
     livingTextureNodes,
   unisonOscillators,
+  genesisCoreGains,
+  genesisStereo,
 
   // FM Resonance — live controls for held / latched synth notes
   fmModulator,
@@ -3533,17 +3584,27 @@ if (note.livingTextureNodes) {
 }
 
 if (note.unisonOscillators) {
-  note.unisonOscillators.forEach(({ osc, gain }) => {
+  note.unisonOscillators.forEach(({ osc, gain, pan }) => {
     try {
       osc.stop(ctx.currentTime + release + 0.05);
-      osc.disconnect();
-      gain.disconnect();
+      if (note.genesisStereo) {
+        // Keep the stereo satellites in the envelope release; clean up on end.
+        osc.onended = () => { osc.disconnect(); gain.disconnect(); pan?.disconnect(); };
+      } else {
+        osc.disconnect();
+        gain.disconnect();
+      }
     } catch (error) {
       // Safe cleanup
     }
   });
 }
   
+  if (note.genesisCoreGains) {
+    note.oscillatorA.onended = () => {
+      for (const node of note.genesisCoreGains) node.disconnect();
+    };
+  }
   activeNotes.delete(noteId);
 }
 
@@ -17309,6 +17370,7 @@ function applyPresetSettings(preset) {
     dbSHApplyPreset(preset);
     dbGateApplyPreset(preset);
     if (!preset) return;
+    genesisSetControls(preset);
     if (dbBindingReady) dbExitBindingForPreset();
     else dbReleaseAllBindings();
 
@@ -17876,6 +17938,8 @@ function getCurrentPresetSettings() {
     oscBLevel: get(oscBLevelSlider, 0.35),
     oscBDetune: get(oscBDetuneSlider, 7),
     voiceSpread: get(voiceSpreadSlider),
+    genesisMode: genesisModeSelect?.value === 'stereo' ? 'stereo' : 'legacy',
+    genesisWidth: get(genesisWidthSlider, 85),
     beatTrackingMode: beatTrackingMode?.value ?? "natural",
     beatRate: get(beatRateSlider, 0.5),
     beatTempo: get(beatTempoSlider, 120),
@@ -18242,6 +18306,17 @@ oscBDetuneSlider?.addEventListener(
     updateActiveSynthOscBDetune
 );
 
+// Genesis width is live for single-mode held notes; Binding uses its existing
+// per-source snapshot/revoice mechanism. Mode changes apply on the next note.
+genesisWidthSlider?.addEventListener('input', () => {
+    genesisRefreshDisplay();
+    if (!audioContext) return;
+    activeNotes.forEach(note => {
+        note.unisonOscillators?.forEach(({pan}, index) => {
+            if (pan) pan.pan.setTargetAtTime((index % 2 === 0 ? -1 : 1) * genesisWidth(), audioContext.currentTime, .035);
+        });
+    });
+});
 // Live Synth Voice Spread
 voiceSpreadSlider?.addEventListener(
     "input",
@@ -18413,7 +18488,7 @@ let dbBindingEditTarget = 'A';
 let dbBindingRefreshTimer = null;
 const dbBindingEditorIds = new Set([
  'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
- 'subWaveform','subLevel','oscBLevel','oscBDetune','voiceSpread','beatTrackingMode',
+ 'subWaveform','subLevel','oscBLevel','oscBDetune','voiceSpread','genesisMode','genesisWidth','beatTrackingMode',
  'beatRate','beatTempo','beatDivision','attack','decay','sustain','release',
  'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
  'noiseType','noiseAmount','drift','stereoWidth','deepDreamOrbit','glideEnabled',
@@ -18438,7 +18513,7 @@ function dbBindingEditorLoad() {
    dbSetStatus('Evolution sources are composite. Edit an individual A or B sound to sculpt its parameters.');
    return;
  }
- const settings={...patch.settings,...dbBindingEdits[side]};
+ const settings={genesisMode:'legacy',genesisWidth:85,...patch.settings,...dbBindingEdits[side]};
  // Display source parameters without mutating audio engine state or active voices.
  for(const id of dbBindingEditorIds) {
    const el=document.getElementById(id);
@@ -18446,6 +18521,7 @@ function dbBindingEditorLoad() {
    if(el.type==='checkbox') el.checked=Boolean(settings[id]);
    else el.value=settings[id];
  }
+ genesisRefreshDisplay();
 }
 function dbBindingRefreshHeld() {
  if(dbGetMode()==='off') return;
@@ -18715,6 +18791,8 @@ function dbStoreBinding() {
 // preset (loading a global preset would stop all held notes and reset controls).
 // Audio parameters sampled at voice creation remain independent for the note.
 function dbApplySilently(settings, engine) {
+    // Explicit defaults prevent Genesis settings leaking into Legacy Binding leaves.
+    genesisSetControls(settings);
     const ids = [
       'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
       'subWaveform','subLevel','oscBLevel','oscBDetune','voiceSpread','beatTrackingMode',
