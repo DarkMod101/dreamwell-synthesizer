@@ -1313,6 +1313,16 @@ function genesisApplyNoteTuning(note,state,spread = note.genesisSpreadCents) {
     const targets=[a+drift-note.genesisSpreadCents,a+drift+note.genesisSpreadCents,b-drift-note.genesisSpreadCents,b-drift+note.genesisSpreadCents];
     note.unisonOscillators?.forEach(({osc},i)=>osc.detune.setTargetAtTime(targets[i],now,.035));
 }
+
+const gLfoDefaults={gLfo1Wave:'sine',gLfo1Sync:'free',gLfo2Wave:'sine',gLfo2Sync:'free',gLfo2Rate:2,gLfo2Amount:0,gLfo2Dest:'filter'};
+const gLfoIds=Object.keys(gLfoDefaults);
+function gLfoVal(id){return document.getElementById(id)?.value??gLfoDefaults[id];}
+function gLfoSettings(){return Object.fromEntries(gLfoIds.map(id=>[id,typeof gLfoDefaults[id]==='number'?Number(gLfoVal(id)):gLfoVal(id)]));}
+function gLfoSet(s){for(const id of gLfoIds){const e=document.getElementById(id);if(e)e.value=s[id]??gLfoDefaults[id];}}
+function gLfoRate(n){const sync=gLfoVal('gLfo'+n+'Sync');return sync==='free'?Number(n===1?lfoRateSlider.value:gLfoVal('gLfo2Rate')):Number(document.getElementById('arpTempo')?.value||100)/60*Number(sync)/4;}
+function gLfoUpdate2(b,ctx){const d=gLfoVal('gLfo2Dest'),v=Number(gLfoVal('gLfo2Amount'));b.second.type=gLfoVal('gLfo2Wave');b.second.frequency.setTargetAtTime(gLfoRate(2),ctx.currentTime,.025);if(b.secondDest!==d){b.secondGain.disconnect();if(d==='filter')b.secondGain.connect(b.filter.frequency);if(d==='pitch'){b.secondGain.connect(b.oscillatorA.frequency);b.secondGain.connect(b.oscillatorB.frequency);}if(d==='volume')b.secondGain.connect(b.noteGain.gain);b.secondDest=d;}b.secondGain.gain.setTargetAtTime(d==='volume'?v/2000:v,ctx.currentTime,.025);}
+function gLfoLive(){if(!audioContext)return;for(const note of activeNotes.values()){const b=note.lfoNodes;if(!b)continue;b.lfo.type=gLfoVal('gLfo1Wave');b.lfo.frequency.setTargetAtTime(gLfoRate(1),audioContext.currentTime,.025);if(b.second)gLfoUpdate2(b,audioContext);}}
+
 const genesisFilterDefaults = Object.freeze({filterEnvAmount:0,filterEnvAttack:.01,filterEnvDecay:.3,filterEnvSustain:.25,filterEnvRelease:.4,filterKeyTrack:0});
 const genesisFilterIds=Object.keys(genesisFilterDefaults);
 function genesisFilterSettings(){return Object.fromEntries(genesisFilterIds.map(id=>[id,getValue(document.getElementById(id),genesisFilterDefaults[id])]));}
@@ -1322,6 +1332,7 @@ function genesisFilterRelease(note,ctx,ampRelease){const e=note.genesisFilterEnv
 function genesisFilterLive(note,id,value,ctx){const e=note?.genesisFilterEnv;if(!e)return;e.settings[id]=value;if(id==='filterKeyTrack'){note.filter.detune.setTargetAtTime(1200*Math.log2(note.fmFrequency/261.6255653005986)*value/100,ctx.currentTime,.035);return;}if(id==='filterEnvAmount'||id==='filterEnvSustain'){const p=e.src.offset,t=ctx.currentTime;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else p.cancelScheduledValues(t);p.setTargetAtTime(e.settings.filterEnvAmount*100*e.settings.filterEnvSustain,t,.035);}}
 
 function genesisSetControls(settings = {}) {
+ gLfoSet(settings);
     for(const id of genesisFilterIds){const el=document.getElementById(id);if(el)el.value=settings[id]??genesisFilterDefaults[id];} genesisFilterDisplay();
     if (genesisModeSelect) genesisModeSelect.value = settings.genesisMode === 'stereo' ? 'stereo' : 'legacy';
     if (genesisWidthSlider) genesisWidthSlider.value = settings.genesisWidth ?? 85;
@@ -1382,7 +1393,7 @@ function updateActiveSynthVoiceSpread() {
 function updateActiveSynthLFORate() {
     if (!audioContext) return;
 
-    const rate = getValue(lfoRateSlider, 2);
+    const rate = gLfoRate(1);
 
     activeNotes.forEach((note) => {
         if (!note.lfoNodes?.lfo) return;
@@ -1750,7 +1761,8 @@ function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
   const lfo = ctx.createOscillator();
   const lfoGain = ctx.createGain();
 
-  lfo.frequency.value = getValue(lfoRateSlider, 2);
+  lfo.type=gLfoVal("gLfo1Wave");
+  lfo.frequency.value = gLfoRate(1);
 
   if (lfoDestinationSelect.value === "filter") {
     lfoGain.gain.value = lfoAmount;
@@ -1770,10 +1782,12 @@ function createLFO(ctx, oscillatorA, oscillatorB, filter, noteGain) {
 
   lfo.connect(lfoGain);
   lfo.start();
+  const second=ctx.createOscillator(), secondGain=ctx.createGain(); second.connect(secondGain);
+  const bundle={second,secondGain,oscillatorA,oscillatorB,filter,noteGain}; gLfoUpdate2(bundle,ctx); second.start();
 
   return {
     lfo,
-    lfoGain,
+    lfoGain, second, secondGain,
     oscillatorA,
     oscillatorB,
     filter,
@@ -3556,6 +3570,8 @@ if (note.noiseSource) {
 }
   
   if (note.lfoNodes) {
+    note.lfoNodes.second?.stop(ctx.currentTime + release + 0.05);
+    note.lfoNodes.second?.disconnect(); note.lfoNodes.secondGain?.disconnect();
     note.lfoNodes.lfo.stop(ctx.currentTime + release + 0.05);
     note.lfoNodes.lfo.disconnect();
     note.lfoNodes.lfoGain.disconnect();
@@ -17931,7 +17947,7 @@ function getCurrentPresetSettings() {
     voiceSpread: get(voiceSpreadSlider),
     genesisMode: genesisModeSelect?.value === 'stereo' ? 'stereo' : 'legacy',
     genesisWidth: get(genesisWidthSlider, 85),
-    ...genesisFilterSettings(),
+    ...genesisFilterSettings(), ...gLfoSettings(),
     beatTrackingMode: beatTrackingMode?.value ?? "natural",
     beatRate: get(beatRateSlider, 0.5),
     beatTempo: get(beatTempoSlider, 120),
@@ -18489,7 +18505,7 @@ const dbBindingEditorIds = new Set([
  'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
  'subWaveform','subLevel','oscBLevel',...genesisTuningIds,'voiceSpread','genesisMode','genesisWidth','beatTrackingMode',
  'beatRate','beatTempo','beatDivision','attack','decay','sustain','release',
- ...genesisFilterIds,'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
+ ...gLfoIds,...genesisFilterIds,'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
  'noiseType','noiseAmount','drift','stereoWidth','deepDreamOrbit','glideEnabled',
  'glideTime','presence','fmAmount','fmRatio','fmAttack','fmDecay','fmSustain','fmRelease',
  'coherence','decoherence','polynomialRingEnabled','polynomialRingAmount',
@@ -19498,3 +19514,5 @@ window.addEventListener('pagehide', dbReleaseAllBindings);
 dbBindingInitEditor();
 
 for(const id of genesisFilterIds)document.getElementById(id)?.addEventListener("input",()=>{genesisFilterDisplay();if(typeof dbGetMode==="function"&&dbGetMode()!=="off")return;if(audioContext)for(const note of activeNotes.values())genesisFilterLive(note,id,Number(document.getElementById(id).value),audioContext);});
+
+for(const id of [...gLfoIds,"arpTempo"])document.getElementById(id)?.addEventListener("input",()=>{if(typeof dbGetMode==="function"&&dbGetMode()!=="off")return;gLfoLive();});
