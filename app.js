@@ -1668,7 +1668,11 @@ setDisplay(
     
 }
 
-function createReverbImpulse(ctx, decayTime) {
+let g9ImpulseCache=null;
+function createReverbImpulse(ctx,decayTime){const character=typeof g8State==='object'?g8State.space:'legacy';const key=String(decayTime)+':'+character;if(g9ImpulseCache?.ctx===ctx&&g9ImpulseCache.key===key)return g9ImpulseCache.buffer;const buffer=g9BuildReverbImpulse(ctx,decayTime);g9ImpulseCache={ctx,key,buffer};return buffer;}
+function g9DryScale(){return document.getElementById('g9GainMode')?.value==='balanced'?.5:1;}
+function g9RefreshDry(){if(!audioContext||!dryGain||!delayDryGain)return;const t=audioContext.currentTime,k=g9DryScale();dryGain.gain.setTargetAtTime((1-Number(reverbMixSlider.value))*k,t,.02);delayDryGain.gain.setTargetAtTime((1-Number(delayMixSlider.value))*k,t,.02);}
+function g9BuildReverbImpulse(ctx, decayTime) {
   const sampleRate = ctx.sampleRate;
   const length = sampleRate * decayTime;
   const impulse = ctx.createBuffer(2, length, sampleRate);
@@ -1699,7 +1703,7 @@ function setupReverb(ctx) {
   const decay = getValue(reverbDecaySlider, 3);
 
   reverbNode.buffer = createReverbImpulse(ctx, decay);
-  dryGain.gain.value = 1 - mix;
+  dryGain.gain.value = (1 - mix)*g9DryScale();
   reverbWetGain.gain.value = mix;
 
   reverbNode.connect(reverbWetGain);
@@ -1718,7 +1722,7 @@ function setupDelay(ctx) {
   delayNode.delayTime.value = getValue(delayTimeSlider, 0.55);
   delayFeedbackGain.gain.value = getValue(delayFeedbackSlider, 0.55);
 
-  delayDryGain.gain.value = 1 - mix;
+  delayDryGain.gain.value = (1 - mix)*g9DryScale();
   delayWetGain.gain.value = mix;
 
   delayNode.connect(delayFeedbackGain);
@@ -4233,7 +4237,7 @@ bindSlider(masterVolume, () => {
 bindSlider(reverbMixSlider, () => {
   const ctx = getAudioContext();
   const mix = Number(reverbMixSlider.value);
-  dryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
+  dryGain.gain.setTargetAtTime((1 - mix)*g9DryScale(), ctx.currentTime, 0.01);
   reverbWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
 });
 
@@ -4245,7 +4249,7 @@ bindSlider(reverbDecaySlider, () => {
 bindSlider(delayMixSlider, () => {
   const ctx = getAudioContext();
   const mix = Number(delayMixSlider.value);
-  delayDryGain.gain.setTargetAtTime(1 - mix, ctx.currentTime, 0.01);
+  delayDryGain.gain.setTargetAtTime((1 - mix)*g9DryScale(), ctx.currentTime, 0.01);
   delayWetGain.gain.setTargetAtTime(mix, ctx.currentTime, 0.01);
 });
 
@@ -17812,7 +17816,7 @@ if (fmReleaseDisplay) {
                 Number(reverbMixSlider.value);
 
             dryGain.gain.setTargetAtTime(
-                1 - reverbMix,
+                (1 - reverbMix)*g9DryScale(),
                 now,
                 0.01
             );
@@ -17844,7 +17848,7 @@ if (fmReleaseDisplay) {
                 Number(delayMixSlider.value);
 
             delayDryGain.gain.setTargetAtTime(
-                1 - delayMix,
+                (1 - delayMix)*g9DryScale(),
                 now,
                 0.01
             );
@@ -19559,3 +19563,5 @@ function g8Set(k,v){if(k==='space'){v=['legacy','warm','bright'].includes(v)?v:'
 function g8Load(v){for(const k of Object.keys(g8State))g8Set(k,v?.[k]??(k==='space'?'legacy':0));}
 function g8Init(){for(const k of Object.keys(g8State)){const e=document.getElementById('g8-'+k);e?.addEventListener(k==='space'?'change':'input',()=>g8Set(k,e.value));}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',g8Init);else g8Init();
+
+document.getElementById("g9GainMode")?.addEventListener("change",g9RefreshDry);
