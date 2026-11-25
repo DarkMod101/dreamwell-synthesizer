@@ -3534,3 +3534,63 @@ body::after {display:none!important;}
 .db-genesis-tuning .db-module-content {grid-template-columns:repeat(3,minmax(0,1fr))!important;}
 .db-genesis-fallback-knob {touch-action:none;}
 .db-genesis-fallback-knob .db-neon-value {z-index:2;}
+
+/* DREAM BINDER / TAB BANNER IDENTITY v1 — visual only */
+.db-edit-console {
+  --db-tab-art: url("assets/interface/tab-banners/origin-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="source"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="source"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/origin-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="shape"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="shape"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/physics-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="resonance"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="resonance"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/resonance-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="motion"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="motion"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/motion-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="voicing"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="voicing"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/voicing-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="master"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="master"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/master-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="bindings"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="bindings"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/bindings-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="midi"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="midi"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/midi-banner.webp");
+}
+.db-edit-console:has(.db-edit-tab[data-page="fx"].active),
+.db-edit-console:not(:has(.db-edit-tab.active)):has(.db-edit-tab[data-page="fx"][aria-selected="true"]) {
+  --db-tab-art: url("assets/interface/tab-banners/fxrack-banner.webp");
+}
+
+/* Only the existing module heading strip changes. The original text stays live. */
+.db-edit-console .db-screen-caption {
+  background-color: #10141c !important;
+  background-image: linear-gradient(90deg, rgba(6,9,17,.91) 0%, rgba(6,9,17,.76) 34%, rgba(6,9,17,.44) 62%, rgba(6,9,17,.13) 100%), var(--db-tab-art) !important;
+  background-size: cover, cover !important;
+  background-position: center, center 48% !important;
+  background-repeat: no-repeat !important;
+}
+.db-edit-console .db-screen-caption h2,
+.db-edit-console .db-screen-caption p,
+.db-edit-console .db-screen-kicker,
+.db-edit-console .db-screen-state { text-shadow: 0 1px 4px #03040b, 0 0 8px #03040b; }
+.db-edit-console .db-screen-caption p { color: #c1cbd8; }
+@media (orientation: landscape) {
+  .db-edit-console .db-screen-caption {
+    background-position: center, center 49% !important;
+  }
+}
