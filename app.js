@@ -1313,13 +1313,13 @@ function genesisApplyNoteTuning(note,state,spread = note.genesisSpreadCents) {
     const targets=[a+drift-note.genesisSpreadCents,a+drift+note.genesisSpreadCents,b-drift-note.genesisSpreadCents,b-drift+note.genesisSpreadCents];
     note.unisonOscillators?.forEach(({osc},i)=>osc.detune.setTargetAtTime(targets[i],now,.035));
 }
-const genesisFilterDefaults = Object.freeze({filterEnvAmount:0,filterEnvAttack:.01,filterEnvDecay:.3,filterEnvSustain:.25,filterEnvRelease:.4});
+const genesisFilterDefaults = Object.freeze({filterEnvAmount:0,filterEnvAttack:.01,filterEnvDecay:.3,filterEnvSustain:.25,filterEnvRelease:.4,filterKeyTrack:0});
 const genesisFilterIds=Object.keys(genesisFilterDefaults);
 function genesisFilterSettings(){return Object.fromEntries(genesisFilterIds.map(id=>[id,getValue(document.getElementById(id),genesisFilterDefaults[id])]));}
-function genesisFilterDisplay(){for(const id of genesisFilterIds){const el=document.getElementById(id+'Value');if(el)el.textContent=String(Number(document.getElementById(id).value))+(id==='filterEnvAmount'?' st':id==='filterEnvSustain'?'':' s');}}
-function genesisFilterCreate(ctx,filter){const s=genesisFilterSettings();const src=ctx.createConstantSource();src.offset.value=0;src.connect(filter.detune);src.start();const now=ctx.currentTime,peak=s.filterEnvAmount*100;src.offset.setValueAtTime(0,now);src.offset.linearRampToValueAtTime(peak,now+s.filterEnvAttack);src.offset.linearRampToValueAtTime(peak*s.filterEnvSustain,now+s.filterEnvAttack+s.filterEnvDecay);return {src,settings:s};}
+function genesisFilterDisplay(){for(const id of genesisFilterIds){const el=document.getElementById(id+'Value');if(el)el.textContent=String(Number(document.getElementById(id).value))+(id==='filterKeyTrack'?'%':id==='filterEnvAmount'?' st':id==='filterEnvSustain'?'':' s');}}
+function genesisFilterCreate(ctx,filter,frequency){const s=genesisFilterSettings();filter.detune.value=1200*Math.log2(frequency/261.6255653005986)*s.filterKeyTrack/100;const src=ctx.createConstantSource();src.offset.value=0;src.connect(filter.detune);src.start();const now=ctx.currentTime,peak=s.filterEnvAmount*100;src.offset.setValueAtTime(0,now);src.offset.linearRampToValueAtTime(peak,now+s.filterEnvAttack);src.offset.linearRampToValueAtTime(peak*s.filterEnvSustain,now+s.filterEnvAttack+s.filterEnvDecay);return {src,settings:s};}
 function genesisFilterRelease(note,ctx,ampRelease){const e=note.genesisFilterEnv;if(!e)return;const t=ctx.currentTime,p=e.src.offset;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else{const v=p.value;p.cancelScheduledValues(t);p.setValueAtTime(v,t);}p.linearRampToValueAtTime(0,t+Math.min(e.settings.filterEnvRelease,ampRelease));e.src.stop(t+ampRelease+.05);}
-function genesisFilterLive(note,id,value,ctx){const e=note?.genesisFilterEnv;if(!e)return;e.settings[id]=value;if(id==='filterEnvAmount'||id==='filterEnvSustain'){const p=e.src.offset,t=ctx.currentTime;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else p.cancelScheduledValues(t);p.setTargetAtTime(e.settings.filterEnvAmount*100*e.settings.filterEnvSustain,t,.035);}}
+function genesisFilterLive(note,id,value,ctx){const e=note?.genesisFilterEnv;if(!e)return;e.settings[id]=value;if(id==='filterKeyTrack'){note.filter.detune.setTargetAtTime(1200*Math.log2(note.fmFrequency/261.6255653005986)*value/100,ctx.currentTime,.035);return;}if(id==='filterEnvAmount'||id==='filterEnvSustain'){const p=e.src.offset,t=ctx.currentTime;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else p.cancelScheduledValues(t);p.setTargetAtTime(e.settings.filterEnvAmount*100*e.settings.filterEnvSustain,t,.035);}}
 
 function genesisSetControls(settings = {}) {
     for(const id of genesisFilterIds){const el=document.getElementById(id);if(el)el.value=settings[id]??genesisFilterDefaults[id];} genesisFilterDisplay();
@@ -3037,7 +3037,7 @@ subGain.gain.value =
 filter.frequency.value =
   Math.max(0, baseCutoff) +
   (presenceAmount * 400);
-  const genesisFilterEnv=genesisFilterCreate(ctx,filter);
+  const genesisFilterEnv=genesisFilterCreate(ctx,filter,frequency);
   filter.Q.value =
   getValue(resonanceSlider, 1) +
   originSettings.resonanceBoost;
