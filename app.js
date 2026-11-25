@@ -2558,7 +2558,7 @@ function dbDriveRead() {
     amount: Math.max(0, Math.min(100, num("dbDriveAmount", 30))),
     mix: Math.max(0, Math.min(100, num("dbDriveMix", 40))),
     tone: Math.max(300, Math.min(12000, num("dbDriveTone", 6000))),
-    character: ["soft", "hard", "fold"].includes(el("dbDriveCharacter")?.value) ? el("dbDriveCharacter").value : "soft"
+    character: ["soft", "hard", "fold", "valve"].includes(el("dbDriveCharacter")?.value) ? el("dbDriveCharacter").value : "soft"
   };
 }
 const dbDriveCurveCache = new Map();
@@ -2574,6 +2574,10 @@ function dbDriveCurve(amount, character) {
     else if (character === "fold") {
       const z = x * gain;
       y = (2 / Math.PI) * Math.asin(Math.sin(z));
+    } else if (character === "valve") {
+      const g = 1 + amount * 0.075;
+      const z = x + 0.18 * x * x * (1 - Math.abs(x));
+      y = Math.tanh(g * z) / Math.tanh(g);
     } else y = Math.tanh(x * gain) / Math.tanh(gain);
     curve[i] = y;
   }
@@ -2639,6 +2643,8 @@ function dbDriveCreate(ctx, input, output) {
       const state = dbDriveRead();
       const now = ctx.currentTime;
       const mix = state.enabled ? state.mix / 100 : 0;
+      const quality = state.character === "valve" ? "2x" : "none";
+      if (shaper.oversample !== quality) shaper.oversample = quality;
       shaper.curve = dbDriveCurve(state.amount, state.character);
       lowpass.frequency.setTargetAtTime(state.tone, now, 0.025);
       dry.gain.setTargetAtTime(1 - mix, now, 0.02);
@@ -2964,7 +2970,7 @@ oscillatorB.frequency.exponentialRampToValueAtTime(
   ctx.currentTime + glideTime
 );
 
-dbPitchEnvSchedule(ctx, [[oscillatorA, 1], [oscillatorB, 1], [subOscillator, 0.5]], frequency, ctx.currentTime);
+
 
 // ========================================
 // DREAM BINDER — FM RESONANCE
@@ -3105,6 +3111,9 @@ addUnisonOscillator(
   genesisBOffset - driftCents + spreadCents
 );
   
+  // Schedule after Sub glide and all satellite oscillators have been initialized.
+  dbPitchEnvSchedule(ctx, [[oscillatorA,1],[oscillatorB,1],[subOscillator,0.5],...unisonOscillators.map(({osc})=>[osc,1])], frequency, ctx.currentTime);
+
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
   noteGain.gain.exponentialRampToValueAtTime(0.8, ctx.currentTime + attack);
   noteGain.gain.linearRampToValueAtTime(
