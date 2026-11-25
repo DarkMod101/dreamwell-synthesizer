@@ -15189,6 +15189,16 @@ for (const patch of dbIndustrialFactoryPatches) {
   presetBanks.industrial[patch.key] = patch;
 }
 
+// Genesis Stage X: additive factory showcase.
+const dbGenesisShowcase = [["Abyssal Cinema", "industrialFactorySub", {"attack": 1.4, "release": 4, "cutoff": 650, "subLevel": 0.3, "dbDriveEnabled": false, "reverbMix": 0.3, "filterEnvAmount": 18, "filterEnvAttack": 2, "filterEnvSustain": 0.6}], ["Velvet Voltage", "industrialIronPulse", {"cutoff": 350, "filterEnvAmount": 32, "filterEnvDecay": 0.24, "filterEnvSustain": 0.12, "filterKeyTrack": 65, "dbGateEnabled": false}], ["Neon Pursuit", "industrialBlackCircuit", {"cutoff": 1800, "oscBSemitone": 7, "filterEnvAmount": 20, "filterEnvDecay": 0.35, "dbRingEnabled": false, "dbDriveCharacter": "soft", "dbDriveAmount": 30}], ["Glass Horizon", "industrialStaticCorridor", {"waveform": "triangle", "waveformB": "sine", "noiseAmount": 0, "dbSHEnabled": false, "cutoff": 3200, "filterEnvAmount": -12, "filterEnvAttack": 2, "reverbMix": 0.35}], ["Machine Cathedral", "industrialCoolingReactor", {"oscBOctave": 1, "filterType": "bandpass", "cutoff": 900, "filterKeyTrack": 45, "filterEnvAmount": 16, "dbDriveEnabled": false, "reverbMix": 0.32}], ["Pulse Engine", "industrialPressureValve", {"filterEnvAmount": 24, "filterEnvDecay": 0.18, "filterEnvSustain": 0.2, "filterKeyTrack": 75, "dbDriveAmount": 35}], ["Ion Memory", "industrialIonDischarge", {"oscBSemitone": 7, "filterEnvAmount": 30, "filterEnvDecay": 0.2, "filterEnvSustain": 0, "release": 0.5}], ["Last Light", "industrialLastMachineAwake", {"noiseAmount": 2, "dbDriveEnabled": false, "cutoff": 1400, "filterEnvAmount": 24, "filterEnvAttack": 3, "filterEnvDecay": 2, "filterEnvSustain": 0.5, "reverbMix": 0.35}]];
+for (const [i, [name, baseKey, overrides]] of dbGenesisShowcase.entries()) {
+ const base = presetBanks.industrial[baseKey];
+ if (!base) throw Error(`Missing Genesis base: ${baseKey}`);
+ const key = `genesisShowcase${i+1}`;
+ if (Object.hasOwn(presetBanks.industrial,key)) throw Error(`Genesis collision: ${key}`);
+ presetBanks.industrial[key] = {...base,key,name:`Genesis · ${name}`,collection:"Genesis Showcase",description:`Genesis refinement: ${name}`,settings:{...base.settings,genesisMode:"stereo",genesisWidth:75,voiceSpread:45,masterVolume:.09,...overrides}};
+}
+
 // ========================================
 // Choir Ah Sample Loader
 // ========================================
