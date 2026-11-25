@@ -1681,6 +1681,12 @@ function createReverbImpulse(ctx, decayTime) {
     }
   }
 
+  if (g8State.space !== 'legacy') {
+    const damp = g8State.space === 'warm' ? .07 : .28;
+    for (let c=0;c<2;c++) { const d=impulse.getChannelData(c); let z=0;
+      for(let i=0;i<d.length;i++){z += damp*(d[i]-z); d[i]=z*(g8State.space==='warm'?2.8:1.6);}
+    }
+  }
   return impulse;
 }
 
@@ -1717,7 +1723,7 @@ function setupDelay(ctx) {
 
   delayNode.connect(delayFeedbackGain);
   delayFeedbackGain.connect(delayNode);
-  delayNode.connect(delayWetGain);
+  g8DelayConnect(ctx, delayNode, delayWetGain);
   delayWetGain.connect(masterGain);
   delayDryGain.connect(masterGain);
 }
@@ -1739,8 +1745,9 @@ masterLimiter.ratio.value = 8;
 masterLimiter.attack.value = 0.003;
 masterLimiter.release.value = 0.25;
 
-masterGain.connect(masterLimiter);
-g7Connect(audioContext, masterGain, masterLimiter);
+const eqInput = g8Connect(audioContext, masterLimiter);
+masterGain.connect(eqInput);
+g7Connect(audioContext, masterGain, eqInput);
 masterLimiter.connect(audioContext.destination);
 
     setupReverb(audioContext);
@@ -17381,7 +17388,7 @@ startPianoWaveFusionModulation();
 }
 
 function applyPresetSettings(preset) {
-    if (preset) g7Load(preset.genesisModFx);
+    if (preset) { g7Load(preset.genesisModFx); g8Load(preset.genesisFx); }
     dbPitchEnvApplyPreset(preset);
     dbRingApplyPreset(preset);
     dbDriveApplyPreset(preset);
@@ -17918,6 +17925,7 @@ function getCurrentPresetSettings() {
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
   return {
     genesisModFx: g7Read(),
+    genesisFx: {...g8State},
     dbRingEnabled: dbRingState.enabled,
     dbRingFrequency: dbRingState.frequency,
     dbRingDepth: dbRingState.depth,
@@ -19541,3 +19549,13 @@ input.connect(first);last.connect(wet);lfo.start();g7Nodes[k]={wet,lfo,depth,fir
 function g7Set(k,v){v=Math.max(0,Math.min(1,Number(v)||0));g7State[k]=v;const el=document.getElementById('g7-'+k),label=document.getElementById('g7-'+k+'-value');if(el)el.value=v;if(label)label.textContent=Math.round(v*100)+'%';if(v>0)g7Build(k);const n=g7Nodes[k];if(n&&g7Bus){const t=g7Bus.ctx.currentTime;n.wet.gain.setTargetAtTime(v*.55,t,.015);if(v===0){const old=n;delete g7Nodes[k];setTimeout(()=>{try{g7Bus.input.disconnect(old.first);old.lfo.stop();for(const x of [old.first,old.last,old.depth,old.wet,old.feedback])x?.disconnect();}catch(e){}},150);}}}
 function g7Init(){for(const k of Object.keys(g7State)){const el=document.getElementById('g7-'+k);el?.addEventListener('input',()=>g7Set(k,el.value));}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',g7Init);else g7Init();
+
+// Genesis VIII: shared EQ, stereo echo spread, reverb character
+const g8State={low:0,mid:0,high:0,spread:0,space:'legacy'};
+let g8Eq=null,g8Echo=null;
+function g8Connect(c,out){const low=c.createBiquadFilter(),mid=c.createBiquadFilter(),high=c.createBiquadFilter();low.type='lowshelf';low.frequency.value=180;mid.type='peaking';mid.frequency.value=1200;mid.Q.value=.8;high.type='highshelf';high.frequency.value=5000;low.connect(mid);mid.connect(high);high.connect(out);g8Eq={low,mid,high};for(const k of ['low','mid','high'])g8Eq[k].gain.value=g8State[k];return low;}
+function g8DelayConnect(c,input,out){const dry=c.createGain(),wet=c.createGain(),l=c.createDelay(.1),r=c.createDelay(.1),lp=c.createStereoPanner(),rp=c.createStereoPanner();lp.pan.value=-1;rp.pan.value=1;l.delayTime.value=.011;r.delayTime.value=.029;input.connect(dry);dry.connect(out);input.connect(l);input.connect(r);l.connect(lp);r.connect(rp);lp.connect(wet);rp.connect(wet);wet.connect(out);g8Echo={dry,wet};dry.gain.value=1-g8State.spread;wet.gain.value=g8State.spread*.7071;}
+function g8Set(k,v){if(k==='space'){v=['legacy','warm','bright'].includes(v)?v:'legacy';}else{v=Number(v)||0;v=Math.max(k==='spread'?0:-12,Math.min(k==='spread'?1:12,v));}const changed=g8State[k]!==v;g8State[k]=v;const el=document.getElementById('g8-'+k),label=document.getElementById('g8-'+k+'-value');if(el)el.value=v;if(label)label.textContent=k==='spread'?Math.round(v*100)+'%':v+' dB';if(g8Eq?.[k])g8Eq[k].gain.setTargetAtTime(v,audioContext.currentTime,.02);if(k==='spread'&&g8Echo){g8Echo.dry.gain.setTargetAtTime(1-v,audioContext.currentTime,.02);g8Echo.wet.gain.setTargetAtTime(v*.7071,audioContext.currentTime,.02);}if(k==='space'&&changed&&reverbNode&&audioContext)reverbNode.buffer=createReverbImpulse(audioContext,getValue(reverbDecaySlider,3));}
+function g8Load(v){for(const k of Object.keys(g8State))g8Set(k,v?.[k]??(k==='space'?'legacy':0));}
+function g8Init(){for(const k of Object.keys(g8State)){const e=document.getElementById('g8-'+k);e?.addEventListener(k==='space'?'change':'input',()=>g8Set(k,e.value));}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',g8Init);else g8Init();
