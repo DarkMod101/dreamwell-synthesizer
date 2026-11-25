@@ -797,12 +797,12 @@ function beatTargetHz() {
     return (Number(beatTempoSlider.value) / 60) / Number(beatDivisionSelect.value);
   return null;
 }
-function oscillatorBDetuneCents(noteFrequency, originalCents) {
-  const target = beatTargetHz();
+function oscillatorBDetuneCents(noteFrequency, originalCents, state = null) {
+  const target = state ? (state.beatTrackingMode === 'fixed' ? state.beatRate : state.beatTrackingMode === 'tempo' ? (state.beatTempo / 60) / state.beatDivision : null) : beatTargetHz();
   if (target === null || !Number.isFinite(noteFrequency) || noteFrequency <= 0) return originalCents;
   // Fixed absolute difference in Hz, unlike cents-based natural beating.
   // Preserve the user's detune direction; zero detune means no beating.
-  const sign = Math.sign(Number(oscBDetuneSlider?.value ?? 7));
+  const sign = Math.sign(originalCents);
   if (!sign) return 0;
   return 1200 * Math.log2(1 + sign * Math.min(target, noteFrequency * 0.8) / noteFrequency);
 }
@@ -1272,50 +1272,8 @@ function updateActiveSynthSubLevel() {
 
 function updateActiveSynthOscBDetune() {
     if (!audioContext) return;
-
-    const detune =
-        getValue(oscBDetuneSlider, 7);
-
-    activeNotes.forEach((note) => {
-        if (!note.oscillatorB) return;
-
-        const driftOffset =
-            note.oscillatorB.userDriftOffset || 0;
-
-        note.oscillatorB.detune.setTargetAtTime(
-            oscillatorBDetuneCents(note.fmFrequency, detune) - driftOffset,
-            audioContext.currentTime,
-            0.05
-        );
-
-// Synchronize OSC B unison voices
-if (
-    note.unisonOscillators &&
-    note.unisonOscillators.length === 4
-) {
-    const presenceAmount =
-        getValue(presenceSlider, 0) / 100;
-
-    const voiceSpread =
-        getValue(voiceSpreadSlider, 0) +
-        presenceAmount * 70;
-
-    const spreadCents = voiceSpread * 0.35;
-
-    note.unisonOscillators[2].osc.detune.setTargetAtTime(
-        oscillatorBDetuneCents(note.fmFrequency, detune) - driftOffset - spreadCents,
-        audioContext.currentTime,
-        0.05
-    );
-
-    note.unisonOscillators[3].osc.detune.setTargetAtTime(
-        oscillatorBDetuneCents(note.fmFrequency, detune) - driftOffset + spreadCents,
-        audioContext.currentTime,
-        0.05
-    );
-}
-        
-    });
+    const state = genesisReadTuning();
+    activeNotes.forEach(note => genesisApplyNoteTuning(note, state));
 }
 
 // ========================================
@@ -1331,13 +1289,48 @@ function genesisUnisonWeights(spread) {
     return {core, satellite: satellite * core};
 }
 function genesisWidth() { return Math.max(0, Math.min(1, getValue(genesisWidthSlider, 85) / 100)); }
+const genesisTuningDefaults = Object.freeze({oscAOctave:0,oscASemitone:0,oscAFine:0,oscBOctave:0,oscBSemitone:0,oscBDetune:7});
+const genesisTuningIds = Object.keys(genesisTuningDefaults);
+function genesisReadTuning() {
+    const result = {};
+    for (const id of genesisTuningIds) result[id] = getValue(document.getElementById(id), genesisTuningDefaults[id]);
+    return {...result,beatTrackingMode:beatTrackingMode?.value ?? 'natural',beatRate:getValue(beatRateSlider,.5),beatTempo:getValue(beatTempoSlider,120),beatDivision:getValue(beatDivisionSelect,1)};
+}
+function genesisPitchOffsets(frequency,state) {
+    const a = 1200*state.oscAOctave + 100*state.oscASemitone + state.oscAFine;
+    const bCoarse = 1200*state.oscBOctave + 100*state.oscBSemitone;
+    return [a,bCoarse + oscillatorBDetuneCents(frequency * Math.pow(2,bCoarse/1200),state.oscBDetune,state)];
+}
+function genesisApplyNoteTuning(note,state,spread = note.genesisSpreadCents) {
+    if (!audioContext || !note.oscillatorA || !note.oscillatorB) return;
+    const [a,b] = genesisPitchOffsets(note.fmFrequency,state);
+    const drift = note.genesisDriftCents ?? 0;
+    const now = audioContext.currentTime;
+    note.genesisTuning = {...state};
+    note.genesisSpreadCents = spread ?? 0;
+    note.oscillatorA.detune.setTargetAtTime(a+drift,now,.035);
+    note.oscillatorB.detune.setTargetAtTime(b-drift,now,.035);
+    const targets=[a+drift-note.genesisSpreadCents,a+drift+note.genesisSpreadCents,b-drift-note.genesisSpreadCents,b-drift+note.genesisSpreadCents];
+    note.unisonOscillators?.forEach(({osc},i)=>osc.detune.setTargetAtTime(targets[i],now,.035));
+}
 function genesisSetControls(settings = {}) {
     if (genesisModeSelect) genesisModeSelect.value = settings.genesisMode === 'stereo' ? 'stereo' : 'legacy';
     if (genesisWidthSlider) genesisWidthSlider.value = settings.genesisWidth ?? 85;
+    for (const id of genesisTuningIds) {
+        const el=document.getElementById(id);
+        if (el) el.value=settings[id] ?? genesisTuningDefaults[id];
+    }
     genesisRefreshDisplay();
 }
 function genesisRefreshDisplay() {
     setDisplay(document.getElementById('genesisWidthValue'), `${Math.round(genesisWidth()*100)}%`);
+    for(const id of genesisTuningIds) {
+        const v=getValue(document.getElementById(id),genesisTuningDefaults[id]);
+        const unit=id.endsWith('Octave')?' oct':id.endsWith('Semitone')?' st':' cents';
+        setDisplay(document.getElementById(id+'Value'),`${v>0?'+':''}${v}${unit}`);
+    }
+    document.querySelectorAll('[data-genesis-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.genesisMode===genesisModeSelect?.value)));
+    document.dispatchEvent(new Event('dbGenesisDisplay'));
 }
 function updateActiveSynthVoiceSpread() {
     if (!audioContext) return;
@@ -1358,29 +1351,12 @@ function updateActiveSynthVoiceSpread() {
         if (!note.unisonOscillators ||
             note.unisonOscillators.length !== 4) return;
 
-        const driftCents =
-            note.oscillatorA.detune.value;
-
-        const oscBDetune =
-            getValue(oscBDetuneSlider, 7);
-
-        const detunes = [
-            driftCents - spreadCents,
-            driftCents + spreadCents,
-            oscillatorBDetuneCents(note.fmFrequency, oscBDetune) - driftCents - spreadCents,
-            oscillatorBDetuneCents(note.fmFrequency, oscBDetune) - driftCents + spreadCents
-        ];
+        genesisApplyNoteTuning(note, genesisReadTuning(), spreadCents);
 
         const weights = note.genesisCoreGains ? genesisUnisonWeights(voiceSpread) : null;
         if (weights) note.genesisCoreGains.forEach(node => node.gain.setTargetAtTime(weights.core, audioContext.currentTime, 0.035));
         note.unisonOscillators.forEach(({ osc, gain, pan }, index) => {
             if (pan) pan.pan.setTargetAtTime((index % 2 === 0 ? -1 : 1) * genesisWidth(), audioContext.currentTime, 0.035);
-            osc.detune.setTargetAtTime(
-                detunes[index],
-                audioContext.currentTime,
-                0.05
-            );
-
             gain.gain.setTargetAtTime(
                 weights ? weights.satellite : unisonLevel,
                 audioContext.currentTime,
@@ -3017,10 +2993,10 @@ fmEnvelope.connect(fmDepth);
 fmDepth.connect(oscillatorA.frequency);
 fmModulator.start();
     
-oscillatorA.detune.value = driftCents;
-
-oscillatorB.detune.value =
-  oscillatorBDetuneCents(frequency, getValue(oscBDetuneSlider, 7)) - driftCents;
+const genesisTuning = genesisReadTuning();
+const [genesisAOffset, genesisBOffset] = genesisPitchOffsets(frequency,genesisTuning);
+oscillatorA.detune.value = genesisAOffset + driftCents;
+oscillatorB.detune.value = genesisBOffset - driftCents;
 
 oscillatorB.userDriftOffset = driftCents;
     
@@ -3092,17 +3068,17 @@ noiseGain.gain.value =
     unisonOscillators.push({ osc, gain, pan });
   }
 
-  addUnisonOscillator(waveformA, driftCents - spreadCents);
-addUnisonOscillator(waveformA, driftCents + spreadCents);
+  addUnisonOscillator(waveformA, genesisAOffset + driftCents - spreadCents);
+addUnisonOscillator(waveformA, genesisAOffset + driftCents + spreadCents);
 
 addUnisonOscillator(
   waveformB,
-  oscillatorBDetuneCents(frequency, getValue(oscBDetuneSlider, 7)) - driftCents - spreadCents
+  genesisBOffset - driftCents - spreadCents
 );
 
 addUnisonOscillator(
   waveformB,
-  oscillatorBDetuneCents(frequency, getValue(oscBDetuneSlider, 7)) - driftCents + spreadCents
+  genesisBOffset - driftCents + spreadCents
 );
   
   noteGain.gain.setValueAtTime(0.001, ctx.currentTime);
@@ -3207,6 +3183,9 @@ stereoPanner.connect(delayNode);
   unisonOscillators,
   genesisCoreGains,
   genesisStereo,
+  genesisTuning,
+  genesisDriftCents: driftCents,
+  genesisSpreadCents: spreadCents,
 
   // FM Resonance — live controls for held / latched synth notes
   fmModulator,
@@ -17936,7 +17915,7 @@ function getCurrentPresetSettings() {
     subWaveform: subWaveformSelect?.value ?? "sine",
     subLevel: get(subLevelSlider),
     oscBLevel: get(oscBLevelSlider, 0.35),
-    oscBDetune: get(oscBDetuneSlider, 7),
+    ...Object.fromEntries(genesisTuningIds.map(id=>[id,getValue(document.getElementById(id),genesisTuningDefaults[id])])),
     voiceSpread: get(voiceSpreadSlider),
     genesisMode: genesisModeSelect?.value === 'stereo' ? 'stereo' : 'legacy',
     genesisWidth: get(genesisWidthSlider, 85),
@@ -18300,11 +18279,18 @@ subLevelSlider?.addEventListener(
     updateActiveSynthSubLevel
 );
 
-// Live Synth OSC B Detune
-oscBDetuneSlider?.addEventListener(
-    "input",
-    updateActiveSynthOscBDetune
-);
+// Genesis II: fine, semitone and octave tuning share the same click-free path.
+for (const id of genesisTuningIds) {
+    document.getElementById(id)?.addEventListener('input',()=>{
+        genesisRefreshDisplay();
+        updateActiveSynthOscBDetune();
+    });
+}
+genesisModeSelect?.addEventListener('change',genesisRefreshDisplay);
+document.querySelectorAll('[data-genesis-mode]').forEach(button=>button.addEventListener('click',()=>{
+    genesisModeSelect.value=button.dataset.genesisMode;
+    genesisModeSelect.dispatchEvent(new Event('change',{bubbles:true}));
+}));
 
 // Genesis width is live for single-mode held notes; Binding uses its existing
 // per-source snapshot/revoice mechanism. Mode changes apply on the next note.
@@ -18488,7 +18474,7 @@ let dbBindingEditTarget = 'A';
 let dbBindingRefreshTimer = null;
 const dbBindingEditorIds = new Set([
  'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
- 'subWaveform','subLevel','oscBLevel','oscBDetune','voiceSpread','genesisMode','genesisWidth','beatTrackingMode',
+ 'subWaveform','subLevel','oscBLevel',...genesisTuningIds,'voiceSpread','genesisMode','genesisWidth','beatTrackingMode',
  'beatRate','beatTempo','beatDivision','attack','decay','sustain','release',
  'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
  'noiseType','noiseAmount','drift','stereoWidth','deepDreamOrbit','glideEnabled',
@@ -18510,10 +18496,16 @@ function dbBindingEditorLoad() {
  const side=dbBindingEditTarget==='B'?'B':'A';
  const patch=dbSettingsForLayer(dbUI[side]?.value);
  if (!patch || patch.engine==='evolution') {
-   dbSetStatus('Evolution sources are composite. Edit an individual A or B sound to sculpt its parameters.');
+   const leaf=patch?.evolution?.leaves?.find(x=>x.patch?.engine==='synth');
+   if(leaf) {
+       const settings={...genesisTuningDefaults,...leaf.patch.settings,...dbBindingEdits[side]};
+       for(const id of genesisTuningIds) document.getElementById(id).value=settings[id];
+       genesisRefreshDisplay();
+       dbSetStatus('Tuning edits apply to all Synth leaves of the selected Evolution. Other instruments remain unchanged.');
+   } else dbSetStatus('No Synth leaf available for oscillator tuning in this source.');
    return;
  }
- const settings={genesisMode:'legacy',genesisWidth:85,...patch.settings,...dbBindingEdits[side]};
+ const settings={genesisMode:'legacy',genesisWidth:85,...genesisTuningDefaults,...patch.settings,...dbBindingEdits[side]};
  // Display source parameters without mutating audio engine state or active voices.
  for(const id of dbBindingEditorIds) {
    const el=document.getElementById(id);
@@ -18562,6 +18554,16 @@ function dbBindingHandleEdit(event) {
  const value=el.type==='checkbox'?el.checked:(el.type==='range'?Number(el.value):el.value);
  const sides=dbBindingEditTarget==='both'?['A','B']:[dbBindingEditTarget];
  for(const side of sides) dbBindingEdits[side][id]=value;
+ if(genesisTuningIds.includes(id)) {
+   // Tune held Binding voices in place, including latched and Evolution leaves.
+   // Use each leaf's own snapshot so unrelated parameters never leak across A/B.
+   for(const entry of dbHeldLayers.values()) for(const layer of entry.layers) {
+     if(layer.engine==='synth' && sides.includes(layer.side) && layer.voice?.genesisTuning) {
+       genesisApplyNoteTuning(layer.voice,{...layer.voice.genesisTuning,[id]:value});
+     }
+   }
+   return;
+ }
  dbBindingScheduleRefresh();
 }
 const DB_BINDING_STORAGE = 'dreamBinderBindingsV1';
@@ -18793,6 +18795,10 @@ function dbStoreBinding() {
 function dbApplySilently(settings, engine) {
     // Explicit defaults prevent Genesis settings leaking into Legacy Binding leaves.
     genesisSetControls(settings);
+    if(beatTrackingMode) beatTrackingMode.value=settings.beatTrackingMode ?? 'natural';
+    if(beatRateSlider) beatRateSlider.value=settings.beatRate ?? .5;
+    if(beatTempoSlider) beatTempoSlider.value=settings.beatTempo ?? 120;
+    if(beatDivisionSelect) beatDivisionSelect.value=settings.beatDivision ?? 1;
     const ids = [
       'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
       'subWaveform','subLevel','oscBLevel','oscBDetune','voiceSpread','beatTrackingMode',
@@ -19278,18 +19284,26 @@ function dbSelectSource(source) {
 }
 // Resonance Evolution stores immutable leaf snapshots, not recursive runtime graphs.
 // This prevents cycles and allows strict limits before any audio voice is created.
-function dbEvolutionFlatten(selection){
+function dbEvolutionFlatten(selection,side){
+    // Explicit Save Evolution captures new tuning overrides without modifying factory presets.
+    const tuned=patch=>{
+        const copy=structuredClone(patch);
+        if(copy.engine==='synth') for(const id of genesisTuningIds) {
+            if(dbBindingEdits[side]?.[id]!==undefined) copy.settings[id]=dbBindingEdits[side][id];
+        }
+        return copy;
+    };
     const patch=dbSettingsForLayer(selection);
     if(!patch) throw Error('Select a valid source preset.');
     if(patch.engine==='evolution'){
         const item=patch.evolution;
         if(!Array.isArray(item.leaves)||!item.leaves.length||item.leaves.length>dbEvolutionMaxLeaves) throw Error('This Evolution exceeds the device layer budget.');
-        return {depth:Number(item.depth)||1,leaves:item.leaves.map(leaf=>({patch:structuredClone(leaf.patch),weight:Number(leaf.weight)}))};
+        return {depth:Number(item.depth)||1,leaves:item.leaves.map(leaf=>({patch:tuned(leaf.patch),weight:Number(leaf.weight)}))};
     }
-    return {depth:0,leaves:[{patch:{name:patch.name,engine:patch.engine,settings:structuredClone(patch.settings)},weight:1}]};
+    return {depth:0,leaves:[{patch:tuned({name:patch.name,engine:patch.engine,settings:patch.settings}),weight:1}]};
 }
 function dbEvolutionPreview(){
-    const a=dbEvolutionFlatten(dbUI.A?.value),b=dbEvolutionFlatten(dbUI.B?.value);
+    const a=dbEvolutionFlatten(dbUI.A?.value,'A'),b=dbEvolutionFlatten(dbUI.B?.value,'B');
     const depth=Math.max(a.depth,b.depth)+1;
     const count=a.leaves.length+b.leaves.length;
     if(depth>dbEvolutionMaxDepth) throw Error(`Generation ${depth} exceeds this device's ${dbEvolutionMaxDepth}-generation limit.`);
