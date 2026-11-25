@@ -1740,6 +1740,7 @@ masterLimiter.attack.value = 0.003;
 masterLimiter.release.value = 0.25;
 
 masterGain.connect(masterLimiter);
+g7Connect(audioContext, masterGain, masterLimiter);
 masterLimiter.connect(audioContext.destination);
 
     setupReverb(audioContext);
@@ -17380,6 +17381,7 @@ startPianoWaveFusionModulation();
 }
 
 function applyPresetSettings(preset) {
+    if (preset) g7Load(preset.genesisModFx);
     dbPitchEnvApplyPreset(preset);
     dbRingApplyPreset(preset);
     dbDriveApplyPreset(preset);
@@ -17915,6 +17917,7 @@ function getCurrentPresetSettings() {
   // Numeric values are serializable to JSON; checked boxes retain booleans.
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
   return {
+    genesisModFx: g7Read(),
     dbRingEnabled: dbRingState.enabled,
     dbRingFrequency: dbRingState.frequency,
     dbRingDepth: dbRingState.depth,
@@ -19525,3 +19528,16 @@ dbBindingInitEditor();
 for(const id of genesisFilterIds)document.getElementById(id)?.addEventListener("input",()=>{genesisFilterDisplay();if(typeof dbGetMode==="function"&&dbGetMode()!=="off")return;if(audioContext)for(const note of activeNotes.values())genesisFilterLive(note,id,Number(document.getElementById(id).value),audioContext);});
 
 for(const id of [...gLfoIds,"arpTempo"])document.getElementById(id)?.addEventListener("input",()=>{if(typeof dbGetMode==="function"&&dbGetMode()!=="off")return;gLfoLive();});
+
+// Genesis VII: shared, lazily allocated modulation effects, parallel to protected dry path.
+var g7Bus = null, g7Nodes = {}, g7State = {chorus:0,flanger:0,phaser:0};
+function g7Read(){return {...g7State};}
+function g7Load(v){for(const k of ['chorus','flanger','phaser'])g7Set(k,Number(v?.[k])||0);}
+function g7Connect(ctx,input,output){g7Bus={ctx,input,output};g7Nodes={};for(const k of Object.keys(g7State))if(g7State[k]>0)g7Build(k);}
+function g7Build(k){if(!g7Bus||g7Nodes[k])return;const {ctx,input,output}=g7Bus;const wet=ctx.createGain();wet.gain.value=g7State[k]*0.55;wet.connect(output);const lfo=ctx.createOscillator(),depth=ctx.createGain();lfo.connect(depth);let first,last,feedback=null;
+if(k==='phaser'){const fs=Array.from({length:4},(_,i)=>{const f=ctx.createBiquadFilter();f.type='allpass';f.frequency.value=350*Math.pow(1.7,i);f.Q.value=.65;depth.connect(f.detune);return f;});fs.slice(1).forEach((f,i)=>fs[i].connect(f));first=fs[0];last=fs[3];lfo.frequency.value=.23;depth.gain.value=1000;}
+else {const d=ctx.createDelay(.1);d.delayTime.value=k==='chorus'?.022:.004;depth.connect(d.delayTime);lfo.frequency.value=k==='chorus'?.7:.19;depth.gain.value=k==='chorus'?.006:.003;first=last=d;if(k==='flanger'){feedback=ctx.createGain();feedback.gain.value=.32;d.connect(feedback);feedback.connect(d);}}
+input.connect(first);last.connect(wet);lfo.start();g7Nodes[k]={wet,lfo,depth,first,last,feedback};}
+function g7Set(k,v){v=Math.max(0,Math.min(1,Number(v)||0));g7State[k]=v;const el=document.getElementById('g7-'+k),label=document.getElementById('g7-'+k+'-value');if(el)el.value=v;if(label)label.textContent=Math.round(v*100)+'%';if(v>0)g7Build(k);const n=g7Nodes[k];if(n&&g7Bus){const t=g7Bus.ctx.currentTime;n.wet.gain.setTargetAtTime(v*.55,t,.015);if(v===0){const old=n;delete g7Nodes[k];setTimeout(()=>{try{g7Bus.input.disconnect(old.first);old.lfo.stop();for(const x of [old.first,old.last,old.depth,old.wet,old.feedback])x?.disconnect();}catch(e){}},150);}}}
+function g7Init(){for(const k of Object.keys(g7State)){const el=document.getElementById('g7-'+k);el?.addEventListener('input',()=>g7Set(k,el.value));}}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',g7Init);else g7Init();
