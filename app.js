@@ -1,3 +1,4 @@
+var dbBindingReady = false;
 let audioContext;
 let masterGain;
 let reverbNode;
@@ -17308,7 +17309,8 @@ function applyPresetSettings(preset) {
     dbSHApplyPreset(preset);
     dbGateApplyPreset(preset);
     if (!preset) return;
-    dbReleaseAllBindings();
+    if (dbBindingReady) dbExitBindingForPreset();
+    else dbReleaseAllBindings();
 
     // Preset changes must reset arpeggiator state, never carry over latched
     // notes or a running timer into another sound. Switching presets stays silent.
@@ -18697,7 +18699,8 @@ function dbReadSavedBinding() {
         for (const side of ['A','B']) if (data.captures?.[side]) dbCapture[side] = data.captures[side];
         if (data.A && dbUI.A && [...dbUI.A.options].some(o=>o.value===data.A)) dbUI.A.value = data.A;
         if (data.B && dbUI.B && [...dbUI.B.options].some(o=>o.value===data.B)) dbUI.B.value = data.B;
-        if (dbUI.mode && ['off','layer','split'].includes(data.mode)) dbUI.mode.value = data.mode;
+        // Restore source choices, but never restore an active performance on reload.
+        if (dbUI.mode) dbUI.mode.value = 'off';
         if (dbUI.balance && Number.isFinite(Number(data.balance))) dbUI.balance.value = Math.max(0,Math.min(100,data.balance));
         if (dbUI.split && Number.isFinite(Number(data.split))) dbUI.split.value = data.split;
     } catch (_) { /* User browser storage may be restricted. */ }
@@ -18931,6 +18934,19 @@ function dbBindingRelease(frequency) {
     setKeyLatched(frequency,false);
     return true;
 }
+let dbLastBindingMode = 'layer';
+function dbExitBindingForPreset() {
+    clearTimeout(dbBindingRefreshTimer);
+    dbBindingEdits.A = {};
+    dbBindingEdits.B = {};
+    if (dbUI.mode) dbUI.mode.value = 'off';
+    dbSyncMode();
+}
+function dbToggleBinding() {
+    if (!dbUI.mode) return;
+    dbUI.mode.value = dbGetMode() === 'off' ? dbLastBindingMode : 'off';
+    dbSyncMode();
+}
 function dbSyncMode() {
     clearTimeout(dbBindingRefreshTimer);
     dbReleaseAllBindings();
@@ -18944,6 +18960,9 @@ function dbSyncMode() {
     stopActivePianoNodes();
     stopActiveChoirNodes();
     const mode = dbGetMode();
+    if (mode !== 'off') dbLastBindingMode = mode;
+    const toggle = document.getElementById('dbBindingToggle');
+    if (toggle) { toggle.textContent = mode === 'off' ? 'BINDING OFF · ENABLE' : 'BINDING ON · DISABLE'; toggle.setAttribute('aria-pressed', String(mode !== 'off')); }
     const splitRow = document.querySelector('.db-split-row');
     if (splitRow) splitRow.style.display = mode === 'split' ? 'grid' : 'none';
     if (dbUI.balance) dbUI.balance.disabled = mode !== 'layer';
@@ -19319,6 +19338,7 @@ function dbEvolutionUpdateLimit(){
 dbPopulateSplitNotes();
 dbFillLayerSelectors();
 dbReadSavedBinding();
+dbBindingReady = true;
 dbRenderGallery();
 dbSyncMode();
 dbUpdateBlend();
@@ -19326,6 +19346,7 @@ dbUpdateAlgebraStatus();
 dbSpectrumFrame=requestAnimationFrame(dbDrawSpectrum);
 for(const id of ['dbLayerA','dbLayerB','dbSplitNote']) document.getElementById(id)?.addEventListener('change',dbSyncMode);
 dbUI.mode?.addEventListener('change',dbSyncMode);
+document.getElementById('dbBindingToggle')?.addEventListener('click',dbToggleBinding);
 dbUI.balance?.addEventListener('input',dbUpdateBlend);
 document.getElementById('dbRandomizeBinding')?.addEventListener('click',dbRandomizeBinding);
 document.getElementById('dbSaveEvolution')?.addEventListener('click',dbEvolutionOpen);
