@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dream Binder · Resonance Workstation</title>
-<meta content="#080717" name="theme-color"/><link href="style.css?v=genesis-refinement-1" rel="stylesheet"/><link rel="stylesheet" href="dream-matrix.css?v=matrix-restored-20261118"/><link rel="manifest" href="manifest.webmanifest"/><link rel="icon" type="image/png" href="assets/icon/icon-192.png"/><meta name="apple-mobile-web-app-capable" content="yes"/></head>
+<meta content="#080717" name="theme-color"/><link href="style.css?v=genesis-refinement-2" rel="stylesheet"/><link rel="stylesheet" href="dream-matrix.css?v=matrix-restored-20261118"/><link rel="manifest" href="manifest.webmanifest"/><link rel="icon" type="image/png" href="assets/icon/icon-192.png"/><meta name="apple-mobile-web-app-capable" content="yes"/></head>
 <body>
 <div id="db-startup-splash" role="status" aria-label="Opening Dream Binder">
   <img src="assets/splash/dream-binder-splash.webp" alt="Dream Binder — Resonant Doorways" fetchpriority="high" />
@@ -59,9 +59,6 @@
 <span>Osc B Level <strong id="oscBLevelValue">35%</strong></span>
 <input id="oscBLevel" max="1" min="0" step="0.01" type="range" value="0.35"/>
 </label><label>
-<span>Osc B Detune <strong id="oscBDetuneValue">+7 cents</strong></span>
-<input id="oscBDetune" max="50" min="-50" step="1" type="range" value="7"/>
-</label><label>
 <span>Oscillator Beat Tracking</span>
 <select id="beatTrackingMode">
 <option selected="" value="natural">Natural (Pitch-Tracked)</option>
@@ -83,7 +80,7 @@
 <option value="0.5">1/8 (Eighth)</option>
 <option value="0.25">1/16 (Sixteenth)</option>
 </select>
-</label></div></details><details class="panel db-module db-workstation-module db-tone-sub" open=""><summary>SUB OSCILLATOR</summary><div class="db-module-content"><label>
+</label></div></details><details class="panel db-module db-workstation-module db-genesis-tuning" open><summary>GENESIS · OSCILLATOR TUNING</summary><div class="db-module-content"><label class="db-genesis-knob-label"><span>A · Octave <strong id="oscAOctaveValue">+0 oct</strong></span><input id="oscAOctave" min="-2" max="2" step="1" type="range" value="0"/></label><label class="db-genesis-knob-label"><span>A · Semitone <strong id="oscASemitoneValue">+0 st</strong></span><input id="oscASemitone" min="-12" max="12" step="1" type="range" value="0"/></label><label class="db-genesis-knob-label"><span>A · Fine <strong id="oscAFineValue">+0 cents</strong></span><input id="oscAFine" min="-50" max="50" step="1" type="range" value="0"/></label><label class="db-genesis-knob-label"><span>B · Octave <strong id="oscBOctaveValue">+0 oct</strong></span><input id="oscBOctave" min="-2" max="2" step="1" type="range" value="0"/></label><label class="db-genesis-knob-label"><span>B · Semitone <strong id="oscBSemitoneValue">+0 st</strong></span><input id="oscBSemitone" min="-12" max="12" step="1" type="range" value="0"/></label><label class="db-genesis-knob-label"><span>B · Fine <strong id="oscBDetuneValue">+7 cents</strong></span><input id="oscBDetune" min="-50" max="50" step="1" type="range" value="7"/></label><p>Independent pitch for A and B, including their unison voices. B Fine retains the original Detune parameter. Sub remains tied to the played note.</p></div></details><details class="panel db-module db-workstation-module db-tone-sub" open=""><summary>SUB OSCILLATOR</summary><div class="db-module-content"><label>
 <span>Sub Waveform</span>
 <select id="subWaveform">
 <option value="sine">Sine</option>
@@ -93,7 +90,7 @@
 </label><label>
 <span>Sub Level <strong id="subLevelValue">0%</strong></span>
 <input id="subLevel" max="100" min="0" step="1" type="range" value="0"/>
-</label></div></details><details class="panel db-module db-workstation-module" open><summary>GENESIS · STEREO UNISON</summary><div class="db-module-content"><label><span>Oscillator Architecture</span><select id="genesisMode"><option value="legacy" selected>Legacy · Original</option><option value="stereo">Genesis · Stereo</option></select></label><label><span>Unison Stereo Width <strong id="genesisWidthValue">85%</strong></span><input id="genesisWidth" type="range" min="0" max="100" step="1" value="85"/></label><p class="db-pane-note">Synth only. Voice Spread in Motion controls detune and unison strength. Width is live; architecture changes apply to the next note (Binding revoices held notes).</p></div></details></div></section><section class="db-edit-pane" data-pane="shape" hidden="" id="dbPaneShape"><div class="db-pane-modules"><details class="panel db-module db-module-filter" open=""><summary>FILTER</summary><div class="db-module-content">
+</label></div></details><details class="panel db-module db-workstation-module" open><summary>GENESIS · STEREO UNISON</summary><div class="db-module-content"><div class="db-genesis-switch-wrap"><span>Oscillator Architecture</span><div class="db-genesis-switch" role="group" aria-label="Oscillator architecture"><button type="button" data-genesis-mode="legacy" aria-pressed="true">LEGACY</button><button type="button" data-genesis-mode="stereo" aria-pressed="false">GENESIS</button></div><select id="genesisMode" hidden aria-label="Oscillator architecture"><option value="legacy" selected>Legacy · Original</option><option value="stereo">Genesis · Stereo</option></select></div><label class="db-genesis-knob-label"><span>Unison Stereo Width <strong id="genesisWidthValue">85%</strong></span><input id="genesisWidth" type="range" min="0" max="100" step="1" value="85"/></label><p class="db-pane-note">Synth only. Voice Spread in Motion controls detune and unison strength. Width is live; architecture changes apply to the next note (Binding revoices held notes).</p></div></details></div></section><section class="db-edit-pane" data-pane="shape" hidden="" id="dbPaneShape"><div class="db-pane-modules"><details class="panel db-module db-module-filter" open=""><summary>FILTER</summary><div class="db-module-content">
 <label>
           Filter Type
           <select id="filterType">
@@ -560,7 +557,7 @@
 </div><!-- /preset-browser-overlay -->
 <dialog id="dbEvolutionLibraryDialog" class="db-evolution-dialog db-evolution-library-dialog" aria-labelledby="dbEvolutionLibraryHeading"><h2 id="dbEvolutionLibraryHeading">∞ MY RESONANCE EVOLUTIONS</h2><p>Choose a saved Evolution and load it into Source A or B to create another Binding.</p><div id="dbEvolutionLibraryList" class="db-evolution-library-list"></div><div class="db-evolution-dialog-actions"><button type="button" id="dbEvolutionLibraryClose" aria-label="Close Evolution library">CLOSE</button></div></dialog>
 <dialog id="dbEvolutionDialog" class="db-evolution-dialog" aria-labelledby="dbEvolutionHeading"><form method="dialog" id="dbEvolutionForm"><h2 id="dbEvolutionHeading">∞ RESONANCE EVOLUTION</h2><p>Name your discovery. The original sounds remain untouched.</p><label>EVOLUTION NAME<input id="dbEvolutionName" maxlength="64" required autocomplete="off" placeholder="Name your new resonance"/></label><button type="button" id="dbSuggestEvolutionName">✧ SUGGEST A NAME</button><p id="dbEvolutionDialogStatus" role="status"></p><div class="db-evolution-dialog-actions"><button value="cancel" formnovalidate>Cancel</button><button id="dbConfirmEvolution" value="save">SAVE EVOLUTION</button></div></form></dialog>
-<script src="app.js?v=genesis-refinement-1"></script>
+<script src="app.js?v=genesis-refinement-2"></script>
 <script src="dream-matrix.js?v=matrix-restored-20261118" defer></script>
 <script src="nexus-ui.js?v=atlas-entry-clean-1"></script>
 <script src="atlas-static.js?v=1" defer></script>
@@ -617,6 +614,29 @@
       document.querySelector('.db-edit-tab[data-page="fx"]')?.click();
     }
   });
+})();
+</script>
+<script>
+(function(){
+ const ids=['oscAOctave','oscASemitone','oscAFine','oscBOctave','oscBSemitone','oscBDetune','genesisWidth'];
+ function mount(){
+  for(const id of ids){
+   const el=document.getElementById(id); if(!el || el.closest('.db-neon-control')) continue;
+   const wrap=document.createElement('div'); wrap.className='db-neon-control db-genesis-fallback-knob db-violet';
+   el.before(wrap); wrap.append(el);
+   wrap.insertAdjacentHTML('beforeend','<svg viewBox="0 0 72 72" aria-hidden="true"><circle class="db-knob-well" cx="36" cy="36" r="29"/><path class="db-knob-track" d="M 18.3 53.7 A25 25 0 1 1 53.7 53.7"/><path class="db-knob-progress" d="M 18.3 53.7 A25 25 0 1 1 53.7 53.7" pathLength="100"/><circle class="db-knob-pointer" r="2.7"/></svg><span class="db-neon-value" aria-hidden="true"></span>');
+   const progress=wrap.querySelector('.db-knob-progress'),pointer=wrap.querySelector('.db-knob-pointer'),value=wrap.querySelector('.db-neon-value');
+   const min=Number(el.min),max=Number(el.max),step=Number(el.step)||1;
+   const refresh=()=>{const v=Number(el.value),f=(v-min)/(max-min),a=(135+270*f)*Math.PI/180;progress.style.strokeDasharray=`${f*100} 100`;pointer.setAttribute('cx',36+25*Math.cos(a));pointer.setAttribute('cy',36+25*Math.sin(a));value.textContent=id==='genesisWidth'?v+'%':(v>0?'+':'')+v;};
+   let drag=null;
+   wrap.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();el.focus({preventScroll:true});drag={id:e.pointerId,y:e.clientY,value:Number(el.value)};wrap.setPointerCapture(e.pointerId);});
+   wrap.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const next=Math.max(min,Math.min(max,Math.round((drag.value+(drag.y-e.clientY)*(max-min)/150-min)/step)*step+min));if(Number(el.value)!==next){el.value=next;el.dispatchEvent(new Event('input',{bubbles:true}));}});
+   const end=e=>{if(drag?.id!==e.pointerId)return;drag=null;el.dispatchEvent(new Event('change',{bubbles:true}));};
+   wrap.addEventListener('pointerup',end);wrap.addEventListener('pointercancel',end);wrap.addEventListener('lostpointercapture',end);
+   el.addEventListener('input',refresh);document.addEventListener('dbGenesisDisplay',refresh);refresh();
+  }
+ }
+ window.addEventListener('load',mount,{once:true});
 })();
 </script>
 </body>
