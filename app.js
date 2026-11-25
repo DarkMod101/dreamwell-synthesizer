@@ -1313,7 +1313,16 @@ function genesisApplyNoteTuning(note,state,spread = note.genesisSpreadCents) {
     const targets=[a+drift-note.genesisSpreadCents,a+drift+note.genesisSpreadCents,b-drift-note.genesisSpreadCents,b-drift+note.genesisSpreadCents];
     note.unisonOscillators?.forEach(({osc},i)=>osc.detune.setTargetAtTime(targets[i],now,.035));
 }
+const genesisFilterDefaults = Object.freeze({filterEnvAmount:0,filterEnvAttack:.01,filterEnvDecay:.3,filterEnvSustain:.25,filterEnvRelease:.4});
+const genesisFilterIds=Object.keys(genesisFilterDefaults);
+function genesisFilterSettings(){return Object.fromEntries(genesisFilterIds.map(id=>[id,getValue(document.getElementById(id),genesisFilterDefaults[id])]));}
+function genesisFilterDisplay(){for(const id of genesisFilterIds){const el=document.getElementById(id+'Value');if(el)el.textContent=String(Number(document.getElementById(id).value))+(id==='filterEnvAmount'?' st':id==='filterEnvSustain'?'':' s');}}
+function genesisFilterCreate(ctx,filter){const s=genesisFilterSettings();const src=ctx.createConstantSource();src.offset.value=0;src.connect(filter.detune);src.start();const now=ctx.currentTime,peak=s.filterEnvAmount*100;src.offset.setValueAtTime(0,now);src.offset.linearRampToValueAtTime(peak,now+s.filterEnvAttack);src.offset.linearRampToValueAtTime(peak*s.filterEnvSustain,now+s.filterEnvAttack+s.filterEnvDecay);return {src,settings:s};}
+function genesisFilterRelease(note,ctx,ampRelease){const e=note.genesisFilterEnv;if(!e)return;const t=ctx.currentTime,p=e.src.offset;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else{const v=p.value;p.cancelScheduledValues(t);p.setValueAtTime(v,t);}p.linearRampToValueAtTime(0,t+Math.min(e.settings.filterEnvRelease,ampRelease));e.src.stop(t+ampRelease+.05);}
+function genesisFilterLive(note,id,value,ctx){const e=note?.genesisFilterEnv;if(!e)return;e.settings[id]=value;if(id==='filterEnvAmount'||id==='filterEnvSustain'){const p=e.src.offset,t=ctx.currentTime;if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(t);else p.cancelScheduledValues(t);p.setTargetAtTime(e.settings.filterEnvAmount*100*e.settings.filterEnvSustain,t,.035);}}
+
 function genesisSetControls(settings = {}) {
+    for(const id of genesisFilterIds){const el=document.getElementById(id);if(el)el.value=settings[id]??genesisFilterDefaults[id];} genesisFilterDisplay();
     if (genesisModeSelect) genesisModeSelect.value = settings.genesisMode === 'stereo' ? 'stereo' : 'legacy';
     if (genesisWidthSlider) genesisWidthSlider.value = settings.genesisWidth ?? 85;
     for (const id of genesisTuningIds) {
@@ -3028,6 +3037,7 @@ subGain.gain.value =
 filter.frequency.value =
   Math.max(0, baseCutoff) +
   (presenceAmount * 400);
+  const genesisFilterEnv=genesisFilterCreate(ctx,filter);
   filter.Q.value =
   getValue(resonanceSlider, 1) +
   originSettings.resonanceBoost;
@@ -3183,6 +3193,7 @@ stereoPanner.connect(delayNode);
   unisonOscillators,
   genesisCoreGains,
   genesisStereo,
+  genesisFilterEnv,
   genesisTuning,
   genesisDriftCents: driftCents,
   genesisSpreadCents: spreadCents,
@@ -3475,6 +3486,7 @@ if (note.release) {
     
   const ctx = getAudioContext();
   const release = getValue(releaseSlider, 0.5);
+  genesisFilterRelease(note,ctx,release);
 
   note.noteGain.gain.cancelScheduledValues(ctx.currentTime);
   note.noteGain.gain.setValueAtTime(note.noteGain.gain.value, ctx.currentTime);
@@ -17919,6 +17931,7 @@ function getCurrentPresetSettings() {
     voiceSpread: get(voiceSpreadSlider),
     genesisMode: genesisModeSelect?.value === 'stereo' ? 'stereo' : 'legacy',
     genesisWidth: get(genesisWidthSlider, 85),
+    ...genesisFilterSettings(),
     beatTrackingMode: beatTrackingMode?.value ?? "natural",
     beatRate: get(beatRateSlider, 0.5),
     beatTempo: get(beatTempoSlider, 120),
@@ -18476,7 +18489,7 @@ const dbBindingEditorIds = new Set([
  'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
  'subWaveform','subLevel','oscBLevel',...genesisTuningIds,'voiceSpread','genesisMode','genesisWidth','beatTrackingMode',
  'beatRate','beatTempo','beatDivision','attack','decay','sustain','release',
- 'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
+ ...genesisFilterIds,'filterType','cutoff','resonance','lfoRate','lfoAmount','lfoDestination',
  'noiseType','noiseAmount','drift','stereoWidth','deepDreamOrbit','glideEnabled',
  'glideTime','presence','fmAmount','fmRatio','fmAttack','fmDecay','fmSustain','fmRelease',
  'coherence','decoherence','polynomialRingEnabled','polynomialRingAmount',
@@ -18554,6 +18567,7 @@ function dbBindingHandleEdit(event) {
  const value=el.type==='checkbox'?el.checked:(el.type==='range'?Number(el.value):el.value);
  const sides=dbBindingEditTarget==='both'?['A','B']:[dbBindingEditTarget];
  for(const side of sides) dbBindingEdits[side][id]=value;
+ if(genesisFilterIds.includes(id)){for(const entry of dbHeldLayers.values())for(const layer of entry.layers)if(layer.engine==='synth'&&sides.includes(layer.side))genesisFilterLive(layer.voice,id,value,audioContext);return;}
  if(genesisTuningIds.includes(id)) {
    // Tune held Binding voices in place, including latched and Evolution leaves.
    // Use each leaf's own snapshot so unrelated parameters never leak across A/B.
@@ -19482,3 +19496,5 @@ window.addEventListener('pagehide', dbReleaseAllBindings);
 
 // Stage 7.2 editor activation.
 dbBindingInitEditor();
+
+for(const id of genesisFilterIds)document.getElementById(id)?.addEventListener("input",()=>{genesisFilterDisplay();if(typeof dbGetMode==="function"&&dbGetMode()!=="off")return;if(audioContext)for(const note of activeNotes.values())genesisFilterLive(note,id,Number(document.getElementById(id).value),audioContext);});
