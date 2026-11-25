@@ -19349,11 +19349,13 @@ function dbSelectSource(source) {
 // Resonance Evolution stores immutable leaf snapshots, not recursive runtime graphs.
 // This prevents cycles and allows strict limits before any audio voice is created.
 function dbEvolutionFlatten(selection,side){
-    // Explicit Save Evolution captures new tuning overrides without modifying factory presets.
+    // Stage XI: freeze the same per-side overrides used by Binding playback.
+    // Copy only recognized editor fields; never mutate a factory or saved leaf.
     const tuned=patch=>{
         const copy=structuredClone(patch);
-        if(copy.engine==='synth') for(const id of genesisTuningIds) {
-            if(dbBindingEdits[side]?.[id]!==undefined) copy.settings[id]=dbBindingEdits[side][id];
+        copy.settings={...(copy.settings||{})};
+        for(const [id,value] of Object.entries(dbBindingEdits[side]||{})) {
+            if(dbBindingEditorIds.has(id)) copy.settings[id]=structuredClone(value);
         }
         return copy;
     };
