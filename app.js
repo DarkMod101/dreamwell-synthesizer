@@ -3210,11 +3210,13 @@ stereoPanner.connect(delayNode);
       ? createPolynomialRingVoice(ctx, oscillatorA, oscillatorB, subOscillator, filter)
       : null;
 
+  const spectralVoice = dbSpectral.create(ctx, frequency, filter);
   oscillatorA.start();
   oscillatorB.start();
   subOscillator.start();
   noiseSource.start();
   return {
+  spectralVoice,
   oscillatorA,
   oscillatorB,
   oscAGain,
@@ -3550,6 +3552,7 @@ if (note.release) {
   if (note.dbDrive) note.dbDrive.stop(release + 0.05);
   if (note.dbSH) note.dbSH.stop(release + 0.05);
   if (note.dbGate) note.dbGate.stop(release + 0.05);
+  note.spectralVoice?.stop(release + 0.05);
 
   if (note.resonantField) {
     note.resonantField.stop(release + 0.05);
@@ -17420,6 +17423,7 @@ function applyPresetSettings(preset) {
     dbSHApplyPreset(preset);
     dbGateApplyPreset(preset);
     if (!preset) return;
+    dbSpectral.load(preset);
     genesisSetControls(preset);
     if (dbBindingReady) dbExitBindingForPreset();
     else dbReleaseAllBindings();
@@ -17949,6 +17953,7 @@ function getCurrentPresetSettings() {
   // Numeric values are serializable to JSON; checked boxes retain booleans.
   const get = (element, fallback = 0) => element ? Number(element.value) : fallback;
   return {
+    ...dbSpectral.read(),
     genesisModFx: g7Read(),
     genesisFx: {...g8State},
     dbRingEnabled: dbRingState.enabled,
@@ -18547,6 +18552,7 @@ const dbBindingEdits = {A:{},B:{}};
 let dbBindingEditTarget = 'A';
 let dbBindingRefreshTimer = null;
 const dbBindingEditorIds = new Set([
+ ...dbSpectral.ids,
  'waveform','waveformB','origin','waveFusion','waveFusionCurve','dreamMorphMotion',
  'subWaveform','subLevel','oscBLevel',...genesisTuningIds,'voiceSpread','genesisMode','genesisWidth','beatTrackingMode',
  'beatRate','beatTempo','beatDivision','attack','decay','sustain','release',
@@ -18572,14 +18578,16 @@ function dbBindingEditorLoad() {
  if (!patch || patch.engine==='evolution') {
    const leaf=patch?.evolution?.leaves?.find(x=>x.patch?.engine==='synth');
    if(leaf) {
-       const settings={...genesisTuningDefaults,...leaf.patch.settings,...dbBindingEdits[side]};
+       const settings={...genesisTuningDefaults,...dbSpectral.defaults,...leaf.patch.settings,...dbBindingEdits[side]};
+       dbSpectral.load(settings);
        for(const id of genesisTuningIds) document.getElementById(id).value=settings[id];
        genesisRefreshDisplay();
        dbSetStatus('Tuning edits apply to all Synth leaves of the selected Evolution. Other instruments remain unchanged.');
    } else dbSetStatus('No Synth leaf available for oscillator tuning in this source.');
    return;
  }
- const settings={genesisMode:'legacy',genesisWidth:85,...genesisTuningDefaults,...patch.settings,...dbBindingEdits[side]};
+ const settings={genesisMode:'legacy',genesisWidth:85,...genesisTuningDefaults,...dbSpectral.defaults,...patch.settings,...dbBindingEdits[side]};
+ dbSpectral.load(settings);
  // Display source parameters without mutating audio engine state or active voices.
  for(const id of dbBindingEditorIds) {
    const el=document.getElementById(id);
@@ -18628,6 +18636,10 @@ function dbBindingHandleEdit(event) {
  const value=el.type==='checkbox'?el.checked:(el.type==='range'?Number(el.value):el.value);
  const sides=dbBindingEditTarget==='both'?['A','B']:[dbBindingEditTarget];
  for(const side of sides) dbBindingEdits[side][id]=value;
+ if(dbSpectral.ids.includes(id)){
+   for(const entry of dbHeldLayers.values()) for(const layer of entry.layers) if(layer.engine==='synth'&&sides.includes(layer.side)) layer.voice?.spectralVoice?.update(id,value);
+   return; // structural changes only on next note
+ }
  if(event.dbDreamMatrix && (id==='cutoff'||id==='resonance')) {
    if(audioContext) for(const entry of dbHeldLayers.values()) for(const layer of entry.layers) {
      if(layer.engine!=='synth'||!sides.includes(layer.side)||!layer.voice?.filter) continue;
@@ -18888,6 +18900,7 @@ function dbStoreBinding() {
 // preset (loading a global preset would stop all held notes and reset controls).
 // Audio parameters sampled at voice creation remain independent for the note.
 function dbApplySilently(settings, engine) {
+    dbSpectral.load(settings);
     // Explicit defaults prevent Genesis settings leaking into Legacy Binding leaves.
     genesisSetControls(settings);
     if(beatTrackingMode) beatTrackingMode.value=settings.beatTrackingMode ?? 'natural';
@@ -19608,3 +19621,14 @@ function g8Init(){for(const k of Object.keys(g8State)){const e=document.getEleme
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',g8Init);else g8Init();
 
 document.getElementById("g9GainMode")?.addEventListener("change",g9RefreshDry);
+
+// Spectral controls: live existing single-source voices only; Binding handled in its capture listener.
+for(const id of dbSpectral.ids){
+ const el=document.getElementById(id);
+ el?.addEventListener(el.type==='range'?'input':'change',()=>{
+  dbSpectral.display();
+  if(dbGetMode()!=='off')return;
+  const value=el.type==='checkbox'?el.checked:el.type==='range'?Number(el.value):el.value;
+  for(const note of activeNotes.values())note.spectralVoice?.update(id,value);
+ });
+}
