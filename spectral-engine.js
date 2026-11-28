@@ -1,4 +1,4 @@
-/* Dream Binder Spectral Synthesis IV.1 — adaptive linear frequency display. */
+/* Dream Binder Spectral Synthesis V — harmonic phase geometry and preserved IV.1 displays. */
 const dbSpectral = (() => {
   'use strict';
   const specs = {
@@ -135,15 +135,81 @@ const dbSpectral = (() => {
     const canvas=get('dbSpectralCanvas'); if(!canvas||canvas.dataset.bound)return;
     const c=canvas.getContext('2d',{alpha:false}); if(!c)return; canvas.dataset.bound='1';
     const shell=canvas.closest('.db-spectral-shell'), module=canvas.closest('details');
-    const axis=get('dbSpectralAxis'),mode=get('dbSpectralMode'),readout=get('dbSpectralReadout'),chip=get('dbSpectralFreezeChip'),view=get('dbSpectralView');
-    let frequency=false,visible=false,raf=0,last=0,phase=0,prev=0,key='',W=0,H=0;
+    const scaleLabel=get('dbSpectralScaleLabel'),axis=get('dbSpectralAxis'),mode=get('dbSpectralMode'),readout=get('dbSpectralReadout'),chip=get('dbSpectralFreezeChip'),view=get('dbSpectralView');
+    let selected=0,frequency=false,visible=false,raf=0,last=0,phase=0,prev=0,key='',W=0,H=0;
     const set=(el,text)=>{if(el&&el.textContent!==text)el.textContent=text;};
+    // Geometry is a deterministic phase-projection model of the selected spectral voice.
+    // Oscillator phase is not exposed by Web Audio: use explicit synthetic phase offsets.
+    // No audio nodes, analysers, history buffers or independent animation timers.
+    function geometry(snap){
+      const s=snap.state, base=Math.max(8,snap.base), parts=snap.parts.filter(p=>p.amp>1e-7&&p.freq>0);
+      const L=10,R=W-10,T=10,B=H-21,w=R-L,h=B-T,cx=(L+R)/2,cy=(T+B)/2;
+      c.fillStyle='#060911';c.fillRect(0,0,W,H);
+      const bg=c.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)*.65);bg.addColorStop(0,'#15142a');bg.addColorStop(.57,'#0b1020');bg.addColorStop(1,'#060911');c.fillStyle=bg;c.fillRect(L,T,w,h);
+      c.save();c.beginPath();c.rect(L,T,w,h);c.clip();
+      const rx=w*.43,ry=h*.43;
+      c.strokeStyle='#53658c26';c.lineWidth=.65;
+      for(let i=1;i<=4;i++){c.beginPath();c.ellipse(cx,cy,rx*i/4,ry*i/4,0,0,Math.PI*2);c.stroke();}
+      c.beginPath();c.moveTo(L,cy);c.lineTo(R,cy);c.moveTo(cx,T);c.lineTo(cx,B);c.stroke();
+      for(let i=1;i<8;i++){const x=L+w*i/8;c.beginPath();c.moveTo(x,cy-2);c.lineTo(x,cy+2);c.stroke();}
+      if(parts.length){
+        // Fixed phase slices of the same partial set give a woven projection.
+        // Recurrence avoids sin/cos per sample. Higher modes keep a bounded point budget.
+        const high=Math.max(...parts.map(p=>p.freq/base));
+        const slices=snap.count<=12?14:snap.count<=24?9:5;
+        const N=Math.min(640,Math.max(256,Math.ceil(high*10)));
+        const cycles=Math.min(2.25,Math.max(.8,N/(Math.max(1,high)*9)));
+        const dt=2*Math.PI*cycles/(N-1), total=parts.reduce((a,p)=>a+p.amp,0), visualTotal=parts.reduce((a,p)=>a+Math.sqrt(p.amp),0);
+        const traces=[];let maxX=0,maxY=0;
+        for(let k=0;k<slices;k++){
+          const rot=k-(slices-1)/2, stereo=s.spectralStereo/100;
+          const oscillators=parts.map(p=>{
+            const ratio=p.freq/base, angle=p.n*.73+rot*.64*Math.sqrt(p.n), inc=ratio*dt;
+            const delay=stereo*.38+rot*.10;
+            // Square-root display compression reveals quiet partials; never changes audio.
+            return {a:Math.sqrt(p.amp)/visualTotal,cs:Math.cos(angle),sn:Math.sin(angle),dc:Math.cos(inc),ds:Math.sin(inc),yc:Math.cos(delay),ys:Math.sin(delay)};
+          });
+          const xy=new Float32Array(N*2);
+          for(let i=0;i<N;i++){
+            let x=0,y=0;
+            for(const o of oscillators){x+=o.a*o.cs;y+=o.a*(o.sn*o.yc+o.cs*o.ys);const cc=o.cs*o.dc-o.sn*o.ds;o.sn=o.sn*o.dc+o.cs*o.ds;o.cs=cc;}
+            // Embed the two harmonic projections around a circular guide to expose
+            // the woven radial/vertical relationships without implying measured stereo.
+            const u=i*dt, radius=.67+.36*x;
+            const X=radius*Math.cos(u),Y=radius*Math.sin(u)*.75+.46*y;
+            xy[2*i]=X;xy[2*i+1]=Y;maxX=Math.max(maxX,Math.abs(X));maxY=Math.max(maxY,Math.abs(Y));
+          }
+          traces.push(xy);
+        }
+        // Common normalization across all slices; keep projection aspect consistent.
+        const extent=Math.max(.001,maxX,maxY),sx=Math.min(rx,ry*3.0)/extent,sy=Math.min(ry,rx/1.65)/extent;
+        const path=xy=>{c.beginPath();for(let i=0;i<xy.length;i+=2){const x=cx+xy[i]*sx,y=cy-xy[i+1]*sy;if(i===0)c.moveTo(x,y);else c.lineTo(x,y);}};
+        const strength=.48+.52*Math.min(1,total/.32);
+        c.globalAlpha=strength;c.lineJoin='round';c.lineCap='round';
+        for(let k=0;k<traces.length;k++){
+          const xy=traces[k];path(xy);c.strokeStyle='#253bff19';c.lineWidth=3.4;c.stroke();
+          c.strokeStyle=k===traces.length-1?'#00b9ff83':k===1?'#3769ffb0':'#9362ff67';c.lineWidth=.7;c.stroke();
+        }
+        const main=traces[Math.floor(traces.length/2)];path(main);c.strokeStyle='#8850ff28';c.lineWidth=4;c.stroke();c.strokeStyle='#b998ffe0';c.lineWidth=1.05;c.stroke();
+        const secondary=traces[traces.length-1];path(secondary);c.strokeStyle='#46efff9c';c.lineWidth=.75;c.stroke();
+        // Discrete phase samples on the main trajectory (not detected intersections).
+        c.globalAlpha=1;for(const f of [.18,.51,.84]){const i=Math.min(N-1,Math.round(f*(N-1)))*2,x=cx+main[i]*sx,y=cy-main[i+1]*sy;c.beginPath();c.arc(x,y,3.3,0,Math.PI*2);c.fillStyle='#43ff652b';c.fill();c.beginPath();c.arc(x,y,1.35,0,Math.PI*2);c.fillStyle='#78ff72';c.fill();}
+      }else{c.fillStyle='#8b9aaf';c.font='10px system-ui';c.textAlign='center';c.textBaseline='middle';c.fillText('NO GENERATED PARTIAL ENERGY',cx,cy);}
+      c.restore();c.strokeStyle='#46536b';c.lineWidth=1;c.strokeRect(L+.5,T+.5,w-1,h-1);
+      c.font='8px system-ui';c.textAlign='left';c.textBaseline='middle';c.fillStyle='#b998ff';c.fillText('PHASE MODEL',L,H-9);c.fillStyle='#78ff72';c.textAlign='right';c.fillText('• PHASE SAMPLES',R,H-9);
+      set(mode,`${snap.active?'LIVE':'MODEL'} · ${s.spectralQuality.toUpperCase()} / ${snap.count}`);
+      set(scaleLabel,'NORMALIZED / POLAR');set(axis,'HARMONIC PHASE MODEL');
+      set(chip,snap.active?(s.spectralFreeze?'FROZEN':s.spectralMotion?'LIVE':'STATIC'):(s.spectralEnabled?(s.spectralFreeze?'FROZEN':'PREVIEW'):'BYPASSED'));
+      set(readout,`${snap.active?'Voice':'A2 model'} ${snap.base.toFixed(1)} Hz · ${parts.length} contributing partials · ${snap.used}/144 allocated`);
+    }
     function draw(snap){
       const r=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,1.5);
       if(r.width<100||r.height<70)return;
       W=r.width;H=r.height;const pw=Math.round(W*dpr),ph=Math.round(H*dpr);
       if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph;}
       c.setTransform(pw/W,0,0,ph/H,0,0);
+      if(selected===2){geometry(snap);return;}
+      set(scaleLabel,'MODEL GAIN / dB');
       const s=snap.state,L=34,T=13,R=W-13,B=H-25,w=R-L,h=B-T;
       // Hz view: show actual frequency spacing, zoomed to the allocated spectrum.
       // Include silent allocated partials so density changes do not rescale the axis.
@@ -185,11 +251,11 @@ const dbSpectral = (() => {
       set(readout,`${snap.active?'Voice':'A2 model'} ${snap.base.toFixed(1)} Hz · ${peak?'Peak H'+peak.n+' / '+peak.freq.toFixed(0)+' Hz':'No partials above −60 dB'} · ${snap.used}/144 allocated`);
     }
     function shown(){return visible&&!document.hidden&&module.open&&canvas.getClientRects().length>0&&get('dm-modal')?.hidden!==false;}
-    function tick(ts){raf=0;if(!shown())return; if(ts-last>=1000/30){const state=read();const dt=prev?Math.min(.1,(ts-prev)/1000):0;prev=ts;last=ts;if(state.spectralEnabled&&!state.spectralFreeze&&state.spectralMotion>0)phase+=dt*(.25+state.spectralMotion/100*2.5);const snap=snapshot(phase);const next=JSON.stringify([frequency,snap.active,snap.state,snap.base,snap.used,snap.parts.map(p=>[p.freq,p.amp]),canvas.clientWidth,canvas.clientHeight]);if(next!==key){key=next;draw(snap);}}
+    function tick(ts){raf=0;if(!shown())return; if(ts-last>=1000/(selected===2?20:30)){const state=read();const dt=prev?Math.min(.1,(ts-prev)/1000):0;prev=ts;last=ts;if(state.spectralEnabled&&!state.spectralFreeze&&state.spectralMotion>0)phase+=dt*(.25+state.spectralMotion/100*2.5);const snap=snapshot(phase);const next=JSON.stringify([selected,snap.active,snap.state,snap.base,snap.used,snap.parts.map(p=>[p.freq,p.amp]),canvas.clientWidth,canvas.clientHeight]);if(next!==key){key=next;draw(snap);}}
       raf=requestAnimationFrame(tick);
     }
     function wake(){if(shown()){if(!raf){prev=0;key='';raf=requestAnimationFrame(tick);}}else if(raf){cancelAnimationFrame(raf);raf=0;}}
-    view.addEventListener('click',()=>{frequency=!frequency;view.textContent=frequency?'Hz':'PARTIALS';view.setAttribute('aria-pressed',String(frequency));key='';wake();});
+    view.addEventListener('click',()=>{selected=(selected+1)%3;frequency=selected===1;const labels=['PARTIALS','Hz','GEOMETRY'];view.textContent=labels[selected];view.setAttribute('aria-label',`Display: ${labels[selected]}. Next: ${labels[(selected+1)%3]}`);view.title=`Switch to ${labels[(selected+1)%3]} view`;key='';wake();});
     const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;wake();});observer.observe(canvas);
     new ResizeObserver(()=>{key='';wake();}).observe(canvas);
     module.addEventListener('toggle',wake);document.addEventListener('visibilitychange',wake);
