@@ -3596,51 +3596,21 @@ body::after {display:none!important;}
 }
 
 
-/* Dream Binder — Spectral Visualizer */
-.db-spectral-module > .db-module-content{display:grid;gap:12px;}
-.db-spectral-shell{position:relative;overflow:hidden;min-height:0;padding:14px 14px 10px;border-radius:18px;border:1px solid rgba(170,138,232,.26);background:
-  radial-gradient(circle at 72% 18%, rgba(118,84,215,.18), transparent 28%),
-  radial-gradient(circle at 16% 86%, rgba(84,208,235,.11), transparent 30%),
-  linear-gradient(180deg, rgba(14,15,32,.98), rgba(10,8,25,.94));
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.02), 0 18px 35px rgba(0,0,0,.26);}
-.db-spectral-shell::before{content:"";position:absolute;inset:8px;border-radius:14px;pointer-events:none;border:1px solid rgba(223,202,255,.08);background:
-  linear-gradient(90deg, rgba(193,167,255,.06) 1px, transparent 1px),
-  linear-gradient(rgba(193,167,255,.06) 1px, transparent 1px);background-size:34px 28px;mask-image:linear-gradient(to bottom, rgba(255,255,255,.75), rgba(255,255,255,.25));}
-.db-spectral-shell::after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;background:linear-gradient(180deg, rgba(255,255,255,.05), transparent 16%, transparent 78%, rgba(214,169,255,.06));}
-.db-spectral-shell canvas{position:relative;display:block;width:100%;height:170px;margin-top:6px;border-radius:12px;background:linear-gradient(180deg, rgba(3,5,16,.92), rgba(6,8,20,.75));}
-.db-spectral-readout{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;font-size:10px;letter-spacing:.11em;color:#b9c7de;text-transform:uppercase;}
-#dbSpectralReadout{min-width:0;color:#9cd8f1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-#dbSpectralFreezeChip{flex:0 0 auto;padding:5px 9px;border-radius:999px;border:1px solid rgba(177,149,240,.28);background:linear-gradient(180deg, rgba(65,43,105,.42), rgba(19,17,41,.82));color:#edd7ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);}
-#dbSpectralFreezeChip.is-frozen{color:#ffe4a8;border-color:rgba(255,214,128,.36);background:linear-gradient(180deg, rgba(109,74,19,.58), rgba(43,28,10,.86));}
-#dbSpectralFreezeChip.is-disabled{color:#9a97ad;opacity:.82;}
-.db-spectral-module .db-pane-note{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-.db-spectral-module #spectralBudget{white-space:nowrap;color:#efe5ff;}
-@media (max-width: 680px){.db-spectral-shell{padding:11px 11px 9px;border-radius:15px}.db-spectral-shell canvas{height:142px}.db-spectral-readout{font-size:9px;letter-spacing:.08em}}
-@media (max-height: 480px) and (orientation: landscape){.db-spectral-shell canvas{height:104px}}
-
-
-/* Dream Binder — Spectral Visualizer V3 Pro Display */
-.db-spectral-module > .db-module-content{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start;}
-.db-spectral-module .db-spectral-shell{grid-column:1/-1;position:relative;overflow:hidden;padding:18px 18px 14px;border-radius:16px;border:1px solid rgba(205,193,255,.12);background:
-  linear-gradient(180deg, rgba(2,4,16,.16), rgba(9,8,22,.26)),
-  url('assets/interface/dream-matrix-bolted-panel.webp') center/cover no-repeat;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.035), 0 12px 26px rgba(0,0,0,.28);min-height:0;}
-.db-spectral-module .db-spectral-shell::before{content:'';position:absolute;inset:12px 14px;border-radius:12px;pointer-events:none;background:linear-gradient(180deg, rgba(0,0,0,.34), rgba(0,0,0,.14) 12%, rgba(255,255,255,.03) 55%, rgba(0,0,0,.26));box-shadow: inset 0 0 0 1px rgba(198,178,255,.08), inset 0 12px 24px rgba(100,84,164,.08);}
-.db-spectral-module .db-spectrum-header,.db-spectral-module .db-spectrum-axis,.db-spectral-module .db-spectral-readout{position:relative;z-index:2;}
-.db-spectral-module .db-spectrum-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 10px;font-size:11px;line-height:1.2;letter-spacing:.18em;text-transform:uppercase;color:#ded4ff;font-weight:700;text-shadow:0 0 8px rgba(200,164,255,.18);}
-.db-spectral-module #dbSpectralMode{color:#b9dbff;text-align:right;font-weight:700;letter-spacing:.12em;}
-.db-spectral-module .db-spectral-shell canvas{position:relative;z-index:2;display:block;width:100%;height:228px;margin:0;border-radius:12px;background:linear-gradient(180deg, rgba(4,7,21,.96), rgba(7,9,24,.82));box-shadow: inset 0 0 0 1px rgba(175,164,240,.08), inset 0 14px 30px rgba(37,23,77,.18), 0 0 28px rgba(67,20,129,.08);}
-.db-spectral-module .db-spectrum-axis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:9px;padding:0 2px;font-size:10px;line-height:1.15;letter-spacing:.1em;text-transform:uppercase;color:#a8afc7;}
-.db-spectral-module .db-spectrum-axis span:nth-child(2),.db-spectral-module .db-spectrum-axis span:nth-child(3){text-align:center;}
-.db-spectral-module .db-spectrum-axis span:last-child{text-align:right;}
-.db-spectral-module .db-spectral-readout{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:10px;min-height:34px;}
-.db-spectral-module #dbSpectralReadout{flex:1 1 auto;min-width:0;padding:0 2px;font-size:11px;line-height:1.25;letter-spacing:.11em;text-transform:uppercase;color:#9fe7ff;text-shadow:0 0 10px rgba(102,223,255,.14);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.db-spectral-module #dbSpectralFreezeChip{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid rgba(174,148,240,.28);background:linear-gradient(180deg, rgba(58,37,94,.68), rgba(24,18,48,.92));color:#f1dcff;font-size:11px;letter-spacing:.13em;text-transform:uppercase;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 16px rgba(128,78,219,.12);}
-.db-spectral-module #dbSpectralFreezeChip.is-frozen{color:#ffe6ad;border-color:rgba(255,214,128,.34);background:linear-gradient(180deg, rgba(110,76,28,.68), rgba(49,31,11,.94));}
-.db-spectral-module #dbSpectralFreezeChip.is-disabled{opacity:.78;color:#b3a9c9;}
-.db-spectral-module .db-pane-note{grid-column:1/-1;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-.db-spectral-module #spectralBudget{white-space:nowrap;color:#efe7ff;}
-@media (max-width: 900px){.db-spectral-module .db-spectral-shell canvas{height:206px;}.db-spectral-module .db-spectrum-header{font-size:10px;letter-spacing:.16em;}.db-spectral-module .db-spectrum-axis{font-size:9px;}}
-@media (max-width: 680px){.db-spectral-module > .db-module-content{grid-template-columns:repeat(2,minmax(0,1fr));}.db-spectral-module .db-spectral-shell{padding:16px 14px 12px;}.db-spectral-module .db-spectral-shell::before{inset:10px 11px;}.db-spectral-module .db-spectral-shell canvas{height:210px;}.db-spectral-module #dbSpectralReadout{font-size:10px;letter-spacing:.09em;white-space:normal;}.db-spectral-module .db-spectral-readout{align-items:flex-start;}.db-spectral-module #dbSpectralFreezeChip{padding:7px 11px;font-size:10px;}.db-spectral-module .db-spectrum-axis{font-size:8px;gap:6px;}}
-@media (max-width: 460px){.db-spectral-module > .db-module-content{grid-template-columns:1fr 1fr;}.db-spectral-module .db-spectral-shell canvas{height:190px;}.db-spectral-module .db-spectrum-header{font-size:9px;letter-spacing:.14em;}.db-spectral-module #dbSpectralMode{max-width:50%;}.db-spectral-module .db-spectrum-axis{font-size:7.5px;}}
-@media (max-height: 480px) and (orientation: landscape){.db-spectral-module .db-spectral-shell canvas{height:128px;}}
+/* Spectral V4 — dedicated full-width bay and nine-slice bolted chassis */
+#dbPaneSource .db-pane-modules > .db-spectral-module{grid-column:1/-1!important;width:100%;box-sizing:border-box;min-width:0!important;}
+#dbPaneSource .db-spectral-module > .db-module-content{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;align-items:start!important;}
+#dbPaneSource .db-spectral-shell{grid-column:1/-1!important;min-width:0;box-sizing:border-box;position:relative;isolation:isolate;border:18px solid transparent;border-image:url('assets/interface/dream-matrix-bolted-panel.webp') 85 fill / 18px / 0 stretch;background:#14171f;padding:4px 5px 3px;overflow:hidden;}
+.db-spec-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 6px;color:#e0e4ed;}
+.db-spec-top strong{display:block;font-size:10px;letter-spacing:.12em;line-height:1.2;}.db-spec-top small{display:block;font-size:9px;letter-spacing:.06em;color:#9cbdcf;margin-top:3px;}
+#dbSpectralView{font:600 9px system-ui;letter-spacing:.06em;color:#c5e2ec;border:1px solid #657488;border-radius:4px;background:linear-gradient(#343d48,#101722);padding:7px 8px;min-height:28px;cursor:pointer;flex-shrink:0;}
+.db-spec-screen{background:#080c14;border:1px solid #586373;border-radius:4px;box-shadow:0 0 0 2px #07090d,inset 0 2px 5px #000;overflow:hidden;}
+.db-spec-scale{display:flex;justify-content:space-between;gap:5px;font-size:8px;letter-spacing:.04em;color:#98adbd;padding:5px 7px 0;}
+#dbSpectralCanvas{display:block;width:100%;height:clamp(145px,32vw,235px);max-width:100%;}
+.db-spectral-readout{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap;font:9px/1.3 system-ui;color:#b6d1df;}
+#dbSpectralReadout{flex:1 1 130px;min-width:0;overflow-wrap:anywhere;}
+#dbSpectralFreezeChip{font:600 9px system-ui;color:#dbd4f0;border:1px solid #6c637d;border-radius:3px;padding:4px 6px;background:#11131d;white-space:nowrap;}
+#dbPaneSource .db-spectral-module #spectralBudget{color:#d0d9e4;}
+#dbPaneSource .db-spectral-module label:has(#spectralQuality){grid-column:span 2;}
+#dbPaneSource .db-spectral-module label:has(#spectralQuality) select{max-width:220px!important;}
+@media(orientation:landscape){#dbPaneSource .db-spectral-module > .db-module-content{grid-template-columns:repeat(4,minmax(0,1fr))!important;}#dbPaneSource .db-spectral-shell{border-width:14px;border-image-width:14px;padding:2px 4px;}#dbSpectralCanvas{height:clamp(110px,27vh,195px);}}
+@media(max-width:350px) and (orientation:portrait){#dbPaneSource .db-spectral-shell{border-width:12px;border-image-width:12px;padding:3px;}#dbPaneSource .db-spectral-module > .db-module-content{grid-template-columns:repeat(2,minmax(0,1fr))!important;}#dbPaneSource .db-spectral-module label:has(#spectralQuality){grid-column:auto;}}
