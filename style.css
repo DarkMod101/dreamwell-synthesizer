@@ -3594,3 +3594,26 @@ body::after {display:none!important;}
     background-position: center, center 49% !important;
   }
 }
+
+
+/* Dream Binder — Spectral Visualizer */
+.db-spectral-module > .db-module-content{display:grid;gap:12px;}
+.db-spectral-shell{position:relative;overflow:hidden;min-height:0;padding:14px 14px 10px;border-radius:18px;border:1px solid rgba(170,138,232,.26);background:
+  radial-gradient(circle at 72% 18%, rgba(118,84,215,.18), transparent 28%),
+  radial-gradient(circle at 16% 86%, rgba(84,208,235,.11), transparent 30%),
+  linear-gradient(180deg, rgba(14,15,32,.98), rgba(10,8,25,.94));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.02), 0 18px 35px rgba(0,0,0,.26);}
+.db-spectral-shell::before{content:"";position:absolute;inset:8px;border-radius:14px;pointer-events:none;border:1px solid rgba(223,202,255,.08);background:
+  linear-gradient(90deg, rgba(193,167,255,.06) 1px, transparent 1px),
+  linear-gradient(rgba(193,167,255,.06) 1px, transparent 1px);background-size:34px 28px;mask-image:linear-gradient(to bottom, rgba(255,255,255,.75), rgba(255,255,255,.25));}
+.db-spectral-shell::after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;background:linear-gradient(180deg, rgba(255,255,255,.05), transparent 16%, transparent 78%, rgba(214,169,255,.06));}
+.db-spectral-shell canvas{position:relative;display:block;width:100%;height:170px;margin-top:6px;border-radius:12px;background:linear-gradient(180deg, rgba(3,5,16,.92), rgba(6,8,20,.75));}
+.db-spectral-readout{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px;font-size:10px;letter-spacing:.11em;color:#b9c7de;text-transform:uppercase;}
+#dbSpectralReadout{min-width:0;color:#9cd8f1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#dbSpectralFreezeChip{flex:0 0 auto;padding:5px 9px;border-radius:999px;border:1px solid rgba(177,149,240,.28);background:linear-gradient(180deg, rgba(65,43,105,.42), rgba(19,17,41,.82));color:#edd7ff;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);}
+#dbSpectralFreezeChip.is-frozen{color:#ffe4a8;border-color:rgba(255,214,128,.36);background:linear-gradient(180deg, rgba(109,74,19,.58), rgba(43,28,10,.86));}
+#dbSpectralFreezeChip.is-disabled{color:#9a97ad;opacity:.82;}
+.db-spectral-module .db-pane-note{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.db-spectral-module #spectralBudget{white-space:nowrap;color:#efe5ff;}
+@media (max-width: 680px){.db-spectral-shell{padding:11px 11px 9px;border-radius:15px}.db-spectral-shell canvas{height:142px}.db-spectral-readout{font-size:9px;letter-spacing:.08em}}
+@media (max-height: 480px) and (orientation: landscape){.db-spectral-shell canvas{height:104px}}
