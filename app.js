@@ -2532,9 +2532,9 @@ function dbRingCreate(ctx, noteFrequency, input, output) {
   carrier.start();
   let stopped = false;
   const voice = {
-    update() {
+    update(override) {
       if (stopped) return;
-      const s = dbRingRead();
+      const s = override ? Object.assign(state, override) : Object.assign(state, dbRingRead());
       const mix = s.enabled ? s.depth / 100 : 0;
       const now = ctx.currentTime;
       const hz = s.mode === "track" ? noteFrequency * s.frequency / 110 : s.frequency;
@@ -18617,6 +18617,13 @@ function dbBindingHandleEdit(event) {
  const value=el.type==='checkbox'?el.checked:(el.type==='range'?Number(el.value):el.value);
  const sides=dbBindingEditTarget==='both'?['A','B']:[dbBindingEditTarget];
  for(const side of sides) dbBindingEdits[side][id]=value;
+ if(event.dbDreamMatrix && (id==='dbRingFrequency'||id==='dbRingDepth')) {
+   for(const entry of dbHeldLayers.values()) for(const layer of entry.layers) {
+     if(layer.engine!=='synth'||!sides.includes(layer.side)||!layer.voice?.dbRing) continue;
+     layer.voice.dbRing.update(id==='dbRingFrequency'?{frequency:value}:{depth:value});
+   }
+   return;
+ }
  if(genesisFilterIds.includes(id)){for(const entry of dbHeldLayers.values())for(const layer of entry.layers)if(layer.engine==='synth'&&sides.includes(layer.side))genesisFilterLive(layer.voice,id,value,audioContext);return;}
  if(genesisTuningIds.includes(id)) {
    // Tune held Binding voices in place, including latched and Evolution leaves.
