@@ -1,4 +1,4 @@
-/* Dream Binder Spectral Synthesis IV — read-only calibrated partial display. */
+/* Dream Binder Spectral Synthesis IV.1 — adaptive linear frequency display. */
 const dbSpectral = (() => {
   'use strict';
   const specs = {
@@ -145,7 +145,14 @@ const dbSpectral = (() => {
       if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph;}
       c.setTransform(pw/W,0,0,ph/H,0,0);
       const s=snap.state,L=34,T=13,R=W-13,B=H-25,w=R-L,h=B-T;
-      const x=f=>L+Math.log(f/20)/Math.log(1000)*w;
+      // Hz view: show actual frequency spacing, zoomed to the allocated spectrum.
+      // Include silent allocated partials so density changes do not rescale the axis.
+      const highest=Math.max(100,...snap.parts.map(p=>p.freq));
+      const target=highest*1.06/Math.max(2,Math.min(8,Math.floor(w/48)));
+      const power=10**Math.floor(Math.log10(target));
+      const step=([1,2,2.5,5,10].find(n=>n*power>=target)||10)*power;
+      const end=Math.ceil(highest*1.06/step)*step;
+      const x=f=>L+f/end*w;
       const xp=n=>L+(n-.5)/snap.count*w;
       const y=db=>B-(clamp(db,-60,0)+60)/60*h;
       const db=a=>20*Math.log10(Math.max(a,1e-8));
@@ -153,27 +160,27 @@ const dbSpectral = (() => {
       const bg=c.createLinearGradient(0,T,0,B);bg.addColorStop(0,'#10192a');bg.addColorStop(1,'#060a12');c.fillStyle=bg;c.fillRect(L,T,w,h);
       c.font='9px system-ui';c.textBaseline='middle';c.lineWidth=1;
       for(let d=0;d>=-60;d-=12){const yy=y(d);c.strokeStyle=d===0?'#415268':'#243345';c.beginPath();c.moveTo(L,yy+.5);c.lineTo(R,yy+.5);c.stroke();c.fillStyle='#9caec2';c.textAlign='right';c.fillText(String(d),L-5,yy);}
-      const ticks=frequency?(W<350?[20,100,1000,10000,20000]:[20,50,100,200,500,1000,2000,5000,10000,20000]):Array.from(new Set([1,Math.ceil(snap.count/4),Math.ceil(snap.count/2),Math.ceil(snap.count*3/4),snap.count]));
+      const ticks=frequency?Array.from({length:Math.round(end/step)+1},(_,i)=>i*step):Array.from(new Set([1,Math.ceil(snap.count/4),Math.ceil(snap.count/2),Math.ceil(snap.count*3/4),snap.count]));
       c.textAlign='center';c.textBaseline='top';
-      for(const t of ticks){const xx=frequency?x(t):xp(t);c.strokeStyle='#203043';c.beginPath();c.moveTo(xx,T);c.lineTo(xx,B);c.stroke();c.fillStyle='#9caec2';const label=frequency?(t>=1000?t/1000+'k':String(t)):'H'+t;const tw=c.measureText(label).width;c.fillText(label,clamp(xx,tw/2+2,W-tw/2-2),B+6);}
+      for(const t of ticks){const xx=frequency?x(t):xp(t);c.strokeStyle='#203043';c.beginPath();c.moveTo(xx,T);c.lineTo(xx,B);c.stroke();c.fillStyle='#9caec2';const label=frequency?(t>=1000?Number((t/1000).toFixed(3))+'k':String(t)):'H'+t;const tw=c.measureText(label).width;c.fillText(label,clamp(xx,tw/2+2,W-tw/2-2),B+6);}
       // Focus is the actual harmonic index used by the synthesis equation.
       const focus=1+(snap.count-1)*s.spectralFocus/100,spread=Math.max(1,snap.count*(.055+s.spectralBlur/100*.22));
       const focusFreq=n=>{const a=snap.parts[Math.max(0,Math.min(snap.count-1,Math.round(n)-1))];return a?.freq||snap.base;};
-      const fa=frequency?x(clamp(focusFreq(focus-spread),20,20000)):xp(focus-spread),fb=frequency?x(clamp(focusFreq(focus+spread),20,20000)):xp(focus+spread);
+      const fa=frequency?x(focusFreq(focus-spread)):xp(focus-spread),fb=frequency?x(focusFreq(focus+spread)):xp(focus+spread);
       c.save();c.beginPath();c.rect(L,T,w,h);c.clip();
       c.fillStyle='#b9945018';c.fillRect(Math.min(fa,fb),T,Math.abs(fb-fa),h);
-      const fcenter=frequency?x(clamp(focusFreq(focus),20,20000)):xp(focus);c.strokeStyle='#ceaf6277';c.setLineDash([3,4]);c.beginPath();c.moveTo(fcenter,T);c.lineTo(fcenter,B);c.stroke();c.setLineDash([]);
+      const fcenter=frequency?x(focusFreq(focus)):xp(focus);c.strokeStyle='#ceaf6277';c.setLineDash([3,4]);c.beginPath();c.moveTo(fcenter,T);c.lineTo(fcenter,B);c.stroke();c.setLineDash([]);
       const points=[];let peak=null;
-      for(const p of snap.parts){if(p.amp<=0||db(p.amp)<-60||(frequency&&(p.freq<20||p.freq>20000)))continue;const xx=frequency?x(p.freq):xp(p.n),yy=y(db(p.amp));points.push({x:xx,y:yy,n:p.n});if(!peak||p.amp>peak.amp)peak=p;}
+      for(const p of snap.parts){if(p.amp<=0||db(p.amp)<-60)continue;const xx=frequency?x(p.freq):xp(p.n),yy=y(db(p.amp));points.push({x:xx,y:yy,n:p.n});if(!peak||p.amp>peak.amp)peak=p;}
       points.sort((a,b)=>a.x-b.x);
       if(points.length>1){c.beginPath();c.moveTo(points[0].x,B);for(const p of points)c.lineTo(p.x,p.y);c.lineTo(points[points.length-1].x,B);c.closePath();const fill=c.createLinearGradient(0,T,0,B);fill.addColorStop(0,'#9977ec44');fill.addColorStop(1,'#497ec50d');c.fillStyle=fill;c.fill();}
       const bw=Math.max(1,Math.min(5,w/snap.count*.32));const bars=c.createLinearGradient(0,T,0,B);bars.addColorStop(0,'#e5d5ff');bars.addColorStop(.45,'#aa83f1');bars.addColorStop(1,'#377caa');
-      c.fillStyle=bars;for(const p of points)c.fillRect(p.x-bw/2,p.y,bw,B-p.y);
+      c.fillStyle=bars;for(let i=0;i<points.length;i++){const p=points[i];const gap=Math.min(i?p.x-points[i-1].x:Infinity,i+1<points.length?points[i+1].x-p.x:Infinity);const width=frequency?Math.max(.75,Math.min(bw,gap*.62)):bw;c.fillRect(p.x-width/2,p.y,width,B-p.y);}
       if(points.length>1){c.beginPath();c.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)c.lineTo(points[i].x,points[i].y);c.strokeStyle='#81d9eb';c.lineWidth=1.1;c.stroke();}
-      c.fillStyle='#d6eeff';for(const p of points)c.fillRect(p.x-2,p.y-1,4,2);
+      c.fillStyle='#d6eeff';for(const p of points){const tip=frequency?Math.min(2,bw):4;c.fillRect(p.x-tip/2,p.y-1,tip,2);}
       c.restore();c.strokeStyle='#46536b';c.lineWidth=1;c.strokeRect(L+.5,T+.5,w-1,h-1);
       set(mode,`${snap.active?'LIVE':'MODEL'} · ${s.spectralQuality.toUpperCase()} / ${snap.count}`);
-      set(axis,frequency?'FREQUENCY / Hz':'PARTIAL INDEX / HARMONICS');
+      set(axis,frequency?'AUTO RANGE / Hz (LINEAR)':'PARTIAL INDEX / HARMONICS');
       set(chip,snap.active?(s.spectralFreeze?'FROZEN':s.spectralMotion?'LIVE':'STATIC'):(s.spectralEnabled?(s.spectralFreeze?'FROZEN':'PREVIEW'):'BYPASSED'));
       set(readout,`${snap.active?'Voice':'A2 model'} ${snap.base.toFixed(1)} Hz · ${peak?'Peak H'+peak.n+' / '+peak.freq.toFixed(0)+' Hz':'No partials above −60 dB'} · ${snap.used}/144 allocated`);
     }
