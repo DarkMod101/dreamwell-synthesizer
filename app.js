@@ -2598,7 +2598,13 @@ function dbDriveCurve(amount, character) {
   dbDriveCurveCache.set(key, curve);
   return curve;
 }
-function dbDriveRefresh() {
+function dbDriveRefresh(event) {
+  if(event?.dbDreamMatrix && ["dbDriveMix","dbDriveTone"].includes(event.target?.id)){
+    const id=event.target.id,value=Number(event.target.value),label=document.getElementById(id+"Value");
+    if(label)label.textContent=id==="dbDriveMix"?`${value}%`:`${Math.round(value)} Hz`;
+    if(typeof dbGetMode!=="function"||dbGetMode()==="off") activeNotes.forEach(note=>note.dbDrive?.matrixUpdate(id,value));
+    return;
+  }
   const s = dbDriveRead();
   const labels = {
     dbDriveAmountValue: `${s.amount}%`,
@@ -2650,6 +2656,11 @@ function dbDriveCreate(ctx, input, output) {
   wet.connect(output);
   let stopped = false;
   const voice = {
+    matrixUpdate(id,value){
+      if(stopped)return;const now=ctx.currentTime;
+      if(id==="dbDriveTone")lowpass.frequency.setTargetAtTime(value,now,.035);
+      if(id==="dbDriveMix"){const m=Math.max(0,Math.min(1,value/100));dry.gain.setTargetAtTime(1-m,now,.035);wet.gain.setTargetAtTime(m,now,.035);}
+    },
     update() {
       if (stopped) return;
       const state = dbDriveRead();
@@ -18617,6 +18628,10 @@ function dbBindingHandleEdit(event) {
  const value=el.type==='checkbox'?el.checked:(el.type==='range'?Number(el.value):el.value);
  const sides=dbBindingEditTarget==='both'?['A','B']:[dbBindingEditTarget];
  for(const side of sides) dbBindingEdits[side][id]=value;
+ if(event.dbDreamMatrix && (id==='dbDriveMix'||id==='dbDriveTone')) {
+   for(const entry of dbHeldLayers.values())for(const layer of entry.layers)if(layer.engine==='synth'&&sides.includes(layer.side))layer.voice?.dbDrive?.matrixUpdate(id,value);
+   return;
+ }
  if(event.dbDreamMatrix && (id==='dbRingFrequency'||id==='dbRingDepth')) {
    for(const entry of dbHeldLayers.values()) for(const layer of entry.layers) {
      if(layer.engine!=='synth'||!sides.includes(layer.side)||!layer.voice?.dbRing) continue;
