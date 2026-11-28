@@ -18628,6 +18628,14 @@ function dbBindingHandleEdit(event) {
  const value=el.type==='checkbox'?el.checked:(el.type==='range'?Number(el.value):el.value);
  const sides=dbBindingEditTarget==='both'?['A','B']:[dbBindingEditTarget];
  for(const side of sides) dbBindingEdits[side][id]=value;
+ if(event.dbDreamMatrix && (id==='cutoff'||id==='resonance')) {
+   if(audioContext) for(const entry of dbHeldLayers.values()) for(const layer of entry.layers) {
+     if(layer.engine!=='synth'||!sides.includes(layer.side)||!layer.voice?.filter) continue;
+     const param=id==='cutoff'?layer.voice.filter.frequency:layer.voice.filter.Q;
+     param.setTargetAtTime(Math.max(0,value),audioContext.currentTime,.05);
+   }
+   return;
+ }
  if(event.dbDreamMatrix && (id==='dbDriveMix'||id==='dbDriveTone')) {
    for(const entry of dbHeldLayers.values())for(const layer of entry.layers)if(layer.engine==='synth'&&sides.includes(layer.side))layer.voice?.dbDrive?.matrixUpdate(id,value);
    return;
@@ -18650,6 +18658,7 @@ function dbBindingHandleEdit(event) {
    }
    return;
  }
+ if(event.dbDreamMatrix) return; // Never retrigger held Binding voices for Matrix automation.
  dbBindingScheduleRefresh();
 }
 const DB_BINDING_STORAGE = 'dreamBinderBindingsV1';
